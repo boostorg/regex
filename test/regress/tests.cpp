@@ -593,7 +593,7 @@ hl_grep_test_proc(const RegEx& e)
    // check $`:
    start = e.Position(-1);
    end = start + e.Length(-1);
-   if(start == -1)
+   if(start == boost::RegEx::npos)
    {
       if(hl_match_id &&
          ( matches[hl_match_id] != matches[hl_match_id - 1] )
@@ -628,7 +628,7 @@ hl_grep_test_proc(const RegEx& e)
    // check $':
    start = e.Position(-2);
    end = start + e.Length(-2);
-   if(start == -1)
+   if(start == boost::RegEx::npos)
    {
       if(matches[hl_match_id + 1] != (int)search_text.size())
       {
