@@ -534,7 +534,7 @@ OutputIterator regex_format(OutputIterator out,
                          )
 {
    re_detail::trivial_format_traits<charT> traits;
-   return regex_format_imp(out, m, fmt, fmt + traits.length(fmt), flags, traits);
+   return re_detail::regex_format_imp(out, m, fmt, fmt + traits.length(fmt), flags, traits);
 }
 
 template <class OutputIterator, class Iterator, class charT>
@@ -545,7 +545,7 @@ OutputIterator regex_format(OutputIterator out,
                          )
 {
    re_detail::trivial_format_traits<charT> traits;
-   return regex_format_imp(out, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
+   return re_detail::regex_format_imp(out, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
 }  
 
 template <class Iterator, class charT>
@@ -556,7 +556,7 @@ std::basic_string<charT> regex_format(const match_results<Iterator>& m,
    std::basic_string<charT> result;
    re_detail::string_out_iterator<std::basic_string<charT> > i(result);
    re_detail::trivial_format_traits<charT> traits;
-   regex_format_imp(i, m, fmt, fmt + traits.length(fmt), flags, traits);
+   re_detail::regex_format_imp(i, m, fmt, fmt + traits.length(fmt), flags, traits);
    return result;
 }
 
@@ -568,7 +568,7 @@ std::basic_string<charT> regex_format(const match_results<Iterator>& m,
    std::basic_string<charT> result;
    re_detail::string_out_iterator<std::basic_string<charT> > i(result);
    re_detail::trivial_format_traits<charT> traits;
-   regex_format_imp(i, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
+   re_detail::regex_format_imp(i, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
    return result;
 }
 

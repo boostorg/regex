@@ -25,6 +25,7 @@
 #include "test_regex_replace.hpp"
 #include "test_deprecated.hpp"
 #include "test_mfc.hpp"
+#include "test_icu.hpp"
 #include "test_locale.hpp"
 
 
@@ -69,6 +70,9 @@ void test(const charT& c, const tagT& tag)
       && (test_locale::c_locale_state() == test_locale::test_no_locale)
       &&(test_locale::cpp_locale_state() == test_locale::test_no_locale))
       test_mfc(c, tag);
+   // test ICU code:
+   test_info<charT>::set_typename("ICU interfaces");
+   test_icu(c, tag);
 }
 
 //
@@ -211,5 +215,28 @@ void test_en_locale();
 void test_emacs();
 void test_operators();
 void test_overloads();
+
+//
+// template instances:
+// we pretty much have to instantiate these separately
+// otherwise compilation times are really excessive...
+//
+#ifndef BOOST_REGEX_TEST_INSTANCES
+#define template template<>
+#endif
+
+template void test<char, test_regex_replace_tag>(const char&, const test_regex_replace_tag&);
+template void test<char, test_regex_search_tag>(const char&, const test_regex_search_tag&);
+template void test<char, test_invalid_regex_tag>(const char&, const test_invalid_regex_tag&);
+
+#ifndef BOOST_NO_WREGEX
+template void test<wchar_t, test_regex_replace_tag>(const wchar_t&, const test_regex_replace_tag&);
+template void test<wchar_t, test_regex_search_tag>(const wchar_t&, const test_regex_search_tag&);
+template void test<wchar_t, test_invalid_regex_tag>(const wchar_t&, const test_invalid_regex_tag&);
+#endif
+
+#ifndef BOOST_REGEX_TEST_INSTANCES
+#undef template
+#endif
 
 #endif

@@ -26,7 +26,7 @@
 // store information about the test we are about to conduct:
 //
 template <class charT>
-class test_info
+class test_info_base
 {
 public:
    typedef std::basic_string<charT> string_type;
@@ -51,7 +51,7 @@ private:
       return d;
    }
 public:
-   test_info(){};
+   test_info_base(){};
    static void set_info(
       const char* file,
       int line,
@@ -129,6 +129,16 @@ public:
       return data().expression_type_name;
    }
 };
+
+template <class T>
+struct test_info
+   : public test_info_base<wchar_t>
+{};
+
+template<>
+struct test_info<char>
+   : public test_info_base<char>
+{};
 
 template <class charT>
 std::ostream& operator<<(std::ostream& os, const test_info<charT>&)

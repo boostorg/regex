@@ -46,6 +46,10 @@ public:
    {
       return s_win_locale;
    }
+   static const char* c_str()
+   {
+      return m_name.c_str();
+   }
 #ifndef BOOST_NO_STD_LOCALE
    static std::locale cpp_locale()
    {
@@ -67,9 +71,11 @@ private:
    static std::locale s_cpp_locale_inst;
 #endif
    static boost::uint32_t s_win_locale_inst;
+   static std::string m_name;
 
    // backed up versions of the previous locales and their action state:
    std::string     m_old_c_locale;
+   std::string     m_old_name;
    int             m_old_c_state;
 #ifndef BOOST_NO_STD_LOCALE
    std::locale     m_old_cpp_locale;

@@ -1257,7 +1257,7 @@ bool valid_value(charT, int v, const mpl::true_&)
    return (v >> (sizeof(charT) * CHAR_BIT)) == 0;
 }
 template <class charT>
-bool valid_value(charT, int v, const mpl::false_&)
+bool valid_value(charT, int, const mpl::false_&)
 {
    return true; // v will alsways fit in a charT
 }

@@ -374,9 +374,9 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL print_regex_library_info();
 #endif
 
 #if defined(BOOST_REGEX_DIAG)
-#  pragma message ("BOOST_REGEX_DECL set as: " BOOST_STRINGIZE(BOOST_REGEX_DECL))
-#  pragma message ("BOOST_REGEX_CALL set as: " BOOST_STRINGIZE(BOOST_REGEX_CALL))
-#  pragma message ("BOOST_REGEX_CCALL set as: " BOOST_STRINGIZE(BOOST_REGEX_CCALL))
+#  pragma message ("BOOST_REGEX_DECL" BOOST_STRINGIZE(=BOOST_REGEX_DECL))
+#  pragma message ("BOOST_REGEX_CALL" BOOST_STRINGIZE(=BOOST_REGEX_CALL))
+#  pragma message ("BOOST_REGEX_CCALL" BOOST_STRINGIZE(=BOOST_REGEX_CCALL))
 #ifdef BOOST_REGEX_USE_C_LOCALE
 #  pragma message ("Using C locale in regex traits class")
 #elif BOOST_REGEX_USE_CPP_LOCALE
@@ -384,19 +384,14 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL print_regex_library_info();
 #else
 #  pragma message ("Using Win32 locale in regex traits class")
 #endif
-#ifdef BOOST_REGEX_DYN_LINK
+#if defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)
 #  pragma message ("Dynamic linking enabled")
 #endif
-#ifdef BOOST_REGEX_NO_LIB
+#if defined(BOOST_REGEX_NO_LIB) || defined(BOOST_ALL_NO_LIB)
 #  pragma message ("Auto-linking disabled")
 #endif
 #ifdef BOOST_REGEX_NO_EXTERNAL_TEMPLATES
 #  pragma message ("Extern templates disabled")
-#endif
-#ifdef BOOST_REGEX_V3
-#  pragma message ("Using Version 3 regex code")
-#else
-#  pragma message ("Using Version 4 regex code")
 #endif
 
 #endif

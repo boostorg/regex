@@ -16,6 +16,7 @@
   *   DESCRIPTION: entry point for test program.
   */
 
+#define BOOST_REGEX_TEST_INSTANCES
 #include "test.hpp"
 #include "test_locale.hpp"
 #include <stdarg.h>

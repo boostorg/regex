@@ -229,6 +229,11 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL global_upper(char c);
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_lower(wchar_t c);
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_upper(wchar_t c);
 #endif
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL global_lower(unsigned short c);
+BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL global_upper(unsigned short c);
+#endif
+
 template <class charT>
 int global_value(charT c)
 {

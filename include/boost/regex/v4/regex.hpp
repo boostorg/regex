@@ -87,7 +87,6 @@
 #ifndef BOOST_REGEX_MATCHER_HPP
 #include <boost/regex/v4/perl_matcher.hpp>
 #endif
-
 //
 // template instances:
 //

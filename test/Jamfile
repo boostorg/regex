@@ -25,6 +25,9 @@ test_replace.cpp
 test_sets.cpp
 test_simple_repeats.cpp
 test_tricky_cases.cpp
+test_icu.cpp
+test_overloads.cpp
+test_operators.cpp
 ;
 
 #
@@ -151,6 +154,9 @@ test-suite regex
  ]
 
 ;
+
+
+
 
 
 

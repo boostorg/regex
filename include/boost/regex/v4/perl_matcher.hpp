@@ -24,7 +24,7 @@ namespace re_detail{
 //
 // error checking API:
 //
-BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex::flag_type ef, match_flag_type mf);
+BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex_constants::syntax_option_type ef, match_flag_type mf);
 //
 // function can_start:
 //
@@ -85,11 +85,11 @@ template <class Seq, class C>
 inline int string_compare(const Seq& s, const C* p)
 {
    std::size_t i = 0;
-   while(p[i] && (p[i] == s[i]))
+   while((i < s.size()) && (p[i] == s[i]))
    {
       ++i;
    }
-   return s[i] - p[i];
+   return (i == s.size()) ? -p[i] : s[i] - p[i];
 }
 #endif
 # define STR_COMP(s,p) string_compare(s,p)
@@ -354,7 +354,9 @@ private:
    bool match_backstep();
    bool match_assert_backref();
    bool match_toggle_case();
+#ifdef BOOST_REGEX_RECURSIVE
    bool backtrack_till_match(std::size_t count);
+#endif
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();
@@ -450,9 +452,14 @@ private:
    unsigned used_block_count;
 #endif
 
-   // these operations aren't allowed, so are declared private:
-   perl_matcher& operator=(const perl_matcher&);
-   perl_matcher(const perl_matcher&);
+   // these operations aren't allowed, so are declared private,
+   // bodies are provided to keep explicit-instantiation requests happy:
+   perl_matcher& operator=(const perl_matcher&)
+   {
+      return *this;
+   }
+   perl_matcher(const perl_matcher& that)
+      : m_result(that.m_result), re(that.re), traits_inst(that.traits_inst), rep_obj(0) {}
 };
 
 } // namespace re_detail

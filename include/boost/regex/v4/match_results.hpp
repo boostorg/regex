@@ -149,7 +149,7 @@ public:
    string_type format(const string_type& fmt,
                       match_flag_type flags = format_default) const
    {
-      return regex_format(*this, fmt, flags);
+      return regex_format<BidiIterator, char_type>(*this, fmt, flags);
    }
    // format with locale:
    template <class OutputIterator, class RegexT>

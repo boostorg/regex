@@ -29,6 +29,7 @@ void test_replace()
    TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab", match_default|format_no_copy, "<$0>", "<123><><><>");
    TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab1", match_default|format_no_copy, "<$0>", "<123><><><1><>");
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$`$", "...$");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "(?1x:y)", "(?1x:y)");
    // and now escapes:
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$x", "$x");
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\a", "\a");
