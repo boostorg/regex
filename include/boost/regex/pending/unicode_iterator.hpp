@@ -16,6 +16,48 @@
   *   DESCRIPTION: Iterator adapters for converting between different Unicode encodings.
   */
 
+/****************************************************************************
+
+Contents:
+~~~~~~~~~
+
+1) Read Only, Input Adapters:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+template <class BaseIterator, class U8Type = ::boost::uint8_t>
+class u32_to_u8_iterator;
+
+Adapters sequence of UTF-32 code points to "look like" a sequence of UTF-8.
+
+template <class BaseIterator, class U32Type = ::boost::uint32_t>
+class u8_to_u32_iterator;
+
+Adapters sequence of UTF-8 code points to "look like" a sequence of UTF-32.
+
+template <class BaseIterator, class U16Type = ::boost::uint16_t>
+class u32_to_u16_iterator;
+
+Adapters sequence of UTF-32 code points to "look like" a sequence of UTF-16.
+
+template <class BaseIterator, class U32Type = ::boost::uint32_t>
+class u16_to_u32_iterator;
+
+Adapters sequence of UTF-16 code points to "look like" a sequence of UTF-32.
+
+2) Single pass output iterator adapters:
+
+template <class BaseIterator>
+class utf8_output_iterator;
+
+Accepts UTF-32 code points and forwards them on as UTF-8 code points.
+
+template <class BaseIterator>
+class utf16_output_iterator;
+
+Accepts UTF-32 code points and forwards them on as UTF-16 code points.
+
+****************************************************************************/
+
 #ifndef BOOST_REGEX_UNICODE_ITERATOR_HPP
 #define BOOST_REGEX_UNICODE_ITERATOR_HPP
 #include <boost/cstdint.hpp>
@@ -61,7 +103,7 @@ inline unsigned utf8_byte_count(boost::uint8_t c)
       ++result;
       mask >>= 1;
    }
-   return (result == 0) ? 1 : result;
+   return (result == 0) ? 1 : ((result > 4) ? 4 : result);
 }
 
 inline unsigned utf8_trailing_byte_count(boost::uint8_t c)
