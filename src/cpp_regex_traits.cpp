@@ -241,7 +241,7 @@ message_data<char>::message_data(const std::locale& l, const std::string& regex_
 #endif
       for(std::size_t j = 0; j < s.size(); ++j)
       {
-         syntax_map[s[j]] = (unsigned char)(i);
+         syntax_map[(unsigned char)s[j]] = (unsigned char)(i);
       }
    }
 
