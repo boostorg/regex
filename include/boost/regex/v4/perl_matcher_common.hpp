@@ -82,7 +82,7 @@ void perl_matcher<BidiIterator, Allocator, traits, Allocator2>::estimate_max_sta
    if(dist > (difference_type)(lim / states))
       max_state_count = lim;
    else
-      max_state_count = 1000 + states * dist;
+      max_state_count = 100000 + states * dist;
 }
 template <class BidiIterator, class Allocator, class traits, class Allocator2>
 void perl_matcher<BidiIterator, Allocator, traits, Allocator2>::estimate_max_state_count(void*)
