@@ -27,7 +27,7 @@ double time_match(const std::string& re, const std::string& text, bool icase)
    int counter, repeats;
    double result = 0;
    double run;
-   if(0 != regcomp(&e, re.c_str(), (icase ? REG_ICASE | REG_EXTENDED : REG_EXTENDED)))
+   if(0 != ::regcomp(&e, re.c_str(), (icase ? REG_ICASE | REG_EXTENDED : REG_EXTENDED)))
       return -1;
    do
    {

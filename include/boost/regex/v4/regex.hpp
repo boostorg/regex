@@ -81,6 +81,12 @@
 #ifndef BOOST_REGEX_V4_MATCH_RESULTS_HPP
 #include <boost/regex/v4/match_results.hpp>
 #endif
+#ifndef BOOST_REGEX_V4_PROTECTED_CALL_HPP
+#include <boost/regex/v4/protected_call.hpp>
+#endif
+#ifndef BOOST_REGEX_MATCHER_HPP
+#include <boost/regex/v4/perl_matcher.hpp>
+#endif
 
 //
 // template instances:
@@ -136,12 +142,6 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #endif
 
 } // namespace boost
-#ifndef BOOST_REGEX_V4_PROTECTED_CALL_HPP
-#include <boost/regex/v4/protected_call.hpp>
-#endif
-#ifndef BOOST_REGEX_MATCHER_HPP
-#include <boost/regex/v4/perl_matcher.hpp>
-#endif
 #ifndef BOOST_REGEX_MATCH_HPP
 #include <boost/regex/v4/regex_match.hpp>
 #endif

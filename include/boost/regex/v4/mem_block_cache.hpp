@@ -20,7 +20,7 @@
 
 #include <new>
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/static_mutex.hpp>
+#include <boost/regex/pending/static_mutex.hpp>
 #endif
 
 #ifdef BOOST_HAS_ABI_HEADERS

@@ -57,7 +57,7 @@ template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 #  include BOOST_ABI_SUFFIX
 #endif
 
-#elif defined(BOOST_MSVC)
+#elif defined(BOOST_MSVC) || defined(BOOST_INTEL) || defined(__GNUC__)
 
 #  ifndef BOOST_REGEX_INSTANTIATE
 #     define template extern template
@@ -69,6 +69,8 @@ template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 #  endif
 
 template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
+template class BOOST_REGEX_DECL match_results< const BOOST_REGEX_CHAR_T* >;
+template class BOOST_REGEX_DECL match_results< std::basic_string<BOOST_REGEX_CHAR_T>::const_iterator >;
 
 #  ifdef BOOST_MSVC
 #     pragma warning(pop)

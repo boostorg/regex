@@ -21,7 +21,7 @@
 //
 #include <boost/config.hpp>
 
-#if (defined(BOOST_MSVC) || defined(__ICL)) && (_MSC_VER >= 1300)
+#if (defined(BOOST_MSVC) || defined(__ICL)) && (_MSC_VER >= 1300) && (_MSC_VER < 1400)
 #  define TEST_MFC
 #endif
 

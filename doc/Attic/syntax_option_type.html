@@ -175,7 +175,7 @@ static const syntax_option_type collate;
                <TD>No</TD>
                <TD>Normally Boost.Regex behaves as if the Perl m-modifier is on: so the 
                   assertions ^ and $ match after and before embedded newlines respectively, 
-                  setting this flags is eqivalent to prefixing the expression with (?-m).</TD>
+                  setting this flags is equivalent to prefixing the expression with (?-m).</TD>
             </TR>
             <TR>
                <TD>no_mod_s</TD>
@@ -251,7 +251,7 @@ static const syntax_option_type collate;
                      character classes permitted.</P>
                   <P>In addition some perl-style escape sequences are supported (actually the awk 
                      syntax requires \a \b \t \v \f \n and \r to be recognised,&nbsp;but other 
-                     escape sequences invoke undefined behaviour according to the POSIX standard).</P>
+                     escape sequences invoke undefined behavior according to the POSIX standard).</P>
                </TD>
             </TR>
          </TABLE>
@@ -324,9 +324,9 @@ static const syntax_option_type collate;
                <TD>Yes</TD>
                <TD>
                   <P>Specifies that the grammar recognized by the regular expression engine is the 
-                     same as that used by POSIX basic regular expressions in IEEE Std 1003.1-2001, 
-                     Portable Operating System Interface (POSIX ), Base Definitions and Headers, 
-                     Section 9, Regular Expressions (FWD.1).
+                     same as that used by <A href="syntax_basic.html#Basic">POSIX basic regular 
+                        expressions</A> in IEEE Std 1003.1-2001, Portable Operating System Interface 
+                     (POSIX ), Base Definitions and Headers, Section 9, Regular Expressions (FWD.1).
                   </P>
                </TD>
             </TR>
@@ -340,12 +340,19 @@ static const syntax_option_type collate;
                <TD>Yes</TD>
                <TD>
                   <P>Specifies that the grammar recognized by the regular expression engine is the 
-                     same as that used by POSIX utility grep in IEEE Std 1003.1-2001, Portable 
-                     Operating System Interface (POSIX ), Shells and Utilities, Section 4, 
-                     Utilities, grep (FWD.1).</P>
+                     same as that used by <A href="syntax_basic.html#grep">POSIX utility grep</A> in 
+                     IEEE Std 1003.1-2001, Portable Operating System Interface (POSIX ), Shells and 
+                     Utilities, Section 4, Utilities, grep (FWD.1).</P>
                   <P>That is to say, the same as POSIX basic syntax, but with the newline character 
-                     acting as an alternation character in addition to "|".</P>
+                     acting as an alternation character; the expression is treated as a newline 
+                     separated list of alternatives.</P>
                </TD>
+            </TR>
+            <TR>
+               <TD>emacs</TD>
+               <TD>No</TD>
+               <TD>Specifies that the grammar recognised is the superset of the POSIX-Basic 
+                  syntax used by the <A href="syntax_basic.html#emacs">emacs</A> program.</TD>
             </TR>
          </TABLE>
       </P>
@@ -390,7 +397,10 @@ static const syntax_option_type collate;
                <TD>collate</TD>
                <TD>Yes</TD>
                <TD>
-                  <P>Specifies that character ranges of the form "[a-b]" should be locale sensitive.</P>
+                  <P>Specifies that character ranges of the form "[a-b]" should be locale 
+                     sensitive.&nbsp; <STRONG>This bit is</STRONG> <STRONG>on by default</STRONG> for 
+                     POSIX-Basic regular expressions, but can be unset to force ranges to be 
+                     compared by code point only.</P>
                </TD>
             </TR>
             <TR>
@@ -398,7 +408,7 @@ static const syntax_option_type collate;
                <TD>No</TD>
                <TD>Specifies that the \n character has the same effect as the alternation 
                   operator |.&nbsp; Allows newline separated lists to be used as a list of 
-                  alternatives.</TD>
+                  alternatives.&nbsp; This bit is already set, if you use the <EM>grep</EM> option.</TD>
             </TR>
             <TR>
                <TD>no_char_classes</TD>
@@ -482,3 +492,4 @@ static const syntax_option_type collate;
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
    </body>
 </html>
+

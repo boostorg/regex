@@ -49,6 +49,9 @@ int cpp_main(int /*argc*/, char * /*argv*/[])
    test_options();
    test_options2();
    test_en_locale();
+   test_emacs();
+   test_operators();
+   test_overloads();
    return error_count;
 }
 

@@ -53,7 +53,7 @@
 #include <boost/regex_fwd.hpp>
 #endif
 
-#include "boost/mpl/aux_/has_xxx.hpp"
+#include "boost/mpl/has_xxx.hpp"
 #include <boost/static_assert.hpp>
 
 #ifdef BOOST_HAS_ABI_HEADERS

@@ -71,7 +71,7 @@ public:
 
    // size:
    size_type size() const
-   { return m_subs.size() - 2; }
+   { return empty() ? 0 : m_subs.size() - 2; }
    size_type max_size() const
    { return m_subs.max_size(); }
    bool empty() const
@@ -235,7 +235,7 @@ public:
       size_type len = m_subs.size();
       if(len > n + 2)
       {
-         m_subs.erase(m_subs.begin()+n+2);
+         m_subs.erase(m_subs.begin()+n+2, m_subs.end());
          std::fill(m_subs.begin(), m_subs.end(), v);
       }
       else

@@ -54,7 +54,9 @@ perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, 
    estimate_max_state_count(static_cast<category*>(0));
    if(!(m_match_flags & (match_perl|match_posix)))
    {
-      if((re.flags() & regbase::no_perl_ex) == 0)
+      if((re.flags() & (regbase::main_option_type|regbase::no_perl_ex)) == 0)
+         m_match_flags |= match_perl;
+      else if((re.flags() & (regbase::main_option_type|regbase::emacs_ex)) == (regbase::basic_syntax_group|regbase::emacs_ex))
          m_match_flags |= match_perl;
       else
          m_match_flags |= match_posix;
@@ -80,15 +82,17 @@ perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, 
 template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std::random_access_iterator_tag*)
 {
+   static const difference_type k = 100000;
    difference_type dist = boost::re_detail::distance(base, last);
    traits_size_type states = static_cast<traits_size_type>(re.size());
    states *= states;
-   difference_type lim = (std::numeric_limits<difference_type>::max)() - 100000 - states;
-   if(dist > (difference_type)(lim / states))
-      max_state_count = lim;
+   difference_type lim = ((std::numeric_limits<difference_type>::max)() - k) / states;
+   if(dist >= lim)
+      max_state_count = (std::numeric_limits<difference_type>::max)();
    else
-      max_state_count = 100000 + states * dist;
+      max_state_count = k + states * dist;
 }
+
 template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(void*)
 {

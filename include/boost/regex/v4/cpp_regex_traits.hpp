@@ -30,10 +30,13 @@
 #include <boost/regex/v4/regex_traits_defaults.hpp>
 #endif
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/static_mutex.hpp>
+#include <boost/regex/pending/static_mutex.hpp>
 #endif
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v4/primary_transform.hpp>
+#endif
+#ifndef BOOST_REGEX_OBJECT_CACHE_HPP
+#include <boost/regex/pending/object_cache.hpp>
 #endif
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -165,6 +168,25 @@ struct cpp_regex_traits_base
    std::messages<charT> const* m_pmessages;
 #endif
    std::collate<charT> const* m_pcollate;
+
+   bool operator<(const cpp_regex_traits_base& b)const
+   {
+      if(m_pctype == b.m_pctype)
+      {
+         if(m_pmessages == b.m_pmessages)
+         {
+            return m_pcollate < b.m_pcollate;
+         }
+         return m_pmessages < b.m_pmessages;
+      }
+      return m_pctype < b.m_pctype;
+   }
+   bool operator==(const cpp_regex_traits_base& b)const
+   {
+      return (m_pctype == b.m_pctype) 
+         && (m_pmessages == b.m_pmessages) 
+         && (m_pcollate == b.m_pcollate);
+   }
 };
 
 template <class charT>
@@ -191,7 +213,17 @@ class cpp_regex_traits_char_layer : public cpp_regex_traits_base<charT>
    typedef std::map<charT, regex_constants::syntax_type> map_type;
    typedef typename map_type::const_iterator map_iterator_type;
 public:
-   cpp_regex_traits_char_layer(const std::locale& l);
+   cpp_regex_traits_char_layer(const std::locale& l)
+      : cpp_regex_traits_base<charT>(l)
+   {
+      init();
+   }
+   cpp_regex_traits_char_layer(const cpp_regex_traits_base<charT>& b)
+      : cpp_regex_traits_base<charT>(b)
+   {
+      init();
+   }
+   void init();
 
    regex_constants::syntax_type syntax_type(charT c)const
    {
@@ -217,8 +249,7 @@ private:
 };
 
 template <class charT>
-cpp_regex_traits_char_layer<charT>::cpp_regex_traits_char_layer(const std::locale& l) 
-   : cpp_regex_traits_base<charT>(l)
+void cpp_regex_traits_char_layer<charT>::init()
 {
    // we need to start by initialising our syntax map so we know which
    // character is used for which purpose:
@@ -303,6 +334,11 @@ class BOOST_REGEX_DECL cpp_regex_traits_char_layer<char> : public cpp_regex_trai
    typedef std::string string_type;
 public:
    cpp_regex_traits_char_layer(const std::locale& l)
+   : cpp_regex_traits_base<char>(l)
+   {
+      init();
+   }
+   cpp_regex_traits_char_layer(const cpp_regex_traits_base<char>& l)
    : cpp_regex_traits_base<char>(l)
    {
       init();
@@ -393,7 +429,16 @@ public:
    typedef std::basic_string<charT> string_type;
    typedef charT char_type;
    //cpp_regex_traits_implementation();
-   cpp_regex_traits_implementation(const std::locale& l);
+   cpp_regex_traits_implementation(const std::locale& l)
+      : cpp_regex_traits_char_layer<charT>(l), m_is(&m_sbuf)
+   {
+      init();
+   }
+   cpp_regex_traits_implementation(const cpp_regex_traits_base<charT>& l)
+      : cpp_regex_traits_char_layer<charT>(l), m_is(&m_sbuf)
+   {
+      init();
+   }
    std::string error_string(regex_constants::error_type n) const
    {
       if(!m_error_strings.empty())
@@ -429,6 +474,7 @@ private:
    // helpers:
    //
    char_class_type lookup_classname_imp(const charT* p1, const charT* p2) const;
+   void init();
 #ifdef BOOST_REGEX_BUGGY_CTYPE_FACET
 public:
    bool isctype(charT c, char_class_type m)const;
@@ -605,8 +651,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
 }
 
 template <class charT>
-cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const std::locale& l)
-: cpp_regex_traits_char_layer<charT>(l), m_is(&m_sbuf)
+void cpp_regex_traits_implementation<charT>::init()
 {
 #ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
@@ -798,8 +843,8 @@ bool cpp_regex_traits_implementation<charT>::isctype(const charT c, char_class_t
 template <class charT>
 boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
-   // TODO: create a cache for previously constructed objects.
-   return boost::shared_ptr<cpp_regex_traits_implementation<charT> >(new cpp_regex_traits_implementation<charT>(l));
+   cpp_regex_traits_base<charT> key(l);
+   return ::boost::object_cache<cpp_regex_traits_base<charT>, cpp_regex_traits_implementation<charT> >::get(key, 5);
 }
 
 } // re_detail

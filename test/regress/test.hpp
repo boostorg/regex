@@ -208,5 +208,8 @@ void test_conditionals();
 void test_options();
 void test_options2();
 void test_en_locale();
+void test_emacs();
+void test_operators();
+void test_overloads();
 
 #endif

@@ -21,7 +21,7 @@
 
 #ifdef BOOST_HAS_THREADS
 
-#include <boost/regex/static_mutex.hpp>
+#include <boost/regex/pending/static_mutex.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS)
 #define NOMINMAX

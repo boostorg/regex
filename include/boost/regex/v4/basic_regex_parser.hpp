@@ -51,6 +51,7 @@ public:
    bool parse_inner_set(basic_char_set<charT, traits>& char_set);
    bool parse_QE();
    bool parse_perl_extension();
+   bool add_emacs_code(bool negate);
    digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
    charT unescape_character();
    regex_constants::syntax_option_type parse_options();
@@ -183,6 +184,22 @@ bool basic_regex_parser<charT, traits>::parse_basic()
          ++m_position;
          return parse_repeat();
       }
+   case regex_constants::syntax_plus:
+      if(!(this->m_last_state) || (this->m_last_state->type == syntax_element_start_line) || !(this->flags() & regbase::emacs_ex))
+         return parse_literal();
+      else
+      {
+         ++m_position;
+         return parse_repeat(1);
+      }
+   case regex_constants::syntax_question:
+      if(!(this->m_last_state) || (this->m_last_state->type == syntax_element_start_line) || !(this->flags() & regbase::emacs_ex))
+         return parse_literal();
+      else
+      {
+         ++m_position;
+         return parse_repeat(0, 1);
+      }
    case regex_constants::syntax_open_set:
       return parse_set();
    default:
@@ -301,7 +318,10 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    //
    // begin by checking for a perl-style (?...) extension:
    //
-   if((this->flags() & (regbase::main_option_type | regbase::no_perl_ex)) == 0)
+   if(
+         ((this->flags() & (regbase::main_option_type | regbase::no_perl_ex)) == 0)
+         || ((this->flags() & (regbase::main_option_type | regbase::emacs_ex)) == (regbase::basic_syntax_group|regbase::emacs_ex))
+     )
    {
       if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
          return parse_perl_extension();
@@ -377,7 +397,7 @@ template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_basic_escape()
 {
    ++m_position;
-   bool result;
+   bool result = true;
    switch(this->m_traits.escape_syntax_type(*m_position))
    {
    case regex_constants::syntax_open_mark:
@@ -418,7 +438,97 @@ bool basic_regex_parser<charT, traits>::parse_basic_escape()
       break;
    case regex_constants::syntax_digit:
       return parse_backref();
+   case regex_constants::escape_type_start_buffer:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_buffer_start);
+      }
+      else
+         result = parse_literal();
+      break;
+   case regex_constants::escape_type_end_buffer:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_buffer_end);
+      }
+      else
+         result = parse_literal();
+      break;
+   case regex_constants::escape_type_word_assert:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_word_boundary);
+      }
+      else
+         result = parse_literal();
+      break;
+   case regex_constants::escape_type_not_word_assert:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_within_word);
+      }
+      else
+         result = parse_literal();
+      break;
+   case regex_constants::escape_type_left_word:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_word_start);
+      }
+      else
+         result = parse_literal();
+      break;
+   case regex_constants::escape_type_right_word:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         ++m_position;
+         this->append_state(syntax_element_word_end);
+      }
+      else
+         result = parse_literal();
+      break;
    default:
+      if(this->flags() & regbase::emacs_ex)
+      {
+         bool negate = true;
+         switch(*m_position)
+         {
+         case 'w':
+            negate = false;
+            // fall through:
+         case 'W':
+            {
+            basic_char_set<charT, traits> char_set;
+            if(negate)
+               char_set.negate();
+            char_set.add_class(this->m_word_mask);
+            if(0 == this->append_set(char_set))
+            {
+               fail(regex_constants::error_ctype, m_position - m_base);
+               return false;
+            }
+            ++m_position;
+            return true;
+            }
+         case 's':
+            negate = false;
+            // fall through:
+         case 'S':
+            return add_emacs_code(negate);
+         case 'c':
+         case 'C':
+            // not supported yet:
+            fail(regex_constants::error_escape, m_position - m_base);
+            return false;
+         default:
+            break;
+         }
+      }
       result = parse_literal();
       break;
    }
@@ -447,7 +557,7 @@ bool basic_regex_parser<charT, traits>::parse_extended_escape()
             char_set.add_class(m);
             if(0 == this->append_set(char_set))
             {
-               fail(regex_constants::error_range, m_position - m_base);
+               fail(regex_constants::error_ctype, m_position - m_base);
                return false;
             }
             ++m_position;
@@ -533,7 +643,11 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
    // when we get to here we may have a non-greedy ? mark still to come:
    //
    if((m_position != m_end) 
-      && (0 == (this->flags() & (regbase::main_option_type | regbase::no_perl_ex))))
+      && (
+            (0 == (this->flags() & (regbase::main_option_type | regbase::no_perl_ex)))
+            || ((regbase::basic_syntax_group|regbase::emacs_ex) == (this->flags() & (regbase::main_option_type | regbase::emacs_ex)))
+         )
+      )
    {
       // OK we have a perl regex, check for a '?':
       if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
@@ -1619,6 +1733,85 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    // and the case change data:
    //
    m_has_case_change = old_case_change;
+   return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::add_emacs_code(bool negate)
+{
+   //
+   // parses an emacs style \sx or \Sx construct.
+   //
+   if(++m_position == m_end)
+   {
+      fail(regex_constants::error_escape, m_position - m_base);
+      return false;
+   }
+   basic_char_set<charT, traits> char_set;
+   if(negate)
+      char_set.negate();
+
+   static const charT s_punct[] = { 'p', 'u', 'n', 'c', 't', };
+
+   switch(*m_position)
+   {
+   case 's':
+   case ' ':
+      char_set.add_class(this->m_mask_space);
+      break;
+   case 'w':
+      char_set.add_class(this->m_word_mask);
+      break;
+   case '_':
+      char_set.add_single(digraph<charT>(charT('$'))); 
+      char_set.add_single(digraph<charT>(charT('&'))); 
+      char_set.add_single(digraph<charT>(charT('*'))); 
+      char_set.add_single(digraph<charT>(charT('+'))); 
+      char_set.add_single(digraph<charT>(charT('-'))); 
+      char_set.add_single(digraph<charT>(charT('_'))); 
+      char_set.add_single(digraph<charT>(charT('<'))); 
+      char_set.add_single(digraph<charT>(charT('>'))); 
+      break;
+   case '.':
+      char_set.add_class(this->m_traits.lookup_classname(s_punct, s_punct+5));
+      break;
+   case '(':
+      char_set.add_single(digraph<charT>(charT('('))); 
+      char_set.add_single(digraph<charT>(charT('['))); 
+      char_set.add_single(digraph<charT>(charT('{'))); 
+      break;
+   case ')':
+      char_set.add_single(digraph<charT>(charT(')'))); 
+      char_set.add_single(digraph<charT>(charT(']'))); 
+      char_set.add_single(digraph<charT>(charT('}'))); 
+      break;
+   case '"':
+      char_set.add_single(digraph<charT>(charT('"'))); 
+      char_set.add_single(digraph<charT>(charT('\''))); 
+      char_set.add_single(digraph<charT>(charT('`'))); 
+      break;
+   case '\'':
+      char_set.add_single(digraph<charT>(charT('\''))); 
+      char_set.add_single(digraph<charT>(charT(','))); 
+      char_set.add_single(digraph<charT>(charT('#'))); 
+      break;
+   case '<':
+      char_set.add_single(digraph<charT>(charT(';'))); 
+      break;
+   case '>':
+      char_set.add_single(digraph<charT>(charT('\n'))); 
+      char_set.add_single(digraph<charT>(charT('\f'))); 
+      break;
+   default:
+      fail(regex_constants::error_ctype, m_position - m_base);
+      return false;
+   }
+   if(0 == this->append_set(char_set))
+   {
+      fail(regex_constants::error_ctype, m_position - m_base);
+      return false;
+   }
+   ++m_position;
    return true;
 }
 

@@ -64,6 +64,7 @@ public:
       no_intervals = 1 << 9,                      // {x,y} not allowed
       bk_plus_qm = 1 << 10,                       // uses \+ and \?
       bk_vbar = 1 << 11,                          // use \| for alternatives
+      emacs_ex = 1 << 12,                         // enables emacs extensions
 
       //
       // options common to all groups:
@@ -83,7 +84,7 @@ public:
       basic = basic_syntax_group | collate | no_escape_in_lists,
       extended = no_bk_refs | collate | no_perl_ex | no_escape_in_lists,
       normal = 0,
-      emacs = basic | no_char_classes | no_intervals,
+      emacs = basic_syntax_group | collate | emacs_ex | bk_vbar,
       awk = no_bk_refs | collate | no_perl_ex,
       grep = basic | newline_alt,
       egrep = extended | newline_alt,

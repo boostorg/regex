@@ -17,7 +17,7 @@
   */
 
 #include <iostream>
-#include <boost/regex/static_mutex.hpp>
+#include <boost/regex/pending/static_mutex.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/timer.hpp>
 

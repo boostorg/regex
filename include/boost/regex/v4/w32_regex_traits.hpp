@@ -23,10 +23,13 @@
 #include <boost/regex/v4/regex_traits_defaults.hpp>
 #endif
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/static_mutex.hpp>
+#include <boost/regex/pending/static_mutex.hpp>
 #endif
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v4/primary_transform.hpp>
+#endif
+#ifndef BOOST_REGEX_OBJECT_CACHE_HPP
+#include <boost/regex/pending/object_cache.hpp>
 #endif
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -534,7 +537,7 @@ template <class charT>
 boost::shared_ptr<w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::re_detail::lcid_type l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
    // TODO: create a cache for previously constructed objects.
-   return boost::shared_ptr<w32_regex_traits_implementation<charT> >(new w32_regex_traits_implementation<charT>(l));
+   return boost::object_cache< ::boost::re_detail::lcid_type, w32_regex_traits_implementation<charT> >::get(l, 5);
 }
 
 } // re_detail
