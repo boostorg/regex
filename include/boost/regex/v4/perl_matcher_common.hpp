@@ -660,6 +660,17 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_restart_continue()
 }
 
 template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
+{
+   std::ptrdiff_t maxlen = std::distance(search_base, position);
+   if(maxlen < static_cast<const re_brace*>(pstate)->index)
+      return false;
+   std::advance(position, -static_cast<const re_brace*>(pstate)->index);
+   pstate = pstate->next.p;
+   return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()
 {
 #ifdef BOOST_MSVC
@@ -737,7 +748,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_line()
       return true;
    while(position != last)
    {
-      while((position != last) && (*position != '\n'))
+      while((position != last) && !is_separator(*position))
          ++position;
       if(position == last)
          return false;

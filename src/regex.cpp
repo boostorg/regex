@@ -49,6 +49,10 @@ bad_expression::~bad_expression() throw() {}
 
 namespace re_detail{
 
+BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex)
+{
+   ::boost::throw_exception(ex);
+}
 //
 // error checking API:
 //

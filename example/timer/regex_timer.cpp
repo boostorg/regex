@@ -145,7 +145,7 @@ int main(int argc, char**argv)
    double tim;
    bool result;
    int iters = 100;
-   double wait_time = std::min(t.elapsed_min() * 1000, 1.0);
+   double wait_time = (std::min)(t.elapsed_min() * 1000, 1.0);
 
    while(true)
    {

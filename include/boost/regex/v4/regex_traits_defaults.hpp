@@ -19,6 +19,10 @@
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #define BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_PREFIX
+#endif
+
 namespace boost{ namespace re_detail{
 
 BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n);
@@ -77,6 +81,11 @@ inline bool is_separator(charT c)
 {
    return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r') || (static_cast<int>(c) == 0x2028) || (static_cast<int>(c) == 0x2029));
 }
+template <>
+inline bool is_separator<char>(char c)
+{
+   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r'));
+}
 
 //
 // get a default collating element:
@@ -99,7 +108,7 @@ struct character_pointer_range
    }
    bool operator == (const character_pointer_range& r)const
    {
-      return (std::distance(p1, p2) == std::distance(r.p1, r.p2)) && std::equal(p1, p2, r.p1);
+      return ((p2 - p1) == (r.p2 - r.p1)) && std::equal(p1, p2, r.p1);
    }
 };
 template <class charT>
@@ -182,5 +191,9 @@ int parse_value(const charT*& p1, const charT* p2, const traits& traits_inst, in
 
 } // re_detail
 } // boost
+
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_SUFFIX
+#endif
 
 #endif

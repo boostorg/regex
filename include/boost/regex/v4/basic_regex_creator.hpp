@@ -198,6 +198,7 @@ protected:
    re_syntax_base*               m_last_state;         // the last state we added
    bool                          m_icase;              // true for case insensitive matches
    unsigned                      m_repeater_id;        // the id of the next repeater
+   bool                          m_has_backrefs;       // true if there are actually any backrefs
    unsigned                      m_backrefs;           // bitmask of permitted backrefs
    boost::uintmax_t              m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
    typename traits::char_class_type m_word_mask;       // mask used to determine if a character is a word character
@@ -211,17 +212,19 @@ private:
 
    void fixup_pointers(re_syntax_base* state);
    void create_startmaps(re_syntax_base* state);
-   void create_startmap(re_syntax_base* state, unsigned char* map, unsigned int* pnull, unsigned char mask);
+   int calculate_backstep(re_syntax_base* state);
+   void create_startmap(re_syntax_base* state, unsigned char* l_map, unsigned int* pnull, unsigned char mask);
    unsigned get_restart_type(re_syntax_base* state);
    void set_all_masks(unsigned char* bits, unsigned char);
    bool is_bad_repeat(re_syntax_base* pt);
    void set_bad_repeat(re_syntax_base* pt);
    syntax_element_type get_repeat_type(re_syntax_base* state);
+   void probe_leading_repeat(re_syntax_base* state);
 };
 
 template <class charT, class traits>
 basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits>* data)
-   : m_pdata(data), m_traits(data->m_traits), m_last_state(0), m_repeater_id(0), m_backrefs(0)
+   : m_pdata(data), m_traits(data->m_traits), m_last_state(0), m_repeater_id(0), m_has_backrefs(false), m_backrefs(0)
 {
    m_pdata->m_data.clear();
    static const charT w = 'w';
@@ -244,6 +247,9 @@ basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits
 template <class charT, class traits>
 re_syntax_base* basic_regex_creator<charT, traits>::append_state(syntax_element_type t, std::size_t s)
 {
+   // if the state is a backref then make a note of it:
+   if(t == syntax_element_backref)
+      this->m_has_backrefs = true;
    // append a new state, start by aligning our last one:
    m_pdata->m_data.align();
    // set the offset to the next state in our last one:
@@ -538,7 +544,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          return 0;  // invalid or unsupported equivalence class
       for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
       {
-         charT c(i);
+         charT c(static_cast<charT>(i));
          string_type s2 = this->m_traits.transform_primary(&c, &c+1);
          if(s == s2)
             result->_map[i] = true;
@@ -585,6 +591,8 @@ void basic_regex_creator<charT, traits>::finalize(const charT* p1, const charT* 
    create_startmap(m_pdata->m_first_state, m_pdata->m_startmap, &(m_pdata->m_can_be_null), mask_all);
    // get the restart type:
    m_pdata->m_restart_type = get_restart_type(m_pdata->m_first_state);
+   // optimise a leading repeat if there is one:
+   probe_leading_repeat(m_pdata->m_first_state);
 }
 
 template <class charT, class traits>
@@ -645,6 +653,11 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          // adjust the type of the state to allow for faster matching:
          state->type = this->get_repeat_type(state);
          return;
+      case syntax_element_backstep:
+         // we need to calculate how big the backstep is:
+         static_cast<re_brace*>(state)->index
+            = this->calculate_backstep(state->next.p);
+         // fall through:
       default:
          state = state->next.p;
       }
@@ -652,7 +665,65 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
 }
 
 template <class charT, class traits>
-void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, unsigned char* map, unsigned int* pnull, unsigned char mask)
+int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state)
+{
+   typedef typename traits::char_class_type mask_type;
+   int result = 0;
+   while(state)
+   {
+      switch(state->type)
+      {
+      case syntax_element_startmark:
+         if((static_cast<re_brace*>(state)->index == -1)
+            || (static_cast<re_brace*>(state)->index == -2))
+         {
+            state = static_cast<re_jump*>(state->next.p)->alt.p->next.p;
+            continue;
+         }
+         else if(static_cast<re_brace*>(state)->index == -3)
+         {
+            state = state->next.p->next.p;
+            continue;
+         }
+         break;
+      case syntax_element_endmark:
+         if((static_cast<re_brace*>(state)->index == -1)
+            || (static_cast<re_brace*>(state)->index == -2))
+            return result;
+      case syntax_element_literal:
+         result += static_cast<re_literal*>(state)->length;
+         break;
+      case syntax_element_wild:
+      case syntax_element_set:
+         result += 1;
+         break;
+      case syntax_element_backref:
+      case syntax_element_rep:
+      case syntax_element_combining:
+      case syntax_element_dot_rep:
+      case syntax_element_char_rep:
+      case syntax_element_short_set_rep:
+      case syntax_element_long_set_rep:
+      case syntax_element_backstep:
+         return -1;
+      case syntax_element_long_set:
+         if(static_cast<re_set_long<mask_type>*>(state)->singleton == 0)
+            return -1;
+         result += 1;
+         break;
+      case syntax_element_jump:
+         state = static_cast<re_jump*>(state)->alt.p;
+         continue;
+      default:
+         break;
+      }
+      state = state->next.p;
+   }
+   return -1;
+}
+
+template <class charT, class traits>
+void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, unsigned char* l_map, unsigned int* pnull, unsigned char mask)
 {
    int not_last_jump = 1;
    while(state)
@@ -661,16 +732,16 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       {
       case syntax_element_literal:
       {
-         // don't set anything in *pnull, set each element in map
+         // don't set anything in *pnull, set each element in l_map
          // that could match the first character in the literal:
-         if(map)
+         if(l_map)
          {
-            map[0] |= mask_init;
+            l_map[0] |= mask_init;
             charT first_char = *static_cast<charT*>(static_cast<void*>(static_cast<re_literal*>(state) + 1));
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(m_traits.translate(static_cast<charT>(i), m_icase) == first_char)
-                  map[i] |= mask;
+                  l_map[i] |= mask;
             }
          }
          return;
@@ -678,11 +749,11 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       case syntax_element_end_line:
       {
          // next character must be a line separator (if there is one):
-         if(map)
+         if(l_map)
          {
-            map[0] |= mask_init;
-            map['\n'] |= mask;
-            map['\r'] |= mask;
+            l_map[0] |= mask_init;
+            l_map['\n'] |= mask;
+            l_map['\r'] |= mask;
          }
          // now figure out if we can match a NULL string at this point:
          if(pnull)
@@ -697,13 +768,13 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       case syntax_element_wild:
       {
          // can't be null, any character can match:
-         set_all_masks(map, mask);
+         set_all_masks(l_map, mask);
          return;
       }
       case syntax_element_match:
       {
          // must be null, any character can match:
-         set_all_masks(map, mask);
+         set_all_masks(l_map, mask);
          if(pnull)
             *pnull |= mask;
          return;
@@ -711,14 +782,14 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       case syntax_element_word_start:
       {
          // recurse, then AND with all the word characters:
-         create_startmap(state->next.p, map, pnull, mask);
-         if(map)
+         create_startmap(state->next.p, l_map, pnull, mask);
+         if(l_map)
          {
-            map[0] |= mask_init;
+            l_map[0] |= mask_init;
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(!m_traits.is_class(static_cast<charT>(i), m_word_mask))
-                  map[i] &= static_cast<unsigned char>(~mask);
+                  l_map[i] &= static_cast<unsigned char>(~mask);
             }
          }
          return;
@@ -726,14 +797,14 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       case syntax_element_word_end:
       {
          // recurse, then AND with all the word characters:
-         create_startmap(state->next.p, map, pnull, mask);
-         if(map)
+         create_startmap(state->next.p, l_map, pnull, mask);
+         if(l_map)
          {
-            map[0] |= mask_init;
+            l_map[0] |= mask_init;
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(m_traits.is_class(static_cast<charT>(i), m_word_mask))
-                  map[i] &= static_cast<unsigned char>(~mask);
+                  l_map[i] &= static_cast<unsigned char>(~mask);
             }
          }
          return;
@@ -746,32 +817,32 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          return;
       }
       case syntax_element_long_set:
-         if(map)
+         if(l_map)
          {
             typedef typename traits::char_class_type mask_type;
             if(static_cast<re_set_long<mask_type>*>(state)->singleton)
             {
-               map[0] |= mask_init;
+               l_map[0] |= mask_init;
                for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
                {
                   charT c = static_cast<charT>(i);
                   if(&c != re_is_set_member(&c, &c + 1, static_cast<re_set_long<mask_type>*>(state), *m_pdata))
-                     map[i] |= mask;
+                     l_map[i] |= mask;
                }
             }
             else
-               set_all_masks(map, mask);
+               set_all_masks(l_map, mask);
          }
          return;
       case syntax_element_set:
-         if(map)
+         if(l_map)
          {
-            map[0] |= mask_init;
+            l_map[0] |= mask_init;
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(static_cast<re_set*>(state)->_map[
                   static_cast<unsigned char>(m_traits.translate(static_cast<charT>(i), this->m_icase))])
-                  map[i] |= mask;
+                  l_map[i] |= mask;
             }
          }
          return;
@@ -790,14 +861,14 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             re_alt* rep = static_cast<re_alt*>(state);
             if(rep->_map[0] & mask_init)
             {
-               if(map)
+               if(l_map)
                {
                   // copy previous results:
-                  map[0] |= mask_init;
+                  l_map[0] |= mask_init;
                   for(unsigned int i = 0; i <= UCHAR_MAX; ++i)
                   {
                      if(rep->_map[i] & mask_any)
-                        map[i] |= mask;
+                        l_map[i] |= mask;
                   }
                }
                if(pnull)
@@ -812,29 +883,53 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
                // so take the union of the two options:
                if(is_bad_repeat(state))
                {
-                  set_all_masks(map, mask);
+                  set_all_masks(l_map, mask);
                   return;
                }
                set_bad_repeat(state);
-               create_startmap(state->next.p, map, pnull, mask);
-               if((state->type == syntax_element_alt) 
+               create_startmap(state->next.p, l_map, pnull, mask);
+               if((state->type == syntax_element_alt)
                   || (static_cast<re_repeat*>(state)->min == 0)
                   || (not_last_jump == 0))
-                  create_startmap(rep->alt.p, map, pnull, mask);
+                  create_startmap(rep->alt.p, l_map, pnull, mask);
             }
          }
          return;
       case syntax_element_soft_buffer_end:
          // match newline or null:
-         if(map)
+         if(l_map)
          {
-            map[0] |= mask_init;
-            map['\n'] |= mask;
-            map['\r'] |= mask;
+            l_map[0] |= mask_init;
+            l_map['\n'] |= mask;
+            l_map['\r'] |= mask;
          }
          if(pnull)
             *pnull |= mask;
          return;
+      case syntax_element_endmark:
+         // need to handle independent subs as a special case:
+         if(static_cast<re_brace*>(state)->index == -3)
+         {
+            // can be null, any character can match:
+            set_all_masks(l_map, mask);
+            if(pnull)
+               *pnull |= mask;
+            return;
+         }
+         else
+         {
+            state = state->next.p;
+            break;
+         }
+
+      case syntax_element_startmark:
+         // need to handle independent subs as a special case:
+         if(static_cast<re_brace*>(state)->index == -3)
+         {
+            state = state->next.p->next.p;
+            break;
+         }
+         // otherwise fall through:
       default:
          state = state->next.p;
       }
@@ -961,6 +1056,48 @@ syntax_element_type basic_regex_creator<charT, traits>::get_repeat_type(re_synta
    }
    return state->type;
 }
+
+template <class charT, class traits>
+void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* state)
+{
+   // enumerate our states, and see if we have a leading repeat 
+   // for which failed search restarts can be optimised;
+   do
+   {
+      switch(state->type)
+      {
+      case syntax_element_startmark:
+         if(static_cast<re_brace*>(state)->index >= 0)
+         {
+            state = state->next.p;
+            continue;
+         }
+         return;
+      case syntax_element_endmark:
+      case syntax_element_start_line:
+      case syntax_element_end_line:
+      case syntax_element_word_boundary:
+      case syntax_element_within_word:
+      case syntax_element_word_start:
+      case syntax_element_word_end:
+      case syntax_element_buffer_start:
+      case syntax_element_buffer_end:
+      case syntax_element_restart_continue:
+         state = state->next.p;
+         break;
+      case syntax_element_dot_rep:
+      case syntax_element_char_rep:
+      case syntax_element_short_set_rep:
+      case syntax_element_long_set_rep:
+         if(this->m_has_backrefs == 0)
+            static_cast<re_repeat*>(state)->leading = true;
+         // fall through:
+      default:
+         return;
+      }
+   }while(state);
+}
+
 
 } // namespace re_detail
 

@@ -1,6 +1,17 @@
 
+#include <boost/detail/workaround.hpp>
+
+#if BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+// we get unresolved externals from basic_string
+// unless we do this, a well known Borland bug:
+#define _RWSTD_COMPILE_INSTANTIATE
+#endif
 
 #include "test.hpp"
+
+#ifdef BOOST_MSVC
+#pragma warning(disable:4127)
+#endif
 
 void basic_tests()
 {
@@ -417,8 +428,10 @@ void test_anchors()
    //
    TEST_REGEX_SEARCH("^.", extended, "  \n  \r\n  ", match_default, make_array(0, 1, -2, 3, 4, -2, 7, 8, -2, -2));
    TEST_REGEX_SEARCH(".$", extended, "  \n  \r\n  ", match_default, make_array(1, 2, -2, 4, 5, -2, 8, 9, -2, -2));
-   TEST_REGEX_SEARCH_W(L"^.", extended, L"\u2028 \u2028", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
-   TEST_REGEX_SEARCH_W(L".$", extended, L" \u2028 \u2028", match_default, make_array(0, 1, -2, 2, 3, -2, 3, 4, -2, -2));
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+   TEST_REGEX_SEARCH_W(L"^.", extended, L"\x2028 \x2028", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH_W(L".$", extended, L" \x2028 \x2028", match_default, make_array(0, 1, -2, 2, 3, -2, 3, 4, -2, -2));
+#endif
 }
 
 void test_backrefs()
@@ -491,7 +504,9 @@ void test_character_escapes()
    TEST_REGEX_SEARCH("a\\Q+*?\\\\Eb", perl, "a+*?\\b", match_default, make_array(0, 6, -2, -2));
    TEST_REGEX_SEARCH("\\C+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
    TEST_REGEX_SEARCH("\\X+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\X", perl, L"a\u0300\u0301", match_default, make_array(0, 3, -2, -2));
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+   TEST_REGEX_SEARCH_W(L"\\X", perl, L"a\x0300\x0301", match_default, make_array(0, 3, -2, -2));
+#endif
 }
 
 void test_assertion_escapes()
@@ -667,6 +682,7 @@ void test_tricky_cases()
 
 void test_tricky_cases2()
 {
+   using namespace boost::regex_constants;
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "0xFF", match_default, make_array(0, 4, 0, 4,	0, 4,	-1, -1, -1, -1, -1, -1, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "35", match_default, make_array(0, 2, 0, 2, -1, -1, 0, 2, -1, -1, -1, -1, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "0xFFu", match_default, make_array(0, 5, 0, 4, 0, 4, -1, -1, -1, -1, -1, -1, -1, -1, -2, -2));
@@ -679,14 +695,16 @@ void test_tricky_cases2()
    // posix only:
    TEST_REGEX_SEARCH("^[[:blank:]]*#([^\\n]*\\\\[[:space:]]+)*[^\\n]*", awk, "#define some_symbol(x) \\  \r\n  foo();\\\r\n   printf(#x);", match_default, make_array(0, 53, 28, 42, -2, -2));
    // now try and test some unicode specific characters:
-   TEST_REGEX_SEARCH_W(L"[[:unicode:]]+", perl, L"a\u0300\u0400z", match_default, make_array(1, 3, -2, -2));
-   TEST_REGEX_SEARCH_W(L"[\x10-\xff]", perl, L"\u0300\u0400", match_default, make_array(-2, -2));
-   TEST_REGEX_SEARCH_W(L"[\01-\05]{5}", perl, L"\u0300\u0400\u0300\u0400\u0300\u0400", match_default, make_array(-2, -2));
-   TEST_REGEX_SEARCH_W(L"[\x300-\x400]+", perl, L"\u0300\u0400\u0300\u0400\u0300\u0400", match_default, make_array(0, 6, -2, -2));
-   TEST_REGEX_SEARCH_W(L"[\\x{300}-\\x{400}]+", perl, L"\u0300\u0400\u0300\u0400\u0300\u0400", match_default, make_array(0, 6, -2, -2));
-   TEST_REGEX_SEARCH_W(L"\\x{300}\\x{400}+", perl, L"\u0300\u0400\u0400\u0400\u0400\u0400", match_default, make_array(0, 6, -2, -2));
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+   TEST_REGEX_SEARCH_W(L"[[:unicode:]]+", perl, L"a\x0300\x0400z", match_default, make_array(1, 3, -2, -2));
+   TEST_REGEX_SEARCH_W(L"[\x10-\xff]", perl, L"\x0300\x0400", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH_W(L"[\01-\05]{5}", perl, L"\x0300\x0400\x0300\x0400\x0300\x0400", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH_W(L"[\x300-\x400]+", perl, L"\x0300\x0400\x0300\x0400\x0300\x0400", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH_W(L"[\\x{300}-\\x{400}]+", perl, L"\x0300\x0400\x0300\x0400\x0300\x0400", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\x{300}\\x{400}+", perl, L"\x0300\x0400\x0400\x0400\x0400\x0400", match_default, make_array(0, 6, -2, -2));
+#endif
    // finally try some case insensitive matches:
-   TEST_REGEX_SEARCH("0123456789@abcdefghijklmnopqrstuvwxyz\\[\\\\\\]\\^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\{\\|\\}", perl|icase, "0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}", match_default, make_array(0, 72, -2, -2));   
+   TEST_REGEX_SEARCH("0123456789@abcdefghijklmnopqrstuvwxyz\\[\\\\\\]\\^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\\{\\|\\}", perl|icase, "0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}", match_default, make_array(0, 72, -2, -2));
    TEST_REGEX_SEARCH("a", perl|icase, "A", match_default, make_array(0, 1, -2, -2));   
    TEST_REGEX_SEARCH("A", perl|icase, "a", match_default, make_array(0, 1, -2, -2));   
    TEST_REGEX_SEARCH("[abc]+", perl|icase, "abcABC", match_default, make_array(0, 6, -2, -2));   
@@ -763,6 +781,9 @@ void test_tricky_cases2()
    TEST_REGEX_SEARCH("()\\1", perl, "a", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, -2));
    TEST_REGEX_SEARCH("a()\\1b", perl, "ab", match_default, make_array(0, 2, 1, 1, -2, -2));
    TEST_REGEX_SEARCH("a()b\\1", perl, "ab", match_default, make_array(0, 2, 1, 1, -2, -2));
+   TEST_REGEX_SEARCH("([a-c]+)\\1", perl, "abcbc", match_default, make_array(1, 5, 1, 3, -2, -2));
+   TEST_REGEX_SEARCH(".+abc", perl, "xxxxxxxxyyyyyyyyab", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(.+)\\1", perl, "abcdxxxyyyxxxyyy", match_default, make_array(4, 16, 4, 10, -2, -2));
 
    //
    // the strings in the next test case are too long for most compilers to cope with,
@@ -806,7 +827,7 @@ void test_tricky_cases2()
          make_array(753, 1076, 934, 1005, -2, 2143, 2466, 2324, 2395, -2, -2));
       test(char(0), test_regex_search_tag());
    }while(0);
-#ifndef BOOST_NO_WREGEX
+#if !defined(BOOST_NO_WREGEX) && !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
    do{
       std::string st(big_text);
       test_info<wchar_t>::set_info(__FILE__, __LINE__, 
@@ -997,6 +1018,18 @@ void test_forward_lookahead_asserts()
    TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "abc3", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "abC3", match_default, make_array(0, 4, -2, -2));
    TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "ABCD3", match_default, make_array(-2, -2));
+
+   // lookbehind assertions, added 2004-04-30
+   TEST_REGEX_SEARCH("/\\*.*(?<=\\*)/", perl, "/**/", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("/\\*.*(?<=\\*)/", perl, "/*****/   ", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("(?<=['\"]).*?(?=['\"])", perl, " 'ac' ", match_default, make_array(2, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?<=['\"]).*?(?=['\"])", perl, " \"ac\" ", match_default, make_array(2, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?<=['\"]).*?(?<!\\\\)(?=['\"])", perl, " \"ac\" ", match_default, make_array(2, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?<=['\"]).*?(?<!\\\\)(?=['\"])", perl, " \"ac\\\"\" ", match_default, make_array(2, 6, -2, -2));
+   TEST_INVALID_REGEX("(?<=[abc]", perl);
+   TEST_INVALID_REGEX("(?<=", perl);
+   TEST_INVALID_REGEX("(?<", perl);
+   TEST_INVALID_REGEX("(?", perl);
 }
 
 void test_fast_repeats()
@@ -1178,105 +1211,109 @@ void test_fast_repeats()
    TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab______xy", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("([5[.ae.]]*?).somesite", perl, "//555.somesite", match_default, make_array(2, 14, 2, 5, -2, -2));
+}
 
-   //TEST_REGEX_SEARCH("", perl, "", match_default, make_array(-2, -2));
-#if 0
-  
-- normal REG_PERL
+void test_independent_subs()
+{
+   using namespace boost::regex_constants;
+   TEST_REGEX_SEARCH("(?>^abc)", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?>^abc)", perl, "def\nabc", match_default, make_array(4, 7, -2, -2));
+   TEST_REGEX_SEARCH("(?>^abc)", perl, "defabc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?>.*/)foo", perl, "/this/is/a/very/long/line/in/deed/with/very/many/slashes/in/it/you/see/", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?>.*/)foo", perl, "/this/is/a/very/long/line/in/deed/with/very/many/slashes/in/and/foo", match_default, make_array(0, 67, -2, -2));
+   TEST_REGEX_SEARCH("(?>(\\.\\d\\d[1-9]?))\\d+", perl, "1.230003938", match_default, make_array(1, 11, 1, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?>(\\.\\d\\d[1-9]?))\\d+", perl, "1.875000282", match_default, make_array(1, 11, 1, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?>(\\.\\d\\d[1-9]?))\\d+", perl, "1.235", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^((?>\\w+)|(?>\\s+))*$", perl, "now is the time for all good men to come to the aid of the party", match_default, make_array(0, 64, 59, 64, -2, -2));
+   TEST_REGEX_SEARCH("^((?>\\w+)|(?>\\s+))*$", perl, "this is not a line with only words and spaces!", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("((?>\\d+))(\\w)", perl, "12345a", match_default, make_array(0, 6, 0, 5, 5, 6, -2, -2));
+   TEST_REGEX_SEARCH("((?>\\d+))(\\w)", perl, "12345+", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("((?>\\d+))(\\d)", perl, "12345", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?>a+)b", perl, "aaab", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("((?>a+)b)", perl, "aaab", match_default, make_array(0, 4, 0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?>(a+))b", perl, "aaab", match_default, make_array(0, 4, 0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?>b)+", perl, "aaabbbccc", match_default, make_array(3, 6, -2, -2));
+   TEST_REGEX_SEARCH("(?>a+|b+|c+)*c", perl, "aaabbbbccccd", match_default, make_array(0, 8, -2, 8, 9, -2, 9, 10, -2, 10, 11, -2, -2));
+   TEST_REGEX_SEARCH("((?>[^()]+)|\\([^()]*\\))+", perl, "((abc(ade)ufh()()x", match_default, make_array(2, 18, 17, 18, -2, -2));
+   TEST_REGEX_SEARCH("\\(((?>[^()]+)|\\([^()]+\\))+\\)", perl, "(abc)", match_default, make_array(0, 5, 1, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\(((?>[^()]+)|\\([^()]+\\))+\\)", perl, "(abc(def)xyz)", match_default, make_array(0, 13, 9, 12, -2, -2));
+   TEST_REGEX_SEARCH("\\(((?>[^()]+)|\\([^()]+\\))+\\)", perl, "((()aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", match_default, make_array(-2, -2));
 
-; new (?: construct )
-(?>^abc) abc 0 3
-(?>^abc) def\nabc 4 7
-(?>^abc) defabc -1 -1
-(?>.*/)foo /this/is/a/very/long/line/in/deed/with/very/many/slashes/in/it/you/see/ -1 -1
-(?>.*/)foo /this/is/a/very/long/line/in/deed/with/very/many/slashes/in/and/foo 0 67
-(?>(\.\d\d[1-9]?))\d+ 1.230003938 1 11 1 4
-(?>(\.\d\d[1-9]?))\d+ 1.875000282 1 11 1 5
-(?>(\.\d\d[1-9]?))\d+ 1.235 -1 -1
-^((?>\w+)|(?>\s+))*$ "now is the time for all good men to come to the aid of the party" 0 64 59 64
-^((?>\w+)|(?>\s+))*$ "this is not a line with only words and spaces!" -1 -1
-((?>\d+))(\w) 12345a 0 6 0 5 5 6
-((?>\d+))(\w) 12345+ -1 -1
-((?>\d+))(\d) 12345 -1 -1
-(?>a+)b aaab 0 4
-((?>a+)b) aaab 0 4 0 4
-(?>(a+))b aaab 0 4 0 3
-(?>b)+ aaabbbccc 3 6
-(?>a+|b+|c+)*c aaabbbbccccd 0 8
-((?>[^()]+)|\([^()]*\))+ ((abc(ade)ufh()()x 2 18 17 18
-\(((?>[^()]+)|\([^()]+\))+\) (abc) 0 5 1 4
-\(((?>[^()]+)|\([^()]+\))+\) (abc(def)xyz) 0 13 9 12
-\(((?>[^()]+)|\([^()]+\))+\) ((()aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -1 -1
-(?>a*)* a 0 1
-(?>a*)* aa 0 2
-(?>a*)* aaaa 0 4
-(?>a*)* a 0 1
-(?>a*)* aaabcde 0 3
-((?>a*))* aaaaa 0 5 5 5
-((?>a*))* aabbaa 0 2 2 2
-((?>a*?))* aaaaa 0 0 0 0
-((?>a*?))*    aabbaa 0 0 0 0
-"word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword" "word cat dog elephant mussel cow horse canary baboon snake shark otherword" 0 74
-"word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword" "word cat dog elephant mussel cow horse canary baboon snake shark" -1 -1
-"word (?>[a-zA-Z0-9]+ ){0,30}otherword" "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I hope" -1 -1
-"word (?>[a-zA-Z0-9]+ ){0,30}otherword" "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I really really hope otherword" -1 -1
-((?>Z)+|A)* ZABCDEFG 0 2 1 2
-((?>)+|A)* !
+   TEST_REGEX_SEARCH("(?>a*)*", perl, "a", match_default, make_array(0, 1, -2, 1, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?>a*)*", perl, "aa", match_default, make_array(0, 2, -2, 2, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?>a*)*", perl, "aaaa", match_default, make_array(0, 4, -2, 4, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?>a*)*", perl, "a", match_default, make_array(0, 1, -2, 1, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?>a*)*", perl, "aaabcde", match_default, make_array(0, 3, -2, 3, 3, -2, 4, 4, -2, 5, 5, -2, 6, 6, -2, 7, 7, -2, -2));
+   TEST_REGEX_SEARCH("((?>a*))*", perl, "aaaaa", match_default, make_array(0, 5, 5, 5, -2, 5, 5, 5, 5, -2, -2));
+   TEST_REGEX_SEARCH("((?>a*))*", perl, "aabbaa", match_default, make_array(0, 2, 2, 2, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, 4, 6, 6, 6, -2, 6, 6, 6, 6, -2, -2));
+   TEST_REGEX_SEARCH("((?>a*?))*", perl, "aaaaa", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, 4, 4, 4, 4, -2, 5, 5, 5, 5, -2, -2));
+   TEST_REGEX_SEARCH("((?>a*?))*", perl, "aabbaa", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, 4, 4, 4, 4, -2, 5, 5, 5, 5, -2, 6, 6, 6, 6, -2, -2));
+   TEST_REGEX_SEARCH("word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword", perl, "word cat dog elephant mussel cow horse canary baboon snake shark otherword", match_default, make_array(0, 74, -2, -2));
+   TEST_REGEX_SEARCH("word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword", perl, "word cat dog elephant mussel cow horse canary baboon snake shark", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("word (?>[a-zA-Z0-9]+ ){0,30}otherword", perl, "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I hope", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("word (?>[a-zA-Z0-9]+ ){0,30}otherword", perl, "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I really really hope otherword", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("((?>Z)+|A)+", perl, "ZABCDEFG", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_INVALID_REGEX("((?>)+|A)+", perl);
+}
 
-; subtleties of matching with no sub-expressions marked
-- normal match_nosubs REG_NO_POSIX_TEST
-a(b?c)+d accd 0 4 
-(wee|week)(knights|night) weeknights 0 10 
-.* abc 0 3
-a(b|(c))d abd 0 3 
-a(b|(c))d acd 0 3
-a(b*|c|e)d abbd 0 4
-a(b*|c|e)d acd 0 3 
-a(b*|c|e)d ad 0 2
-a(b?)c abc 0 3
-a(b?)c ac 0 2
-a(b+)c abc 0 3
-a(b+)c abbbc 0 5
-a(b*)c ac 0 2
-(a|ab)(bc([de]+)f|cde) abcdef 0 6
-a([bc]?)c abc 0 3
-a([bc]?)c ac 0 2
-a([bc]+)c abc 0 3
-a([bc]+)c abcc 0 4
-a([bc]+)bc abcbc 0 5
-a(bb+|b)b abb 0 3
-a(bbb+|bb+|b)b abb 0 3
-a(bbb+|bb+|b)b abbb 0 4
-a(bbb+|bb+|b)bb abbb 0 4
-(.*).* abcdef 0 6
-(a*)* bc 0 0
+void test_nosubs()
+{
+   using namespace boost::regex_constants;
+   // subtleties of matching with no sub-expressions marked
+   TEST_REGEX_SEARCH("a(b?c)+d", perl, "accd", match_default|match_nosubs, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(wee|week)(knights|night)", perl, "weeknights", match_default|match_nosubs, make_array(0, 10, -2, -2));
+   TEST_REGEX_SEARCH(".*", perl, "abc", match_default|match_nosubs, make_array(0, 3, -2, 3, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b|(c))d", perl, "abd", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b|(c))d", perl, "acd", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl, "abbd", match_default|match_nosubs, make_array(0, 4, -2, -2));
+   
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl, "acd", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl, "ad", match_default|match_nosubs, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b?)c", perl, "abc", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b?)c", perl, "ac", match_default|match_nosubs, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b+)c", perl, "abc", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b+)c", perl, "abbbc", match_default|match_nosubs, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a(b*)c", perl, "ac", match_default|match_nosubs, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("(a|ab)(bc([de]+)f|cde)", perl, "abcdef", match_default|match_nosubs, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]?)c", perl, "abc", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]?)c", perl, "ac", match_default|match_nosubs, make_array(0, 2, -2, -2));
 
-- normal nosubs REG_NO_POSIX_TEST
-a(b?c)+d accd 0 4 
-(wee|week)(knights|night) weeknights 0 10 
-.* abc 0 3
-a(b|(c))d abd 0 3 
-a(b|(c))d acd 0 3
-a(b*|c|e)d abbd 0 4
-a(b*|c|e)d acd 0 3 
-a(b*|c|e)d ad 0 2
-a(b?)c abc 0 3
-a(b?)c ac 0 2
-a(b+)c abc 0 3
-a(b+)c abbbc 0 5
-a(b*)c ac 0 2
-(a|ab)(bc([de]+)f|cde) abcdef 0 6
-a([bc]?)c abc 0 3
-a([bc]?)c ac 0 2
-a([bc]+)c abc 0 3
-a([bc]+)c abcc 0 4
-a([bc]+)bc abcbc 0 5
-a(bb+|b)b abb 0 3
-a(bbb+|bb+|b)b abb 0 3
-a(bbb+|bb+|b)b abbb 0 4
-a(bbb+|bb+|b)bb abbb 0 4
-(.*).* abcdef 0 6
-(a*)* bc 0 0
+   TEST_REGEX_SEARCH("a([bc]+)c", perl, "abc", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]+)c", perl, "abcc", match_default|match_nosubs, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]+)bc", perl, "abcbc", match_default|match_nosubs, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a(bb+|b)b", perl, "abb", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl, "abb", match_default|match_nosubs, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl, "abbb", match_default|match_nosubs, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)bb", perl, "abbb", match_default|match_nosubs, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(.*).*", perl, "abcdef", match_default|match_nosubs, make_array(0, 6, -2, 6, 6, -2, -2));
+   TEST_REGEX_SEARCH("(a*)*", perl, "bc", match_default|match_nosubs, make_array(0, 0, -2, 1, 1, -2, 2, 2, -2, -2));
 
-#endif
+   TEST_REGEX_SEARCH("a(b?c)+d", perl|nosubs, "accd", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(wee|week)(knights|night)", perl|nosubs, "weeknights", match_default, make_array(0, 10, -2, -2));
+   TEST_REGEX_SEARCH(".*", perl|nosubs, "abc", match_default, make_array(0, 3, -2, 3, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b|(c))d", perl|nosubs, "abd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b|(c))d", perl|nosubs, "acd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl|nosubs, "abbd", match_default, make_array(0, 4, -2, -2));
+   
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl|nosubs, "acd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl|nosubs, "ad", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b?)c", perl|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b?)c", perl|nosubs, "ac", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b+)c", perl|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(b+)c", perl|nosubs, "abbbc", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a(b*)c", perl|nosubs, "ac", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("(a|ab)(bc([de]+)f|cde)", perl|nosubs, "abcdef", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]?)c", perl|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]?)c", perl|nosubs, "ac", match_default, make_array(0, 2, -2, -2));
+
+   TEST_REGEX_SEARCH("a([bc]+)c", perl|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]+)c", perl|nosubs, "abcc", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a([bc]+)bc", perl|nosubs, "abcbc", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a(bb+|b)b", perl|nosubs, "abb", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl|nosubs, "abb", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl|nosubs, "abbb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a(bbb+|bb+|b)bb", perl|nosubs, "abbb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(.*).*", perl|nosubs, "abcdef", match_default, make_array(0, 6, -2, 6, 6, -2, -2));
+   TEST_REGEX_SEARCH("(a*)*", perl|nosubs, "bc", match_default, make_array(0, 0, -2, 1, 1, -2, 2, 2, -2, -2));
+
 }

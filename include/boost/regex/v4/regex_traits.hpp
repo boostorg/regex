@@ -35,6 +35,10 @@
 #include <boost/regex/v4/cpp_regex_traits.hpp>
 #endif
 
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_PREFIX
+#endif
+
 namespace boost{
 
 template <class charT, class implementationT >
@@ -44,6 +48,10 @@ struct regex_traits : public implementationT
 };
 
 } // namespace boost
+
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_SUFFIX
+#endif
 
 #endif // include
 

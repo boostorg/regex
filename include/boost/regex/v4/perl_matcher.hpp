@@ -333,6 +333,7 @@ private:
    bool match_char_repeat();
    bool match_dot_repeat_fast();
    bool match_dot_repeat_slow();
+   bool match_backstep();
    bool backtrack_till_match(unsigned count);
 
    // find procs stored in s_find_vtable:

@@ -140,5 +140,7 @@ void test_partial_match();
 void test_forward_lookahead_asserts();
 void test_fast_repeats();
 void test_tricky_cases2();
+void test_independent_subs();
+void test_nosubs();
 
 #endif

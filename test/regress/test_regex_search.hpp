@@ -134,7 +134,7 @@ void test_regex_grep(boost::basic_regex<charT, traits>& r)
    boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
    const int* answer_table = test_info<charT>::answer_table();
    grep_test_predicate<charT, traits> pred(search_text.begin(), answer_table);
-   boost::regex_grep(pred, search_text, r, opts);
+   boost::regex_grep(pred, search_text.begin(), search_text.end(), r, opts);
 }
 
 template<class charT, class traits>
@@ -158,7 +158,7 @@ void test_regex_match(boost::basic_regex<charT, traits>& r)
       {
          BOOST_REGEX_TEST_ERROR("boost::regex_match found a match when it should not have done so.", charT);
       }
-      else if((answer_table[0] == 0) && (answer_table[1] == search_text.size()))
+      else if((answer_table[0] == 0) && (answer_table[1] == static_cast<int>(search_text.size())))
       {
          if(boost::regex_match(
             search_text.begin(),

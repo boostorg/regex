@@ -29,6 +29,15 @@
 #include <boost/regex/v4/primary_transform.hpp>
 #endif
 
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_PREFIX
+#endif
+
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4786)
+#endif
+
 namespace boost{ 
 
 //
@@ -58,8 +67,8 @@ public:
    const charT* getnext() { return this->gptr(); }
 protected:
    std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n);
-   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
-   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
+   //typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
+   //typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
 private:
    parser_buf& operator=(const parser_buf&);
    parser_buf(const parser_buf&);
@@ -73,6 +82,7 @@ parser_buf<charT, traits>::setbuf(char_type* s, streamsize n)
    return this;
 }
 
+#if 0
 template<class charT, class traits>
 typename parser_buf<charT, traits>::pos_type
 parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which)
@@ -131,7 +141,7 @@ parser_buf<charT, traits>::seekpos(pos_type sp, ::std::ios_base::openmode which)
    }
    return pos_type(off_type(-1));
 }
-
+#endif
 
 //
 // class cpp_regex_traits_base:
@@ -308,9 +318,25 @@ class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT
 {
 public:
    typedef typename cpp_regex_traits<charT>::char_class_type char_class_type;
+   typedef typename std::ctype<charT>::mask                  native_mask_type;
    BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 16);
    BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 17);
    BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 18);
+#ifdef __GNUC__
+   BOOST_STATIC_CONSTANT(native_mask_type, 
+      mask_base = 
+         std::ctype<charT>::alnum 
+         | std::ctype<charT>::alpha
+         | std::ctype<charT>::cntrl
+         | std::ctype<charT>::digit
+         | std::ctype<charT>::graph
+         | std::ctype<charT>::lower
+         | std::ctype<charT>::print
+         | std::ctype<charT>::punct
+         | std::ctype<charT>::space
+         | std::ctype<charT>::upper
+         | std::ctype<charT>::xdigit);
+#else
    BOOST_STATIC_CONSTANT(char_class_type, 
       mask_base = 
          std::ctype<charT>::alnum 
@@ -324,6 +350,7 @@ public:
          | std::ctype<charT>::space
          | std::ctype<charT>::upper
          | std::ctype<charT>::xdigit);
+#endif
 
    //BOOST_STATIC_ASSERT(0 == (mask_base & (mask_word | mask_unicode)));
 
@@ -346,9 +373,9 @@ public:
       char_class_type result = lookup_classname_imp(p1, p2);
       if(result == 0)
       {
-         string_type s(p1, p2);
-         this->m_pctype->tolower(&*s.begin(), &*s.end());
-         result = lookup_classname_imp(&*s.begin(), &*s.end());
+         string_type temp(p1, p2);
+         this->m_pctype->tolower(&*temp.begin(), &*temp.begin() + temp.size());
+         result = lookup_classname_imp(&*temp.begin(), &*temp.begin() + temp.size());
       }
       return result;
    }
@@ -388,20 +415,20 @@ typename cpp_regex_traits_implementation<charT>::string_type
       // the best we can do is translate to lower case, then get a regular sort key:
       {
          result.assign(p1, p2);
-         m_pctype->tolower(&*result.begin(), &*result.end());
-         result = this->m_pcollate->transform(&*result.begin(), &*result.end());
+         this->m_pctype->tolower(&*result.begin(), &*result.begin() + result.size());
+         result = this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size());
          break;
       }
    case sort_fixed:
       {
          // get a regular sort key, and then truncate it:
-         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.end()));
+         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size()));
          result.erase(this->m_collate_delim);
          break;
       }
    case sort_delim:
          // get a regular sort key, and then truncate everything after the delim:
-         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.end()));
+         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size()));
          std::size_t i;
          for(i = 0; i < result.size(); ++i)
          {
@@ -425,10 +452,30 @@ typename cpp_regex_traits_implementation<charT>::string_type
       if(pos != m_custom_collate_names.end())
          return pos->second;
    }
+#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
    std::string name(p1, p2);
+#else
+   std::string name;
+   const charT* p0 = p1;
+   while(p0 != p2)
+	   name.append(1, char(*p0++));
+#endif
    name = lookup_default_collate_name(name);
+#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
    if(name.size())
       return string_type(name.begin(), name.end());
+#else
+   if(name.size())
+   {
+	   string_type result;
+	   typedef std::string::const_iterator iter;
+	   iter b = name.begin();
+	   iter e = name.end();
+	   while(b != e)
+		   result.append(1, charT(*b++));
+	   return result;
+   }
+#endif
    if(p2 - p1 == 1)
       return string_type(1, *p1);
    return string_type();
@@ -730,5 +777,13 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
 
 
 } // boost
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+
+#ifdef BOOST_HAS_ABI_HEADERS
+#  include BOOST_ABI_SUFFIX
+#endif
 
 #endif

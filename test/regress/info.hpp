@@ -11,7 +11,9 @@
 template <class charT>
 class test_info
 {
+public:
    typedef std::basic_string<charT> string_type;
+private:
    struct data_type
    {
       std::string file;

@@ -90,7 +90,7 @@ void scoped_static_mutex_lock::lock()
 #if !defined(InterlockedCompareExchangePointer)
       while(0 != InterlockedCompareExchange(reinterpret_cast<void**>((boost::uint_least16_t*)&(m_mutex.m_mutex)), (void*)1, 0))
 #else
-      while(0 != InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 1, 0))
+      while(0 != InterlockedCompareExchange(reinterpret_cast<LONG*>(&(m_mutex.m_mutex)), 1, 0))
 #endif
       {
          Sleep(0);
@@ -106,7 +106,7 @@ void scoped_static_mutex_lock::unlock()
 #if !defined(InterlockedCompareExchangePointer)
       InterlockedExchange((LONG*)&(m_mutex.m_mutex), 0);
 #else
-      InterlockedExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 0);
+      InterlockedExchange(reinterpret_cast<LONG*>(&(m_mutex.m_mutex)), 0);
 #endif
       m_have_lock = false;
    }

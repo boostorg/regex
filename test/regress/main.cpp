@@ -22,6 +22,8 @@ int cpp_main(int argc, char * argv[])
    test_partial_match();
    test_forward_lookahead_asserts();
    test_fast_repeats();
+   test_independent_subs();
+   test_nosubs();
    return error_count;
 }
 

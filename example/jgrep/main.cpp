@@ -46,10 +46,7 @@ using std::endl;
 #include <algorithm>
 #endif
 
-allocator_type a;
-
-re_type e(a);
-//rei_type ei(a);
+re_type e;
 
 // flags for output:
 

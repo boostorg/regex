@@ -249,16 +249,14 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    //
    if((this->flags() & (regbase::main_option_type | regbase::no_perl_ex)) == 0)
    {
-      if(m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
+      if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
          return parse_perl_extension();
    }
    //
    // update our mark count, and append the required state:
    //
-   unsigned markid;
-   if(this->flags() & regbase::nosubs)
-      markid = 0;
-   else
+   unsigned markid = 0;
+   if(0 == (this->flags() & regbase::nosubs))
       markid = ++m_mark_count;
    re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_startmark, sizeof(re_brace)));
    pb->index = markid;
@@ -1070,6 +1068,10 @@ bool basic_regex_parser<charT, traits>::parse_backref()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_QE()
 {
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
    //
    // parse a \Q...\E sequence:
    //
@@ -1104,6 +1106,9 @@ bool basic_regex_parser<charT, traits>::parse_QE()
       ++start;
    }
    return true;
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 template <class charT, class traits>
@@ -1114,7 +1119,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    //
    // backup some state, and prepare the way:
    //
-   int markid;
+   int markid = 0;
    std::ptrdiff_t jump_offset = 0;
    re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_startmark, sizeof(re_brace)));
    std::ptrdiff_t last_paren_start = this->getoffset(pb);
@@ -1157,6 +1162,35 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       this->m_pdata->m_data.align();
       m_alt_insert_point = this->m_pdata->m_data.size();
       break;
+   case regex_constants::escape_type_left_word:
+      {
+         // a lookbehind assertion:
+         if(++m_position == m_end)
+            fail(REG_BADRPT, m_position - m_base);
+         regex_constants::syntax_type t = this->m_traits.syntax_type(*m_position);
+         if(t == regex_constants::syntax_not)
+            pb->index = markid = -2;
+         else if(t == regex_constants::syntax_equal)
+            pb->index = markid = -1;
+         else
+            fail(REG_BADRPT, m_position - m_base);
+         ++m_position;
+         jump_offset = this->getoffset(this->append_state(syntax_element_jump, sizeof(re_jump)));
+         this->append_state(syntax_element_backstep, sizeof(re_brace));
+         this->m_pdata->m_data.align();
+         m_alt_insert_point = this->m_pdata->m_data.size();
+         break;
+      }
+   case regex_constants::escape_type_right_word:
+      //
+      // an independent sub-expression:
+      //
+      pb->index = markid = -3;
+      ++m_position;
+      jump_offset = this->getoffset(this->append_state(syntax_element_jump, sizeof(re_jump)));
+      this->m_pdata->m_data.align();
+      m_alt_insert_point = this->m_pdata->m_data.size();
+      break;
    default:
       fail(REG_BADRPT, m_position - m_base);
    }
@@ -1180,6 +1214,11 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       this->m_pdata->m_data.align();
       re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
       jmp->alt.i = this->m_pdata->m_data.size() - this->getoffset(jmp);
+      if(this->m_last_state == jmp)
+      {
+         // Oops... we didn't have anything inside the assertion:
+         fail(REG_EMPTY, m_position - m_base);
+      }
    }
    //
    // append closing parenthesis state:

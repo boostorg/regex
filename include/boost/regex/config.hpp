@@ -174,6 +174,7 @@ using std::distance;
 #  ifdef BOOST_MSVC
       // warning suppression with VC6:
 #     pragma warning(disable: 4800)
+#     pragma warning(disable: 4786)
 #  endif
 #  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>(x)
 #endif
@@ -367,12 +368,14 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 namespace boost{
 namespace re_detail{
 
+BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex);
+
 template <class traits>
 void raise_error(const traits& t, unsigned code)
 {
    (void)t;  // warning suppression
    std::runtime_error e(t.error_string(code));
-   throw_exception(e);
+   ::boost::re_detail::raise_runtime_error(e);
 }
 
 }

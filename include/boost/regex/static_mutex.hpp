@@ -89,7 +89,7 @@ class static_mutex
 {
 public:
    typedef scoped_static_mutex_lock scoped_lock;
-   volatile boost::int32_t m_mutex;
+   boost::int32_t m_mutex;
 };
 
 #define BOOST_STATIC_MUTEX_INIT { 0, }

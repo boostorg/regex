@@ -41,9 +41,6 @@
 #ifndef BOOST_REGEX_FWD_HPP
 #include <boost/regex_fwd.hpp>
 #endif
-#ifndef BOOST_REGEX_STACK_HPP
-#include <boost/regex/v4/regex_stack.hpp>
-#endif
 #ifndef BOOST_REGEX_RAW_BUFFER_HPP
 #include <boost/regex/v4/regex_raw_buffer.hpp>
 #endif
