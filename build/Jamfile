@@ -59,7 +59,7 @@ lib boost_regex : ../src/$(SOURCES) <template>regex-options
     ;
 
 
-dll boost_regex : ../src/$(SOURCES).cpp <template>regex-dll-options
+dll boost_regex : ../src/$(SOURCES) <template>regex-dll-options
     : 
         common-variant-tag
     : 

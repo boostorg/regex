@@ -154,6 +154,11 @@ public:
    {
       return this->m_can_be_null;
    }
+   const regex_data<charT, traits>& get_data()const
+   {
+      basic_regex_implementation<charT, traits> const* p = this;
+      return *static_cast<const regex_data<charT, traits>*>(p);
+   }
 };
 
 } // namespace re_detail
@@ -469,6 +474,11 @@ public:
    {
       assert(m_pimpl.get());
       return m_pimpl->can_be_null();
+   }
+   const re_detail::regex_data<charT, traits>& get_data()const
+   {
+      assert(m_pimpl.get());
+      return m_pimpl->get_data();
    }
 
 private:

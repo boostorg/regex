@@ -208,10 +208,10 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_imp()
    else
    {
       // start again:
-      search_base = position = (*m_presult)[0].second;
+      search_base = position = m_result[0].second;
       // If last match was null and match_not_null was not set then increment
       // our start position, otherwise we go into an infinite loop:
-      if(((m_match_flags & match_not_null) == 0) && (m_presult->length() == 0))
+      if(((m_match_flags & match_not_null) == 0) && (m_result.length() == 0))
       {
          if(position == last)
             return false;
@@ -590,7 +590,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set()
    // let the traits class do the work:
    if(position == last)
       return false;
-   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<char_class_type>*>(pstate), re);
+   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<char_class_type>*>(pstate), re.get_data());
    if(t != position)
    {
       pstate = pstate->next.p;

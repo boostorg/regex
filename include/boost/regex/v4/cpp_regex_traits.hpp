@@ -304,6 +304,27 @@ template <class charT>
 class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT>
 {
 public:
+   typedef typename cpp_regex_traits<charT>::char_class_type char_class_type;
+   BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 16);
+   BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 17);
+   BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 18);
+   BOOST_STATIC_CONSTANT(char_class_type, 
+      mask_base = 
+         std::ctype<charT>::alnum 
+         | std::ctype<charT>::alpha
+         | std::ctype<charT>::cntrl
+         | std::ctype<charT>::digit
+         | std::ctype<charT>::graph
+         | std::ctype<charT>::lower
+         | std::ctype<charT>::print
+         | std::ctype<charT>::punct
+         | std::ctype<charT>::space
+         | std::ctype<charT>::upper
+         | std::ctype<charT>::xdigit);
+
+   //BOOST_STATIC_ASSERT(0 == (mask_base & (mask_word | mask_unicode)));
+
+
    typedef std::basic_string<charT> string_type;
    //cpp_regex_traits_implementation();
    cpp_regex_traits_implementation(const std::locale& l);
@@ -316,10 +337,25 @@ public:
       }
       return get_default_error_string(n);
    }
+   char_class_type lookup_classname(const charT* p1, const charT* p2) const
+   {
+      char_class_type result = lookup_classname_imp(p1, p2);
+      if(result == 0)
+      {
+         string_type s(p1, p2);
+         this->m_pctype->tolower(&*s.begin(), &*s.end());
+         result = lookup_classname_imp(&*s.begin(), &*s.end());
+      }
+      return result;
+   }
    re_detail::parser_buf<charT>   m_sbuf;            // buffer for parsing numbers.
    std::basic_istream<charT>      m_is;              // stream for parsing numbers.
 private:
    std::map<int, std::string>     m_error_strings;   // error messages indexed by numberic ID
+   //
+   // helpers:
+   //
+   char_class_type lookup_classname_imp(const charT* p1, const charT* p2) const;
 };
 
 template <class charT>
@@ -349,7 +385,7 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
    //
    if((int)cat >= 0)
    {
-      for(int i = 0; i <= boost::regex_constants::error_unknown; ++i)
+      for(boost::regex_constants::error_type i = 0; i <= boost::regex_constants::error_unknown; ++i)
       {
          const char* p = get_default_error_string(i);
          string_type default_message;
@@ -370,11 +406,53 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
 }
 
 template <class charT>
+typename cpp_regex_traits_implementation<charT>::char_class_type 
+   cpp_regex_traits_implementation<charT>::lookup_classname_imp(const charT* p1, const charT* p2) const
+{
+   static const char_class_type masks[] = 
+   {
+      0,
+      std::ctype<char>::alnum, 
+      std::ctype<char>::alpha,
+      cpp_regex_traits_implementation<charT>::mask_blank,
+      std::ctype<char>::cntrl,
+      std::ctype<char>::digit,
+      std::ctype<char>::digit,
+      std::ctype<char>::graph,
+      std::ctype<char>::lower,
+      std::ctype<char>::lower,
+      std::ctype<char>::print,
+      std::ctype<char>::punct,
+      std::ctype<char>::space,
+      std::ctype<char>::space,
+      std::ctype<char>::upper,
+      cpp_regex_traits_implementation<charT>::mask_unicode,
+      std::ctype<char>::upper,
+      std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
+      std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
+      std::ctype<char>::xdigit,
+   };
+   std::size_t id = 1 + re_detail::get_default_class_id(p1, p2);
+   assert(id < sizeof(masks) / sizeof(masks[0]));
+   return masks[id];
+}
+
+
+template <class charT>
 boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
    // TODO: create a cache for previously constructed objects.
    return boost::shared_ptr<cpp_regex_traits_implementation<charT> >(new cpp_regex_traits_implementation<charT>(l));
 }
+
+//
+// helpers to suppress warnings:
+//
+template <class charT>
+inline bool is_extended(charT c)
+{ return c > 256; }
+inline bool is_extended(char)
+{ return false; }
 
 } // re_detail
 
@@ -389,25 +467,6 @@ public:
    typedef std::basic_string<char_type> string_type;
    typedef std::locale                  locale_type;
    typedef boost::uint_least32_t        char_class_type;
-
-   BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 16);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 17);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 18);
-   BOOST_STATIC_CONSTANT(char_class_type, 
-      mask_base = 
-         std::ctype<char>::alnum 
-         | std::ctype<char>::alpha
-         | std::ctype<char>::cntrl
-         | std::ctype<char>::digit
-         | std::ctype<char>::graph
-         | std::ctype<char>::lower
-         | std::ctype<char>::print
-         | std::ctype<char>::punct
-         | std::ctype<char>::space
-         | std::ctype<char>::upper
-         | std::ctype<char>::xdigit);
-
-   //BOOST_STATIC_ASSERT(0 == (mask_base & (mask_word | mask_unicode)));
 
    cpp_regex_traits()
       : m_pimpl(re_detail::create_cpp_regex_traits<charT>(std::locale()))
@@ -438,33 +497,7 @@ public:
    }
    char_class_type lookup_classname(const charT* p1, const charT* p2) const
    {
-      static const char_class_type masks[] = 
-      {
-         0,
-         std::ctype<char>::alnum, 
-         std::ctype<char>::alpha,
-         cpp_regex_traits<charT>::mask_blank,
-         std::ctype<char>::cntrl,
-         std::ctype<char>::digit,
-         std::ctype<char>::digit,
-         std::ctype<char>::graph,
-         std::ctype<char>::lower,
-         std::ctype<char>::lower,
-         std::ctype<char>::print,
-         std::ctype<char>::punct,
-         std::ctype<char>::space,
-         std::ctype<char>::space,
-         cpp_regex_traits<charT>::mask_unicode,
-         std::ctype<char>::upper,
-         std::ctype<char>::upper,
-         std::ctype<char>::alnum | cpp_regex_traits<charT>::mask_word, 
-         std::ctype<char>::alnum | cpp_regex_traits<charT>::mask_word, 
-         std::ctype<char>::xdigit,
-      };
-      int id = re_detail::get_default_class_id(p1, p2);
-      assert(id >= -1);
-      assert(id < sizeof(masks) / sizeof(masks[0]));
-      return masks[1 + id];
+      return m_pimpl->lookup_classname(p1, p2);
    }
    string_type lookup_collatename(const charT* p1, const charT* p2) const
    {
@@ -472,16 +505,17 @@ public:
    }
    bool is_class(charT c, char_class_type f) const
    {
-      if((f & cpp_regex_traits<charT>::mask_base) 
+      typedef typename std::ctype<charT>::mask ctype_mask;
+      if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_base) 
          && (m_pimpl->m_pctype->is(
-            static_cast<std::ctype<charT>::mask>(f & cpp_regex_traits<charT>::mask_base), c)))
+            static_cast<ctype_mask>(f & re_detail::cpp_regex_traits_implementation<charT>::mask_base), c)))
          return true;
-      else if((f & cpp_regex_traits<charT>::mask_unicode) && (c >= 256))
+      else if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_unicode) && re_detail::is_extended(c))
          return true;
-      else if((f & cpp_regex_traits<charT>::mask_word) && (c == '_'))
+      else if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_word) && (c == '_'))
          return true;
-      else if((f & cpp_regex_traits<charT>::mask_blank) 
-         && m_pimpl->m_pctype->is(static_cast<std::ctype<charT>::mask>(f & cpp_regex_traits<charT>::mask_base), c)
+      else if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_blank) 
+         && m_pimpl->m_pctype->is(std::ctype<charT>::space, c)
          && !re_detail::is_separator(c))
          return true;
       return false;
@@ -515,6 +549,7 @@ private:
    // catalog name handler:
    //
    static std::string& get_catalog_name_inst();
+
 #ifdef BOOST_HAS_THREADS
    static static_mutex& get_mutex_inst();
 #endif

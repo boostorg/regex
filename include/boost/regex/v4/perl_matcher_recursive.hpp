@@ -637,7 +637,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       BidiIterator end = position;
       std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
-      while((position != end) && (position != re_is_set_member(position, last, set, re)))
+      while((position != end) && (position != re_is_set_member(position, last, set, re.get_data())))
       {
          ++position;
       }
@@ -645,7 +645,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
    }
    else
    {
-      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re)))
+      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re.get_data())))
       {
          ++position;
          ++count;
@@ -665,7 +665,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
    {
       while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
-         if(position != re_is_set_member(position, last, set, re))
+         if(position != re_is_set_member(position, last, set, re.get_data()))
          {
             ++position;
             ++count;
@@ -685,7 +685,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       if(position == last)
          return false;
       position = save_pos;
-      if(position != re_is_set_member(position, last, set, re))
+      if(position != re_is_set_member(position, last, set, re.get_data()))
       {
          ++position;
          ++count;

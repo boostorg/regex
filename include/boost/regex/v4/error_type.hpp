@@ -23,12 +23,15 @@
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #define BOOST_REGEX_ERROR_TYPE_HPP
 
+#ifdef __cplusplus
 namespace boost{
+#endif
 
 //
 // start with the POSIX API versions of these:
 //
 typedef unsigned reg_error_t;
+typedef reg_error_t reg_errcode_t;  // backwards compatibility
 
 static const reg_error_t REG_NOERROR = 0;   /* Success.  */
 static const reg_error_t REG_NOMATCH = 1;   /* Didn't find a match (for regexec).  */
@@ -57,6 +60,7 @@ static const reg_error_t REG_ESTACK = 19;   /* out of stack space */
 static const reg_error_t REG_E_UNKNOWN = 20; /* unknown error */
 static const reg_error_t REG_ENOSYS = REG_E_UNKNOWN; /* Reserved. */
 
+#ifdef __cplusplus
 namespace regex_constants{
 
 typedef ::boost::reg_error_t error_type;
@@ -80,5 +84,6 @@ static const error_type error_unknown = REG_E_UNKNOWN;
 
 }
 }
+#endif // __cplusplus
 
 #endif

@@ -55,9 +55,8 @@ template test-dll
 #
 template regression-dll
     : <template>test-dll                    # sources
-      regress/parse.cpp
-      regress/regress.cpp 
-      regress/tests.cpp
+      regress/main.cpp
+      regress/basic_tests.cpp 
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 
@@ -66,14 +65,7 @@ test-suite regex
       [ regex-test regex_regress
           : <template>regression     # sources
           :                          # requirements
-          : regress/tests.txt        # input files
-      ]
-
-      [ regex-test regex_wide_regress
-          : <template>regression     # sources
-            <template>../build/msvc-stlport-tricky
-          : <define>TEST_UNICODE=1   # requirements
-          : regress/tests.txt        # input files
+          :                          # input files
       ]
 
       [ regex-test posix_api_check
@@ -115,15 +107,8 @@ test-suite regex
 
       [ regex-test regex_regress_dll
           : <template>regression-dll     # sources
-          :                          # requirements
-          : regress/tests.txt        # input files
-      ]
-
-      [ regex-test regex_wide_regress_dll
-          : <template>regression-dll     # sources
-            <template>../build/msvc-stlport-tricky
-          : <define>TEST_UNICODE=1   # requirements
-          : regress/tests.txt        # input files
+          :                              # requirements
+          :                              # input files
       ]
 
       [ compile concepts/concept_check.cpp

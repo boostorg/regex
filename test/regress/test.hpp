@@ -85,6 +85,13 @@ const int* make_array(int first, ...);
 // define the test group proceedures:
 //
 void basic_tests();
+void test_alt();
+void test_sets();
+void test_anchors();
+void test_backrefs();
+void test_character_escapes();
+void test_assertion_escapes();
+void test_tricky_cases();
 
 
 #endif

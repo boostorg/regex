@@ -76,7 +76,7 @@ public:
       
 
 
-      basic = basic_syntax_group | collate,
+      basic = basic_syntax_group | collate | no_escape_in_lists,
       extended = no_bk_refs | collate | no_perl_ex | no_escape_in_lists,
       normal = 0,
       emacs = basic | no_char_classes | no_intervals,
@@ -123,6 +123,8 @@ namespace regex_constants{
       bk_plus_qm = ::boost::regbase::bk_plus_qm,
       bk_vbar = ::boost::regbase::bk_vbar,
       no_intervals = ::boost::regbase::no_intervals,
+      no_char_classes = ::boost::regbase::no_char_classes,
+      no_escape_in_lists = ::boost::regbase::no_escape_in_lists,
 
       basic = ::boost::regbase::basic,
       extended = ::boost::regbase::extended,

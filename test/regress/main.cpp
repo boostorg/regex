@@ -7,6 +7,13 @@ int error_count = 0;
 int cpp_main(int argc, char * argv[])
 {
    basic_tests();
+   test_alt();
+   test_sets();
+   test_anchors();
+   test_backrefs();
+   test_character_escapes();
+   test_assertion_escapes();
+   test_tricky_cases();
    return error_count;
 }
 
@@ -43,3 +50,4 @@ const int* make_array(int first, ...)
    va_end(ap);
    return data;
 }
+

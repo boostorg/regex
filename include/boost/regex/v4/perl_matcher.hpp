@@ -91,17 +91,17 @@ template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
                           const re_set_long<char_classT>* set_, 
-                          const basic_regex<charT, traits_type>& e)
+                          const regex_data<charT, traits_type>& e)
 {   
    const charT* p = reinterpret_cast<const charT*>(set_+1);
    iterator ptr;
    unsigned int i;
-   bool icase = e.flags() & regex_constants::icase;
+   bool icase = e.m_flags & regex_constants::icase;
 
    if(next == last) return next;
 
    typedef typename traits_type::string_type traits_string_type;
-   const traits_type& traits_inst = e.get_traits();
+   const traits_type& traits_inst = e.m_traits;
    
    // dwa 9/13/00 suppress incorrect MSVC warning - it claims this is never
    // referenced
@@ -149,17 +149,17 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
       // try and match a range, NB only a single character can match
       if(set_->cranges)
       {
-         if((e.flags() & regex_constants::collate) == 0)
+         if((e.m_flags & regex_constants::collate) == 0)
             s1.assign(1, col);
          else
             s1 = traits_inst.transform(&col, &col + 1);
          for(i = 0; i < set_->cranges; ++i)
          {
-            if(STR_COMP(s1, p) <= 0)
+            if(STR_COMP(s1, p) >= 0)
             {
                while(*p)++p;
                ++p;
-               if(STR_COMP(s1, p) >= 0)
+               if(STR_COMP(s1, p) <= 0)
                   return set_->isnot ? next : ++next;
             }
             else
@@ -412,7 +412,7 @@ private:
    void push_assertion(const re_syntax_base* ps, bool positive);
    void push_alt(const re_syntax_base* ps);
    void push_repeater_count(int i, repeater_count<BidiIterator>** s);
-   void push_single_repeat(unsigned c, const re_repeat* r, BidiIterator last_position, int id);
+   void push_single_repeat(std::size_t c, const re_repeat* r, BidiIterator last_position, int id);
    void push_non_greedy_repeat(const re_syntax_base* ps);
 
 

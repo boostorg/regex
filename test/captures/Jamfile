@@ -16,7 +16,7 @@ EX_SOURCES =
    wide_posix_api.cpp
    winstances.cpp ;
        
-lib boost_regex_extra : ../../src/$(EX_SOURCES).cpp <template>../../build/regex-options
+lib boost_regex_extra : ../../src/$(EX_SOURCES) <template>../../build/regex-options
     : 
         <define>BOOST_REGEX_MATCH_EXTRA=1
     : 

@@ -132,17 +132,19 @@ int get_default_class_id(const charT* p1, const charT* p2)
       {data+40, data+45,}, // punct
       {data+45, data+46,}, // s
       {data+45, data+50,}, // space
-      {data+50, data+57,}, // unicode
       {data+57, data+58,}, // u
+      {data+50, data+57,}, // unicode
       {data+57, data+62,}, // upper
       {data+62, data+63,}, // w
       {data+62, data+66,}, // word
       {data+66, data+72,}, // xdigit
    };
+   static const character_pointer_range<charT>* ranges_begin = ranges;
+   static const character_pointer_range<charT>* ranges_end = ranges + (sizeof(ranges)/sizeof(ranges[0]));
    
    character_pointer_range<charT> t = { p1, p2, };
-   const character_pointer_range<charT>* p = std::lower_bound(ranges, ranges + (sizeof(ranges)/sizeof(ranges[0])), t);
-   if(t == *p)
+   const character_pointer_range<charT>* p = std::lower_bound(ranges_begin, ranges_end, t);
+   if((p != ranges_end) && (t == *p))
       return static_cast<int>(p - ranges);
    return -1;
 }

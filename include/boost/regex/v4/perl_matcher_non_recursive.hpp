@@ -103,10 +103,10 @@ struct save_state_init
 template <class BidiIterator>
 struct saved_single_repeat : public saved_state
 {
-   unsigned count;
+   std::size_t count;
    const re_repeat* rep;
    BidiIterator last_position;
-   saved_single_repeat(unsigned c, const re_repeat* r, BidiIterator lp, int arg_id) 
+   saved_single_repeat(std::size_t c, const re_repeat* r, BidiIterator lp, int arg_id) 
       : saved_state(arg_id), count(c), rep(r), last_position(lp){}
 };
 
@@ -275,7 +275,7 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::push_repeater_count(i
 }
 
 template <class BidiIterator, class Allocator, class traits>
-inline void perl_matcher<BidiIterator, Allocator, traits>::push_single_repeat(unsigned c, const re_repeat* r, BidiIterator last_position, int id)
+inline void perl_matcher<BidiIterator, Allocator, traits>::push_single_repeat(std::size_t c, const re_repeat* r, BidiIterator last_position, int id)
 {
    saved_single_repeat<BidiIterator>* pmp = static_cast<saved_single_repeat<BidiIterator>*>(m_backup_state);
    --pmp;
@@ -585,11 +585,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    assert(1 == static_cast<const re_literal*>(rep->next.p)->length);
    const char_type what = *reinterpret_cast<const char_type*>(static_cast<const re_literal*>(rep->next.p) + 1);
-   unsigned count = 0;
+   std::size_t count = 0;
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
@@ -652,11 +652,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    const unsigned char* map = static_cast<const re_set*>(rep->next.p)->_map;
-   unsigned count = 0;
+   std::size_t count = 0;
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
@@ -719,17 +719,17 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    const re_set_long<typename traits::char_class_type>* set = static_cast<const re_set_long<typename traits::char_class_type>*>(pstate->next.p);
-   unsigned count = 0;
+   std::size_t count = 0;
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
       std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
-      while((position != end) && (position != re_is_set_member(position, last, set, re)))
+      while((position != end) && (position != re_is_set_member(position, last, set, re.get_data())))
       {
          ++position;
       }
@@ -737,7 +737,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
    }
    else
    {
-      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re)))
+      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re.get_data())))
       {
          ++position;
          ++count;
@@ -926,7 +926,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_greedy_single_repeat(
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
    assert(rep->next.p);
    assert(rep->alt.p);
 
@@ -975,7 +975,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_slow_dot_repeat(bool 
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
    assert(rep->type == syntax_element_dot_rep);
    assert(rep->next.p);
    assert(rep->alt.p);
@@ -1037,7 +1037,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_fast_dot_repeat(bool 
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
 
    assert(count < rep->max);
    position = pmp->last_position;
@@ -1089,7 +1089,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_char_repeat(bool r)
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
    pstate = rep->next.p;
    const char_type what = *reinterpret_cast<const char_type*>(static_cast<const re_literal*>(pstate) + 1);
    position = pmp->last_position;
@@ -1153,7 +1153,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_short_set_repeat(bool
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
    pstate = rep->next.p;
    const unsigned char* map = static_cast<const re_set*>(rep->next.p)->_map;
    position = pmp->last_position;
@@ -1217,7 +1217,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat(bool 
    }
 
    const re_repeat* rep = pmp->rep;
-   unsigned count = pmp->count;
+   std::size_t count = pmp->count;
    pstate = rep->next.p;
    const re_set_long<typename traits::char_class_type>* set = static_cast<const re_set_long<typename traits::char_class_type>*>(pstate);
    position = pmp->last_position;
@@ -1234,7 +1234,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat(bool 
       // wind forward until we can skip out of the repeat:
       do
       {
-         if(position == re_is_set_member(position, last, set, re))
+         if(position == re_is_set_member(position, last, set, re.get_data()))
          {
             // failed repeat match, discard this state and look for another:
             destroy_single_repeat();

@@ -60,6 +60,7 @@
 #  include <boost/throw_exception.hpp>
 #  include <boost/scoped_ptr.hpp>
 #  include <boost/shared_ptr.hpp>
+#  include <boost/mpl/bool_fwd.hpp>
 #  ifndef BOOST_NO_STD_LOCALE
 #     include <locale>
 #  endif
