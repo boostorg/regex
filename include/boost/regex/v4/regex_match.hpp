@@ -136,7 +136,7 @@ inline bool regex_match(const wchar_t* str,
 }
 #endif
 inline bool regex_match(const std::string& s, 
-                        match_results<std::string::const_iterator, regex::allocator_type>& m,
+                        smatch& m,
                         const regex& e, 
                         match_flag_type flags = match_default)
 {

@@ -129,7 +129,7 @@ struct saved_single_repeat : public saved_state
    const re_repeat* rep;
    BidiIterator last_position;
    saved_single_repeat(unsigned c, const re_repeat* r, BidiIterator lp, int id) 
-      : saved_state(id), count(c), last_position(lp), rep(r){}
+      : saved_state(id), count(c), rep(r), last_position(lp){}
 };
 
 template <class BidiIterator, class Allocator, class traits, class Allocator2>
@@ -298,6 +298,15 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark(
          pstate = pstate->next.p->next.p;
          push_assertion(next_pstate, index == -1);
          break;
+      }
+   case -3:
+      {
+         // independent sub-expression:
+         const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
+         pstate = pstate->next.p->next.p;
+         bool r = match_all_states();
+         pstate = next_pstate;
+         return r;
       }
    default:
    {

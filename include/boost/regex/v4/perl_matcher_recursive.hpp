@@ -93,6 +93,15 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark(
             r = true;
          break;
       }
+   case -3:
+      {
+         // independent sub-expression:
+         const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
+         pstate = pstate->next.p->next.p;
+         r = match_all_states();
+         pstate = next_pstate;
+         break;
+      }
    default:
    {
       assert(index > 0);
@@ -625,8 +634,9 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::backtrack_till_m
 #endif
 }
 
-}
+} // namespace re_detail
 } // namespace boost
+
 
 #ifdef __BORLANDC__
 #  pragma option pop

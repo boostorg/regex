@@ -447,6 +447,8 @@ void BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::compile_maps()
                   if(static_cast<re_detail::re_set_long*>(rep->next.p)->singleton)
                      rep->type = re_detail::syntax_element_long_set_rep;
                   break;
+               default:
+                  break;
                }
             }
          }
@@ -475,8 +477,18 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
          return probe_start(node->next.p->next.p, cc, terminal)
             && probe_start(static_cast<const re_detail::re_jump*>(node->next.p)->alt.p, cc, terminal);
       }
-      // fall through:
+      else if(static_cast<const re_detail::re_brace*>(node)->index == -3)
+      {
+         return probe_start(node->next.p->next.p, cc, terminal);
+      }
+      // doesn't tell us anything about the next character, so:
+      return probe_start(node->next.p, cc, terminal);
    case re_detail::syntax_element_endmark:
+      if(static_cast<const re_detail::re_brace*>(node)->index == -3)
+      {
+         return true;
+      }
+      // fall through:
    case re_detail::syntax_element_start_line:
    case re_detail::syntax_element_word_boundary:
    case re_detail::syntax_element_buffer_start:
@@ -561,6 +573,10 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
       // we need to take the OR of the two alternatives:
       return probe_start(static_cast<re_detail::re_jump*>(node)->alt.p, cc, terminal) || probe_start(node->next.p, cc, terminal);
    case re_detail::syntax_element_rep:
+   case re_detail::syntax_element_char_rep:
+   case re_detail::syntax_element_dot_rep:
+   case re_detail::syntax_element_long_set_rep:
+   case re_detail::syntax_element_short_set_rep:
       // we need to take the OR of the two alternatives
       if(static_cast<re_detail::re_repeat*>(node)->min == 0)
          return probe_start(node->next.p, cc, static_cast<re_detail::re_jump*>(node)->alt.p) || probe_start(static_cast<re_detail::re_jump*>(node)->alt.p, cc, terminal);
@@ -1403,6 +1419,11 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
                static_cast<re_detail::re_jump*>(dat)->alt.i = INT_MAX/2;
                mark.push(data.size() - re_detail::re_jump_size);
                continue;
+            case traits_type::syntax_right_word:
+               static_cast<re_detail::re_brace*>(dat)->index = -3;
+               markid.pop();
+               markid.push(-3);
+               goto common_forward_assert;
             case traits_type::syntax_not:
                static_cast<re_detail::re_brace*>(dat)->index = -2;
                markid.pop();
