@@ -67,7 +67,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
    }
    // set default flags:
    boost::uint_fast32_t flags = (f & REG_EXTENDED) ? regbase::extended : regbase::basic;
-   expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : 0;
+   expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : match_default;
 
    // and translate those that are actually set:
    if(f & REG_NOCOLLATE)
@@ -84,6 +84,10 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
       flags |= regbase::escape_in_lists;
    if(f & REG_NEWLINE_ALT)
       flags |= regbase::newline_alt;
+#ifndef BOOST_REGEX_V3
+   if(f & REG_PERLEX)
+      flags |= regbase::perlex;
+#endif
 
    const wchar_t* p2;
    if(f & REG_PEND)
@@ -173,7 +177,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecW(const regex_tW* expression, cons
 {
    BOOST_RE_GUARD_STACK
    bool result = false;
-   boost::uint_fast32_t flags = match_default | expression->eflags;
+   match_flag_type flags = match_default | expression->eflags;
    const wchar_t* end;
    const wchar_t* start;
    wcmatch m;

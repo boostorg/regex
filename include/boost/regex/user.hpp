@@ -53,5 +53,27 @@
 // cause more problems than they are worth:
 // #define BOOST_REGEX_NO_FWD
 
+// define this if your compiler can't cope with the new 
+// version 4 regex code.
+// #define BOOST_REGEX_V3
 
+// define this if your compiler supports MS Windows structured
+// exception handling.
+// #define BOOST_REGEX_HAS_MS_STACK_GUARD
+
+// define this if you want to use the recursive algorithm
+// even if BOOST_REGEX_HAS_MS_STACK_GUARD is not defined.
+// #define BOOST_REGEX_RECURSIVE
+
+// define this if you want to use the non-recursive
+// algorithm, even if the recursive version would be the default.
+// #define BOOST_REGEX_NON_RECURSIVE
+
+// define this if you want to set the size of the memory blocks
+// used by the non-recursive algorithm.
+// #define BOOST_REGEX_BLOCKSIZE 4096
+
+// define this if you want to set the maximum number of memory blocks
+// used by the non-recursive algorithm.
+// #define BOOST_REGEX_MAX_BLOCKS 1024
 

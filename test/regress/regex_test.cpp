@@ -64,7 +64,7 @@ regbase::flag_type f = regbase::escape_in_lists | regbase::char_classes | regbas
 template class reg_expression<test_char_type>;
 template struct sub_match<ra_it>;
 template class match_results<ra_it>;
-
+#if 0
 template bool regex_match(ra_it,
                  ra_it,
                  match_results<ra_it>& m,
@@ -169,7 +169,7 @@ template test_string_type regex_merge(const test_string_type&,
                                      unsigned int flags);
 
 #endif
-
+#endif
 } // namespace boost
 
 //

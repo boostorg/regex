@@ -34,7 +34,11 @@ using std::endl;
 #  pragma hrdstop
 #endif
 
+#ifdef BOOST_REGEX_V3
 #include <boost/regex/v3/fileiter.hpp>
+#else
+#include <boost/regex/v4/fileiter.hpp>
+#endif
 #include "jgrep.h"
 
 #ifndef JM_ALGO_INCLUDED
@@ -164,6 +168,8 @@ void parse_switch(const char* flag)
       ++flag;
    }
 }
+
+using namespace boost;
 
 void HandleFile(const char* wild)
 {
