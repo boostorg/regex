@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE         regex.cpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Declares boost::reg_expression<> and associated
+  *   DESCRIPTION: Declares boost::basic_regex<> and associated
   *                functions and classes. This header is the main
   *                entry point for the template regex code.
   */
@@ -76,6 +76,12 @@
 #ifndef BOOST_REGEX_V4_BASIC_REGEX_HPP
 #include <boost/regex/v4/basic_regex.hpp>
 #endif
+#ifndef BOOST_REGEX_V4_BASIC_REGEX_CREATOR_HPP
+#include <boost/regex/v4/basic_regex_creator.hpp>
+#endif
+#ifndef BOOST_REGEX_V4_BASIC_REGEX_PARSER_HPP
+#include <boost/regex/v4/basic_regex_parser.hpp>
+#endif
 #ifndef BOOST_REGEX_V4_SUB_MATCH_HPP
 #include <boost/regex/v4/sub_match.hpp>
 #endif
@@ -85,9 +91,6 @@
 #ifndef BOOST_REGEX_V4_MATCH_RESULTS_HPP
 #include <boost/regex/v4/match_results.hpp>
 #endif
-#ifndef BOOST_REGEX_COMPILE_HPP
-#include <boost/regex/v4/regex_compile.hpp>
-#endif
 
 //
 // template instances:
@@ -96,7 +99,7 @@
 #ifdef BOOST_REGEX_NARROW_INSTANTIATE
 #  define BOOST_REGEX_INSTANTIATE
 #endif
-#include <boost/regex/v4/instances.hpp>
+//#include <boost/regex/v4/instances.hpp>
 #undef BOOST_REGEX_CHAR_T
 #ifdef BOOST_REGEX_INSTANTIATE
 #  undef BOOST_REGEX_INSTANTIATE
@@ -107,7 +110,7 @@
 #ifdef BOOST_REGEX_WIDE_INSTANTIATE
 #  define BOOST_REGEX_INSTANTIATE
 #endif
-#include <boost/regex/v4/instances.hpp>
+//#include <boost/regex/v4/instances.hpp>
 #undef BOOST_REGEX_CHAR_T
 #ifdef BOOST_REGEX_INSTANTIATE
 #  undef BOOST_REGEX_INSTANTIATE
@@ -117,9 +120,9 @@
 
 namespace boost{
 #ifdef BOOST_REGEX_NO_FWD
-typedef reg_expression<char, regex_traits<char>, BOOST_DEFAULT_ALLOCATOR(char)> regex;
+typedef basic_regex<char, regex_traits<char> > regex;
 #ifndef BOOST_NO_WREGEX
-typedef reg_expression<wchar_t, regex_traits<wchar_t>, BOOST_DEFAULT_ALLOCATOR(wchar_t)> wregex;
+typedef basic_regex<wchar_t, regex_traits<wchar_t> > wregex;
 #endif
 #endif
 
@@ -131,6 +134,9 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #endif
 
 } // namespace boost
+#ifndef BOOST_REGEX_MATCHER_HPP
+#include <boost/regex/v4/perl_matcher.hpp>
+#endif
 #ifndef BOOST_REGEX_MATCH_HPP
 #include <boost/regex/v4/regex_match.hpp>
 #endif

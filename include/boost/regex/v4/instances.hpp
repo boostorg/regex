@@ -47,7 +47,7 @@ namespace boost{
 #     pragma option push -Jgx
 #  endif
 
-template class BOOST_REGEX_DECL reg_expression< BOOST_REGEX_CHAR_T >;
+template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 
 #  ifndef BOOST_REGEX_INSTANTIATE
 #     pragma option pop
@@ -68,7 +68,7 @@ template class BOOST_REGEX_DECL reg_expression< BOOST_REGEX_CHAR_T >;
 #     pragma warning(disable : 4251 4231 4660)
 #  endif
 
-template class BOOST_REGEX_DECL reg_expression< BOOST_REGEX_CHAR_T >;
+template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 
 #  ifdef BOOST_MSVC
 #     pragma warning(pop)

@@ -31,7 +31,7 @@ namespace boost{
 //
 // Forward declaration:
 //
-template <class RandomAccessIterator, class Allocator>
+template <class BidiIterator, class Allocator = BOOST_DEFAULT_ALLOCATOR(sub_match<BidiIterator> ) >
 class match_results;
 
 namespace re_detail{
@@ -55,20 +55,19 @@ void BOOST_REGEX_CALL re_skip_format(const charT*& fmt, const traits_type& trait
    (void)traits_inst;
 
    typedef typename traits_type::size_type traits_size_type;
-   typedef typename traits_type::uchar_type traits_uchar_type;
    typedef typename traits_type::string_type traits_string_type;
 
    unsigned int parens = 0;
    unsigned int c;
    while(*fmt)
    {
-      c = traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt));
-      if((c == traits_type::syntax_colon) && (parens == 0))
+      c = traits_inst.syntax_type(*fmt);
+      if((c == regex_constants::syntax_colon) && (parens == 0))
       {
          ++fmt;
          return;
       }
-      else if(c == traits_type::syntax_close_bracket)
+      else if(c == regex_constants::syntax_close_mark)
       {
          if(parens == 0)
          {
@@ -77,9 +76,9 @@ void BOOST_REGEX_CALL re_skip_format(const charT*& fmt, const traits_type& trait
          }
          --parens;
       }
-      else if(c == traits_type::syntax_open_bracket)
+      else if(c == regex_constants::syntax_open_mark)
          ++parens;
-      else if(c == traits_type::syntax_slash)
+      else if(c == regex_constants::syntax_escape)
       {
          ++fmt;
          if(*fmt == 0)
@@ -133,9 +132,9 @@ namespace{
 // is sent to an OutputIterator,
 // _reg_format_aux does the actual work:
 //
-template <class OutputIterator, class Iterator, class Allocator, class charT, class traits_type>
+template <class OutputIterator, class Iterator, class charT, class traits_type>
 OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out, 
-                          const match_results<Iterator, Allocator>& m, 
+                          const match_results<Iterator>& m, 
                           const charT*& fmt,
                           match_flag_type flags, const traits_type& traits_inst)
 {
@@ -146,14 +145,13 @@ OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
    while(*fmt_end) ++ fmt_end;
 
    typedef typename traits_type::size_type traits_size_type;
-   typedef typename traits_type::uchar_type traits_uchar_type;
    typedef typename traits_type::string_type traits_string_type;
 
    while(*fmt)
    {
-      switch(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)))
+      switch(traits_inst.syntax_type(*fmt))
       {
-      case traits_type::syntax_dollar:
+      case regex_constants::syntax_dollar:
          if(flags & format_sed)
          {
             // no perl style replacement,
@@ -168,20 +166,20 @@ OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
             ++out;
             return out;
          }
-         switch(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)))
+         switch(traits_inst.syntax_type(*fmt))
          {
-         case traits_type::syntax_start_buffer:
+         case regex_constants::escape_type_start_buffer:
             oi_assign(&out, re_copy_out(out, Iterator(m[-1].first), Iterator(m[-1].second)));
             ++fmt;
             continue;
-         case traits_type::syntax_end_buffer:
+         case regex_constants::escape_type_end_buffer:
             oi_assign(&out, re_copy_out(out, Iterator(m[-2].first), Iterator(m[-2].second)));
             ++fmt;
             continue;
-         case traits_type::syntax_digit:
+         case regex_constants::syntax_digit:
          {
 expand_sub:
-            unsigned int index = traits_inst.toi(fmt, fmt_end, 10);
+            unsigned int index = parse_value(fmt, fmt_end, traits_inst, 10);
             if(index < m.size())
                oi_assign(&out, re_copy_out(out, Iterator(m[index].first), Iterator(m[index].second)));
             continue;
@@ -202,7 +200,7 @@ expand_sub:
             ++fmt;
          }
          continue;
-      case traits_type::syntax_slash:
+      case regex_constants::syntax_escape:
       {
          // escape sequence:
          ++fmt;
@@ -215,33 +213,33 @@ expand_sub:
             ++fmt;
             return out;
          }
-         switch(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)))
+         switch(traits_inst.syntax_type(*fmt))
          {
-         case traits_type::syntax_a:
+         case regex_constants::escape_type_control_a:
             c = '\a';
             ++fmt;
             break;
-         case traits_type::syntax_f:
+         case regex_constants::escape_type_control_f:
             c = '\f';
             ++fmt;
             break;
-         case traits_type::syntax_n:
+         case regex_constants::escape_type_control_n:
             c = '\n';
             ++fmt;
             break;
-         case traits_type::syntax_r:
+         case regex_constants::escape_type_control_r:
             c = '\r';
             ++fmt;
             break;
-         case traits_type::syntax_t:
+         case regex_constants::escape_type_control_t:
             c = '\t';
             ++fmt;
             break;
-         case traits_type::syntax_v:
+         case regex_constants::escape_type_control_v:
             c = '\v';
             ++fmt;
             break;
-         case traits_type::syntax_x:
+         case regex_constants::escape_type_hex:
             ++fmt;
             if(fmt == fmt_end)
             {
@@ -250,7 +248,7 @@ expand_sub:
                return out;
             }
             // maybe have \x{ddd}
-            if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)) == traits_type::syntax_open_brace)
+            if(traits_inst.syntax_type(*fmt) == regex_constants::syntax_open_brace)
             {
                ++fmt;
                if(fmt == fmt_end)
@@ -261,7 +259,8 @@ expand_sub:
                   ++fmt;
                   continue;
                }
-               if(traits_inst.is_class(*fmt, traits_type::char_class_xdigit) == false)
+               int val = parse_value(fmt, fmt_end, traits_inst, 16);
+               if(val < 0)
                {
                   fmt -= 2;
                   *out = *fmt;
@@ -269,10 +268,10 @@ expand_sub:
                   ++fmt;
                   continue;
                }
-               c = (charT)traits_inst.toi(fmt, fmt_end, -16);
-               if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)) != traits_type::syntax_close_brace)
+               c = static_cast<charT>(val);
+               if(traits_inst.syntax_type(*fmt) != regex_constants::syntax_close_brace)
                {
-                  while(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*fmt)) != traits_type::syntax_slash)
+                  while(traits_inst.syntax_type(*fmt) != regex_constants::syntax_escape)
                      --fmt;
                   ++fmt;
                   *out = *fmt;
@@ -285,7 +284,8 @@ expand_sub:
             }
             else
             {
-               if(traits_inst.is_class(*fmt, traits_type::char_class_xdigit) == false)
+               int val = parse_value(fmt, fmt_end, traits_inst, 16);
+               if(val < 0)
                {
                   --fmt;
                   *out = *fmt;
@@ -293,10 +293,10 @@ expand_sub:
                   ++fmt;
                   continue;
                }
-               c = (charT)traits_inst.toi(fmt, fmt_end, -16);
+               c = static_cast<charT>(val);
             }
             break;
-         case traits_type::syntax_c:
+         case regex_constants::escape_type_ascii_control:
             ++fmt;
             if(fmt == fmt_end)
             {
@@ -305,8 +305,7 @@ expand_sub:
                ++out;
                return out;
             }
-            if(((typename traits_type::uchar_type)(*fmt) < (typename traits_type::uchar_type)'@')
-                  || ((typename traits_type::uchar_type)(*fmt) > (typename traits_type::uchar_type)127) )
+            if( (*fmt < static_cast<charT>('@')) || (*fmt > static_cast<charT>('z')) )
             {
                --fmt;
                *out = *fmt;
@@ -314,18 +313,18 @@ expand_sub:
                ++fmt;
                break;
             }
-            c = (charT)((typename traits_type::uchar_type)(*fmt) - (typename traits_type::uchar_type)'@');
+            c = static_cast<charT>(*fmt - static_cast<charT>('@'));
             ++fmt;
             break;
-         case traits_type::syntax_e:
+         case regex_constants::escape_type_e:
             c = (charT)27;
             ++fmt;
             break;
-         case traits_type::syntax_digit:
+         case regex_constants::syntax_digit:
             if(flags & format_sed)
                goto expand_sub;
             else
-               c = (charT)traits_inst.toi(fmt, fmt_end, -8);
+               c = static_cast<charT>(parse_value(fmt, fmt_end, traits_inst, 8));
             break;
          default:
             //c = *fmt;
@@ -335,7 +334,7 @@ expand_sub:
          ++out;
          continue;
       }
-      case traits_type::syntax_open_bracket:
+      case regex_constants::syntax_open_mark:
          if(0 == (flags & format_all))
          {
             *out = *fmt;
@@ -349,7 +348,7 @@ expand_sub:
             oi_assign(&out, _reg_format_aux(out, m, fmt, flags, traits_inst));
             continue;
          }
-      case traits_type::syntax_close_bracket:
+      case regex_constants::syntax_close_mark:
          if(0 == (flags & format_all))
          {
             *out = *fmt;
@@ -362,7 +361,7 @@ expand_sub:
             ++fmt;  // return from recursion
             return out;
          }
-      case traits_type::syntax_colon:
+      case regex_constants::syntax_colon:
          if(flags & regex_constants::format_is_if)
          {
             ++fmt;
@@ -372,7 +371,7 @@ expand_sub:
          ++out;
          ++fmt;
          continue;
-      case traits_type::syntax_question:
+      case regex_constants::syntax_question:
       {
          if(0 == (flags & format_all))
          {
@@ -392,17 +391,17 @@ expand_sub:
                ++fmt;
                return out;
             }
-            unsigned int id = traits_inst.toi(fmt, fmt_end, 10);
+            unsigned int id = parse_value(fmt, fmt_end, traits_inst, 10);
             if(m[id].matched)
             {
                oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
-               if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
+               if(traits_inst.syntax_type(*(fmt-1)) == regex_constants::syntax_colon)
                   re_skip_format(fmt, traits_inst);
             }
             else
             {
                re_skip_format(fmt, traits_inst);
-               if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
+               if(traits_inst.syntax_type(*(fmt-1)) == regex_constants::syntax_colon)
                   oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
             }
             return out;
@@ -448,7 +447,7 @@ public:
    }
 };
 
-template <class OutputIterator, class Iterator, class charT, class Allocator, class traits_type>
+template <class OutputIterator, class Iterator, class charT, class traits_type>
 class merge_out_predicate
 {
    OutputIterator* out;
@@ -456,15 +455,13 @@ class merge_out_predicate
    const charT* fmt;
    match_flag_type flags;
    const traits_type* pt;
-   // rebind allocator to correct type:
-   typedef typename detail::rebind_allocator<sub_match<Iterator>, Allocator>::type alloc_type;
 
 public:
    merge_out_predicate(OutputIterator& o, Iterator& pi, const charT* f, match_flag_type format_flags, const traits_type& p)
       : out(&o), last(&pi), fmt(f), flags(format_flags), pt(&p){}
 
    ~merge_out_predicate() {}
-   bool BOOST_REGEX_CALL operator()(const boost::match_results<Iterator, alloc_type>& m)
+   bool BOOST_REGEX_CALL operator()(const boost::match_results<Iterator>& m)
    {
       const charT* f = fmt;
       if(0 == (flags & format_no_copy))
@@ -477,9 +474,9 @@ public:
 
 } // namespace re_detail
 
-template <class OutputIterator, class Iterator, class Allocator, class charT>
+template <class OutputIterator, class Iterator, class charT>
 OutputIterator regex_format(OutputIterator out,
-                          const match_results<Iterator, Allocator>& m,
+                          const match_results<Iterator>& m,
                           const charT* fmt,
                           match_flag_type flags = format_all
                          )
@@ -488,9 +485,9 @@ OutputIterator regex_format(OutputIterator out,
    return re_detail::_reg_format_aux(out, m, fmt, flags, t);
 }
 
-template <class OutputIterator, class Iterator, class Allocator, class charT>
+template <class OutputIterator, class Iterator, class charT>
 OutputIterator regex_format(OutputIterator out,
-                          const match_results<Iterator, Allocator>& m,
+                          const match_results<Iterator>& m,
                           const std::basic_string<charT>& fmt,
                           match_flag_type flags = format_all
                          )
@@ -500,8 +497,8 @@ OutputIterator regex_format(OutputIterator out,
    return re_detail::_reg_format_aux(out, m, start, flags, t);
 }  
 
-template <class Iterator, class Allocator, class charT>
-std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m, 
+template <class Iterator, class charT>
+std::basic_string<charT> regex_format(const match_results<Iterator>& m, 
                                       const charT* fmt, 
                                       match_flag_type flags = format_all)
 {
@@ -511,8 +508,8 @@ std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& 
    return result;
 }
 
-template <class Iterator, class Allocator, class charT>
-std::basic_string<charT> regex_format(const match_results<Iterator, Allocator>& m, 
+template <class Iterator, class charT>
+std::basic_string<charT> regex_format(const match_results<Iterator>& m, 
                                       const std::basic_string<charT>& fmt, 
                                       match_flag_type flags = format_all)
 {

@@ -46,12 +46,6 @@ namespace boost{
 bad_pattern::~bad_pattern() throw() {}
 bad_expression::~bad_expression() throw() {}
 
-regbase::regbase()
-   : _flags(regbase::failbit){}
-
-regbase::regbase(const regbase& b)
-   : _flags(b._flags){}
-
 
 namespace re_detail{
 
@@ -118,12 +112,6 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page()
 }
 #endif
 
-BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_regex_exception(const std::string& msg)
-{
-   bad_expression e(msg);
-   throw_exception(e);
-}
-
 #if defined(BOOST_REGEX_NON_RECURSIVE) && !defined(BOOST_REGEX_V3)
 
 #if BOOST_REGEX_MAX_CACHE_BLOCKS == 0
@@ -140,7 +128,11 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL put_mem_block(void* p)
 
 #else
 
+#ifdef BOOST_HAS_THREADS
+mem_block_cache block_cache = { 0, 0, BOOST_STATIC_MUTEX_INIT, };
+#else
 mem_block_cache block_cache = { 0, 0, };
+#endif
 
 BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block()
 {

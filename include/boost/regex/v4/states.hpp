@@ -36,6 +36,7 @@ enum mask_type
 {
    mask_take = 1,
    mask_skip = 2,
+   mask_init = 4,
    mask_any = mask_skip | mask_take,
    mask_all = mask_any
 };
@@ -123,7 +124,7 @@ execution of the machine.
 union offset_type
 {
    re_syntax_base*   p;
-   std::size_t       i;
+   std::ptrdiff_t    i;
 };
 
 /*** struct re_syntax_base ********************************************
@@ -133,7 +134,6 @@ struct re_syntax_base
 {
    syntax_element_type   type;         // what kind of state this is
    offset_type           next;         // next state in the machine
-   unsigned int          can_be_null;  // true if we match a NULL string
 };
 
 /*** struct re_brace **************************************************
@@ -162,10 +162,11 @@ First csingles null-terminated strings
 Then 2 * cranges NULL terminated strings
 Then cequivalents NULL terminated strings
 ***********************************************************************/
+template <class mask_type>
 struct re_set_long : public re_syntax_base
 {
    unsigned int            csingles, cranges, cequivalents;
-   boost::uint_fast32_t    cclasses;
+   mask_type               cclasses;
    bool                    isnot;
    bool                    singleton;
 };
@@ -175,7 +176,7 @@ A set of narrow-characters, matches any of _map which is none-zero
 ***********************************************************************/
 struct re_set : public re_syntax_base
 {
-   unsigned char _map[256];
+   unsigned char _map[1 << CHAR_BIT];
 };
 
 /*** struct re_jump ***************************************************
@@ -183,19 +184,27 @@ Jump to a new location in the machine (not next).
 ***********************************************************************/
 struct re_jump : public re_syntax_base
 {
-   offset_type     alt;           // location to jump to
-   unsigned char   _map[256];     // which characters can take the jump
+   offset_type     alt;                 // location to jump to
+};
+
+/*** struct re_alt ***************************************************
+Jump to a new location in the machine (possibly next).
+***********************************************************************/
+struct re_alt : public re_jump
+{
+   unsigned char   _map[1 << CHAR_BIT]; // which characters can take the jump
+   unsigned int    can_be_null;         // true if we match a NULL string
 };
 
 /*** struct re_repeat *************************************************
 Repeat a section of the machine
 ***********************************************************************/
-struct re_repeat : public re_jump
+struct re_repeat : public re_alt
 {
-   unsigned   min, max;  // min and max allowable repeats
-   int        id;        // Unique identifier for this repeat
-   bool       leading;   // True if this repeat is at the start of the machine (lets us optimize some searches)
-   bool       greedy;    // True if this is a greedy repeat
+   std::size_t   min, max;  // min and max allowable repeats
+   int           id;        // Unique identifier for this repeat
+   bool          leading;   // True if this repeat is at the start of the machine (lets us optimize some searches)
+   bool          greedy;    // True if this is a greedy repeat
 };
 
 /*** enum re_jump_size_type *******************************************
@@ -212,11 +221,11 @@ enum re_jump_size_type
 /*** proc re_is_set_member *********************************************
 Forward declaration: we'll need this one later...
 ***********************************************************************/
-template <class iterator, class charT, class traits_type, class Allocator>
+template <class iterator, class charT, class traits_type>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
-                          const re_set_long* set_, 
-                          const reg_expression<charT, traits_type, Allocator>& e);
+                          const re_set_long<typename traits_type::char_class_type>* set_, 
+                          const basic_regex<charT, traits_type>& e);
 
 } // namespace re_detail
 

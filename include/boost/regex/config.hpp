@@ -50,12 +50,16 @@
 #  include <iterator>
 #  include <iosfwd>
 #  include <vector>
+#  include <map>
+#  include <limits>
 #  include <boost/config.hpp>
+#  include <boost/assert.hpp>
 #  include <boost/cstdint.hpp>
 #  include <boost/detail/allocator.hpp>
 #  include <boost/regex/config/cstring.hpp>
 #  include <boost/throw_exception.hpp>
 #  include <boost/scoped_ptr.hpp>
+#  include <boost/shared_ptr.hpp>
 #  ifndef BOOST_NO_STD_LOCALE
 #     include <locale>
 #  endif
@@ -116,6 +120,9 @@
 //
 #if defined(BOOST_DISABLE_WIN32) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_NO_W32
+#endif
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+#  include <windows.h>
 #endif
 
 // some versions of gcc can't merge template instances:
@@ -285,20 +292,6 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
 
-#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
-#  include <windows.h>
-#endif
-
-#ifdef MAXPATH
-#  define BOOST_REGEX_MAX_PATH MAXPATH
-#elif defined(MAX_PATH)
-#  define BOOST_REGEX_MAX_PATH MAX_PATH
-#elif defined(FILENAME_MAX)
-#  define BOOST_REGEX_MAX_PATH FILENAME_MAX
-#else
-#  define BOOST_REGEX_MAX_PATH 200
-#endif
-
 #ifndef BOOST_REGEX_MAX_STATE_COUNT
 #  define BOOST_REGEX_MAX_STATE_COUNT 100000000
 #endif
@@ -331,63 +324,6 @@ if(0 == (x))\
 #  define BOOST_REGEX_NOEH_ASSERT(x)
 #endif
 
-/*****************************************************************************
- *
- *  Debugging / tracing support:
- *
- ****************************************************************************/
-
-#if defined(BOOST_REGEX_DEBUG) && defined(__cplusplus)
-
-#  include <iostream>
-using std::cout;
-using std::cin;
-using std::cerr;
-using std::endl;
-using std::hex;
-using std::dec;
-
-#  ifndef jm_assert
-#     define jm_assert(x) assert(x)
-#  endif
-#  ifndef jm_trace
-#     define jm_trace(x) cerr << x << endl;
-#  endif
-#  ifndef jm_instrument
-#     define jm_instrument jm_trace(__FILE__<<"#"<<__LINE__)
-#  endif
-
-namespace boost{
-   namespace re_detail{
-class debug_guard
-{
-public:
-   char g1[32];
-   const char* pc;
-   char* pnc;
-   const char* file;
-   int line;
-   char g2[32];
-   debug_guard(const char* f, int l, const char* p1 = 0, char* p2 = 0);
-   ~debug_guard();
-};
-
-#  define BOOST_RE_GUARD_STACK boost::re_detail::debug_guard sg(__FILE__, __LINE__);
-#  define BOOST_RE_GUARD_GLOBAL(x) const char g1##x[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, }; char g2##x[32]; boost::debug_guard g3##x(__FILE__, __LINE__, g1##x, g2##x);
-
-   } // namespace re_detail
-} // namespace boost
-
-#else
-
-#  define jm_assert(x)
-#  define jm_trace(x)
-#  define BOOST_RE_GUARD_STACK
-#  define BOOST_RE_GUARD_GLOBAL(x)
-#  ifndef jm_instrument
-#     define jm_instrument
-#  endif
-#endif
 
 /*****************************************************************************
  *
@@ -430,13 +366,12 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 namespace boost{
 namespace re_detail{
 
-BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_regex_exception(const std::string& s);
-
 template <class traits>
 void raise_error(const traits& t, unsigned code)
 {
    (void)t;  // warning suppression
-   raise_regex_exception(t.error_string(code));
+   std::runtime_error e(t.error_string(code));
+   throw_exception(e);
 }
 
 }

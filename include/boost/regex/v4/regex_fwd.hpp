@@ -13,7 +13,7 @@
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE         regex_fwd.cpp
   *   VERSION      see <boost/version.hpp>
-  *   DESCRIPTION: Forward declares boost::reg_expression<> and
+  *   DESCRIPTION: Forward declares boost::basic_regex<> and
   *                associated typedefs.
   */
 
@@ -23,7 +23,6 @@
 #ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/config.hpp>
 #endif
-#include <boost/detail/allocator.hpp>
 
 //
 // define BOOST_REGEX_NO_FWD if this
@@ -46,16 +45,17 @@
 namespace boost{
 
 template <class charT>
-class regex_traits;
+class cpp_regex_traits;
 
-template <class charT, class traits = regex_traits<charT>, class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
-class reg_expression;
-template <class charT, class traits = regex_traits<charT>, class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
+template <class charT, class implementationT = cpp_regex_traits<charT> >
+struct regex_traits;
+
+template <class charT, class traits = regex_traits<charT> >
 class basic_regex;
 
-typedef basic_regex<char, regex_traits<char>, BOOST_DEFAULT_ALLOCATOR(char) > regex;
+typedef basic_regex<char, regex_traits<char> > regex;
 #ifndef BOOST_NO_WREGEX
-typedef basic_regex<wchar_t, regex_traits<wchar_t>, BOOST_DEFAULT_ALLOCATOR(wchar_t) > wregex;
+typedef basic_regex<wchar_t, regex_traits<wchar_t> > wregex;
 #endif
 
 } // namespace boost

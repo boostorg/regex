@@ -46,16 +46,11 @@ namespace boost{
 
 template <class BidirectionalIterator,
           class charT,
-          class traits,
-          class Allocator>
+          class traits>
 class regex_token_iterator_implementation 
 {
-   typedef basic_regex<charT, traits, Allocator> regex_type;
-#if 1
+   typedef basic_regex<charT, traits> regex_type;
    typedef sub_match<BidirectionalIterator>      value_type;
-#else
-   typedef std::basic_string<charT>              value_type;
-#endif
 
    match_results<BidirectionalIterator> what;   // current match
    BidirectionalIterator                end;    // end of search area
@@ -160,15 +155,22 @@ public:
 
 template <class BidirectionalIterator, 
           class charT = BOOST_DEDUCED_TYPENAME re_detail::regex_iterator_traits<BidirectionalIterator>::value_type,
-          class traits = regex_traits<charT>,
-          class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
+          class traits = regex_traits<charT> >
 class regex_token_iterator 
+#ifndef BOOST_NO_STD_ITERATOR
+   : public std::iterator<
+         std::forward_iterator_tag, 
+         sub_match<BidirectionalIterator>,
+         typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type,
+         const sub_match<BidirectionalIterator>*,
+         const sub_match<BidirectionalIterator>& >         
+#endif
 {
 private:
-   typedef regex_token_iterator_implementation<BidirectionalIterator, charT, traits, Allocator> impl;
+   typedef regex_token_iterator_implementation<BidirectionalIterator, charT, traits> impl;
    typedef shared_ptr<impl> pimpl;
 public:
-   typedef          basic_regex<charT, traits, Allocator>                   regex_type;
+   typedef          basic_regex<charT, traits>                   regex_type;
    typedef          sub_match<BidirectionalIterator>                        value_type;
    typedef typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type 
                                                                             difference_type;

@@ -24,6 +24,7 @@
 #include <boost/regex/config.hpp>
 #endif
 #include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/error_type.hpp>
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
@@ -46,8 +47,8 @@ typedef size_t regsize_t;
 typedef struct
 {
    unsigned int re_magic;
-   unsigned int re_nsub;      /* number of parenthesized subexpressions */
-   const char* re_endp;       /* end pointer for REG_PEND */
+   std::size_t  re_nsub;      /* number of parenthesized subexpressions */
+   const char*  re_endp;       /* end pointer for REG_PEND */
    void* guts;                /* none of your business :-) */
    match_flag_type eflags;        /* none of your business :-) */
 } regex_tA;
@@ -56,7 +57,7 @@ typedef struct
 typedef struct
 {
    unsigned int re_magic;
-   unsigned int re_nsub;         /* number of parenthesized subexpressions */
+   std::size_t  re_nsub;         /* number of parenthesized subexpressions */
    const wchar_t* re_endp;       /* end pointer for REG_PEND */
    void* guts;                   /* none of your business :-) */
    match_flag_type eflags;           /* none of your business :-) */
@@ -127,34 +128,6 @@ BOOST_REGEX_DECL void BOOST_REGEX_CCALL regfreeW(regex_tW*);
 #define regfree regfreeA
 #define regex_t regex_tA
 #endif
-
-/* regerror() flags */
-typedef enum
-{
-  REG_NOERROR = 0,   /* Success.  */
-  REG_NOMATCH = 1,      /* Didn't find a match (for regexec).  */
-
-  /* POSIX regcomp return error codes.  (In the order listed in the
-     standard.)  */
-  REG_BADPAT = 2,    /* Invalid pattern.  */
-  REG_ECOLLATE = 3,  /* Undefined collating element.  */
-  REG_ECTYPE = 4,    /* Invalid character class name.  */
-  REG_EESCAPE = 5,   /* Trailing backslash.  */
-  REG_ESUBREG = 6,   /* Invalid back reference.  */
-  REG_EBRACK = 7,    /* Unmatched left bracket.  */
-  REG_EPAREN = 8,    /* Parenthesis imbalance.  */
-  REG_EBRACE = 9,    /* Unmatched \{.  */
-  REG_BADBR = 10,    /* Invalid contents of \{\}.  */
-  REG_ERANGE = 11,   /* Invalid range end.  */
-  REG_ESPACE = 12,   /* Ran out of memory.  */
-  REG_BADRPT = 13,   /* No preceding re for repetition op.  */
-  REG_EEND = 14,     /* unexpected end of expression */
-  REG_ESIZE = 15,    /* expression too big */
-  REG_ERPAREN = 16,   /* unmatched right parenthesis */
-  REG_EMPTY = 17,    /* empty expression */
-  REG_E_MEMORY = REG_ESIZE, /* out of memory */
-  REG_E_UNKNOWN = 18 /* unknown error */
-} reg_errcode_t;
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
@@ -248,7 +221,7 @@ public:
    std::size_t Position(int i = 0)const;
    std::size_t Length(int i = 0)const;
    bool Matched(int i = 0)const;
-   unsigned int Marks()const;
+   std::size_t Marks()const;
    std::string What(int i = 0)const;
    std::string operator[](int i)const { return What(i); }
 

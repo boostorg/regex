@@ -29,11 +29,10 @@ namespace boost{
 
 template <class BidirectionalIterator, 
           class charT,
-          class traits,
-          class Allocator>
+          class traits>
 class regex_iterator_implementation 
 {
-   typedef basic_regex<charT, traits, Allocator> regex_type;
+   typedef basic_regex<charT, traits> regex_type;
 
    match_results<BidirectionalIterator> what;  // current match
    BidirectionalIterator                base;  // start of sequence
@@ -73,15 +72,22 @@ public:
 
 template <class BidirectionalIterator, 
           class charT = BOOST_DEDUCED_TYPENAME re_detail::regex_iterator_traits<BidirectionalIterator>::value_type,
-          class traits = regex_traits<charT>,
-          class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
+          class traits = regex_traits<charT> >
 class regex_iterator 
+#ifndef BOOST_NO_STD_ITERATOR
+   : public std::iterator<
+         std::forward_iterator_tag, 
+         match_results<BidirectionalIterator>,
+         typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type,
+         const match_results<BidirectionalIterator>*,
+         const match_results<BidirectionalIterator>& >         
+#endif
 {
 private:
-   typedef regex_iterator_implementation<BidirectionalIterator, charT, traits, Allocator> impl;
+   typedef regex_iterator_implementation<BidirectionalIterator, charT, traits> impl;
    typedef shared_ptr<impl> pimpl;
 public:
-   typedef          basic_regex<charT, traits, Allocator>                   regex_type;
+   typedef          basic_regex<charT, traits>                   regex_type;
    typedef          match_results<BidirectionalIterator>                    value_type;
    typedef typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type 
                                                                             difference_type;

@@ -25,9 +25,7 @@
 
 namespace boost{
 
-template <class BidiIterator
-         , class Allocator = BOOST_DEFAULT_ALLOCATOR(sub_match<BidiIterator> )
-         >
+template <class BidiIterator, class Allocator>
 class match_results
 { 
 private:

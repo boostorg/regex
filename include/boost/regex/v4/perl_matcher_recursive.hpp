@@ -45,37 +45,37 @@ public:
    const sub_match<BidiIterator>& get() { return sub; }
 };
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_all_states()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
    static matcher_proc_type const s_match_vtable[26] = 
    {
-      (&perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark),
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_endmark,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_literal,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_start_line,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_end_line,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_wild,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_match,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_word_boundary,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_within_word,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_word_start,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_word_end,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_buffer_start,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_buffer_end,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_backref,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_jump,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_alt,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_combining,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_soft_buffer_end,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_restart_continue,
-      (::boost::is_random_access_iterator<BidiIterator>::value ? &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat_fast : &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat_slow),
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_repeat,
+      (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
+      &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_literal,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_start_line,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_end_line,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_wild,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_match,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_within_word,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_word_start,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_word_end,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_buffer_start,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_buffer_end,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_backref,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_long_set,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_set,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_jump,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_alt,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_rep,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_combining,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_soft_buffer_end,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_restart_continue,
+      (::boost::is_random_access_iterator<BidiIterator>::value ? &perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast : &perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow),
+      &perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat,
    };
 
    if(state_count > max_state_count)
@@ -94,8 +94,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_all_states
    return true;
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
 {
    int index = static_cast<const re_brace*>(pstate)->index;
    bool r = true;
@@ -185,11 +185,11 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark(
    return r;
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_alt()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_alt()
 {
    bool take_first, take_second;
-   const re_jump* jmp = static_cast<const re_jump*>(pstate);
+   const re_alt* jmp = static_cast<const re_alt*>(pstate);
 
    // find out which of these two alternatives we need to take:
    if(position == last)
@@ -199,8 +199,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_alt()
    }
    else
    {
-      take_first = access::can_start(*position, jmp->_map, (unsigned char)mask_take);
-      take_second = access::can_start(*position, jmp->_map, (unsigned char)mask_skip);
+      take_first = can_start(*position, jmp->_map, (unsigned char)mask_take);
+      take_second = can_start(*position, jmp->_map, (unsigned char)mask_skip);
   }
 
    if(take_first)
@@ -230,8 +230,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_alt()
    return false;  // neither option is possible
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -261,8 +261,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep()
    }
    else
    {
-      take_first = access::can_start(*position, rep->_map, (unsigned char)mask_take);
-      take_second = access::can_start(*position, rep->_map, (unsigned char)mask_skip);
+      take_first = can_start(*position, rep->_map, (unsigned char)mask_take);
+      take_second = can_start(*position, rep->_map, (unsigned char)mask_skip);
    }
 
    if(next_count->get_count() < rep->min)
@@ -327,8 +327,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep()
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat_slow()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -387,8 +387,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat_fast()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -400,7 +400,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
    // start by working out how much we can skip:
    //
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   unsigned count = std::min(static_cast<unsigned>(re_detail::distance(position, last)), (rep->greedy ? rep->max : rep->min));
+   unsigned count = (std::min)(static_cast<unsigned>(re_detail::distance(position, last)), (rep->greedy ? rep->max : rep->min));
    if(rep->min > count)
       return false;  // not enough text left to match
    std::advance(position, count);
@@ -413,7 +413,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
    BidiIterator save_pos;
    do
    {
-      while((position != last) && (count < rep->max) && !access::can_start(*position, rep->_map, mask_skip))
+      while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
          ++position;
          ++count;
@@ -437,8 +437,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repeat()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -454,11 +454,11 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (traits_inst.translate(*position, icase) == what))
       {
@@ -486,7 +486,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
    BidiIterator save_pos;
    do
    {
-      while((position != last) && (count < rep->max) && !access::can_start(*position, rep->_map, mask_skip))
+      while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
          if((traits_inst.translate(*position, icase) == what))
          {
@@ -507,8 +507,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(traits_inst.translate(*position, icase) == what)
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop
@@ -518,8 +526,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -534,13 +542,13 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
-      while((position != end) && map[(traits_uchar_type)traits_inst.translate(*position, icase)])
+      while((position != end) && map[static_cast<unsigned char>(traits_inst.translate(*position, icase))])
       {
          ++position;
       }
@@ -548,7 +556,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
    }
    else
    {
-      while((count < desired) && (position != last) && map[(traits_uchar_type)traits_inst.translate(*position, icase)])
+      while((count < desired) && (position != last) && map[static_cast<unsigned char>(traits_inst.translate(*position, icase))])
       {
          ++position;
          ++count;
@@ -566,9 +574,9 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
    BidiIterator save_pos;
    do
    {
-      while((position != last) && (count < rep->max) && !access::can_start(*position, rep->_map, mask_skip))
+      while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
-         if(map[(traits_uchar_type)traits_inst.translate(*position, icase)])
+         if(map[static_cast<unsigned char>(traits_inst.translate(*position, icase))])
          {
             ++position;
             ++count;
@@ -587,8 +595,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(map[static_cast<unsigned char>(traits_inst.translate(*position, icase))])
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop
@@ -598,8 +614,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_repeat()
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -609,16 +625,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   const re_set_long* set = static_cast<const re_set_long*>(pstate->next.p);
+   const re_set_long<typename traits::char_class_type>* set = static_cast<const re_set_long<typename traits::char_class_type>*>(pstate->next.p);
    unsigned count = 0;
    //
    // start by working out how much we can skip:
    //
-   unsigned desired = rep->greedy ? rep->max : rep->min;
+   std::size_t desired = rep->greedy ? rep->max : rep->min;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
       BidiIterator end = position;
-      std::advance(end, std::min((unsigned)re_detail::distance(position, last), desired));
+      std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
       while((position != end) && (position != re_is_set_member(position, last, set, re)))
       {
@@ -646,7 +662,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
    BidiIterator save_pos;
    do
    {
-      while((position != last) && (count < rep->max) && !access::can_start(*position, rep->_map, mask_skip))
+      while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
          if(position != re_is_set_member(position, last, set, re))
          {
@@ -667,8 +683,16 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          return false;
       if(position == last)
          return false;
-      position = ++save_pos;
-      ++count;
+      position = save_pos;
+      if(position != re_is_set_member(position, last, set, re))
+      {
+         ++position;
+         ++count;
+      }
+      else
+      {
+         return false;
+      }
    }while(true);
 #ifdef __BORLANDC__
 #pragma option pop
@@ -678,8 +702,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
 #endif
 }
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
-bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::backtrack_till_match(unsigned count)
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::backtrack_till_match(unsigned count)
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -708,7 +732,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::backtrack_till_m
    }
    do
    {
-      while(count && !access::can_start(*position, rep->_map, mask_skip))
+      while(count && !can_start(*position, rep->_map, mask_skip))
       {
          --position;
          --count;

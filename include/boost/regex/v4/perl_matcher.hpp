@@ -25,6 +25,36 @@ namespace re_detail{
 // error checking API:
 //
 BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex::flag_type ef, match_flag_type mf);
+//
+// function can_start:
+//
+template <class charT>
+bool can_start(charT c, const unsigned char* map, unsigned char mask)
+{
+   return ((c < 0) ? true : ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask));
+}
+inline bool can_start(char c, const unsigned char* map, unsigned char mask)
+{
+   return map[(unsigned char)c] & mask;
+}
+inline bool can_start(signed char c, const unsigned char* map, unsigned char mask)
+{
+   return map[(unsigned char)c] & mask;
+}
+inline bool can_start(unsigned char c, const unsigned char* map, unsigned char mask)
+{
+   return map[c] & mask;
+}
+inline bool can_start(unsigned short c, const unsigned char* map, unsigned char mask)
+{
+   return ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask);
+}
+#if defined(WCHAR_MIN) && (WCHAR_MIN == 0) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
+inline bool can_start(wchar_t c, const unsigned char* map, unsigned char mask)
+{
+   return ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask);
+}
+#endif
 
 
 //
@@ -57,11 +87,11 @@ inline const charT* re_skip_past_null(const charT* p)
   return ++p;
 }
 
-template <class iterator, class charT, class traits_type, class Allocator>
+template <class iterator, class charT, class traits_type>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
-                          const re_set_long* set_, 
-                          const reg_expression<charT, traits_type, Allocator>& e)
+                          const re_set_long<typename traits_type::char_class_type>* set_, 
+                          const basic_regex<charT, traits_type>& e)
 {   
    const charT* p = reinterpret_cast<const charT*>(set_+1);
    iterator ptr;
@@ -114,16 +144,15 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
 
    if(set_->cranges || set_->cequivalents)
    {
-      traits_string_type s2(1, col);
       traits_string_type s1;
       //
       // try and match a range, NB only a single character can match
       if(set_->cranges)
       {
          if((e.flags() & regex_constants::collate) == 0)
-            s1 = s2;
+            s1.assign(1, col);
          else
-            traits_inst.transform(s1, s2);
+            s1 = traits_inst.transform(&col, &col + 1);
          for(i = 0; i < set_->cranges; ++i)
          {
             if(STR_COMP(s1, p) <= 0)
@@ -148,7 +177,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
       // try and match an equivalence class, NB only a single character can match
       if(set_->cequivalents)
       {
-         traits_inst.transform_primary(s1, s2);
+         s1 = traits_inst.transform_primary(&col, &col +1);
          for(i = 0; i < set_->cequivalents; ++i)
          {
             if(STR_COMP(s1, p) == 0)
@@ -164,42 +193,14 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
    return set_->isnot ? ++next : next;
 }
 
-template <class charT, class traits, class Allocator>
-struct access_t : public reg_expression<charT, traits, Allocator>
-{
-   typedef typename is_byte<charT>::width_type width_type;
-   typedef reg_expression<charT, traits, Allocator> base_type;
-   typedef charT char_type;
-   typedef traits traits_type;
-   typedef Allocator alloc_type;
-
-   static int repeat_count(const base_type& b) 
-   { return base_type::repeat_count(b); }
-   static unsigned int restart_type(const base_type& b) 
-   { return base_type::restart_type(b); }
-   static const re_syntax_base* first(const base_type& b)
-   { return base_type::first(b); }
-   static const unsigned char* get_map(const base_type& b)
-   { return base_type::get_map(b); }
-   static std::size_t leading_length(const base_type& b)
-   { return base_type::leading_length(b); }
-   static const kmp_info<charT>* get_kmp(const base_type& b)
-   { return base_type::get_kmp(b); }
-   static bool can_start(char_type c, const unsigned char* _map, unsigned char mask)
-   {
-      return reg_expression<char_type, traits_type, alloc_type>::can_start(c, _map, mask, width_type());
-   }
-};
-
-
 template <class BidiIterator>
 class repeater_count
 {
    repeater_count** stack;
    repeater_count* next;
    int id;
-   unsigned count;              // the number of iterations so far
-   BidiIterator start_pos; // where the last repeat started
+   std::size_t count;        // the number of iterations so far
+   BidiIterator start_pos;   // where the last repeat started
 public:
    repeater_count(repeater_count** s)
    {
@@ -230,10 +231,10 @@ public:
    {
       *stack = next;
    }
-   unsigned get_count() { return count; }
+   std::size_t get_count() { return count; }
    int get_id() { return id; }
    int operator++() { return ++count; }
-   bool check_null_repeat(const BidiIterator& pos, unsigned max)
+   bool check_null_repeat(const BidiIterator& pos, std::size_t max)
    {
       // this is called when we are about to start a new repeat,
       // if the last one was NULL move our count to max,
@@ -268,22 +269,20 @@ enum saved_state_type
    saved_state_count = 14
 };
 
-template <class BidiIterator, class Allocator, class traits, class Allocator2>
+template <class BidiIterator, class Allocator, class traits>
 class perl_matcher
 {
 public:
    typedef typename traits::char_type char_type;
-   typedef perl_matcher<BidiIterator, Allocator, traits, Allocator2> self_type;
+   typedef perl_matcher<BidiIterator, Allocator, traits> self_type;
    typedef bool (self_type::*matcher_proc_type)(void);
-   typedef access_t<char_type, traits, Allocator2> access;
    typedef typename traits::size_type traits_size_type;
-   typedef typename traits::uchar_type traits_uchar_type;
    typedef typename is_byte<char_type>::width_type width_type;
    typedef typename regex_iterator_traits<BidiIterator>::difference_type difference_type;
 
    perl_matcher(BidiIterator first, BidiIterator end, 
       match_results<BidiIterator, Allocator>& what, 
-      const reg_expression<char_type, traits, Allocator2>& e,
+      const basic_regex<char_type, traits>& e,
       match_flag_type f);
 
    bool match();
@@ -361,7 +360,7 @@ private:
    // where the current search started from, acts as base for $` during grep:
    BidiIterator search_base;
    // the expression being examined:
-   const reg_expression<char_type, traits, Allocator2>& re;
+   const basic_regex<char_type, traits>& re;
    // the expression's traits class:
    const traits& traits_inst;
    // the next state in the machine being matched:
@@ -382,6 +381,8 @@ private:
    repeater_count<BidiIterator>* next_count;
    // the first repeat being examined (top of linked list):
    repeater_count<BidiIterator> rep_obj;
+   // the mask to pass when matching word boundaries:
+   typename traits::char_class_type m_word_mask;
 
 #ifdef BOOST_REGEX_NON_RECURSIVE
    //

@@ -46,8 +46,16 @@ public:
 class BOOST_REGEX_DECL bad_expression : public bad_pattern
 {
 public:
-   explicit bad_expression(const std::string& s) : bad_pattern(s) {}
+   explicit bad_expression(const std::string& s, regex_constants::error_type err, std::ptrdiff_t pos) 
+      : bad_pattern(s), m_error_code(err), m_position(pos) {}
    ~bad_expression() throw();
+   regex_constants::error_type errorno()
+   { return m_error_code; }
+   std::ptrdiff_t position()
+   { return m_position; }
+private:
+   regex_constants::error_type m_error_code;
+   std::ptrdiff_t m_position;
 };
 
 #ifdef BOOST_HAS_ABI_HEADERS

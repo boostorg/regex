@@ -22,9 +22,8 @@ template test
 #
 template regression
     : <template>test                    # sources
-      regress/parse.cpp
-      regress/regress.cpp 
-      regress/tests.cpp
+      regress/main.cpp
+      regress/basic_tests.cpp 
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 

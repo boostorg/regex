@@ -172,7 +172,6 @@ using namespace boost;
 void HandleFile(const char* wild)
 {
    using namespace boost;
-   jm_trace("Handling file " << wild);
    file_iterator end;
    file_iterator start(wild);
 
@@ -193,14 +192,12 @@ void HandleFile(const char* wild)
          std::strcat(buf, directory_iterator::separator());
          std::strcat(buf, "*");
       }
-      jm_trace("Enumerating directories: " << buf);
       directory_iterator dstart(buf);
       directory_iterator dend;
 
       // now get the file mask bit of "wild":
       const char* ptr = wild + rootlen;
       if(*ptr) ++ptr;
-      jm_trace("File mask part is: " << ptr);
 
       while(dstart != dend)
       {
@@ -217,7 +214,6 @@ int done = 0;
 void HandleArg(const char* arg)
 {
    using namespace boost;
-   jm_trace("Handling argument: " << arg);
    if(*arg == '-')
    {
       parse_switch(arg);

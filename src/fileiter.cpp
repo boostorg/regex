@@ -67,7 +67,6 @@ const char* _fi_sep_alt = _fi_sep;
 
 void mapfile::open(const char* file)
 {
-   BOOST_RE_GUARD_STACK
 #if defined(__CYGWIN__)||defined(__CYGWIN32__)
    char win32file[ MAX_PATH ];
    cygwin_conv_to_win32_path( file, win32file );
@@ -110,7 +109,6 @@ void mapfile::open(const char* file)
 
 void mapfile::close()
 {
-   BOOST_RE_GUARD_STACK
    if(hfile != INVALID_HANDLE_VALUE)
    {
       UnmapViewOfFile((void*)_first);
@@ -125,7 +123,6 @@ void mapfile::close()
 
 mapfile_iterator& mapfile_iterator::operator = (const mapfile_iterator& i)
 {
-   BOOST_RE_GUARD_STACK
    if(file && node)
       file->unlock(node);
    file = i.file;
@@ -138,7 +135,6 @@ mapfile_iterator& mapfile_iterator::operator = (const mapfile_iterator& i)
 
 mapfile_iterator& mapfile_iterator::operator++ ()
 {
-   BOOST_RE_GUARD_STACK
    if((++offset == mapfile::buf_size) && file)
    {
       ++node;
@@ -151,7 +147,6 @@ mapfile_iterator& mapfile_iterator::operator++ ()
 
 mapfile_iterator mapfile_iterator::operator++ (int)
 {
-   BOOST_RE_GUARD_STACK
    mapfile_iterator temp(*this);
    if((++offset == mapfile::buf_size) && file)
    {
@@ -165,7 +160,6 @@ mapfile_iterator mapfile_iterator::operator++ (int)
 
 mapfile_iterator& mapfile_iterator::operator-- ()
 {
-   BOOST_RE_GUARD_STACK
    if((offset == 0) && file)
    {
       --node;
@@ -180,7 +174,6 @@ mapfile_iterator& mapfile_iterator::operator-- ()
 
 mapfile_iterator mapfile_iterator::operator-- (int)
 {
-   BOOST_RE_GUARD_STACK
    mapfile_iterator temp(*this);
    if((offset == 0) && file)
    {
@@ -196,7 +189,6 @@ mapfile_iterator mapfile_iterator::operator-- (int)
 
 mapfile_iterator operator + (const mapfile_iterator& i, long off)
 {
-   BOOST_RE_GUARD_STACK
    mapfile_iterator temp(i);
    temp += off;
    return temp;
@@ -204,7 +196,6 @@ mapfile_iterator operator + (const mapfile_iterator& i, long off)
 
 mapfile_iterator operator - (const mapfile_iterator& i, long off)
 {
-   BOOST_RE_GUARD_STACK
    mapfile_iterator temp(i);
    temp -= off;
    return temp;
@@ -212,19 +203,16 @@ mapfile_iterator operator - (const mapfile_iterator& i, long off)
 
 mapfile::iterator mapfile::begin()const
 {
-   BOOST_RE_GUARD_STACK
    return mapfile_iterator(this, 0);
 }
 
 mapfile::iterator mapfile::end()const
 {
-   BOOST_RE_GUARD_STACK
    return mapfile_iterator(this, _size);
 }
 
 void mapfile::lock(pointer* node)const
 {
-   BOOST_RE_GUARD_STACK
    assert(node >= _first);
    assert(node <= _last);
    if(node < _last)
@@ -265,7 +253,6 @@ void mapfile::lock(pointer* node)const
 
 void mapfile::unlock(pointer* node)const
 {
-   BOOST_RE_GUARD_STACK
    assert(node >= _first);
    assert(node <= _last);
    if(node < _last)
@@ -279,7 +266,6 @@ void mapfile::unlock(pointer* node)const
 
 long int get_file_length(std::FILE* hfile)
 {
-   BOOST_RE_GUARD_STACK
    long int result;
    std::fseek(hfile, 0, SEEK_END);
    result = std::ftell(hfile);
@@ -290,7 +276,6 @@ long int get_file_length(std::FILE* hfile)
 
 void mapfile::open(const char* file)
 {
-   BOOST_RE_GUARD_STACK
    hfile = std::fopen(file, "rb");
 #ifndef BOOST_NO_EXCEPTIONS
    try{
@@ -325,7 +310,6 @@ void mapfile::open(const char* file)
 
 void mapfile::close()
 {
-   BOOST_RE_GUARD_STACK
    if(hfile != 0)
    {
       pointer* p = _first;
@@ -350,7 +334,6 @@ void mapfile::close()
 
 file_iterator::file_iterator()
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -381,7 +364,6 @@ file_iterator::file_iterator()
 
 file_iterator::file_iterator(const char* wild)
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -450,7 +432,6 @@ file_iterator::file_iterator(const char* wild)
 
 file_iterator::file_iterator(const file_iterator& other)
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -478,7 +459,6 @@ file_iterator::file_iterator(const file_iterator& other)
 
 file_iterator& file_iterator::operator=(const file_iterator& other)
 {
-   BOOST_RE_GUARD_STACK
    std::strcpy(_root, other._root);
    std::strcpy(_path, other._path);
    ptr = _path + (other.ptr - other._path);
@@ -496,7 +476,6 @@ file_iterator& file_iterator::operator=(const file_iterator& other)
 
 file_iterator::~file_iterator()
 {
-   BOOST_RE_GUARD_STACK
    delete[] _root;
    delete[] _path;
    if(--(ref->count) == 0)
@@ -509,7 +488,6 @@ file_iterator::~file_iterator()
 
 file_iterator file_iterator::operator++(int)
 {
-   BOOST_RE_GUARD_STACK
    file_iterator temp(*this);
    next();
    return temp;
@@ -518,7 +496,6 @@ file_iterator file_iterator::operator++(int)
 
 void file_iterator::next()
 {
-   BOOST_RE_GUARD_STACK
    if(ref->hf != _fi_invalid_handle)
    {
       bool cont = true;
@@ -545,7 +522,6 @@ void file_iterator::next()
 
 directory_iterator::directory_iterator()
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -576,7 +552,6 @@ directory_iterator::directory_iterator()
 
 directory_iterator::directory_iterator(const char* wild)
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -643,7 +618,6 @@ directory_iterator::directory_iterator(const char* wild)
 
 directory_iterator::~directory_iterator()
 {
-   BOOST_RE_GUARD_STACK
    delete[] _root;
    delete[] _path;
    if(--(ref->count) == 0)
@@ -656,7 +630,6 @@ directory_iterator::~directory_iterator()
 
 directory_iterator::directory_iterator(const directory_iterator& other)
 {
-   BOOST_RE_GUARD_STACK
    _root = _path = 0;
    ref = 0;
 #ifndef BOOST_NO_EXCEPTIONS
@@ -684,7 +657,6 @@ directory_iterator::directory_iterator(const directory_iterator& other)
 
 directory_iterator& directory_iterator::operator=(const directory_iterator& other)
 {
-   BOOST_RE_GUARD_STACK
    std::strcpy(_root, other._root);
    std::strcpy(_path, other._path);
    ptr = _path + (other.ptr - other._path);
@@ -701,7 +673,6 @@ directory_iterator& directory_iterator::operator=(const directory_iterator& othe
 
 directory_iterator directory_iterator::operator++(int)
 {
-   BOOST_RE_GUARD_STACK
    directory_iterator temp(*this);
    next();
    return temp;
@@ -709,7 +680,6 @@ directory_iterator directory_iterator::operator++(int)
 
 void directory_iterator::next()
 {
-   BOOST_RE_GUARD_STACK
    if(ref->hf != _fi_invalid_handle)
    {
       bool cont = true;
@@ -748,7 +718,6 @@ struct _fi_priv_data
 
 _fi_priv_data::_fi_priv_data(const char* p)
 {
-   BOOST_RE_GUARD_STACK
    std::strcpy(root, p);
    mask = root;
    while(*mask) ++mask;
@@ -775,7 +744,6 @@ _fi_priv_data::_fi_priv_data(const char* p)
 
 bool iswild(const char* mask, const char* name)
 {
-   BOOST_RE_GUARD_STACK
    while(*mask && *name)
    {
       switch(*mask)
@@ -817,7 +785,6 @@ bool iswild(const char* mask, const char* name)
 
 unsigned _fi_attributes(const char* root, const char* name)
 {
-   BOOST_RE_GUARD_STACK
    char buf[MAX_PATH];
    if( ( (root[0] == *_fi_sep) || (root[0] == *_fi_sep_alt) ) && (root[1] == '\0') )
       std::sprintf(buf, "%s%s", root, name);
@@ -834,7 +801,6 @@ unsigned _fi_attributes(const char* root, const char* name)
 
 _fi_find_handle _fi_FindFirstFile(const char* lpFileName, _fi_find_data* lpFindFileData)
 {
-   BOOST_RE_GUARD_STACK
    _fi_find_handle dat = new _fi_priv_data(lpFileName);
 
    DIR* h = opendir(dat->root);
@@ -850,7 +816,6 @@ _fi_find_handle _fi_FindFirstFile(const char* lpFileName, _fi_find_data* lpFindF
 
 bool _fi_FindNextFile(_fi_find_handle dat, _fi_find_data* lpFindFileData)
 {
-   BOOST_RE_GUARD_STACK
    dirent* d;
    do
    {
@@ -868,7 +833,6 @@ bool _fi_FindNextFile(_fi_find_handle dat, _fi_find_data* lpFindFileData)
 
 bool _fi_FindClose(_fi_find_handle dat)
 {
-   BOOST_RE_GUARD_STACK
    closedir(dat->d);
    delete dat;
    return true;

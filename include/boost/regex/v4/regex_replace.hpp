@@ -28,34 +28,34 @@ namespace boost{
 #  include BOOST_ABI_PREFIX
 #endif
 
-template <class OutputIterator, class Iterator, class traits, class Allocator, class charT>
+template <class OutputIterator, class Iterator, class traits, class charT>
 OutputIterator regex_replace(OutputIterator out,
                          Iterator first,
                          Iterator last,
-                         const reg_expression<charT, traits, Allocator>& e, 
+                         const basic_regex<charT, traits>& e, 
                          const charT* fmt, 
                          match_flag_type flags = match_default)
 {
    Iterator l = first;
-   re_detail::merge_out_predicate<OutputIterator, Iterator, charT, Allocator, traits> oi(out, l, fmt, flags, e.get_traits());
+   re_detail::merge_out_predicate<OutputIterator, Iterator, charT, traits> oi(out, l, fmt, flags, e.get_traits());
    regex_grep(oi, first, last, e, flags);
    return (flags & format_no_copy) ? out : re_detail::re_copy_out(out, l, last);
 }
 
-template <class OutputIterator, class Iterator, class traits, class Allocator, class charT>
+template <class OutputIterator, class Iterator, class traits, class charT>
 inline OutputIterator regex_replace(OutputIterator out,
                          Iterator first,
                          Iterator last,
-                         const reg_expression<charT, traits, Allocator>& e, 
+                         const basic_regex<charT, traits>& e, 
                          const std::basic_string<charT>& fmt,
                          match_flag_type flags = match_default)
 {
    return regex_replace(out, first, last, e, fmt.c_str(), flags);
 }
 
-template <class traits, class Allocator, class charT>
+template <class traits, class charT>
 std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
-                         const reg_expression<charT, traits, Allocator>& e, 
+                         const basic_regex<charT, traits>& e, 
                          const charT* fmt,
                          match_flag_type flags = match_default)
 {
@@ -65,9 +65,9 @@ std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
    return result;
 }
 
-template <class traits, class Allocator, class charT>
+template <class traits, class charT>
 std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
-                         const reg_expression<charT, traits, Allocator>& e, 
+                         const basic_regex<charT, traits>& e, 
                          const std::basic_string<charT>& fmt,
                          match_flag_type flags = match_default)
 {
