@@ -468,10 +468,9 @@ void raise_error(const traits& t, unsigned code)
 #  ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
 #     undef BOOST_REGEX_HAS_MS_STACK_GUARD
 #  endif
-namespace boost{ namespace re_detail{
-BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block();
-BOOST_REGEX_DECL void BOOST_REGEX_CALL release_mem_block(void*);
-} }
+#  ifndef BOOST_REGEX_MAX_CACHE_BLOCKS
+#     define BOOST_REGEX_MAX_CACHE_BLOCKS BOOST_REGEX_MAX_BLOCKS
+#  endif
 #endif
 
 

@@ -97,6 +97,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match()
 #ifdef BOOST_REGEX_NON_RECURSIVE
    save_state_init init(&m_stack_base, &m_backup_state);
    used_block_count = BOOST_REGEX_MAX_BLOCKS;
+   try{
 #endif
 
    // reset our state machine:
@@ -111,6 +112,17 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match()
       return false;
    return m_result[0].second == last;
 
+#ifdef BOOST_REGEX_NON_RECURSIVE
+   }
+   catch(...)
+   {
+      // unwind all pushed states, apart from anything else this
+      // ensures that all the states are correctly destructed
+      // not just the memory freed.
+      while(unwind(true)){}
+      throw;
+   }
+#endif
 #ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
    }__except(EXCEPTION_STACK_OVERFLOW == GetExceptionCode())
    {
@@ -134,6 +146,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
 #ifdef BOOST_REGEX_NON_RECURSIVE
    save_state_init init(&m_stack_base, &m_backup_state);
    used_block_count = BOOST_REGEX_MAX_BLOCKS;
+   try{
 #endif
 
    state_count = 0;
@@ -180,6 +193,17 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
    matcher_proc_type proc = s_find_vtable[type];
    return (this->*proc)();
 
+#ifdef BOOST_REGEX_NON_RECURSIVE
+   }
+   catch(...)
+   {
+      // unwind all pushed states, apart from anything else this
+      // ensures that all the states are correctly destructed
+      // not just the memory freed.
+      while(unwind(true)){}
+      throw;
+   }
+#endif
 #ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
    }__except(EXCEPTION_STACK_OVERFLOW == GetExceptionCode())
    {
@@ -755,6 +779,12 @@ perl_matcher<BidiIterator, Allocator, traits, Allocator2>::s_match_vtable[] =
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_combining,
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_soft_buffer_end,
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_restart_continue,
+#if 0
+   &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep,
+   &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep,
+   &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep,
+   &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_rep,
+#else
 #if defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat_fast,
 #else
@@ -763,7 +793,7 @@ perl_matcher<BidiIterator, Allocator, traits, Allocator2>::s_match_vtable[] =
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repeat,
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat,
    &perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_repeat,
-
+#endif
 };
 
 template <class BidiIterator, class Allocator, class traits, class Allocator2>

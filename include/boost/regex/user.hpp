@@ -77,3 +77,9 @@
 // used by the non-recursive algorithm.
 // #define BOOST_REGEX_MAX_BLOCKS 1024
 
+// define this if you want to set the maximum number of memory blocks
+// cached by the non-recursive algorithm: Normally this is the same as 
+// BOOST_REGEX_MAX_BLOCKS, but can be higher if you have multiple threads
+// all using boost.regex, or lower if you don't want boost.regex to cache
+// memory.
+// #define BOOST_REGEX_MAX_CACHE_BLOCKS 1024
