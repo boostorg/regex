@@ -27,22 +27,22 @@ Contents:
 template <class BaseIterator, class U8Type = ::boost::uint8_t>
 class u32_to_u8_iterator;
 
-Adapters sequence of UTF-32 code points to "look like" a sequence of UTF-8.
+Adapts sequence of UTF-32 code points to "look like" a sequence of UTF-8.
 
 template <class BaseIterator, class U32Type = ::boost::uint32_t>
 class u8_to_u32_iterator;
 
-Adapters sequence of UTF-8 code points to "look like" a sequence of UTF-32.
+Adapts sequence of UTF-8 code points to "look like" a sequence of UTF-32.
 
 template <class BaseIterator, class U16Type = ::boost::uint16_t>
 class u32_to_u16_iterator;
 
-Adapters sequence of UTF-32 code points to "look like" a sequence of UTF-16.
+Adapts sequence of UTF-32 code points to "look like" a sequence of UTF-16.
 
 template <class BaseIterator, class U32Type = ::boost::uint32_t>
 class u16_to_u32_iterator;
 
-Adapters sequence of UTF-16 code points to "look like" a sequence of UTF-32.
+Adapts sequence of UTF-16 code points to "look like" a sequence of UTF-32.
 
 2) Single pass output iterator adapters:
 
