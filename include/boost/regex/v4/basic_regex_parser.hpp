@@ -611,6 +611,52 @@ bool basic_regex_parser<charT, traits>::parse_extended_escape()
       ++m_position;
       this->append_state(syntax_element_restart_continue);
       break;
+   case regex_constants::escape_type_not_property:
+      negate = true;
+      // fall through:
+   case regex_constants::escape_type_property:
+      {
+         ++m_position;
+         char_class_type m;
+         if(m_position == m_end)
+         {
+            fail(regex_constants::error_escape, m_position - m_base);
+            return false;
+         }
+         // maybe have \p{ddd}
+         if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_open_brace)
+         {
+            const charT* base = m_position;
+            // skip forward until we find enclosing brace:
+            while((m_position != m_end) && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_brace))
+               ++m_position;
+            if(m_position == m_end)
+            {
+               fail(regex_constants::error_escape, m_position - m_base);
+               return false;
+            }
+            m = this->m_traits.lookup_classname(++base, m_position++);
+         }
+         else
+         {
+            m = this->m_traits.lookup_classname(m_position, m_position+1);
+            ++m_position;
+         }
+         if(m != 0)
+         {
+            basic_char_set<charT, traits> char_set;
+            if(negate)
+               char_set.negate();
+            char_set.add_class(m);
+            if(0 == this->append_set(char_set))
+            {
+               fail(regex_constants::error_ctype, m_position - m_base);
+               return false;
+            }
+            return true;
+         }
+         fail(regex_constants::error_ctype, m_position - m_base);
+      }
    default:
       this->append_literal(unescape_character());
       break;
@@ -948,6 +994,7 @@ bool basic_regex_parser<charT, traits>::parse_set()
                if(m != 0)
                {
                   char_set.add_class(m);
+                  ++m_position;
                   break;
                }
             }
@@ -1372,6 +1419,41 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          return result;
       }
       return static_cast<charT>(val);
+      }
+   case regex_constants::escape_type_named_char:
+      {
+         ++m_position;
+         if(m_position == m_end)
+         {
+            fail(regex_constants::error_escape, m_position - m_base);
+            return false;
+         }
+         // maybe have \N{name}
+         if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_open_brace)
+         {
+            const charT* base = m_position;
+            // skip forward until we find enclosing brace:
+            while((m_position != m_end) && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_brace))
+               ++m_position;
+            if(m_position == m_end)
+            {
+               fail(regex_constants::error_escape, m_position - m_base);
+               return false;
+            }
+            string_type s = this->m_traits.lookup_collatename(++base, m_position++);
+            if(s.empty())
+            {
+               fail(regex_constants::error_collate, m_position - m_base);
+               return false;
+            }
+            if(s.size() == 1)
+            {
+               return s[0];
+            }
+         }
+         // fall through is a failure:
+         fail(regex_constants::error_escape, m_position - m_base);
+         return false;
       }
    default:
       result = *m_position;

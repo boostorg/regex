@@ -215,6 +215,7 @@ void test_en_locale();
 void test_emacs();
 void test_operators();
 void test_overloads();
+void test_unicode();
 
 //
 // template instances:

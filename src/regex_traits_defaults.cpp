@@ -96,7 +96,11 @@ BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants
          "C",
          "Z",
          "G",
-         "!", };
+         "!",
+         "p",
+         "P",
+         "N",
+   };
 
    return ((n >= (sizeof(messages) / sizeof(messages[1]))) ? "" : messages[n]);
 }
@@ -374,9 +378,9 @@ BOOST_REGEX_DECL regex_constants::escape_syntax_type BOOST_REGEX_CALL get_defaul
       regex_constants::escape_type_not_class,        /*K*/
       regex_constants::escape_type_not_class,        /*L*/
       regex_constants::escape_type_not_class,        /*M*/
-      regex_constants::escape_type_not_class,        /*N*/
+      regex_constants::escape_type_named_char,       /*N*/
       regex_constants::escape_type_not_class,        /*O*/
-      regex_constants::escape_type_not_class,        /*P*/
+      regex_constants::escape_type_not_property,     /*P*/
       regex_constants::escape_type_Q,                /*Q*/
       regex_constants::escape_type_not_class,        /*R*/
       regex_constants::escape_type_not_class,        /*S*/
@@ -408,7 +412,7 @@ BOOST_REGEX_DECL regex_constants::escape_syntax_type BOOST_REGEX_CALL get_defaul
       regex_constants::escape_type_class,        /*m*/
       regex_constants::escape_type_control_n,       /*n*/
       regex_constants::escape_type_class,           /*o*/
-      regex_constants::escape_type_class,           /*p*/
+      regex_constants::escape_type_property,        /*p*/
       regex_constants::escape_type_class,           /*q*/
       regex_constants::escape_type_control_r,       /*r*/
       regex_constants::escape_type_class,           /*s*/

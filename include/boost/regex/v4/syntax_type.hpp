@@ -89,7 +89,11 @@ static const escape_syntax_type escape_type_C = 50;                            /
 static const escape_syntax_type escape_type_Z = 51;                            // for \Z
 static const escape_syntax_type escape_type_G = 52;                            // for \G
 
-static const escape_syntax_type syntax_max = 54;
+static const escape_syntax_type escape_type_property = 54;                     // for \p
+static const escape_syntax_type escape_type_not_property = 55;                 // for \P
+static const escape_syntax_type escape_type_named_char = 56;                   // for \N
+
+static const escape_syntax_type syntax_max = 57;
 
 }
 }

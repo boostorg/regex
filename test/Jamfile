@@ -26,6 +26,7 @@ test_sets.cpp
 test_simple_repeats.cpp
 test_tricky_cases.cpp
 test_icu.cpp
+test_unicode.cpp
 test_overloads.cpp
 test_operators.cpp
 ;
@@ -118,6 +119,17 @@ test-suite regex
           : <template>test                      # sources
             pathology/recursion_test.cpp
             <lib>../../test/build/boost_test_exec_monitor
+      ]
+      
+      [ run unicode/unicode_iterator_test.cpp ]
+      [ regex-test static_mutex_test
+          : <template>test                      # sources
+            static_mutex/static_mutex_test.cpp
+            <dll>../../thread/build/boost_thread
+      ]
+      [ regex-test object_cache_test
+          : <template>test                      # sources
+            object_cache/object_cache_test.cpp
       ]
       
       [ run config_info/regex_config_info.cpp <template>test 

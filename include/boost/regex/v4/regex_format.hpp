@@ -75,7 +75,7 @@ class basic_regex_formatter
 public:
    typedef typename traits::char_type char_type;
    basic_regex_formatter(OutputIterator o, const Results& r, const traits& t)
-      : m_traits(t), m_results(r), m_out(o), m_state(output_copy) {}
+      : m_traits(t), m_results(r), m_out(o), m_state(output_copy), m_have_conditional(false) {}
    OutputIterator format(const char_type* p1, const char_type* p2, match_flag_type f);
    OutputIterator format(const char_type* p1, match_flag_type f)
    {
@@ -108,6 +108,7 @@ private:
    const char_type* m_end;       // format string end
    match_flag_type m_flags;      // format flags to use
    output_state    m_state;      // what to do with the next character
+   bool            m_have_conditional; // we are parsing a conditional
 private:
    basic_regex_formatter(const basic_regex_formatter&);
    basic_regex_formatter& operator=(const basic_regex_formatter&);
@@ -147,7 +148,10 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_all()
          if(m_flags & boost::regex_constants::format_all)
          {
             ++m_position;
+            bool have_conditional = m_have_conditional;
+            m_have_conditional = false;
             format_until_scope_end();
+            m_have_conditional = have_conditional;
             if(m_position == m_end)
                return;
             BOOST_ASSERT(*m_position == static_cast<char_type>(')'));
@@ -158,8 +162,15 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_all()
          ++m_position;
          break;
       case ')':
-      case ':':
          if(m_flags & boost::regex_constants::format_all)
+         {
+            return;
+         }
+         put(*m_position);
+         ++m_position;
+         break;
+      case ':':
+         if((m_flags & boost::regex_constants::format_all) && m_have_conditional)
          {
             return;
          }
@@ -405,7 +416,9 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_conditional(
    // output varies depending upon whether sub-expression v matched or not:
    if(m_results[v].matched)
    {
+      m_have_conditional = true;
       format_all();
+      m_have_conditional = false;
       if((m_position != m_end) && (*m_position == static_cast<char_type>(':')))
       {
          // skip the ':':
@@ -425,7 +438,9 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_conditional(
       output_state saved_state = m_state;
       m_state = output_none;
       // format until ':' or ')':
+      m_have_conditional = true;
       format_all();
+      m_have_conditional = false;
       // restore state:
       m_state = saved_state;
       if((m_position != m_end) && (*m_position == static_cast<char_type>(':')))

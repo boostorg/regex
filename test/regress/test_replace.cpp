@@ -75,6 +75,8 @@ void test_replace()
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "\\0", "\0");
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "()?:", "()?:");
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,", match_default|format_perl|format_no_copy, "\\0101", "A");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "\\1", "aa");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "\\2", "bb");
 
    // move to copying unmatched data:
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_all, "bbb", "...bbb,,,");
@@ -101,5 +103,10 @@ void test_replace()
    TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,", match_default|format_perl|format_no_copy, "(?1abc:def)", "(?1abc:def)");
    TEST_REGEX_REPLACE("a+(b+)", perl, "...", match_default|format_perl, "(?1abc:def)", "...");
    TEST_REGEX_REPLACE("a+(b+)", perl, "...", match_default|format_perl|format_no_copy, "(?1abc:def)", "");
+   // probe bug reports and other special cases:
+   TEST_REGEX_REPLACE("([^\\d]+).*", normal|icase, "tesd 999 test", match_default|format_all, "($1)replace", "tesd replace");
+   TEST_REGEX_REPLACE("(a)(b)", perl, "ab", match_default|format_all, "$1:$2", "a:b");
+   TEST_REGEX_REPLACE("(a(c)?)|(b)", perl, "acab", match_default|format_all, "(?1(?2(C:):A):B:)", "C:AB:");
+
 }
 

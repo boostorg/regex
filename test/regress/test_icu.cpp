@@ -19,7 +19,8 @@
 //
 // We can only build this if we have ICU support:
 //
-#ifdef TEST_ICU
+#include <boost/regex/config.hpp>
+#ifdef BOOST_HAS_ICU
 
 #include <boost/regex/icu.hpp>
 #include "test.hpp"
@@ -27,7 +28,6 @@
 
 void test_icu(const wchar_t&, const test_regex_search_tag& )
 {
-   typedef boost::u16_to_u32_iterator<std::wstring::const_iterator, ::UChar32> conv_iterator;
    boost::u32regex r;
    if(*test_locale::c_str())
    {
@@ -37,26 +37,28 @@ void test_icu(const wchar_t&, const test_regex_search_tag& )
       r.imbue(l);
    }
 
-   const std::wstring& expression = test_info<wchar_t>::expression();
+   std::vector< ::UChar32> expression;
+   expression.assign(test_info<wchar_t>::expression().begin(), test_info<wchar_t>::expression().end());
    boost::regex_constants::syntax_option_type syntax_options = test_info<UChar32>::syntax_options();
    try{
-      r.assign(conv_iterator(expression.begin()), conv_iterator(expression.end()), syntax_options);
+      r.assign(expression.begin(), expression.end(), syntax_options);
       if(r.status())
       {
          BOOST_REGEX_TEST_ERROR("Expression did not compile when it should have done, error code = " << r.status(), UChar32);
       }
-      const std::wstring& search_text = test_info<wchar_t>::search_text();
+      std::vector< ::UChar32> search_text;
+      search_text.assign(test_info<wchar_t>::search_text().begin(), test_info<wchar_t>::search_text().end());
       boost::regex_constants::match_flag_type opts = test_info<wchar_t>::match_options();
       const int* answer_table = test_info<wchar_t>::answer_table();
-      boost::match_results<conv_iterator> what;
+      boost::match_results<std::vector< ::UChar32>::const_iterator> what;
       if(boost::regex_search(
-         conv_iterator(search_text.begin()),
-         conv_iterator(search_text.end()),
+         const_cast<std::vector< ::UChar32>const&>(search_text).begin(),
+         const_cast<std::vector< ::UChar32>const&>(search_text).end(),
          what,
          r,
          opts))
       {
-         test_result(what, conv_iterator(search_text.begin()), answer_table);
+         test_result(what, const_cast<std::vector< ::UChar32>const&>(search_text).begin(), answer_table);
       }
       else if(answer_table[0] >= 0)
       {
@@ -85,7 +87,8 @@ void test_icu(const wchar_t&, const test_regex_search_tag& )
 void test_icu(const wchar_t&, const test_invalid_regex_tag&)
 {
    typedef boost::u16_to_u32_iterator<std::wstring::const_iterator, ::UChar32> conv_iterator;
-   const std::wstring& expression = test_info<wchar_t>::expression();
+   std::vector< ::UChar32> expression;
+   expression.assign(test_info<wchar_t>::expression().begin(), test_info<wchar_t>::expression().end());
    boost::regex_constants::syntax_option_type syntax_options = test_info<wchar_t>::syntax_options();
    boost::u32regex r;
    if(*test_locale::c_str())
@@ -100,7 +103,7 @@ void test_icu(const wchar_t&, const test_invalid_regex_tag&)
    //
    try
    {
-      if(0 == r.assign(conv_iterator(expression.begin()), conv_iterator(expression.end()), syntax_options | boost::regex_constants::no_except).status())
+      if(0 == r.assign(expression.begin(), expression.end(), syntax_options | boost::regex_constants::no_except).status())
       {
          BOOST_REGEX_TEST_ERROR("Expression compiled when it should not have done so.", wchar_t);
       }
@@ -114,7 +117,7 @@ void test_icu(const wchar_t&, const test_invalid_regex_tag&)
    //
    bool have_catch = false;
    try{
-      r.assign(conv_iterator(expression.begin()), conv_iterator(expression.end()), syntax_options);
+      r.assign(expression.begin(), expression.end(), syntax_options);
 #ifdef BOOST_NO_EXCEPTIONS
       if(r.status())
          have_catch = true;
@@ -148,7 +151,8 @@ void test_icu(const wchar_t&, const test_invalid_regex_tag&)
 
 void test_icu(const wchar_t&, const test_regex_replace_tag&)
 {
-   const std::wstring& expression = test_info<wchar_t>::expression();
+   std::vector< ::UChar32> expression;
+   expression.assign(test_info<wchar_t>::expression().begin(), test_info<wchar_t>::expression().end());
    boost::regex_constants::syntax_option_type syntax_options = test_info<UChar32>::syntax_options();
    boost::u32regex r;
    try{

@@ -53,6 +53,7 @@ int cpp_main(int /*argc*/, char * /*argv*/[])
    test_emacs();
    test_operators();
    test_overloads();
+   test_unicode();
    return error_count;
 }
 

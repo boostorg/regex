@@ -88,6 +88,7 @@ void test_sets()
    TEST_REGEX_SEARCH("[[:space:]]+", extended, "a \n\t\rb", match_default, make_array(1, 5, -2, -2));
    TEST_REGEX_SEARCH("[[:upper:]]+", extended, "aBCd", match_default, make_array(1, 3, -2, -2));
    TEST_REGEX_SEARCH("[[:xdigit:]]+", extended, "p0f3Cx", match_default, make_array(1, 5, -2, -2));
+   TEST_REGEX_SEARCH("[\\d]+", perl, "a019b", match_default, make_array(1, 4, -2, -2));
 
    //
    // escapes are supported in character classes if we have either
@@ -243,5 +244,66 @@ void test_sets2()
    TEST_REGEX_SEARCH("[\\s]+", perl, "AB   AB", match_default, make_array(2, 5, -2, -2));
    TEST_INVALID_REGEX("[\\S]", perl);
    TEST_REGEX_SEARCH("\\S+", perl, "  abc  ", match_default, make_array(2, 5, -2, -2));
+
+   // and some Perl style properties:
+   TEST_REGEX_SEARCH("\\pl+", perl, "ABabcAB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\Pl+", perl, "abABCab", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\pu+", perl, "abABCab", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\Pu+", perl, "ABabcAB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\pd+", perl, "AB012AB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\PD+", perl, "01abc01", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\ps+", perl, "AB   AB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\PS+", perl, "  abc  ", match_default, make_array(2, 5, -2, -2));
+
+   TEST_REGEX_SEARCH("\\p{alnum}+", perl, "-%@a0X_-", match_default, make_array(3, 6, -2, -2));
+   TEST_REGEX_SEARCH("\\p{alpha}+", perl, " -%@aX_0-", match_default, make_array(4, 6, -2, -2));
+   TEST_REGEX_SEARCH("\\p{blank}+", perl, "a  \tb", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{cntrl}+", perl, " a\n\tb", match_default, make_array(2, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{digit}+", perl, "a019b", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{graph}+", perl, " a%b ", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{lower}+", perl, "AabC", match_default, make_array(1, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\p{print}+", perl, "AabC", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{punct}+", perl, " %-&\t", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\p{space}+", perl, "a \n\t\rb", match_default, make_array(1, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\p{upper}+", perl, "aBCd", match_default, make_array(1, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\p{xdigit}+", perl, "p0f3Cx", match_default, make_array(1, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\P{alnum}+", perl, "-%@a", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\P{alpha}+", perl, " -%@a", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\P{blank}+", perl, "a  ", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{cntrl}+", perl, " a\n", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\P{digit}+", perl, "a0", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{graph}+", perl, " a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{lower}+", perl, "Aa", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{print}+", perl, "Absc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\P{punct}+", perl, " %", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{space}+", perl, "a ", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{upper}+", perl, "aB", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\P{xdigit}+", perl, "pf", match_default, make_array(0, 1, -2, -2));
+
+   TEST_INVALID_REGEX("\\p{invalid class}", perl);
+   TEST_INVALID_REGEX("\\p{upper", perl);
+   TEST_INVALID_REGEX("\\p{", perl);
+   TEST_INVALID_REGEX("\\p", perl);
+   TEST_INVALID_REGEX("\\P{invalid class}", perl);
+   TEST_INVALID_REGEX("\\P{upper", perl);
+   TEST_INVALID_REGEX("\\P{", perl);
+   TEST_INVALID_REGEX("\\P", perl);
+
+   // try named characters:
+   TEST_REGEX_SEARCH("\\N{zero}", perl, "0", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\N{one}", perl, "1", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\N{two}", perl, "2", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\N{three}", perl, "3", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\N{a}", perl, "bac", match_default, make_array(1, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\N{\xf0}", perl, "b\xf0x", match_default, make_array(1, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\N{right-curly-bracket}", perl, "}", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\N{NUL}", perl, "\0", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[\\N{zero}-\\N{nine}]+", perl, " 0123456789 ", match_default, make_array(1, 11, -2, -2));
+
+   TEST_INVALID_REGEX("\\N", perl);
+   TEST_INVALID_REGEX("\\N{", perl);
+   TEST_INVALID_REGEX("\\N{}", perl);
+   TEST_INVALID_REGEX("\\N{invalid-name}", perl);
+   TEST_INVALID_REGEX("\\N{zero", perl);
 }
 
