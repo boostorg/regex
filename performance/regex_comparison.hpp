@@ -57,7 +57,8 @@ struct results
    std::string expression;
    std::string description;
    results(const std::string& ex, const std::string& desc)
-      : boost_time(-1), 
+      : boost_time(-1),
+        localised_boost_time(-1),
         greta_time(-1),
         safe_greta_time(-1),
         posix_time(-1),
@@ -70,6 +71,8 @@ struct results
    {
       if((boost_time >= 0) && (boost_time < factor))
          factor = boost_time;
+      if((localised_boost_time >= 0) && (localised_boost_time < factor))
+         factor = localised_boost_time;
       if((greta_time >= 0) && (greta_time < factor))
          factor = greta_time;
       if((safe_greta_time >= 0) && (safe_greta_time < factor))
@@ -78,8 +81,6 @@ struct results
          factor = posix_time;
       if((pcre_time >= 0) && (pcre_time < factor))
          factor = pcre_time;
-      if((factor >= 0) && (factor < factor))
-         factor = factor;
    }
 };
 

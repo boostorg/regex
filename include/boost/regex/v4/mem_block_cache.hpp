@@ -80,6 +80,7 @@ struct mem_block_cache
          mem_block_node* old = static_cast<mem_block_node*>(p);
          old->next = next;
          next = old;
+         ++cached_blocks;
       }
    }
 };

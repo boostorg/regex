@@ -438,12 +438,6 @@ void raise_error(const traits& t, unsigned code)
  *
  ****************************************************************************/
 
-#ifndef BOOST_REGEX_NON_RECURSIVE
-// non-recursive mode is currently too fragile to
-// auto-select, this will be removed before release:
-#  define BOOST_REGEX_RECURSIVE
-#endif
-
 #if !defined(BOOST_REGEX_RECURSIVE) && !defined(BOOST_REGEX_NON_RECURSIVE)
 #  ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
 #     define BOOST_REGEX_RECURSIVE
