@@ -18,7 +18,7 @@ XLFLAGS=
 
 CFLAGS= $(INCLUDES) /O2 /GB /GF /Gy -GX -GR -I..\..\..\..\ $(CXXFLAGS)
 
-LFLAGS= -link /LIBPATH:..\..\build\vc6 user32.lib $(XLFLAGS)
+LFLAGS= -link /LIBPATH:..\..\build\vc7 $(XLFLAGS)
 
 all :: r1.exe r2.exe r3.exe r4.exe r5.exe r6.exe r1m.exe r2m.exe r3m.exe r4m.exe r5m.exe r6m.exe r1l.exe r2l.exe r3l.exe r4l.exe r5l.exe r6l.exe r1ls.exe r2ls.exe r3ls.exe r4ls.exe r5ls.exe r6ls.exe r1d.exe r2d.exe r3d.exe r4d.exe r5d.exe r6d.exe r1md.exe r2md.exe r3md.exe r4md.exe r5md.exe r6md.exe r1lmd.exe r2lmd.exe r3lmd.exe r4lmd.exe r5lmd.exe r6lmd.exe
 	echo testing static single threaded version....
@@ -202,6 +202,7 @@ r5lmd.exe : tests.cpp parse.cpp regress.cpp
 
 r6lmd.exe : tests.cpp parse.cpp regress.cpp
 	cl /MDd /D_MT /D_DLL $(CFLAGS) -o r6lmd.exe -DBOOST_RE_TEST_LOCALE_CPP -DTEST_UNICODE tests.cpp parse.cpp regress.cpp $(LFLAGS)
+
 
 
 
