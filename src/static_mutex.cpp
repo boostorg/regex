@@ -23,7 +23,10 @@
 #include <boost/regex/static_mutex.hpp>
 
 #if defined(BOOST_HAS_WINTHREADS)
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <boost/static_assert.hpp>
 #endif
 
 
@@ -64,6 +67,8 @@ void scoped_static_mutex_lock::unlock()
 
 #elif defined(BOOST_HAS_WINTHREADS)
 
+BOOST_STATIC_ASSERT(sizeof(LONG) == sizeof(boost::int32_t));
+
 scoped_static_mutex_lock::scoped_static_mutex_lock(static_mutex& m, bool lk)
 : m_mutex(m), m_have_lock(false)
 {
@@ -81,7 +86,11 @@ void scoped_static_mutex_lock::lock()
 {
    if(0 == m_have_lock)
    {
-      while(0 != InterlockedCompareExchange((LONG*)&(m_mutex.m_mutex), 1, 0))
+#if defined(BOOST_MSVC) && (BOOST_MSVC <=1200)
+      while(0 != InterlockedCompareExchange(reinterpret_cast<void**>((boost::uint_least16_t*)&(m_mutex.m_mutex)), (void*)1, 0))
+#else
+      while(0 != InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 1, 0))
+#endif
       {
          Sleep(0);
       }
@@ -93,7 +102,11 @@ void scoped_static_mutex_lock::unlock()
 {
    if(m_have_lock)
    {
+#if defined(BOOST_MSVC) && (BOOST_MSVC <=1200)
       InterlockedExchange((LONG*)&(m_mutex.m_mutex), 0);
+#else
+      InterlockedExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 0);
+#endif
       m_have_lock = false;
    }
 }

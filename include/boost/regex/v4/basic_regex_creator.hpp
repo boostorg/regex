@@ -64,6 +64,7 @@ protected:
    re_syntax_base*               m_last_state;// the last state we added
    bool                          m_icase;     // true for case insensitive matches
    typename traits::char_class_type m_word_mask; // mask used to determine if a character is a word character
+   typename traits::char_class_type m_mask_space; // mask used to determine if a character is a word character
 private:
    basic_regex_creator& operator=(const basic_regex_creator&);
    basic_regex_creator(const basic_regex_creator&);
@@ -80,8 +81,11 @@ basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits
 {
    m_pdata->m_data.clear();
    static const charT w = 'w';
+   static const charT s = 's';
    m_word_mask = m_traits.lookup_classname(&w, &w +1);
-   //BOOST_ASSERT(m_word_mask); // TODO!!
+   m_mask_space = m_traits.lookup_classname(&s, &s +1);
+   BOOST_ASSERT(m_word_mask); 
+   BOOST_ASSERT(m_mask_space); 
 }
 
 template <class charT, class traits>
@@ -308,7 +312,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(!m_traits.is_class(static_cast<charT>(i), m_word_mask))
-                  map[i] &= ~mask;
+                  map[i] &= static_cast<unsigned char>(~mask);
             }
          }
          return;
@@ -323,7 +327,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(m_traits.is_class(static_cast<charT>(i), m_word_mask))
-                  map[i] &= ~mask;
+                  map[i] &= static_cast<unsigned char>(~mask);
             }
          }
          return;

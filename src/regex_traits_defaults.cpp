@@ -95,7 +95,7 @@ const char* get_default_error_string(regex_constants::error_type n)
       "Invalid back reference",        /* REG_ESUBREG */
       "Unmatched [ or [^",       /* REG_EBRACK */
       "Unmatched ( or \\(",         /* REG_EPAREN */
-      "Unmatched \\{",           /* REG_EBRACE */
+      "Unmatched { or \\{",           /* REG_EBRACE */
       "Invalid content of \\{\\}",     /* REG_BADBR */
       "Invalid range end",       /* REG_ERANGE */
       "Memory exhausted",           /* REG_ESPACE */
@@ -112,7 +112,7 @@ const char* get_default_error_string(regex_constants::error_type n)
       "",
    };
 
-   return (n <= REG_E_UNKNOWN) ? s_default_error_messages[REG_E_UNKNOWN] : s_default_error_messages[n];
+   return (n > REG_E_UNKNOWN) ? s_default_error_messages[REG_E_UNKNOWN] : s_default_error_messages[n];
 }
 
 bool is_combining_implementation(boost::uint_least16_t c)

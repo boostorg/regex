@@ -87,10 +87,10 @@ inline const charT* re_skip_past_null(const charT* p)
   return ++p;
 }
 
-template <class iterator, class charT, class traits_type>
+template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
-                          const re_set_long<typename traits_type::char_class_type>* set_, 
+                          const re_set_long<char_classT>* set_, 
                           const basic_regex<charT, traits_type>& e)
 {   
    const charT* p = reinterpret_cast<const charT*>(set_+1);
@@ -233,7 +233,7 @@ public:
    }
    std::size_t get_count() { return count; }
    int get_id() { return id; }
-   int operator++() { return ++count; }
+   std::size_t operator++() { return ++count; }
    bool check_null_repeat(const BidiIterator& pos, std::size_t max)
    {
       // this is called when we are about to start a new repeat,

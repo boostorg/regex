@@ -586,10 +586,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backref()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set()
 {
+   typedef typename traits::char_class_type char_class_type;
    // let the traits class do the work:
    if(position == last)
       return false;
-   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<typename traits::char_class_type>*>(pstate), re);
+   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<char_class_type>*>(pstate), re);
    if(t != position)
    {
       pstate = pstate->next.p;

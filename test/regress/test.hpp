@@ -11,7 +11,7 @@
 // real test:
 //
 template <class charT, class tagT>
-void test(charT, const tagT& tag)
+void test(const charT&, const tagT& tag)
 {
    boost::basic_regex<charT> e;
    test(e, tag);

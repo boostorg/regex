@@ -221,10 +221,10 @@ enum re_jump_size_type
 /*** proc re_is_set_member *********************************************
 Forward declaration: we'll need this one later...
 ***********************************************************************/
-template <class iterator, class charT, class traits_type>
+template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
-                          const re_set_long<typename traits_type::char_class_type>* set_, 
+                          const re_set_long<char_classT>* set_, 
                           const basic_regex<charT, traits_type>& e);
 
 } // namespace re_detail

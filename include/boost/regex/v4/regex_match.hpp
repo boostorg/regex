@@ -139,7 +139,7 @@ inline bool regex_match(const std::string& s,
 }
 #if !defined(BOOST_NO_WREGEX)
 inline bool regex_match(const std::basic_string<wchar_t>& s, 
-                        match_results<std::basic_string<wchar_t>::const_iterator, wregex::allocator_type>& m,
+                        match_results<std::basic_string<wchar_t>::const_iterator>& m,
                         const wregex& e, 
                         match_flag_type flags = match_default)
 {

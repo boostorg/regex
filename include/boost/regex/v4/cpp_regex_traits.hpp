@@ -37,6 +37,100 @@ class cpp_regex_traits;
 namespace re_detail{
 
 //
+// class parser_buf:
+// acts as a stream buffer which wraps around a pair of pointers:
+//
+template <class charT,
+          class traits = ::std::char_traits<charT> >
+class parser_buf : public ::std::basic_streambuf<charT, traits>
+{
+   typedef ::std::basic_streambuf<charT, traits> base_type;
+   typedef typename base_type::int_type int_type;
+   typedef typename base_type::char_type char_type;
+   typedef typename base_type::pos_type pos_type;
+   typedef ::std::streamsize streamsize;
+   typedef typename base_type::off_type off_type;
+public:
+   parser_buf() : base_type() { setbuf(0, 0); }
+   const charT* getnext() { return this->gptr(); }
+protected:
+   std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n);
+   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
+   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
+private:
+   parser_buf& operator=(const parser_buf&);
+   parser_buf(const parser_buf&);
+};
+
+template<class charT, class traits>
+std::basic_streambuf<charT, traits>*
+parser_buf<charT, traits>::setbuf(char_type* s, streamsize n)
+{
+   this->setg(s, s, s + n);
+   return this;
+}
+
+template<class charT, class traits>
+typename parser_buf<charT, traits>::pos_type
+parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which)
+{
+   if(which & ::std::ios_base::out)
+      return pos_type(off_type(-1));
+   std::ptrdiff_t size = this->egptr() - this->eback();
+   std::ptrdiff_t pos = this->gptr() - this->eback();
+   charT* g = this->eback();
+   switch(way)
+   {
+   case ::std::ios_base::beg:
+      if((off < 0) || (off > size))
+         return pos_type(off_type(-1));
+      else
+         this->setg(g, g + off, g + size);
+      break;
+   case ::std::ios_base::end:
+      if((off < 0) || (off > size))
+         return pos_type(off_type(-1));
+      else
+         this->setg(g, g + size - off, g + size);
+      break;
+   case ::std::ios_base::cur:
+   {
+      std::ptrdiff_t newpos = pos + off;
+      if((newpos < 0) || (newpos > size))
+         return pos_type(off_type(-1));
+      else
+         this->setg(g, g + newpos, g + size);
+      break;
+   }
+   default: ;
+   }
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4244)
+#endif
+   return static_cast<pos_type>(this->gptr() - this->eback());
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+}
+
+template<class charT, class traits>
+typename parser_buf<charT, traits>::pos_type
+parser_buf<charT, traits>::seekpos(pos_type sp, ::std::ios_base::openmode which)
+{
+   if(which & ::std::ios_base::out)
+      return pos_type(off_type(-1));
+   off_type size = static_cast<off_type>(this->egptr() - this->eback());
+   charT* g = this->eback();
+   if(off_type(sp) <= size)
+   {
+      this->setg(g, g + off_type(sp), g + size);
+   }
+   return pos_type(off_type(-1));
+}
+
+
+//
 // class cpp_regex_traits_base:
 // acts as a container for locale and the facets we are using.
 //
@@ -210,8 +304,9 @@ template <class charT>
 class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT>
 {
 public:
-   cpp_regex_traits_implementation();
-   cpp_regex_traits_implementation(const std::locale& l) : cpp_regex_traits_char_layer<charT>(l){}
+   typedef std::basic_string<charT> string_type;
+   //cpp_regex_traits_implementation();
+   cpp_regex_traits_implementation(const std::locale& l);
    std::string error_string(regex_constants::error_type n) const
    {
       if(!m_error_strings.empty())
@@ -221,12 +316,15 @@ public:
       }
       return get_default_error_string(n);
    }
+   re_detail::parser_buf<charT>   m_sbuf;            // buffer for parsing numbers.
+   std::basic_istream<charT>      m_is;              // stream for parsing numbers.
 private:
-   std::map<int, std::string> m_error_strings;
+   std::map<int, std::string>     m_error_strings;   // error messages indexed by numberic ID
 };
 
 template <class charT>
-cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation()
+cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const std::locale& l)
+: cpp_regex_traits_char_layer<charT>(l), m_is(&m_sbuf)
 {
 #ifndef __IBMCPP__
    typename std::messages<charT>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
@@ -253,14 +351,26 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation()
    {
       for(int i = 0; i <= boost::regex_constants::error_unknown; ++i)
       {
-         std::string s = this->m_pmessages->get(cat, 0, i+200, get_default_error_string(i));
-         m_error_strings[i] = s;
+         const char* p = get_default_error_string(i);
+         string_type default_message;
+         while(*p)
+         {
+            default_message.append(1, this->m_pctype->widen(*p));
+            ++p;
+         }
+         string_type s = this->m_pmessages->get(cat, 0, i+200, default_message);
+         std::string result;
+         for(std::string::size_type j = 0; j < s.size(); ++j)
+         {
+            result.append(1, this->m_pctype->narrow(s[j], 0));
+         }
+         m_error_strings[i] = result;
       }
    }
 }
 
 template <class charT>
-boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l)
+boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
    // TODO: create a cache for previously constructed objects.
    return boost::shared_ptr<cpp_regex_traits_implementation<charT> >(new cpp_regex_traits_implementation<charT>(l));
@@ -278,7 +388,26 @@ public:
    typedef std::size_t                  size_type;
    typedef std::basic_string<char_type> string_type;
    typedef std::locale                  locale_type;
-   typedef typename ctype_type::mask    char_class_type;
+   typedef boost::uint_least32_t        char_class_type;
+
+   BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 16);
+   BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 17);
+   BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 18);
+   BOOST_STATIC_CONSTANT(char_class_type, 
+      mask_base = 
+         std::ctype<char>::alnum 
+         | std::ctype<char>::alpha
+         | std::ctype<char>::cntrl
+         | std::ctype<char>::digit
+         | std::ctype<char>::graph
+         | std::ctype<char>::lower
+         | std::ctype<char>::print
+         | std::ctype<char>::punct
+         | std::ctype<char>::space
+         | std::ctype<char>::upper
+         | std::ctype<char>::xdigit);
+
+   //BOOST_STATIC_ASSERT(0 == (mask_base & (mask_word | mask_unicode)));
 
    cpp_regex_traits()
       : m_pimpl(re_detail::create_cpp_regex_traits<charT>(std::locale()))
@@ -309,7 +438,33 @@ public:
    }
    char_class_type lookup_classname(const charT* p1, const charT* p2) const
    {
-      return 0;
+      static const char_class_type masks[] = 
+      {
+         0,
+         std::ctype<char>::alnum, 
+         std::ctype<char>::alpha,
+         cpp_regex_traits<charT>::mask_blank,
+         std::ctype<char>::cntrl,
+         std::ctype<char>::digit,
+         std::ctype<char>::digit,
+         std::ctype<char>::graph,
+         std::ctype<char>::lower,
+         std::ctype<char>::lower,
+         std::ctype<char>::print,
+         std::ctype<char>::punct,
+         std::ctype<char>::space,
+         std::ctype<char>::space,
+         cpp_regex_traits<charT>::mask_unicode,
+         std::ctype<char>::upper,
+         std::ctype<char>::upper,
+         std::ctype<char>::alnum | cpp_regex_traits<charT>::mask_word, 
+         std::ctype<char>::alnum | cpp_regex_traits<charT>::mask_word, 
+         std::ctype<char>::xdigit,
+      };
+      int id = re_detail::get_default_class_id(p1, p2);
+      assert(id >= -1);
+      assert(id < sizeof(masks) / sizeof(masks[0]));
+      return masks[1 + id];
    }
    string_type lookup_collatename(const charT* p1, const charT* p2) const
    {
@@ -317,12 +472,21 @@ public:
    }
    bool is_class(charT c, char_class_type f) const
    {
+      if((f & cpp_regex_traits<charT>::mask_base) 
+         && (m_pimpl->m_pctype->is(
+            static_cast<std::ctype<charT>::mask>(f & cpp_regex_traits<charT>::mask_base), c)))
+         return true;
+      else if((f & cpp_regex_traits<charT>::mask_unicode) && (c >= 256))
+         return true;
+      else if((f & cpp_regex_traits<charT>::mask_word) && (c == '_'))
+         return true;
+      else if((f & cpp_regex_traits<charT>::mask_blank) 
+         && m_pimpl->m_pctype->is(static_cast<std::ctype<charT>::mask>(f & cpp_regex_traits<charT>::mask_base), c)
+         && !re_detail::is_separator(c))
+         return true;
       return false;
    }
-   int value(charT) const
-   {
-      return -1;
-   }
+   int toi(const charT*& p1, const charT* p2, int radix)const;
    locale_type imbue(locale_type l)
    {
       std::locale result(getloc());
@@ -355,6 +519,25 @@ private:
    static static_mutex& get_mutex_inst();
 #endif
 };
+
+
+template <class charT>
+int cpp_regex_traits<charT>::toi(const charT*& first, const charT* last, int radix)const
+{
+   m_pimpl->m_sbuf.pubsetbuf(const_cast<charT*>(first), static_cast<std::streamsize>(last-first));
+   m_pimpl->m_is.clear();
+   if(std::abs(radix) == 16) m_pimpl->m_is >> std::hex;
+   else if(std::abs(radix) == 8) m_pimpl->m_is >> std::oct;
+   else m_pimpl->m_is >> std::dec;
+   int val;
+   if(m_pimpl->m_is >> val)
+   {
+      first = first + ((last - first) - m_pimpl->m_sbuf.in_avail());
+      return val;
+   }
+   else
+      return -1;
+}
 
 template <class charT>
 std::string cpp_regex_traits<charT>::catalog_name(const std::string& name)

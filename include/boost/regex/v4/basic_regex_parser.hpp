@@ -43,6 +43,7 @@ public:
    bool parse_extended_escape();
    bool parse_match_any();
    bool parse_repeat(std::size_t low = 0, std::size_t high = (std::numeric_limits<std::size_t>::max)());
+   bool parse_repeat_range(bool isbasic);
 
 private:
    typedef bool (basic_regex_parser::*parser_proc_type)();
@@ -157,6 +158,7 @@ bool basic_regex_parser<charT, traits>::parse_basic()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_extended()
 {
+   bool result;
    switch(this->m_traits.syntax_type(*m_position))
    {
    case regex_constants::syntax_open_mark:
@@ -190,10 +192,20 @@ bool basic_regex_parser<charT, traits>::parse_extended()
          fail(REG_BADRPT, 0);
       ++m_position;
       return parse_repeat(1);
+   case regex_constants::syntax_open_brace:
+      ++m_position;
+      return parse_repeat_range(false);
+   case regex_constants::syntax_close_brace:
+      fail(REG_EBRACE, this->m_position - this->m_end);
+      // we don't ever get here, because we will have thrown:
+      BOOST_ASSERT(0);
+      result = false;
+      break;
    default:
-      return parse_literal();
+      result = parse_literal();
+      break;
    }
-   return true;
+   return result;
 }
 #ifdef BOOST_MSVC
 #pragma warning(pop)
@@ -244,16 +256,41 @@ template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_basic_escape()
 {
    ++m_position;
+   bool result;
    switch(this->m_traits.escape_syntax_type(*m_position))
    {
    case regex_constants::syntax_open_mark:
       return parse_open_paren();
    case regex_constants::syntax_close_mark:
       return false;
+   case regex_constants::syntax_plus:
+      if(this->m_pdata->m_flags & regex_constants::bk_plus_qm)
+      {
+         ++m_position;
+         return parse_repeat(1);
+      }
+      else
+         return parse_literal();
+   case regex_constants::syntax_question:
+      if(this->m_pdata->m_flags & regex_constants::bk_plus_qm)
+      {
+         ++m_position;
+         return parse_repeat(0, 1);
+      }
+      else
+         return parse_literal();
+   case regex_constants::syntax_open_brace:
+      ++m_position;
+      return parse_repeat_range(true);
+   case regex_constants::syntax_close_brace:
+      fail(REG_EBRACE, this->m_position - this->m_base);
+      result = false;
+      break;
    default:
-      return parse_literal();
+      result = parse_literal();
+      break;
    }
-   return true;
+   return result;
 }
 
 template <class charT, class traits>
@@ -304,6 +341,10 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
          greedy = false;
          ++m_position;
       }
+   }
+   if(0 == this->m_last_state)
+   {
+      fail(REG_BADRPT, std::distance(m_base, m_position));
    }
    if(this->m_last_state->type == syntax_element_endmark)
    {
@@ -365,6 +406,80 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
    rep = static_cast<re_repeat*>(this->getaddress(rep_off));
    rep->alt.i = this->m_pdata->m_data.size() - rep_off;
    return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
+{
+   //
+   // parse a repeat-range:
+   //
+   std::size_t min, max;
+   int v;
+   // skip whitespace:
+   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+      ++m_position;
+   // fail if at end:
+   if(this->m_position == this->m_end)
+      fail(REG_EBRACE, this->m_position - this->m_base);
+   // get min:
+   v = this->m_traits.toi(m_position, m_end, 10);
+   // skip whitespace:
+   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+      ++m_position;
+   if(v < 0)
+      fail(REG_BADBR, this->m_position - this->m_base);
+   else if(this->m_position == this->m_end)
+      fail(REG_EBRACE, this->m_position - this->m_base);
+   min = v;
+   // see if we have a comma:
+   if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_comma)
+   {
+      // move on and error check:
+      ++m_position;
+      // skip whitespace:
+      while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+         ++m_position;
+      if(this->m_position == this->m_end)
+         fail(REG_EBRACE, this->m_position - this->m_base);
+      // get the value if any:
+      v = this->m_traits.toi(m_position, m_end, 10);
+      max = (v >= 0) ? v : (std::numeric_limits<std::size_t>::max)();
+   }
+   else
+   {
+      // no comma, max = min:
+      max = min;
+   }
+   // skip whitespace:
+   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+      ++m_position;
+   // OK now check trailing }:
+   if(this->m_position == this->m_end)
+      fail(REG_EBRACE, this->m_position - this->m_base);
+   if(isbasic)
+   {
+      if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_escape)
+      {
+         ++m_position;
+         if(this->m_position == this->m_end)
+            fail(REG_EBRACE, this->m_position - this->m_base);
+      }
+      else
+      {
+         fail(REG_BADBR, this->m_position - this->m_base);
+      }
+   }
+   if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_brace)
+      ++m_position;
+   else
+      fail(REG_BADBR, this->m_position - this->m_base);
+   //
+   // finally go and add the repeat, unless error:
+   //
+   if(min > max)
+      fail(REG_ERANGE, this->m_position - this->m_base);
+   return parse_repeat(min, max);
 }
 
 } // namespace re_detail

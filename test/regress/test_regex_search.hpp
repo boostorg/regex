@@ -11,6 +11,10 @@ struct test_regex_search_tag{};
 template <class BidirectionalIterator>
 void test_sub_match(const boost::sub_match<BidirectionalIterator>& sub, BidirectionalIterator base, const int* answer_table, int i)
 {
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4244)
+#endif
    typedef typename boost::sub_match<BidirectionalIterator>::value_type charT;
    if(sub.matched == 0)
    {
@@ -38,6 +42,9 @@ void test_sub_match(const boost::sub_match<BidirectionalIterator>& sub, Bidirect
             << ", expected " << answer_table[1 + 2*i] << ".", charT);
       }
    }
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 template <class BidirectionalIterator, class Allocator>
@@ -52,10 +59,11 @@ void test_result(const boost::match_results<BidirectionalIterator, Allocator>& w
 template<class charT, class traits>
 void test_simple_search(boost::basic_regex<charT, traits>& r)
 {
+   typedef typename std::basic_string<charT>::const_iterator const_iterator;
    const std::basic_string<charT>& search_text = test_info<charT>::search_text();
    boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
    const int* answer_table = test_info<charT>::answer_table();
-   boost::match_results<typename std::basic_string<charT>::const_iterator> what;
+   boost::match_results<const_iterator> what;
    if(boost::regex_search(
       search_text.begin(),
       search_text.end(),

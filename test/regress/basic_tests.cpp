@@ -80,92 +80,107 @@ void basic_tests()
    TEST_REGEX_SEARCH("\\*", perl, "*", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("(ab)*", perl, "abab", match_default, make_array(0, 4, 2, 4, -2, -2));
 
+   // now try operator + :
+   TEST_REGEX_SEARCH("ab+", perl, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab+", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab+", perl, "sssabbbbbbsss", match_default, make_array(3, 10, -2, -2));
+   TEST_REGEX_SEARCH("ab+c+", perl, "abbb", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab+c+", perl, "accc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab+c+", perl, "abbcc", match_default, make_array(0, 5, -2, -2));
+   TEST_INVALID_REGEX("+a", perl);
+   TEST_INVALID_REGEX("\\<+", perl);
+   TEST_INVALID_REGEX("\\>+", perl);
+   TEST_REGEX_SEARCH("\n+", perl, "\n\n", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\+", perl, "+", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\+", perl, "++", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\++", perl, "++", match_default, make_array(0, 2, -2, -2));
+
+   TEST_REGEX_SEARCH("+", basic|bk_plus_qm, "+", match_default, make_array(0, 1, -2, -2));
+   TEST_INVALID_REGEX("\\+", basic|bk_plus_qm);
+   TEST_REGEX_SEARCH("a\\+", basic|bk_plus_qm, "aa", match_default, make_array(0, 2, -2, -2));
+
+   // now try operator ?
+   TEST_REGEX_SEARCH("a?", perl, "b", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("ab?", perl, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("ab?", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab?", perl, "sssabbbbbbsss", match_default, make_array(3, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab?c?", perl, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("ab?c?", perl, "abbb", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab?c?", perl, "accc", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab?c?", perl, "abcc", match_default, make_array(0, 3, -2, -2));
+   TEST_INVALID_REGEX("?a", perl);
+   TEST_INVALID_REGEX("\\<?", perl);
+   TEST_INVALID_REGEX("\\>?", perl);
+   TEST_REGEX_SEARCH("\n?", perl, "\n\n", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\?", perl, "?", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\?", perl, "?", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\??", perl, "??", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("?", basic|bk_plus_qm, "?", match_default, make_array(0, 1, -2, -2));
+   TEST_INVALID_REGEX("\\?", basic|bk_plus_qm);
+   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "aa", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "b", match_default, make_array(0, 0, -2, -2));
+
+   TEST_REGEX_SEARCH("a?", basic, "a?", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a+", basic, "a+", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\?", basic, "a?", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\+", basic, "a+", match_default, make_array(0, 2, -2, -2));
+
+   // now try operator {}
+   TEST_REGEX_SEARCH("a{2}", perl, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a{2}", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{2}", perl, "aaa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{2,}", perl, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a{2,}", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{2,}", perl, "aaaaa", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a{2,4}", perl, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a{2,4}", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{2,4}", perl, "aaa", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a{2,4}", perl, "aaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a{2,4}", perl, "aaaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a{ 2 , 4 }", perl, "aaaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a{ 2 , }", perl, "aaaaa", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a{ 2 }", perl, "aaa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\{\\}", perl, "a{}", match_default, make_array(0, 3, -2, -2));
+   TEST_INVALID_REGEX("a{}", perl);
+   TEST_INVALID_REGEX("a{", perl);
+   TEST_INVALID_REGEX("a{1", perl);
+   TEST_INVALID_REGEX("a{1,", perl);
+   TEST_INVALID_REGEX("a{ }", perl);
+   TEST_INVALID_REGEX("a}", perl);
+   TEST_INVALID_REGEX("{1}", perl);
+   TEST_INVALID_REGEX("a{b}", perl);
+   TEST_INVALID_REGEX("a{1b}", perl);
+   TEST_INVALID_REGEX("a{1,b}", perl);
+   TEST_INVALID_REGEX("a{1,2v}", perl);
+
+   // now try operator \\{\\} for POSIX basic regexes
+   TEST_REGEX_SEARCH("a\\{2\\}", basic, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a\\{2\\}", basic, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2\\}", basic, "aaa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,\\}", basic, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a\\{2,\\}", basic, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,\\}", basic, "aaaaa", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,4\\}", basic, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a\\{2,4\\}", basic, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,4\\}", basic, "aaa", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,4\\}", basic, "aaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a\\{2,4\\}", basic, "aaaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a\\{ 2 , 4 \\}", basic, "aaaaa", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a\\{ 2 , \\}", basic, "aaaaa", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("a\\{ 2 \\}", basic, "aaa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{}", basic, "a{}", match_default, make_array(0, 3, -2, -2));
+   TEST_INVALID_REGEX("a\\{\\}", basic);
+   TEST_INVALID_REGEX("a\\{", basic);
+   TEST_INVALID_REGEX("a\\{1", basic);
+   TEST_INVALID_REGEX("a\\{1,", basic);
+   TEST_INVALID_REGEX("a\\{ \\}", basic);
+   TEST_INVALID_REGEX("a\\}", basic);
+   TEST_INVALID_REGEX("\\{1\\}", basic);
+   TEST_INVALID_REGEX("a\\{b\\}", basic);
+   TEST_INVALID_REGEX("a\\{1b\\}", basic);
+   TEST_INVALID_REGEX("a\\{1,b\\}", basic);
+   TEST_INVALID_REGEX("a\\{1,2v\\}", basic);
 #if 0
-
-; now try operator +
-ab+ a -1 -1
-ab+ ab 0 2
-ab+ sssabbbbbbsss 3 10
-ab+c+ a -1 -1
-ab+c+ abbb -1 -1
-ab+c+ accc -1 -1
-ab+c+ abbcc 0 5
-+a !
-\<+ !
-\>+ !
-\n+ \n\n 0 2
-\+ + 0 1
-\+ ++ 0 1
-\++ ++ 0 2
-- match_default normal bk_plus_qm REG_EXTENDED REG_NO_POSIX_TEST
-+ + 0 1
-\+ !
-a\+ aa 0 2
-
-; now try operator ?
-- match_default normal REG_EXTENDED
-a? b 0 0
-ab? a 0 1
-ab? ab 0 2
-ab? sssabbbbbbsss 3 5
-ab?c? a 0 1
-ab?c? abbb 0 2
-ab?c? accc 0 2
-ab?c? abcc 0 3
-?a !
-\<? !
-\>? !
-\n? \n\n 0 1
-\? ? 0 1
-\? ?? 0 1
-\?? ?? 0 1
-- match_default normal bk_plus_qm REG_EXTENDED REG_NO_POSIX_TEST
-? ? 0 1
-\? !
-a\? aa 0 1
-a\? b 0 0
-
-- match_default normal limited_ops
-a? a? 0 2
-a+ a+ 0 2
-a\? a? 0 2
-a\+ a+ 0 2
-
-; now try operator {}
-- match_default normal REG_EXTENDED
-a{2} a -1 -1
-a{2} aa 0 2
-a{2} aaa 0 2
-a{2,} a -1 -1
-a{2,} aa 0 2
-a{2,} aaaaa 0 5
-a{2,4} a -1 -1
-a{2,4} aa 0 2
-a{2,4} aaa 0 3
-a{2,4} aaaa 0 4
-a{2,4} aaaaa 0 4
-; spaces are now allowed inside {}
-"a{ 2 , 4 }" aaaaa 0 4
-a{} !
-"a{ }" !
-a{2 !
-a} !
-\{\} {} 0 2
-
-- match_default normal bk_braces
-a\{2\} a -1 -1
-a\{2\} aa 0 2
-a\{2\} aaa 0 2
-a\{2,\} a -1 -1
-a\{2,\} aa 0 2
-a\{2,\} aaaaa 0 5
-a\{2,4\} a -1 -1
-a\{2,4\} aa 0 2
-a\{2,4\} aaa 0 3
-a\{2,4\} aaaa 0 4
-a\{2,4\} aaaaa 0 4
-"a\{ 2 , 4 \}" aaaaa 0 4
-{} {} 0 2
 
 ; now test the alternation operator |
 - match_default normal REG_EXTENDED

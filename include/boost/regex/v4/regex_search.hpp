@@ -131,6 +131,7 @@ inline bool regex_search(const std::basic_string<charT, ST, SA>& s,
    return regex_search(s.begin(), s.end(), e, flags);
 }
 #else  // non-template function overloads
+#if 0
 inline bool regex_search(const char* first, const char* last, 
                   const regex& e, 
                   match_flag_type flags = match_default)
@@ -142,11 +143,12 @@ inline bool regex_search(const char* first, const char* last,
 #ifndef BOOST_NO_WREGEX
 inline bool regex_search(const wchar_t* first, const wchar_t* last, 
                   const wregex& e, 
-                  match_flag_type flags = match_default)
+                  match_flag_type flags/* = match_default*/)
 {
    wcmatch m;
    return regex_search(first, last, m, e, flags);
 }
+#endif
 #endif
 inline bool regex_search(const char* str, 
                         const regex& e, 

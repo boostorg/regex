@@ -179,7 +179,7 @@ OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out,
          case regex_constants::syntax_digit:
          {
 expand_sub:
-            unsigned int index = parse_value(fmt, fmt_end, traits_inst, 10);
+            unsigned int index = traits_inst.toi(fmt, fmt_end, 10);
             if(index < m.size())
                oi_assign(&out, re_copy_out(out, Iterator(m[index].first), Iterator(m[index].second)));
             continue;
@@ -259,7 +259,7 @@ expand_sub:
                   ++fmt;
                   continue;
                }
-               int val = parse_value(fmt, fmt_end, traits_inst, 16);
+               int val = traits_inst.toi(fmt, fmt_end, 16);
                if(val < 0)
                {
                   fmt -= 2;
@@ -284,7 +284,7 @@ expand_sub:
             }
             else
             {
-               int val = parse_value(fmt, fmt_end, traits_inst, 16);
+               int val = traits_inst.toi(fmt, fmt_end, 16);
                if(val < 0)
                {
                   --fmt;
@@ -324,7 +324,7 @@ expand_sub:
             if(flags & format_sed)
                goto expand_sub;
             else
-               c = static_cast<charT>(parse_value(fmt, fmt_end, traits_inst, 8));
+               c = static_cast<charT>(traits_inst.toi(fmt, fmt_end, 8));
             break;
          default:
             //c = *fmt;
@@ -391,7 +391,7 @@ expand_sub:
                ++fmt;
                return out;
             }
-            unsigned int id = parse_value(fmt, fmt_end, traits_inst, 10);
+            unsigned int id = traits_inst.toi(fmt, fmt_end, 10);
             if(m[id].matched)
             {
                oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));

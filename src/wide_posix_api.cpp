@@ -170,6 +170,10 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 
 BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecW(const regex_tW* expression, const wchar_t* buf, regsize_t n, regmatch_t* array, int eflags)
 {
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4267)
+#endif
    bool result = false;
    match_flag_type flags = match_default | expression->eflags;
    const wchar_t* end;
@@ -224,6 +228,9 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecW(const regex_tW* expression, cons
       return 0;
    }
    return REG_NOMATCH;
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 BOOST_REGEX_DECL void BOOST_REGEX_CCALL regfreeW(regex_tW* expression)

@@ -162,6 +162,10 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
 
 BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecA(const regex_tA* expression, const char* buf, regsize_t n, regmatch_t* array, int eflags)
 {
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4267)
+#endif
    bool result = false;
    match_flag_type flags = match_default | expression->eflags;
    const char* end;
@@ -217,6 +221,9 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecA(const regex_tA* expression, cons
       return 0;
    }
    return REG_NOMATCH;
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 BOOST_REGEX_DECL void BOOST_REGEX_CCALL regfreeA(regex_tA* expression)

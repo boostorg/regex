@@ -119,6 +119,7 @@ namespace regex_constants{
       collate = ::boost::regbase::collate,
       nosubs = ::boost::regbase::nosubs,
       optimize = ::boost::regbase::optimize,
+      bk_plus_qm = ::boost::regbase::bk_plus_qm,
 
       basic = ::boost::regbase::basic,
       extended = ::boost::regbase::extended,

@@ -624,8 +624,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 #ifdef __BORLANDC__
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
+   typedef typename traits::char_class_type char_class_type;
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   const re_set_long<typename traits::char_class_type>* set = static_cast<const re_set_long<typename traits::char_class_type>*>(pstate->next.p);
+   const re_set_long<char_class_type>* set = static_cast<const re_set_long<char_class_type>*>(pstate->next.p);
    unsigned count = 0;
    //
    // start by working out how much we can skip:
