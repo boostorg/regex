@@ -859,6 +859,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_greedy_si
 	{
 		--position;
 		--count;
+      ++state_count;
 	}while(count && !access::can_start(*position, rep->_map, mask_skip));
 
    // if we've hit base, destroy this state:
@@ -912,6 +913,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_slow_dot_
             return true;
          }
          ++count;
+         ++state_count;
          pstate = rep->next.p;
       }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    }   
@@ -963,6 +965,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_fast_dot_
       {
          ++position;
          ++count;
+         ++state_count;
       }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    }
 
@@ -1026,6 +1029,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_char_repe
          }
          ++count;
          ++ position;
+         ++state_count;
          pstate = rep->next.p;
       }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    }   
@@ -1089,6 +1093,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_short_set
          }
          ++count;
          ++ position;
+         ++state_count;
          pstate = rep->next.p;
       }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    }   
@@ -1153,6 +1158,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_long_set_
          }
          ++position;
          ++count;
+         ++state_count;
          pstate = rep->next.p;
       }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    }   

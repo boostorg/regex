@@ -158,7 +158,11 @@ public:
 
    allocator_type get_allocator() const
    {
+#ifndef BOOST_NO_STD_ALLOCATOR
       return m_subs.get_allocator();
+#else
+	  return allocator_type();
+#endif
    }
    void swap(match_results& that)
    {

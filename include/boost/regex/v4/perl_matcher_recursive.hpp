@@ -309,6 +309,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
             restart = position;
          pstate = rep->alt.p;
          save_pos = position;
+         ++state_count;
          if(match_all_states())
             return true;
          if(count >= rep->max)
@@ -360,6 +361,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
+      ++state_count;
       if(match_all_states())
          return true;
       if(count >= rep->max)
@@ -434,6 +436,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
+      ++state_count;
       if(match_all_states())
          return true;
       if(count >= rep->max)
@@ -507,6 +510,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
+      ++state_count;
       if(match_all_states())
          return true;
       if(count >= rep->max)
@@ -580,6 +584,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
+      ++state_count;
       if(match_all_states())
          return true;
       if(count >= rep->max)
@@ -628,6 +633,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::backtrack_till_m
       {
          --position;
          --count;
+         ++state_count;
       }
       pstate = rep->alt.p;
       backtrack = position;
@@ -636,6 +642,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::backtrack_till_m
       if(count == 0)
          return false;
       position = --backtrack;
+      ++state_count;
       --count;
    }while(true);
 #ifdef BOOST_MSVC

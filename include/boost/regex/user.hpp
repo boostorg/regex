@@ -28,9 +28,9 @@
 // locale:
 // #define BOOST_REGEX_USE_CPP_LOCALE
 
-// define this if you want to statically link to regex,
-// even when the runtime is a dll (Probably Win32 specific):
-// #define BOOST_REGEX_STATIC_LINK
+// define this if you want to dynamically link to regex,
+// if the runtime library is also a dll (Probably Win32 specific):
+// #define BOOST_REGEX_DYN_LINK
 
 // define this if you don't want the lib to automatically
 // select its link libraries:

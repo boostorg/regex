@@ -24,6 +24,7 @@
 #define BOOST_REGEX_V4_REGEX_TOKEN_ITERATOR_HPP
 
 #include <boost/shared_ptr.hpp>
+#include <boost/detail/workaround.hpp>
 
 namespace boost{
 
@@ -49,6 +50,7 @@ public:
       : end(last), pre(p), flags(f){ subs.push_back(sub); }
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const std::vector<int>& v, match_flag_type f)
       : end(last), pre(p), subs(v), flags(f){}
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    template <std::size_t N>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const int (&submatches)[N], match_flag_type f)
       : end(last), pre(p), flags(f)
@@ -56,6 +58,7 @@ public:
       for(std::size_t i = 0; i < N; ++i)
          subs.push_back(submatches[i]); 
    }
+#endif
 
    bool init(BidirectionalIterator first)
    {
@@ -146,6 +149,7 @@ public:
       if(!pdata->init(a))
          pdata.reset();
    }
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    template <std::size_t N>
    regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type& re, 
                         const int (&submatches)[N], match_flag_type m = match_default)
@@ -154,7 +158,7 @@ public:
       if(!pdata->init(a))
          pdata.reset();
    }
-
+#endif
    regex_token_iterator(const regex_token_iterator& that)
       : pdata(that.pdata) {}
    regex_token_iterator& operator=(const regex_token_iterator& that)
@@ -207,3 +211,5 @@ private:
 } // namespace boost
 
 #endif // BOOST_REGEX_V4_REGEX_TOKEN_ITERATOR_HPP
+
+

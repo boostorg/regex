@@ -134,6 +134,9 @@ BOOST_LIB_DEBUG_OPT:  nothing for release builds,
 //
 // select linkage opt:
 //
+#if defined(BOOST_REGEX_STATIC_LINK) && defined(BOOST_REGEX_DYN_LINK)
+#  undef BOOST_REGEX_STATIC_LINK
+#endif
 #if (defined(_DLL) || defined(_RTLDLL)) && !defined(BOOST_REGEX_STATIC_LINK)
 #  define BOOST_LIB_LINK_OPT "i"
 #else

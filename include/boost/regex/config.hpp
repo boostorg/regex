@@ -439,7 +439,7 @@ void raise_error(const traits& t, unsigned code)
  ****************************************************************************/
 
 #if !defined(BOOST_REGEX_RECURSIVE) && !defined(BOOST_REGEX_NON_RECURSIVE)
-#  ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
+#  if defined(BOOST_REGEX_HAS_MS_STACK_GUARD) && !defined(_STLP_DEBUG) && !defined(__STL_DEBUG)
 #     define BOOST_REGEX_RECURSIVE
 #  else
 #     define BOOST_REGEX_NON_RECURSIVE
