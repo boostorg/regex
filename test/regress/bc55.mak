@@ -11,7 +11,7 @@ BCROOT=$(MAKEDIR)\..
 #
 # sources to compile for each test:
 #
-SOURCES=tests.cpp parse.cpp regress.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
+SOURCES=basic_tests.cpp main.cpp test_deprecated.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
 
 BCC32   = $(BCROOT)\bin\Bcc32.exe 
 TLINK32 = $(BCROOT)\bin\ILink32.exe
@@ -125,6 +125,7 @@ r5lm.exe : $(SOURCES)
 
 r6lm.exe : $(SOURCES)
 	$(BCC32) -tWM -tWR -D_NO_VCL $(CFLAGS) -er6lm.exe -DBOOST_RE_TEST_LOCALE_CPP -DTEST_UNICODE $(SOURCES)
+
 
 
 

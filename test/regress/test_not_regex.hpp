@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         test_not_regex.hpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Declares tests for invalid regexes.
+  */
 
 
 #ifndef BOOST_REGEX_REGRESS_TEST_NOT_REGEX_HPP
@@ -16,6 +33,10 @@ void test(boost::basic_regex<charT, traits>& r, const test_invalid_regex_tag&)
    bool have_catch = false;
    try{
       r.assign(expression, syntax_options);
+#ifdef BOOST_NO_EXCEPTIONS
+      if(r.status())
+         have_catch = true;
+#endif
    }
    catch(const boost::bad_expression&)
    {

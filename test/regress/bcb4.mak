@@ -14,7 +14,7 @@ TLINK32 = $(BCROOT)\bin\ILink32.exe
 #
 # sources to compile for each test:
 #
-SOURCES=tests.cpp parse.cpp regress.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
+SOURCES=basic_tests.cpp main.cpp test_deprecated.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
 
 IDE_LinkFLAGS32 =  -L$(BCROOT)\LIB
 LINKOPTS= -ap -Tpe -x
@@ -177,6 +177,7 @@ r5lv.exe : $(SOURCES)
 
 r6lv.exe : $(SOURCES)
 	$(BCC32) -tWM -tWR -tWV -tWC $(CFLAGS) -er6lv.exe -DBOOST_RE_TEST_LOCALE_CPP -DTEST_UNICODE $(SOURCES)
+
 
 
 

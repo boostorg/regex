@@ -41,14 +41,12 @@
       <PRE>
 template &lt;class BidirectionalIterator, 
           class charT = iterator_traits&lt;BidirectionalIterator&gt;::value_type,
-          class traits = regex_traits&lt;charT&gt;,
-          class Allocator = allocator&lt;charT&gt; &gt;
+          class traits = regex_traits&lt;charT&gt; &gt;
 class regex_token_iterator 
 {
 public:
-   typedef          <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator&gt;                   regex_type;
-   typedef          <A href="sub_match.html">sub_match</A>                     
-             &lt;BidirectionalIterator&gt;                                     value_type;
+   typedef          <A href="basic_regex.html">basic_regex</A>&lt;charT, traits&gt;                              regex_type;
+   typedef          <A href="sub_match.html">sub_match</A>&lt;BidirectionalIterator&gt;                        value_type;
    typedef typename iterator_traits&lt;BidirectionalIterator&gt;::difference_type difference_type;
    typedef          const value_type*                                       pointer;
    typedef          const value_type&amp;                                       reference;
@@ -280,12 +278,12 @@ boost::regex e(<FONT color=#0000ff>"&lt;\\s*A\\s+[^&gt;]*href\\s*=\\s*\"([^\"]*)
 }
 </pre>
       <HR>
-      <p>Revised 
+      <p>Revised&nbsp; 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         24 Oct 2003 
+         26 June 2004&nbsp; 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
       <p><i>© Copyright John Maddock&nbsp;1998- 
-            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
       <P><I>Use, modification and distribution are subject to the Boost Software License, 
             Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>

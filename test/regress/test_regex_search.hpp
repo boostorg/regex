@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         test_regex_search.hpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Declares tests for regex search and iteration.
+  */
 
 #ifndef BOOST_REGEX_REGRESS_REGEX_SEARCH_HPP
 #define BOOST_REGEX_REGRESS_REGEX_SEARCH_HPP
@@ -92,10 +109,20 @@ void test_regex_iterator(boost::basic_regex<charT, traits>& r)
    boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
    const int* answer_table = test_info<charT>::answer_table();
    test_iterator start(search_text.begin(), search_text.end(), r, opts), end;
+   test_iterator copy(start);
    while(start != end)
    {
+      if(start != copy)
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator != comparison.", charT);
+      }
+      if(!(start == copy))
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator == comparison.", charT);
+      }
       test_result(*start, search_text.begin(), answer_table);
       ++start;
+      ++copy;
       // move on the answer table to next set of answers;
       while(*answer_table++ != -2){}
    }
@@ -185,6 +212,10 @@ void test(boost::basic_regex<charT, traits>& r, const test_regex_search_tag&)
    boost::regex_constants::syntax_option_type syntax_options = test_info<charT>::syntax_options();
    try{
       r.assign(expression, syntax_options);
+      if(r.status())
+      {
+         BOOST_REGEX_TEST_ERROR("Expression did not compile when it should have done, error code = " << r.status(), charT);
+      }
       test_simple_search(r);
       test_regex_iterator(r);
       test_regex_grep(r);

@@ -472,7 +472,9 @@ typename cpp_regex_traits_implementation<charT>::string_type
       if(pos != m_custom_collate_names.end())
          return pos->second;
    }
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
+               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
+               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -481,7 +483,9 @@ typename cpp_regex_traits_implementation<charT>::string_type
 	   name.append(1, char(*p0++));
 #endif
    name = lookup_default_collate_name(name);
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
+               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
+               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else
@@ -759,7 +763,7 @@ private:
 template <class charT>
 int cpp_regex_traits<charT>::toi(const charT*& first, const charT* last, int radix)const
 {
-   m_pimpl->m_sbuf.pubsetbuf(const_cast<charT*>(first), static_cast<std::streamsize>(last-first));
+   m_pimpl->m_sbuf.pubsetbuf(const_cast<charT*>(static_cast<const charT*>(first)), static_cast<std::streamsize>(last-first));
    m_pimpl->m_is.clear();
    if(std::abs(radix) == 16) m_pimpl->m_is >> std::hex;
    else if(std::abs(radix) == 8) m_pimpl->m_is >> std::oct;

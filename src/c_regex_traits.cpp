@@ -177,7 +177,10 @@ bool BOOST_REGEX_CALL c_regex_traits<char>::isctype(char c, char_class_type mask
 c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::lookup_collatename(const char* p1, const char* p2)
 {
    std::string s(p1, p2);
-   return ::boost::re_detail::lookup_default_collate_name(s);
+   s = ::boost::re_detail::lookup_default_collate_name(s);
+   if(s.empty() && (p2-p1 == 1))
+      s.append(1, *p1);
+   return s;
 }
 
 int BOOST_REGEX_CALL c_regex_traits<char>::value(char c, int radix)

@@ -238,6 +238,10 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 // If there are no exceptions then we must report critical-errors
 // the only way we know how; by terminating.
 //
+#include <stdexcept>
+#include <string>
+#include <boost/throw_exception.hpp>
+
 #  define BOOST_REGEX_NOEH_ASSERT(x)\
 if(0 == (x))\
 {\

@@ -169,7 +169,9 @@ bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_typ
 
 c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2) const
 {
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
+               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
+               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -178,7 +180,9 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::l
 	   name.append(1, char(*p0++));
 #endif
    name = ::boost::re_detail::lookup_default_collate_name(name);
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
+               && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
+               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else

@@ -66,15 +66,15 @@ public:
 
    void add_single(const digraph_type& s)
    {
-      m_singles.push_back(s);
+      m_singles.insert(m_singles.end(), s);
       if(s.second)
          m_has_digraphs = true;
       m_empty = false;
    }
    void add_range(const digraph_type& first, const digraph_type& end)
    {
-      m_ranges.push_back(first);
-      m_ranges.push_back(end);
+      m_ranges.insert(m_ranges.end(), first);
+      m_ranges.insert(m_ranges.end(), end);
       if(first.second)
       {
          m_has_digraphs = true;
@@ -94,7 +94,7 @@ public:
    }
    void add_equivalent(const digraph_type& s)
    {
-      m_equivalents.push_back(s);
+      m_equivalents.insert(m_equivalents.end(), s);
       if(s.second)
       {
          m_has_digraphs = true;
@@ -243,6 +243,7 @@ basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits
    : m_pdata(data), m_traits(*(data->m_ptraits)), m_last_state(0), m_repeater_id(0), m_has_backrefs(false), m_backrefs(0)
 {
    m_pdata->m_data.clear();
+   m_pdata->m_status = ::boost::regex_constants::error_ok;
    static const charT w = 'w';
    static const charT s = 's';
    static const charT l[] = { 'l', 'o', 'w', 'e', 'r', };
@@ -409,14 +410,18 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       {
          if(c1.second)
          {
-            s1.append(1, c1.first).append(1, c1.second);
+            s1.insert(s1.end(), c1.first);
+            s1.insert(s1.end(), c1.second);
          }
          else
             s1 = string_type(1, c1.first);
          if(c2.second)
-            s2.append(1, c2.first).append(1, c2.second);
+         {
+            s2.insert(s2.end(), c2.first);
+            s2.insert(s2.end(), c2.second);
+         }
          else
-            s2 = string_type(1, c2.first);
+            s2.insert(s2.end(), c2.first);
       }
       if(s1 > s2)
       {
@@ -684,6 +689,8 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          if(static_cast<re_brace*>(state)->index < 0)
          {
             // Oops error:
+            if(0 == this->m_pdata->m_status) // update the error code if not already set
+               this->m_pdata->m_status = boost::regex_constants::error_brack;
             std::string message = this->m_pdata->m_ptraits->error_string(boost::regex_constants::error_brack);
             boost::regex_error e(message, boost::regex_constants::error_brack, 0);
             e.raise();
@@ -998,6 +1005,7 @@ unsigned basic_regex_creator<charT, traits>::get_restart_type(re_syntax_base* st
       case syntax_element_word_start:
          return regbase::restart_word;
       case syntax_element_buffer_start:
+         return regbase::restart_buf;
       case syntax_element_restart_continue:
          return regbase::restart_continue;
       default:

@@ -566,8 +566,11 @@ std::string RegEx::What(int i)const
    return result;
 }
 
-const unsigned int RegEx::npos = ~0u;
-
+#ifdef BOOST_HAS_LONG_LONG
+const std::size_t RegEx::npos = ~0ULL;
+#else
+const std::size_t RegEx::npos = ~0UL;
+#endif
 
 } // namespace boost
 

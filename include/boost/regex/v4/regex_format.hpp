@@ -145,6 +145,8 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_all()
          {
             ++m_position;
             format_until_scope_end();
+            if(m_position == m_end)
+               return;
             BOOST_ASSERT(*m_position == static_cast<char_type>(')'));
             ++m_position;  // skip the closing ')'
             break;
@@ -334,6 +336,26 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_escape()
    case 'e':
       put(static_cast<char_type>(27));
       ++m_position;
+      break;
+   case 'l':
+      ++m_position;
+      m_state = output_next_lower;
+      break;
+   case 'L':
+      ++m_position;
+      m_state = output_lower;
+      break;
+   case 'u':
+      ++m_position;
+      m_state = output_next_upper;
+      break;
+   case 'U':
+      ++m_position;
+      m_state = output_upper;
+      break;
+   case 'E':
+      ++m_position;
+      m_state = output_copy;
       break;
    default:
       // see if we have a \n sed style backreference:

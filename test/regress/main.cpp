@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         main.cpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: entry point for test program.
+  */
 
 #include "test.hpp"
 #include <stdarg.h>
@@ -24,6 +41,7 @@ int cpp_main(int argc, char * argv[])
    test_partial_match();
    test_forward_lookahead_asserts();
    test_fast_repeats();
+   test_fast_repeats2();
    test_independent_subs();
    test_nosubs();
    test_conditionals();
@@ -65,4 +83,17 @@ const int* make_array(int first, ...)
    va_end(ap);
    return data;
 }
+
+#ifdef BOOST_NO_EXCEPTIONS
+
+namespace boost{
+
+void throw_exception(std::exception const & e)
+{
+   std::abort();
+}
+
+}
+
+#endif
 

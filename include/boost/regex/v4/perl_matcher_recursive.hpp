@@ -454,7 +454,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
          ++position;
          ++count;
       }
-      if((rep->leading) && (count == UINT_MAX))
+      if((rep->leading) && (rep->max == UINT_MAX))
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;

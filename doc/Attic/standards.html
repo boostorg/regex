@@ -27,8 +27,7 @@
       <P>Boost.regex is intended to conform to the <A href="http://anubis.dkuug.dk/jtc1/sc22/wg21/docs/papers/2003/n1429.htm">
             regular expression standardization proposal</A>, which will appear in a 
          future C++ standard technical report (and hopefully in a future version of the 
-         standard).&nbsp; Currently there are some differences in how the regular 
-         expression traits classes are defined, these will be fixed in a future release.</P>
+         standard).&nbsp;</P>
       <H3>ECMAScript / JavaScript</H3>
       <P>All of the ECMAScript regular expression syntax features are supported, except 
          that:</P>
@@ -39,16 +38,26 @@
          Unicode escape sequences.</P>
       <H3>Perl</H3>
       <P>Almost all Perl features are supported, except for:</P>
-      <P>\N{name}&nbsp; Use [[:name:]] instead.</P>
-      <P>\pP and \PP</P>
-      <P>(?imsx-imsx)</P>
-      <P>(?&lt;=pattern)</P>
-      <P>(?&lt;!pattern)</P>
-      <P>(?{code})</P>
-      <P>(??{code})</P>
-      <P>(?(condition)yes-pattern) and (?(condition)yes-pattern|no-pattern)</P>
-      <P>These embarrassments / limitations will be removed in due course, mainly 
-         dependent upon user demand.</P>
+      <P>
+         <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <TD>\N{name}</TD>
+               <TD>Use [[.name.]] instead.</TD>
+            </TR>
+            <TR>
+               <TD>\pP and \PP</TD>
+               <TD>Use [[:P:]] instead.</TD>
+            </TR>
+            <TR>
+               <TD>(?{code})</TD>
+               <TD>Not implementable in a compiled strongly typed language.</TD>
+            </TR>
+            <TR>
+               <TD>(??{code})</TD>
+               <TD>Not implementable in a compiled strongly typed language.</TD>
+            </TR>
+         </TABLE>
+      </P>
       <H3>POSIX</H3>
       <P>All the POSIX basic and extended regular expression features are supported, 
          except that:</P>
@@ -60,18 +69,15 @@
          string sort keys produced by the system; if you need this, and the default 
          implementation doesn't work on your platform, then you will need to supply a 
          custom traits class.</P>
-         <HR>
-      <p>Revised 
+      <HR>
+      <p>Revised&nbsp; 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         24 Oct 2003 
+         28 June 2004&nbsp; 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
       <p><i>© Copyright John Maddock&nbsp;1998- 
-            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 
-            2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+            <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
       <P><I>Use, modification and distribution are subject to the Boost Software License, 
             Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
    </body>
 </html>
-
-

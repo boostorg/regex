@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         test_deprecated.cpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Tests for deprecated interfaces.
+  */
 
 #include "test.hpp"
 #include <boost/cregex.hpp>
@@ -106,6 +123,10 @@ void test_deprecated(const char&, const test_regex_search_tag&)
       return;
    try{
       boost::RegEx e(expression, test_info<char>::syntax_options() & boost::regex::icase);
+      if(e.error_code())
+      {
+         BOOST_REGEX_TEST_ERROR("Expression did not compile when it should have done, error code = " << e.error_code(), char);
+      }
       if(e.Search(search_text, test_info<char>::match_options()))
       {
          int i = 0;
@@ -241,6 +262,8 @@ void test_deprecated(const char&, const test_invalid_regex_tag&)
    bool have_catch = false;
    try{
       boost::RegEx e(expression, test_info<char>::syntax_options() & boost::regex::icase);
+      if(e.error_code())
+         have_catch = true;
    }
    catch(const boost::bad_expression&)
    {

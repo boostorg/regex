@@ -545,6 +545,70 @@ std::ostream& operator << (std::ostream& os, const basic_regex<char, traits>& e)
 }
 #endif
 
+//
+// class reg_expression:
+// this is provided for backwards compatibility only,
+// it is deprecated, no not use!
+//
+#ifdef BOOST_REGEX_NO_FWD
+template <class charT, class traits = regex_traits<charT> >
+#else
+template <class charT, class traits >
+#endif
+class reg_expression : public basic_regex<charT, traits>
+{
+public:
+   typedef typename basic_regex<charT, traits>::flag_type flag_type;
+   typedef typename basic_regex<charT, traits>::size_type size_type;
+   explicit reg_expression(){}
+   explicit reg_expression(const charT* p, flag_type f = regex_constants::normal)
+      : basic_regex<charT, traits>(p, f){}
+   reg_expression(const charT* p1, const charT* p2, flag_type f = regex_constants::normal)
+      : basic_regex<charT, traits>(p1, p2, f){}
+   reg_expression(const charT* p, size_type len, flag_type f)
+      : basic_regex<charT, traits>(p, len, f){}
+   reg_expression(const reg_expression& that)
+      : basic_regex<charT, traits>(that) {}
+   ~reg_expression(){}
+   reg_expression& BOOST_REGEX_CALL operator=(const reg_expression& that)
+   {
+      return this->assign(that);
+   }
+
+#if !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__)
+   template <class ST, class SA>
+   explicit reg_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal)
+   : basic_regex<charT, traits>(p, f)
+   { 
+   }
+
+   template <class InputIterator>
+   reg_expression(InputIterator arg_first, InputIterator arg_last, flag_type f = regex_constants::normal)
+   : basic_regex<charT, traits>(arg_first, arg_last, f)
+   {
+   }
+
+   template <class ST, class SA>
+   reg_expression& BOOST_REGEX_CALL operator=(const std::basic_string<charT, ST, SA>& p)
+   {
+      this->assign(p);
+      return *this;
+   }
+#else
+   explicit reg_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
+   : basic_regex<charT, traits>(p, f)
+   { 
+   }
+
+   reg_expression& BOOST_REGEX_CALL operator=(const std::basic_string<charT>& p)
+   {
+      this->assign(p);
+      return *this;
+   }
+#endif
+
+};
+
 #ifdef BOOST_MSVC
 #pragma warning (pop)
 #endif

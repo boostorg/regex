@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 1998-2002
+ * Copyright (c) 1998-2004
  * Dr John Maddock
  *
  * Use, modification and distribution are subject to the 
@@ -70,7 +70,9 @@ regex_error::~regex_error() throw()
 
 void regex_error::raise()const
 {
+#ifndef BOOST_NO_EXCEPTIONS
    ::boost::throw_exception(*this);
+#endif
 }
 
 

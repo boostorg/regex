@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         test_regex_replace.hpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Declares tests for regex search and replace.
+  */
 
 #ifndef BOOST_REGEX_REGRESS_REGEX_REPLACE_HPP
 #define BOOST_REGEX_REGRESS_REGEX_REPLACE_HPP
@@ -29,6 +46,10 @@ void test(boost::basic_regex<charT, traits>& r, const test_regex_replace_tag&)
    boost::regex_constants::syntax_option_type syntax_options = test_info<charT>::syntax_options();
    try{
       r.assign(expression, syntax_options);
+      if(r.status())
+      {
+         BOOST_REGEX_TEST_ERROR("Expression did not compile when it should have done, error code = " << r.status(), charT);
+      }
       test_regex_replace(r);
    }
    catch(const boost::bad_expression& e)
