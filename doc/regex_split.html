@@ -24,7 +24,7 @@
       </P>
       <HR>
       <p></p>
-      <P>The algorithm regex_split has been deprecated in favour of the iterator <A href="regex_token_iterator.html">
+      <P>The algorithm regex_split has been deprecated in favor of the iterator <A href="regex_token_iterator.html">
             regex_token_iterator</A> which has a more flexible and powerful interface, 
          as well as following the more usual standard library "pull" rather than "push" 
          semantics.</P>
@@ -51,30 +51,37 @@ std::size_t regex_split(OutputIterator out,&nbsp;
 <B>template</B> &lt;<B>class</B> OutputIterator, <B>class</B> charT, <B>class</B> Traits1, <B>class</B> Alloc1&gt;
 std::size_t regex_split(OutputIterator out, 
                         std::basic_string&lt;charT, Traits1, Alloc1&gt;&amp; s);</PRE>
-      <P>Each version takes an output-iterator for output, and a string for input. If 
-         the expression contains no marked sub-expressions, then the algorithm writes 
-         one string onto the output-iterator for each section of input that does not 
-         match the expression. If the expression does contain marked sub-expressions, 
-         then each time a match is found, one string for each marked sub-expression will 
-         be written to the output-iterator. No more than <I>max_split </I>strings will 
-         be written to the output-iterator. Before returning, all the input processed 
-         will be deleted from the string <I>s</I> (if <I>max_split </I>is not reached 
-         then all of <I>s</I> will be deleted). Returns the number of strings written to 
-         the output-iterator. If the parameter <I>max_split</I> is not specified then it 
-         defaults to UINT_MAX. If no expression is specified, then it defaults to "\s+", 
-         and splitting occurs on whitespace.
+      <P><STRONG>Effects: </STRONG>Each version of the algorithm takes an 
+         output-iterator for output, and a string for input. If the expression contains 
+         no marked sub-expressions, then the algorithm writes one string onto the 
+         output-iterator for each section of input that does not match the expression. 
+         If the expression does contain marked sub-expressions, then each time a match 
+         is found, one string for each marked sub-expression will be written to the 
+         output-iterator. No more than <I>max_split </I>strings will be written to the 
+         output-iterator. Before returning, all the input processed will be deleted from 
+         the string <I>s</I> (if <I>max_split </I>is not reached then all of <I>s</I> will 
+         be deleted). Returns the number of strings written to the output-iterator. If 
+         the parameter <I>max_split</I> is not specified then it defaults to UINT_MAX. 
+         If no expression is specified, then it defaults to "\s+", and splitting occurs 
+         on whitespace.
       </P>
-      <P><A href="../example/snippets/regex_split_example_1.cpp">Example</A>: the following 
-         function will split the input string into a series of tokens, and remove each 
-         token from the string <I>s</I>:
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <P><A href="../example/snippets/regex_split_example_1.cpp">Example</A>: the 
+         following function will split the input string into a series of tokens, and 
+         remove each token from the string <I>s</I>:
       </P>
       <PRE><B>unsigned</B> tokenise(std::list&lt;std::string&gt;&amp; l, std::string&amp; s)
 {
 <B>&nbsp;&nbsp; return</B> boost::regex_split(std::back_inserter(l), s);
 }</PRE>
-      <P><A href="../example/snippets/regex_split_example_2.cpp">Example</A>: the following 
-         short program will extract all of the URL's from a html file, and print them 
-         out to <I>cout</I>:
+      <P><A href="../example/snippets/regex_split_example_2.cpp">Example</A>: the 
+         following short program will extract all of the URL's from a html file, and 
+         print them out to <I>cout</I>:
       </P>
       <PRE><FONT color=#008000>#include &lt;list&gt;
 #include &lt;fstream&gt;
@@ -124,15 +131,13 @@ boost::regex e(<FONT color=#000080>"&lt;\\s*A\\s+[^&gt;]*href\\s*=\\s*\"([^\"]*)
    }
    <B>return</B> 0;
 }</PRE>
-      <P>
-         <HR>
-      <P></P>
+      <HR>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
-      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
       <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
             and its documentation for any purpose is hereby granted without fee, provided 
             that the above copyright notice appear in all copies and that both that 

@@ -72,40 +72,44 @@ public:
 </PRE>
       <H3><A name="description"></A>Description</H3>
       <PRE>regex_token_iterator();</PRE>
-      <B>
-         <P>
-         Effects:</B> constructs an end of sequence iterator.</P><PRE>regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type&amp; re, 
+      <P><B> Effects:</B> constructs an end of sequence iterator.</P>
+      <PRE>regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type&amp; re, 
                      int submatch = 0, match_flag_type m = match_default);</PRE>
-      <B>
-         <P>
-         Preconditions: </B><CODE>!re.empty()</CODE>.</P><B>
-         <P>
-         Effects:</B> constructs a regex_token_iterator that will enumerate one 
-      string for each regular expression match of the expression <EM>re</EM> found 
-      within the sequence <EM>[a,b)</EM>, using match flags <EM>m</EM>.&nbsp; The 
-      string enumerated is the&nbsp;sub-expression <EM>submatch </EM>for each match 
-      found; if <EM>submatch </EM>is -1, then enumerates all the text sequences that 
-      did not match the expression <EM>re </EM>(that is to performs field 
-      splitting).</P><PRE>regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type&amp; re, 
+      <P><B> Preconditions: </B><CODE>!re.empty()</CODE>.</P>
+      <P><B> Effects:</B> constructs a regex_token_iterator that will enumerate one 
+         string for each regular expression match of the expression <EM>re</EM> found 
+         within the sequence <EM>[a,b)</EM>, using match flags <EM>m</EM>.&nbsp; The 
+         string enumerated is the&nbsp;sub-expression <EM>submatch </EM>for each match 
+         found; if <EM>submatch </EM>is -1, then enumerates all the text sequences that 
+         did not match the expression <EM>re </EM>(that is to performs field splitting).</P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <PRE>regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type&amp; re, 
                      const std::vector&lt;int&gt;&amp; submatches, match_flag_type m = match_default);</PRE>
-      <B>
-         <P>
-         Preconditions:</B> <CODE>submatches.size() &amp;&amp; !re.empty()</CODE>.</P><B>
-         <P>
-         Effects:</B> constructs a regex_token_iterator that will enumerate <EM>submatches.size()</EM>
-      strings for each regular expression match of the expression <EM>re</EM> found 
-      within the sequence <EM>[a,b)</EM>, using match flags <EM>m</EM>.&nbsp; For 
-      each match found one string will be enumerated&nbsp;for each sub-expression 
-      index&nbsp;contained within <EM>submatches </EM>vector; if <EM>submatches[0] </EM>
-      is -1, then the first string enumerated for each match will be all of the text 
-      from end of the last match to the start of the current match, in addition there 
-      will be one extra string enumerated when no more matches can be found: from the 
-      end of the last match found, to the end of the underlying sequence.</P><PRE>template &lt;std::size_t N&gt;
+      <P><B> Preconditions:</B> <CODE>submatches.size() &amp;&amp; !re.empty()</CODE>.</P>
+      <P><B> Effects:</B> constructs a regex_token_iterator that will enumerate <EM>submatches.size()</EM>
+         strings for each regular expression match of the expression <EM>re</EM> found 
+         within the sequence <EM>[a,b)</EM>, using match flags <EM>m</EM>.&nbsp; For 
+         each match found one string will be enumerated&nbsp;for each sub-expression 
+         index&nbsp;contained within <EM>submatches </EM>vector; if <EM>submatches[0] </EM>
+         is -1, then the first string enumerated for each match will be all of the text 
+         from end of the last match to the start of the current match, in addition there 
+         will be one extra string enumerated when no more matches can be found: from the 
+         end of the last match found, to the end of the underlying sequence.</P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <PRE>template &lt;std::size_t N&gt;
 regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type&amp; re, 
                      const int (&amp;submatches)[R], match_flag_type m = match_default);</PRE>
-      <B>
-         <P>
-         Preconditions: </B><CODE>!re.empty()</CODE>.</P>
+      <P><B> Preconditions: </B><CODE>!re.empty()</CODE>.</P>
       <P><STRONG>Effects:</STRONG></B> constructs a regex_token_iterator that will 
          enumerate&nbsp;<EM>R</EM> strings for each regular expression match of the 
          expression <EM>re</EM> found within the sequence <EM>[a,b)</EM>, using match 
@@ -116,41 +120,46 @@ regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const reg
          of the current match, in addition there will be one extra string enumerated 
          when no more matches can be found: from the end of the last match found, to the 
          end of the underlying sequence.</P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
       <PRE>regex_token_iterator(const regex_token_iterator&amp; that);</PRE>
+      <P><B> Effects: </B>constructs a copy of <CODE>that</CODE>.</P>
+      <P><B> Postconditions:</B> <CODE>*this == that</CODE>.</P>
+      <PRE>regex_token_iterator&amp; operator=(const regex_token_iterator&amp; that);</PRE>
+      <P><B> Effects: </B>sets <CODE>*this</CODE> to be equal to&nbsp;<CODE>that</CODE>.</P>
+      <P><B> Postconditions:</B> <CODE>*this == that</CODE>.</P>
+      <PRE>bool operator==(const regex_token_iterator&amp;);</PRE>
+      <P>
+         <B>Effects: </B>returns true if *this is the same position as that.</P>
+      <PRE>bool operator!=(const regex_token_iterator&amp;);</PRE>
+      <P>
+         <B>Effects: </B>returns <CODE>!(*this == that)</CODE>.</P>
+      <PRE>const value_type&amp; operator*();</PRE>
+      <P>
+         <B>Effects: </B>returns the current string being enumerated.</P>
+      <PRE>const value_type* operator-&gt;();</PRE>
+      <P>
+         <B>Effects: </B>returns <CODE>&amp;(*this)</CODE>.</P>
+      <PRE>regex_token_iterator&amp; operator++();</PRE>
+      <P>
+         <B>Effects: </B>Moves on to the next string to be enumerated.</P>
+      <P><STRONG>Throws:</STRONG> <CODE>std::runtime_error</CODE> if the complexity of 
+         matching the expression against an N character string begins to exceed O(N<SUP>2</SUP>), 
+         or if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
       <B>
-         <P>
-         Effects: </B>constructs a copy of <CODE>that</CODE>.</P><B>
-         <P>
-         Postconditions:</B> <CODE>*this == that</CODE>.</P><PRE>regex_token_iterator&amp; operator=(const regex_token_iterator&amp; that);</PRE>
-      <B>
-         <P>
-         Effects: </B>sets <CODE>*this</CODE> to be equal to&nbsp;<CODE>that</CODE>.</P><B>
-         <P>
-         Postconditions:</B> <CODE>*this == that</CODE>.</P><PRE>bool operator==(const regex_token_iterator&amp;);</PRE>
-      <B>
-         <P>
-         Effects: </B>returns true if *this is the same position as that.</P><PRE>bool operator!=(const regex_token_iterator&amp;);</PRE>
-      <B>
-         <P>
-         Effects: </B>returns <CODE>!(*this == that)</CODE>.</P><PRE>const value_type&amp; operator*();</PRE>
-      <B>
-         <P>
-         Effects: </B>returns the current string being enumerated.</P><PRE>const value_type* operator-&gt;();</PRE>
-      <B>
-         <P>
-         Effects: </B>returns <CODE>&amp;(*this)</CODE>.</P><PRE>regex_token_iterator&amp; operator++();</PRE>
-      <B>
-         <P>
-         Effects: </B>Moves on to the next string to be enumerated.</P><B>
          <P>
          Returns:</B><CODE> *this</CODE>.</P><PRE>regex_token_iterator&amp; operator++(int);</PRE>
-      <B>
-         <P>
-         Effects:</B> constructs a copy <CODE>result</CODE> of <CODE>*this</CODE>, 
-      then calls <CODE>++(*this)</CODE>.</P><B>
-         <P>
-         Returns:</B> <CODE>result</CODE>.<A name="examples"></A>
-      <H3>Examples</H3>
+      <P><B> Effects:</B> constructs a copy <CODE>result</CODE> of <CODE>*this</CODE>, 
+         then calls <CODE>++(*this)</CODE>.</P>
+      <P><B> Returns:</B> <CODE>result</CODE>.<A name="examples"></A>
+         <H3>Examples</H3>
       <P>The following <A href="../example/snippets/regex_token_iterator_example_1.cpp">example</A>
          takes a string and splits it into a series of tokens:</P>
       <pre>
@@ -260,12 +269,10 @@ boost::regex e(<FONT color=#0000ff>"&lt;\\s*A\\s+[^&gt;]*href\\s*=\\s*\"([^\"]*)
    <B>return</B> <FONT color=#0000a0>0</FONT>;
 }
 </pre>
-      <P>
-         <HR>
-      <P></P>
+      <HR>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
       <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>

@@ -23,7 +23,6 @@
          </TABLE>
       </P>
       <HR>
-      <p></p>
       <P>This section covers the regular expression syntax used by this library, this is 
          a programmers guide, the actual syntax presented to your program's users will 
          depend upon the flags used during expression compilation.
@@ -34,7 +33,7 @@
          "}", "[", "]", "^", "$" and "\". These characters are literals when preceded by 
          a "\". A literal is a character that matches itself, or matches the result of 
          traits_type::translate(), where traits_type is the traits template parameter to 
-         class reg_expression.</P>
+         class basic_regex.</P>
       <H3>Wildcard
       </H3>
       <P>The dot character "." matches any single character except : when <I>match_not_dot_null</I>
@@ -123,14 +122,14 @@
          expression "abc".</P>
       <H3>Independent sub-expressions</H3>
       <P>"(?&gt;expression)" matches "expression" as an independent atom (the algorithm 
-         will not backtrack into it if a failure occures later in the expression).</P>
+         will not backtrack into it if a failure occurs later in the expression).</P>
       <H3>Alternatives
       </H3>
       <P>Alternatives occur when the expression can match either one sub-expression or 
          another, each alternative is separated by a "|", or a "\|" if the flag 
          regex_constants::bk_vbar is set, or by a newline character if the flag 
          regex_constants::newline_alt is set. Each alternative is the largest possible 
-         previous sub-expression; this is the opposite behaviour from repetition 
+         previous sub-expression; this is the opposite behavior from repetition 
          operators.
       </P>
       <P>Examples:
@@ -167,7 +166,7 @@
          when the default "C" locale is in effect. For example if the library is 
          compiled with the Win32 localization model, then [a-z] will match the ASCII 
          characters a-z, and also 'A', 'B' etc, but not 'Z' which collates just after 
-         'z'. This locale specific behaviour is disabled by default (in perl mode), and 
+         'z'. This locale specific behavior is disabled by default (in perl mode), and 
          forces ranges to collate according to ASCII character code.
       </P>
       <P>Character classes are denoted using the syntax "[:classname:]" within a set 
@@ -263,7 +262,7 @@
             </TR>
             <TR>
                <TD>&nbsp;</TD>
-               <TD vAlign="top" width="50%">unicode</TD>
+               <TD vAlign="top" width="50%">Unicode</TD>
                <TD vAlign="top" width="50%">Any character whose code is greater than 255, this 
                   applies to the wide character traits classes only.</TD>
                <TD>&nbsp;</TD>
@@ -373,7 +372,7 @@
       </P>
       <H3>Buffer operators
       </H3>
-      <P>The following operators are provide for compatibility with the GNU regular 
+      <P>The following operators are provided for compatibility with the GNU regular 
          expression library, and Perl regular expressions:
       </P>
       <P>"\`" matches the start of a buffer.
@@ -521,7 +520,7 @@
                <TD vAlign="top" width="33%">0xXX
                </TD>
                <TD vAlign="top" width="33%">A hexadecimal character code, where XX is one or more 
-                  hexadecimal digits, optionally a unicode character.
+                  hexadecimal digits, optionally a Unicode character.
                </TD>
                <TD>&nbsp;</TD>
             </TR>
@@ -667,9 +666,9 @@
       <H3>What gets matched?
       </H3>
       <P>
-      When the expression is compiled as a perl-compatible regex then the matching 
+      When the expression is compiled as a Perl-compatible regex then the matching 
       algorithms will perform a depth first search on the state machine and report 
-      the first match found.
+      the first match found.</P>
       <P>
       When the expression is compiled as a POSIX-compatible regex then the matching 
       algorithms will match the first possible matching string, if more than one 
@@ -683,15 +682,11 @@
       chosen is the one with the longest first sub-expression, if that is the same 
       for two or more matches, then the second sub-expression will be examined and so 
       on.
-      <P></P>
-      The following table examples illustrate the main differences between perl and 
+      </P><P>
+      The following table examples illustrate the main differences between Perl and 
       POSIX regular expression matching rules:
-      <P></P>
+      </P>
       <P>
-         <DIV align="center">
-            <P></P>
-            <P align="center">
-               <CENTER>
                   <TABLE id="Table5" cellSpacing="1" cellPadding="7" width="624" border="1">
                      <TBODY>
                         <TR>
@@ -709,29 +704,27 @@
                            </TD>
                         </TR>
                         <TR>
-                           <TD vAlign="top" width="25%"><CODE>
-                                 <P>
-                                 a|ab</CODE>
-            </P>
+                           <TD vAlign="top" width="25%">
+                                 <P><CODE>a|ab</CODE></P>
             </TD>
-            <TD vAlign="top" width="25%"><CODE>
-                  <P>
+            <TD vAlign="top" width="25%">
+                  <P><CODE>
                   xaby</CODE>
       </P>
       </TD>
-      <TD vAlign="top" width="25%"><CODE>
-            <P>
+      <TD vAlign="top" width="25%">
+            <P><CODE>
             "ab"</CODE></P></TD>
-      <TD vAlign="top" width="25%"><CODE>
-            <P>
+      <TD vAlign="top" width="25%">
+            <P><CODE>
             "a"</CODE></P></TD>
       </TR>
       <TR>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>
+         <TD vAlign="top" width="25%">
+               <P><CODE>
                .*([[:alnum:]]+).*</CODE></P></TD>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>
+         <TD vAlign="top" width="25%">
+               <P><CODE>
                " abc def xyz "</CODE></P></TD>
          <TD vAlign="top" width="25%">
             <P>$0 = " abc def xyz "<BR>
@@ -743,33 +736,28 @@
          </TD>
       </TR>
       <TR>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>
+         <TD vAlign="top" width="25%">
+               <P><CODE>
                .*(a|xayy)</CODE></P></TD>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>
+         <TD vAlign="top" width="25%">
+               <P><CODE>
                zzxayyzz</CODE></P></TD>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>
+         <TD vAlign="top" width="25%">
+               <P><CODE>
                "zzxayy"</CODE></P></TD>
-         <TD vAlign="top" width="25%"><CODE>
-               <P>"zzxa"</P>
-               <P></P>
-            </CODE>
+         <TD vAlign="top" width="25%">
+               <P><CODE>"zzxa"</CODE></P>
          </TD>
       </TR>
-      </TBODY></CODE></TD></TR></TABLE></CENTER>
-      <P></P>
-      </DIV>
-      <P>These differences between perl matching rules, and POSIX matching rules, mean 
+      </TBODY></CODE></TD></TR></TABLE>
+      <P>These differences between Perl matching rules, and POSIX matching rules, mean 
          that these two regular expression syntaxes differ not only in the features 
          offered, but also in the form that the state machine takes and/or the 
-         algorithms used to traverse the state machine.
+         algorithms used to traverse the state machine.</p>
          <HR>
-      <P></P>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
       <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
@@ -781,3 +769,5 @@
             for any purpose. It is provided "as is" without express or implied warranty.</I></P>
    </body>
 </html>
+
+

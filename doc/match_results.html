@@ -1,57 +1,78 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
-   <head>
-      <title>Boost.Regex: class match_results</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-      <link rel="stylesheet" type="text/css" href="../../../boost.css">
-   </head>
-   <body>
-      <P>
-         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
-            <TR>
-               <td valign="top" width="300">
-                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
-               </td>
-               <TD width="353">
-                  <H1 align="center">Boost.Regex</H1>
-                  <H2 align="center">class match_results</H2>
-               </TD>
-               <td width="50">
-                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
-               </td>
-            </TR>
-         </TABLE>
-      </P>
-      <HR>
-      <H3>Contents</H3>
-      <DL class="index">
-         <DT><A href="#synopsis">Synopsis</A> <DT><A href="#description">Description</A></DT>
-      </DL>
-      <H3><A name="synopsis"></A>Synopsis</H3>
-      <P>#include &lt;<A href="../../boost/regex.hpp">boost/regex.hpp</A>&gt;
-      </P>
-      <P>Regular expressions are different from many simple pattern-matching algorithms 
-         in that as well as finding an overall match they can also produce 
-         sub-expression matches: each sub-expression being delimited in the pattern by a 
-         pair of parenthesis (...). There has to be some method for reporting 
-         sub-expression matches back to the user: this is achieved this by defining a 
-         class <I>match_results</I> that acts as an indexed collection of sub-expression 
-         matches, each sub-expression match being contained in an object of type <I><A href="sub_match.html">
-               sub_match</A></I>
-      .
-      <P>Template class match_results denotes a collection of character sequences 
-         representing the result of a regular expression match. Objects of type 
-         match_results are passed to the algorithms <A href="regex_match.html">regex_match</A>
-         and <A href="regex_search">regex_search</A>, and are returned by the iterator <A href="regex_iterator.html">
-            regex_iterator</A>
-      .&nbsp; Storage for the collection is allocated and freed as necessary by the 
-      member functions of class match_results.
-      <P>The template class match_results conforms to the requirements of a Sequence, as 
-         specified in (lib.sequence.reqmts), except that only operations defined for 
-         const-qualified Sequences are supported.</P>
-      <P>Class template match_results is most commonly used as one of the typedefs 
-         cmatch, wcmatch, smatch, or wsmatch:</P>
-      <PRE>template &lt;class BidirectionalIterator,
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<title>Boost.Regex: class match_results</title>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../../boost.css">
+</head>
+<body>
+<p></p>
+
+<table id="Table1" cellspacing="1" cellpadding="1" width="100%"
+border="0">
+<tr>
+<td valign="top" width="300">
+<h3><a href="../../../index.htm"><img height="86" width="277" alt=
+"C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+</td>
+<td width="353">
+<h1 align="center">Boost.Regex</h1>
+
+<h2 align="center">class match_results</h2>
+</td>
+<td width="50">
+<h3><a href="index.html"><img height="45" width="43" alt=
+"Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+</td>
+</tr>
+</table>
+
+<br>
+<br>
+ 
+
+<hr>
+<h3>Contents</h3>
+
+<dl class="index">
+<dt><a href="#synopsis">Synopsis</a></dt>
+
+<dt><a href="#description">Description</a></dt>
+</dl>
+
+<h3><a name="synopsis"></a>Synopsis</h3>
+
+<p>#include &lt;<a href="../../boost/regex.hpp">boost/regex.hpp</a>&gt;</p>
+
+<p>Regular expressions are different from many simple
+pattern-matching algorithms in that as well as finding an overall
+match they can also produce sub-expression matches: each
+sub-expression being delimited in the pattern by a pair of
+parenthesis (...). There has to be some method for reporting
+sub-expression matches back to the user: this is achieved this by
+defining a class <i>match_results</i> that acts as an indexed
+collection of sub-expression matches, each sub-expression match
+being contained in an object of type <i><a href="sub_match.html">
+sub_match</a></i> .</p>
+
+<p>Template class match_results denotes a collection of character
+sequences representing the result of a regular expression match.
+Objects of type match_results are passed to the algorithms <a href="regex_match.html">regex_match</a> and <a href="regex_search">
+regex_search</a>, and are returned by the iterator <a href="regex_iterator.html">regex_iterator</a> .&nbsp; Storage for the
+collection is allocated and freed as necessary by the member
+functions of class match_results.</p>
+
+<p>The template class match_results conforms to the requirements of
+a Sequence, as specified in (lib.sequence.reqmts), except that only
+operations defined for const-qualified Sequences are supported.</p>
+
+<p>Class template match_results is most commonly used as one of the
+typedefs cmatch, wcmatch, smatch, or wsmatch:</p>
+
+<pre>
+template &lt;class BidirectionalIterator,
           class Allocator = allocator&lt;sub_match&lt;BidirectionalIterator&gt; &gt;
 class match_results;
 
@@ -123,260 +144,368 @@ basic_ostream&lt;charT, traits&gt;&amp;
 
 template &lt;class BidirectionalIterator, class Allocator&gt;
 void swap(match_results&lt;BidirectionalIterator, Allocator&gt;&amp; m1,
-          match_results&lt;BidirectionalIterator, Allocator&gt;&amp; m2);</PRE>
-      <H3><A name="description"></A>Description</H3>
-      <H4>match_results constructors</H4>
-      <P>In all <CODE>match_results</CODE> constructors, a copy of the Allocator 
-         argument is used for any memory allocation performed by the constructor or 
-         member functions during the lifetime of the object.
-      </P>
-      <PRE>match_results(const Allocator&amp; a = Allocator());</PRE>
-      <B>
-         <P>
-         Effects:</B> Constructs an object of class match_results. The postconditions 
-      of this function are indicated in the table:</P>
-      <P align="center">
-         <CENTER>
-            <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
-               <TBODY>
-                  <TR>
-                     <TD vAlign="top" width="50%"><B>
-                           <P>
-                           Element</B>
-      </P>
-      </TD>
-      <TD vAlign="top" width="50%"><B>
-            <P>
-            Value</B> </P></TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>empty()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>true</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>size()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>0</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>str()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>basic_string&lt;charT&gt;()</P>
-            <P></P>
-         </TD>
-      </TR>
-      </TBODY></TD></TR></TABLE></CENTER>
-      <P></P>
-      <DIV></DIV>
-      <P>&nbsp;</P>
-      <PRE>match_results(const match_results&amp; m);</PRE>
-      <B>
-         <P>
-         Effects:</B> Constructs an object of class match_results, as a copy of 
-      m.</P><PRE>match_results&amp; operator=(const match_results&amp; m);</PRE>
-      <B>
-         <P>
-         Effects:</B> Assigns m to *this. The postconditions of this function are 
-      indicated in the table:</P>
-      <P align="center">
-         <CENTER>
-            <TABLE id="Table3" cellSpacing="1" cellPadding="7" width="624" border="1">
-               <TBODY>
-                  <TR>
-                     <TD vAlign="top" width="50%"><B>
-                           <P>
-                           Element</B>
-      </P>
-      </TD>
-      <TD vAlign="top" width="50%"><B>
-            <P>
-            Value</B> </P>
-      </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>empty()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.empty().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>size()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.size().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>str(n)</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.str(n) for all integers n &lt; m.size().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>prefix()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.prefix().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>suffix()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.suffix().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>(*this)[n]</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m[n] for all integers n &lt; m.size().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>length(n)</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.length(n) for all integers n &lt; m.size().</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>position(n)</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>m.position(n) for all integers n &lt; m.size().</P>
-            <P></P>
-         </TD>
-      </TR>
-      </TBODY></TD></TR></TABLE></CENTER>
-      <P></P>
-      <DIV></DIV>
-      <H4>match_results size</H4>
-      <PRE>size_type size()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the number of sub_match elements stored in *this.</P><PRE>size_type max_size()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the maximum number of sub_match elements that can be 
-      stored in *this.</P><PRE>bool empty()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns <CODE>size() == 0</CODE>.</P>
-      <H4>match_results element access</H4>
-      <PRE>difference_type length(int sub = 0)const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns <CODE>(*this)[sub].length()</CODE>.</P><PRE>difference_type position(unsigned int sub = 0)const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns <CODE>std::distance(prefix().first, 
-         (*this)[sub].first).</P></CODE><PRE>string_type str(int sub = 0)const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns <CODE>string_type((*this)[sub]).</P></CODE><PRE>const_reference operator[](int n) const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a reference to the <CODE>sub_match </CODE>object 
-      representing the character sequence that matched marked sub-expression <I>n</I>. 
-      If <CODE>n == 0 </CODE>then returns a reference to a <CODE>sub_match</CODE> object 
-      representing the character sequence that matched the whole regular 
-      expression.</P><PRE>const_reference prefix()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a reference to the <CODE>sub_match </CODE>object 
-      representing the character sequence from the start of the string being 
-      matched/searched, to the start of the match found.</P><PRE>const_reference suffix()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a reference to the <CODE>sub_match </CODE>object 
-      representing the character sequence from the end of the match found to the end 
-      of the string being matched/searched.</P><PRE>const_iterator begin()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a starting iterator that enumerates over all the marked 
-      sub-expression matches stored in *this.</P><PRE>const_iterator end()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a terminating iterator that enumerates over all the 
-      marked sub-expression matches stored in *this.</P>
-      <H4>match_results reformatting</H4>
-      <PRE>template &lt;class OutputIterator&gt;
+          match_results&lt;BidirectionalIterator, Allocator&gt;&amp; m2);
+</pre>
+
+<h3><a name="description"></a>Description</h3>
+
+<h4>match_results constructors</h4>
+
+<p>In all <code>match_results</code> constructors, a copy of the
+Allocator argument is used for any memory allocation performed by
+the constructor or member functions during the lifetime of the
+object.</p>
+
+<pre>
+match_results(const Allocator&amp; a = Allocator());
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Constructs an object of class match_results. The
+postconditions of this function are indicated in the table:</p>
+
+<p align="center"></p>
+
+<center>
+<table id="Table2" cellspacing="1" cellpadding="7" width="624"
+border="1">
+<tbody>
+<tr>
+<td valign="top" width="50%"><b></b>
+<p><b>Element</b></p>
+</td>
+<td valign="top" width="50%"><b></b>
+<p><b>Value</b></p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>empty()</p>
+</td>
+<td valign="top" width="50%">
+<p>true</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>size()</p>
+</td>
+<td valign="top" width="50%">
+<p>0</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>str()</p>
+</td>
+<td valign="top" width="50%">
+<p>basic_string&lt;charT&gt;()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</center>
+
+<p>&nbsp;</p>
+
+<pre>
+match_results(const match_results&amp; m);
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Constructs an object of class match_results, as
+a copy of m.</p>
+
+<pre>
+match_results&amp; operator=(const match_results&amp; m);
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Assigns m to *this. The postconditions of this
+function are indicated in the table:</p>
+
+<p align="center"></p>
+
+<center>
+<table id="Table3" cellspacing="1" cellpadding="7" width="624"
+border="1">
+<tbody>
+<tr>
+<td valign="top" width="50%"><b></b>
+<p><b>Element</b></p>
+</td>
+<td valign="top" width="50%"><b></b>
+<p><b>Value</b></p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>empty()</p>
+</td>
+<td valign="top" width="50%">
+<p>m.empty().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>size()</p>
+</td>
+<td valign="top" width="50%">
+<p>m.size().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>str(n)</p>
+</td>
+<td valign="top" width="50%">
+<p>m.str(n) for all integers n &lt; m.size().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>prefix()</p>
+</td>
+<td valign="top" width="50%">
+<p>m.prefix().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>suffix()</p>
+</td>
+<td valign="top" width="50%">
+<p>m.suffix().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>(*this)[n]</p>
+</td>
+<td valign="top" width="50%">
+<p>m[n] for all integers n &lt; m.size().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>length(n)</p>
+</td>
+<td valign="top" width="50%">
+<p>m.length(n) for all integers n &lt; m.size().</p>
+</td>
+</tr>
+
+<tr>
+<td valign="top" width="50%">
+<p>position(n)</p>
+</td>
+<td valign="top" width="50%">
+<p>m.position(n) for all integers n &lt; m.size().</p>
+</td>
+</tr>
+</tbody>
+</table>
+</center>
+
+<h4>match_results size</h4>
+
+<pre>
+size_type size()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns the number of sub_match elements stored
+in *this.</p>
+
+<pre>
+size_type max_size()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns the maximum number of sub_match elements
+that can be stored in *this.</p>
+
+<pre>
+bool empty()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns <code>size() == 0</code>.</p>
+
+<h4>match_results element access</h4>
+
+<pre>
+difference_type length(int sub = 0)const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns <code>(*this)[sub].length()</code>.</p>
+
+<pre>
+difference_type position(unsigned int sub = 0)const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns <code>std::distance(prefix().first,
+(*this)[sub].first).</code></p>
+
+<pre>
+string_type str(int sub = 0)const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns <code>
+string_type((*this)[sub]).</code></p>
+
+<pre>
+const_reference operator[](int n) const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a reference to the <code>
+sub_match</code> object representing the character sequence that
+matched marked sub-expression <i>n</i>. If <code>n == 0</code> then
+returns a reference to a <code>sub_match</code> object representing
+the character sequence that matched the whole regular
+expression.</p>
+
+<pre>
+const_reference prefix()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a reference to the <code>
+sub_match</code> object representing the character sequence from
+the start of the string being matched/searched, to the start of the
+match found.</p>
+
+<pre>
+const_reference suffix()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a reference to the <code>
+sub_match</code> object representing the character sequence from
+the end of the match found to the end of the string being
+matched/searched.</p>
+
+<pre>
+const_iterator begin()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a starting iterator that enumerates over
+all the marked sub-expression matches stored in *this.</p>
+
+<pre>
+const_iterator end()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a terminating iterator that enumerates
+over all the marked sub-expression matches stored in *this.</p>
+
+<h4>match_results reformatting</h4>
+
+<pre>
+template &lt;class OutputIterator&gt;
 OutputIterator format(OutputIterator out,
                       const string_type&amp; fmt,
-                      <A href="match_flag_type.html">match_flag_type</A> flags = format_default);</PRE>
-      <B>
-         <P>
-         Requires: </B>The type OutputIterator conforms to the Output Iterator 
-      requirements (24.1.2).</P><B>
-         <P>
-         Effects:</B> Copies the character sequence <I>[fmt.begin(), fmt.end())</I> to 
-      OutputIterator <I>out</I>. For each format specifier or escape sequence in <I>fmt</I>, 
-      replace that sequence with either the character(s) it represents, or the 
-      sequence of characters within *this to which it refers. The bitmasks specified 
-      in <I><A href="match_flag_type.html">flags</A></I> determines what <A href="format_syntax.html">
-         format specifiers or escape sequences are recognized</A>, by default this is 
-      the format used by ECMA-262, ECMAScript Language Specification, Chapter 15 part 
-      5.4.11 String.prototype.replace.</P><B>
-         <P>
-         Returns:</B> <I>out</I>.</P><PRE>string_type format(const string_type&amp; fmt,
-                   <A href="match_flag_type.html">match_flag_type</A> flags = format_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a copy of the string <I>fmt</I>. For each format 
-      specifier or escape sequence in <I>fmt</I>, replace that sequence with either 
-      the character(s) it represents, or the sequence of characters within *this to 
-      which it refers. The bitmasks specified in <I><A href="match_flag_type.html">flags</A></I>
-      determines what <A href="format_syntax.html">format specifiers or escape sequences 
-         are recognized</A>, by default this is the format used by ECMA-262, 
-      ECMAScript Language Specification, Chapter 15 part 5.4.11 
-      String.prototype.replace.</P><PRE>allocator_type get_allocator()const;</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns a copy of the Allocator that was passed to the object's 
-      constructor.</P><PRE>void swap(match_results&amp; that);</PRE>
-      <B>
-         <P>
-         Effects:</B> Swaps the contents of the two sequences. </P><B>
-         <P>
-         Postcondition:</B> <CODE>*this</CODE> contains the sequence of matched 
-      sub-expressions that were in <CODE>that</CODE>, <CODE>that</CODE> contains the 
-      sequence of matched sub-expressions that were in <CODE>*this</CODE>. </P><B>
-         <P>
-         Complexity:</B> constant time.
-      <P>
-         <HR>
-      <P></P>
-      <p>Revised 
-         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
-         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
-      </p>
-      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
-      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
-            and its documentation for any purpose is hereby granted without fee, provided 
-            that the above copyright notice appear in all copies and that both that 
-            copyright notice and this permission notice appear in supporting documentation. 
-            Dr John Maddock makes no representations about the suitability of this software 
-            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
-   </body>
+                      <a href="match_flag_type.html">match_flag_type</a> flags = format_default);
+</pre>
+
+ <b></b>
+<p><b>Requires:</b> The type OutputIterator conforms to the Output
+Iterator requirements (24.1.2).</p>
+
+ <b></b>
+<p><b>Effects:</b> Copies the character sequence <i>[fmt.begin(),
+fmt.end())</i> to OutputIterator <i>out</i>. For each format
+specifier or escape sequence in <i>fmt</i>, replace that sequence
+with either the character(s) it represents, or the sequence of
+characters within *this to which it refers. The bitmasks specified
+in <i><a href="match_flag_type.html">flags</a></i> determines what
+<a href="format_syntax.html">format specifiers or escape sequences
+are recognized</a>, by default this is the format used by ECMA-262,
+ECMAScript Language Specification, Chapter 15 part 5.4.11
+String.prototype.replace.</p>
+
+ <b></b>
+<p><b>Returns:</b> <i>out</i>.</p>
+
+<pre>
+string_type format(const string_type&amp; fmt,
+                   <a href="match_flag_type.html">match_flag_type</a> flags = format_default);
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a copy of the string <i>fmt</i>. For
+each format specifier or escape sequence in <i>fmt</i>, replace
+that sequence with either the character(s) it represents, or the
+sequence of characters within *this to which it refers. The
+bitmasks specified in <i><a href="match_flag_type.html">
+flags</a></i> determines what <a href="format_syntax.html">format
+specifiers or escape sequences are recognized</a>, by default this
+is the format used by ECMA-262, ECMAScript Language Specification,
+Chapter 15 part 5.4.11 String.prototype.replace.</p>
+
+<pre>
+allocator_type get_allocator()const;
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Returns a copy of the Allocator that was passed
+to the object's constructor.</p>
+
+<pre>
+void swap(match_results&amp; that);
+</pre>
+
+ <b></b>
+<p><b>Effects:</b> Swaps the contents of the two sequences.</p>
+
+ <b></b>
+<p><b>Postcondition:</b> <code>*this</code> contains the sequence
+of matched sub-expressions that were in <code>that</code>, <code>
+that</code> contains the sequence of matched sub-expressions that
+were in <code>*this</code>.</p>
+
+ <b></b>
+<p><b>Complexity:</b> constant time.</p>
+
+<p></p>
+
+<hr>
+<p>Revised 
+<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan -->
+17 May 2003 
+<!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
+
+<p><i>&copy; Copyright <a href="mailto:jm@regex.fsnet.co.uk">John
+Maddock</a>&nbsp;1998-
+<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->
+2003
+<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>
+
+<p align="left"><i>Permission to use, copy, modify, distribute and
+sell this software and its documentation for any purpose is hereby
+granted without fee, provided that the above copyright notice
+appear in all copies and that both that copyright notice and this
+permission notice appear in supporting documentation. Dr John
+Maddock makes no representations about the suitability of this
+software for any purpose. It is provided "as is" without express or
+implied warranty.</i></p>
+</body>
 </html>
+
+

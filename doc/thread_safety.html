@@ -23,39 +23,40 @@
          </TABLE>
       </P>
       <HR>
-      <p></p>
-      <P>Class basic_regex&lt;&gt; and its typedefs regex and wregex are thread safe, in 
-         that compiled regular expressions can safely be shared between threads. The 
-         matching algorithms regex_match, regex_search, regex_grep, regex_format and 
-         regex_merge are all re-entrant and thread safe. Class match_results is now 
-         thread safe, in that the results of a match can be safely copied from one 
-         thread to another (for example one thread may find matches and push 
+      <P>Class <A href="basic_regex.html">basic_regex</A>&lt;&gt; and its typedefs regex 
+         and wregex are thread safe, in that compiled regular expressions can safely be 
+         shared between threads. The matching algorithms <A href="regex_match.html">regex_match</A>,
+         <A href="regex_search.html">regex_search</A>, <A href="regex_grep.html">regex_grep</A>,
+         <A href="regex_format.html">regex_format</A> and <A href="regex_merge.html">regex_merge</A>
+         are all re-entrant and thread safe. Class <A href="match_results.html">match_results</A>
+         is now thread safe, in that the results of a match can be safely copied from 
+         one thread to another (for example one thread may find matches and push 
          match_results instances onto a queue, while another thread pops them off the 
-         other end), otherwise use a separate instance of match_results per thread.
+         other end), otherwise use a separate instance of <A href="match_results.html">match_results</A>
+         per thread.
       </P>
-      <P>The POSIX API functions are all re-entrant and thread safe, regular expressions 
-         compiled with <I>regcomp</I> can also be shared between threads.
+      <P>The <A href="posix_api.html">POSIX API functions</A> are all re-entrant and 
+         thread safe, regular expressions compiled with <I>regcomp</I> can also be 
+         shared between threads.
       </P>
-      <P>The class RegEx is only thread safe if each thread gets its own RegEx instance 
-         (apartment threading) - this is a consequence of RegEx handling both compiling 
-         and matching regular expressions.
+      <P>The class<A href="regex.html"> RegEx</A> is only thread safe if each thread 
+         gets its own RegEx instance (apartment threading) - this is a consequence of 
+         RegEx handling both compiling and matching regular expressions.
       </P>
       <P>Finally note that changing the global locale invalidates all compiled regular 
          expressions, therefore calling <I>set_locale</I> from one thread while another 
          uses regular expressions <I>will</I> produce unpredictable results.
       </P>
       <P>
-      There is also a requirement that there is only one thread executing prior to 
-      the start of main().
-      <P>
-         <HR>
-      <P></P>
+         There is also a requirement that there is only one thread executing prior to 
+         the start of main().</P>
+      <HR>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
-      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
       <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
             and its documentation for any purpose is hereby granted without fee, provided 
             that the above copyright notice appear in all copies and that both that 
@@ -64,3 +65,4 @@
             for any purpose. It is provided "as is" without express or implied warranty.</I></P>
    </body>
 </html>
+

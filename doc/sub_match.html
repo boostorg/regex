@@ -23,7 +23,6 @@
          </TABLE>
       </P>
       <HR>
-      <p></p>
       <H3>Synopsis</H3>
       <P>#include &lt;<A href="../../boost/regex.hpp">boost/regex.hpp</A>&gt;
       </P>
@@ -94,42 +93,42 @@ bool operator &gt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
 
 
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator == (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator == (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator != (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator != (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator &lt; (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator &lt; (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator &gt; (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator &gt; (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator &gt;= (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator &gt;= (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
-bool operator &lt;= (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; lhs,
+bool operator &lt;= (const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);
 
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator == (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator != (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator &lt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                 const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                 const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator &gt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                 const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                 const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator &gt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 template &lt;class BidirectionalIterator, class traits, class Allocator&gt; 
 bool operator &lt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
-                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;<TYPENAME re_detail::regex_iterator_traits><RANDOMACCESSITERATOR>::value_type, traits, Allocator&gt;&amp; rhs);
+                  const std::basic_string&lt;iterator_traits&lt;BidirectionalIterator&gt;::value_type, traits, Allocator&gt;&amp; rhs);
 
 template &lt;class BidirectionalIterator&gt; 
 bool operator == (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
@@ -229,191 +228,189 @@ basic_ostream&lt;charT, traits&gt;&amp;
       <PRE>bool matched</PRE>
       <P>A Boolean value denoting whether this sub-expression participated in the match.</P>
       <PRE>static difference_type length();</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>(matched ? 0 : distance(first, second))</CODE>.</P><PRE>operator basic_string&lt;value_type&gt;()const;</PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>(matched ? basic_string&lt;value_type&gt;(first, 
          second) : basic_string&lt;value_type&gt;()).</P></CODE><PRE>basic_string&lt;value_type&gt; str()const;</PRE>
-      <B>
-         <P>
+      
+         <P><B>
          Effects: </B>returns <CODE>(matched ? basic_string&lt;value_type&gt;(first, 
          second) : basic_string&lt;value_type&gt;())</CODE>.</P><PRE>int compare(const sub_match&amp; s)const;</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>str().compare(s.str())</CODE>.</P><PRE>int compare(const basic_string&lt;value_type&gt;&amp; s)const;</PRE>
-      <B>
-         <P>
+      
+         <P><B>
          Effects: </B>returns <CODE>str().compare(s)</CODE>.</P><PRE>int compare(const value_type* s)const;</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>str().compare(s)</CODE>.</P>
       <H4>
          sub_match non-member operators</H4>
       <PRE>template &lt;class BidirectionalIterator&gt;
 bool operator == (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.compare(rhs) == 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt;
 bool operator != (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.compare(rhs) != 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt;
 bool operator &lt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.compare(rhs) &lt; 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt;
 bool operator &lt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+      
+         <P><B>
          Effects: </B>returns <CODE>lhs.compare(rhs) &lt;= 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt;
 bool operator &gt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.compare(rhs) &gt;= 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt;
 bool operator &gt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs,
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.compare(rhs) &gt; 0</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator == (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs == rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator != (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs != rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt; (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &lt; rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt; (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &gt; rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt;= (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &gt;= rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt;= (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &lt;= rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator == (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() == rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator != (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() != rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                  typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() &lt; rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                  typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() &gt; rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>lhs.str() &gt;= rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const* rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() &lt;= rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator == (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs == rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator != (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs != rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt; (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &lt; rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt; (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                  const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &gt; rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt;= (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &gt;= rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt;= (typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; lhs, 
                   const sub_match&lt;BidirectionalIterator&gt;&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs &lt;= rhs.str()</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator == (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() == rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator != (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>lhs.str() != rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                  typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>lhs.str() &lt; rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt; (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                  typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>lhs.str() &gt; rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &gt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>lhs.str() &gt;= rhs</CODE>.</P><PRE>template &lt;class BidirectionalIterator&gt; 
 bool operator &lt;= (const sub_match&lt;BidirectionalIterator&gt;&amp; lhs, 
                   typename iterator_traits&lt;BidirectionalIterator&gt;::value_type const&amp; rhs); </PRE>
-      <B>
-         <P>
+    
+         <P>  <B>
          Effects: </B>returns <CODE>lhs.str() &lt;= rhs</CODE>.</P><PRE>template &lt;class charT, class traits, class BidirectionalIterator&gt;
 basic_ostream&lt;charT, traits&gt;&amp;
    operator &lt;&lt; (basic_ostream&lt;charT, traits&gt;&amp; os
                 const sub_match&lt;BidirectionalIterator&gt;&amp; m);</PRE>
-      <B>
-         <P>
+     
+         <P> <B>
          Effects: </B>returns <CODE>(os &lt;&lt; m.str())</CODE>.
-      <P>
          <HR>
-      <P></P>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
       <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
@@ -425,3 +422,5 @@ basic_ostream&lt;charT, traits&gt;&amp;
             for any purpose. It is provided "as is" without express or implied warranty.</I></P>
    </body>
 </html>
+
+

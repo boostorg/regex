@@ -23,7 +23,6 @@
          </TABLE>
       </P>
       <HR>
-      <p></p>
       <H3>Synopsis</H3>
       <P>Type syntax_option type is an implementation defined bitmask type that controls 
          how a regular expression string is to be interpreted.&nbsp; For convenience 
@@ -83,7 +82,7 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
                      normal semantics: that is the same as that given in the ECMA-262, ECMAScript 
                      Language Specification, Chapter 15 part 10, RegExp (Regular Expression) Objects 
                      (FWD.1).</P>
-                  <P>boost.regex also recognises most perl-compatible extensions in this mode.</P>
+                  <P>boost.regex also recognizes most perl-compatible extensions in this mode.</P>
                </TD>
             </TR>
             <TR>
@@ -229,7 +228,6 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
             </TR>
          </TABLE>
       </P>
-      <P>
       <P>The following constants are specific to this particular regular expression 
          implementation and do not appear in the <A href="http://anubis.dkuug.dk/jtc1/sc22/wg21/docs/papers/2003/n1429.htm">
             regular expression standardization proposal</A>:</P>
@@ -279,7 +277,7 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
                <TD vAlign="top" width="45%">regbase:: bk_parens</TD>
                <TD vAlign="top" width="45%">When this bit is set then "\(" and "\)" are used to 
                   group sub-expressions and "(" and ")" are ordinary characters, this is the 
-                  opposite of default behaviour.</TD>
+                  opposite of default behavior.</TD>
             </TR>
             <TR>
                <TD vAlign="top" width="45%">regbase:: bk_refs</TD>
@@ -290,13 +288,13 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
                <TD vAlign="top" width="45%">regbase:: bk_vbar</TD>
                <TD vAlign="top" width="45%">When this bit is set then "\|" represents the 
                   alternation operator and "|" is an ordinary character. This is the opposite of 
-                  default behaviour.</TD>
+                  default behavior.</TD>
             </TR>
             <TR>
                <TD vAlign="top" width="45%">regbase:: use_except</TD>
                <TD vAlign="top" width="45%">When this bit is set then a <A href="#bad_expression">bad_expression</A>
                   exception will be thrown on error.&nbsp; Use of this flag is deprecated - 
-                  reg_expression will always throw on error.</TD>
+                  basic_regex will always throw on error.</TD>
             </TR>
             <TR>
                <TD vAlign="top" width="45%">regbase:: failbit</TD>
@@ -316,12 +314,10 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
             </TR>
          </TABLE>
       </P>
-      <P>
          <HR>
-      </P>
       <P>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" --></P>
       <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
       <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
@@ -332,3 +328,5 @@ static const syntax_option_type perl;<BR>// these are boost.regex specific:<BR>s
             for any purpose. It is provided "as is" without express or implied warranty.</I></P>
    </body>
 </html>
+
+

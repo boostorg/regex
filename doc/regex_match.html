@@ -26,17 +26,16 @@
       <p></p>
       <H3>Contents</H3>
       <dl class="index">
-         <dt><a href="#synopsis">Synopsis</a></dt> 
-         <dt><a href="#description">Description</a></dt> 
-         <dt><a href="#examples">Examples</a></dt>
+         <dt><a href="#synopsis">Synopsis</a> <dt><a href="#description">Description</a> <dt><a href="#examples">
+                     Examples</a></dt>
       </dl>
       <H3><A name="synopsis"></A>Synopsis</H3>
       <PRE><A name=query_match></A>#include &lt;<A href="../../boost/regex.hpp">boost/regex.hpp</A>&gt; </PRE>
       <P>The algorithm regex _match determines whether a given regular expression 
          matches a given sequence denoted by a pair of bidirectional-iterators, the 
-         algorithm is defined as follows, <EM><FONT color="red">note that the result is true 
-               only if the expression matches the whole of the input sequence</FONT></EM>, 
-         the main use of this function is data input validation.
+         algorithm is defined as follows, <STRONG>note that the result is true only if the 
+            expression matches the whole of the input sequence</STRONG>, the main use of 
+         this function is data input validation.
          <PRE>template &lt;class BidirectionalIterator, class Allocator, class charT,
           class traits, class Allocator2&gt;
 bool regex_match(BidirectionalIterator first, BidirectionalIterator last,
@@ -47,7 +46,7 @@ bool regex_match(BidirectionalIterator first, BidirectionalIterator last,
 template &lt;class BidirectionalIterator, class charT, class traits, class Allocator2&gt;
 bool regex_match(BidirectionalIterator first, BidirectionalIterator last,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
-                 <A href="match_flag_type.html">match_flag_type</a> flags = match_default);
+                 <A href="match_flag_type.html">match_flag_type</A> flags = match_default);
                  
 template &lt;class charT, class Allocator, class traits, class Allocator2&gt;
 bool regex_match(const charT* str, <A href="match_results.html">match_results</A>&lt;const charT*, Allocator&gt;&amp; m,
@@ -78,201 +77,194 @@ bool regex_match(BidirectionalIterator first, BidirectionalIterator last,
                  <A href="match_results.html">match_results</A>&lt;BidirectionalIterator, Allocator&gt;&amp; m,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-         <B>
-            <P>
-            Requires:</B> Type BidirectionalIterator meets the requirements of a 
+      <P><B> Requires:</B> Type BidirectionalIterator meets the requirements of a 
          Bidirectional Iterator (24.1.4).</P>
-      <B>
-         <P>
-         Effects: </B>Determines whether there is an exact match between the regular 
-      expression <I>e</I>, and all of the character sequence [first, last), parameter <I>
-         flags</I> is used to <A href="match_flag_type.html">control how the expression 
-         is matched</A> against the character sequence. Returns true if such a match 
-      exists, false otherwise.</P><B>
-         <P>
-         Postconditions: </B>If the function returns false, then the effect on 
-      parameter <I>m</I> is undefined, otherwise the effects on parameter <I>m</I> are 
-      given in the table:</P> <I>
-         <P>
-            <DIV align="center">
-               <P></P>
-      </I>
+      <P><B> Effects: </B>Determines whether there is an exact match between the regular 
+         expression <I>e</I>, and all of the character sequence [first, last), parameter <I>
+            flags</I> is used to <A href="match_flag_type.html">control how the expression 
+            is matched</A> against the character sequence. Returns true if such a match 
+         exists, false otherwise.</P>
+      <P><STRONG>Throws:</STRONG> <code>std::runtime_error</code> if the complexity of matching the 
+         expression against an N character string begins to exceed O(N<SUP>2</SUP>), or 
+         if the program runs out of stack space while matching the expression (if 
+         Boost.regex is <A href="configuration.html">configured</A> in recursive mode), 
+         or if the matcher exhausts it's permitted memory allocation (if Boost.regex is <A href="configuration.html">
+            configured</A> in non-recursive mode).</P>
+      <P><B> Postconditions: </B>If the function returns false, then the effect on 
+         parameter <I>m</I> is undefined, otherwise the effects on parameter <I>m</I> are 
+         given in the table:</P>
       <P align="center">
          <CENTER>
             <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
                <TBODY>
                   <TR>
-                     <TD vAlign="top" width="50%"><B>
-                           <P>
-                           Element</B>
-      </P>
-      </TD>
-      <TD vAlign="top" width="50%"><B>
-            <P>
-            Value</B> </P></TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.size()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>e.mark_count()</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.empty()</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>false</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.prefix().first</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>first</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.prefix().last</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>first</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.prefix().matched</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>false</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.suffix().first</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>last</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.suffix().last</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>last</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m.suffix().matched</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>false</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[0].first</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>first</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[0].second</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>last</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[0].matched</P>
-         </TD>
-         <TD vAlign="top" width="50%"><CODE>
-               <P>
-               true</CODE> if a full match was found, and <CODE>false</CODE> if it was a 
-            partial match (found as a result of the <CODE>match_partial</CODE> flag being 
-            set).</P></TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[n].first</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>For all integers n &lt; m.size(), the start of the sequence that matched 
-               sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
-               in the match, then <I>last</I>.</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[n].second</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>For all integers n &lt; m.size(), the end of the sequence that matched 
-               sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
-               in the match, then <I>last</I>.</P>
-         </TD>
-      </TR>
-      <TR>
-         <TD vAlign="top" width="50%">
-            <P>m[n].matched</P>
-         </TD>
-         <TD vAlign="top" width="50%">
-            <P>For all integers n &lt; m.size(), true if sub-expression <I>n</I> participated 
-               in the match, false otherwise.</P>
-            <P></P>
-         </TD>
-      </TR>
-      </TBODY></TD></TR></TABLE></CENTER>
+                     <TD vAlign="top" width="50%">
+                        <P><B> Element</B>
+                        </P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P><B> Value</B>
+                        </P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.size()</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>e.mark_count()</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.empty()</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>false</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.prefix().first</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>first</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.prefix().last</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>first</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.prefix().matched</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>false</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.suffix().first</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>last</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.suffix().last</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>last</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m.suffix().matched</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>false</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[0].first</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>first</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[0].second</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>last</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[0].matched</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P><CODE> true</CODE> if a full match was found, and <CODE>false</CODE> if it was 
+                           a partial match (found as a result of the <CODE>match_partial</CODE> flag being 
+                           set).</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[n].first</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>For all integers n &lt; m.size(), the start of the sequence that matched 
+                           sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+                           in the match, then <I>last</I>.</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[n].second</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>For all integers n &lt; m.size(), the end of the sequence that matched 
+                           sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+                           in the match, then <I>last</I>.</P>
+                     </TD>
+                  </TR>
+                  <TR>
+                     <TD vAlign="top" width="50%">
+                        <P>m[n].matched</P>
+                     </TD>
+                     <TD vAlign="top" width="50%">
+                        <P>For all integers n &lt; m.size(), true if sub-expression <I>n</I> participated 
+                           in the match, false otherwise.</P>
+                     </TD>
+                  </TR>
+               </TBODY></TD></TR></TABLE>
+         </CENTER>
       <P></P>
-      </DIV><PRE>template &lt;class BidirectionalIterator, class charT, class traits, class Allocator2&gt;
+      <DIV></DIV>
+      <PRE>&nbsp;</PRE>
+      <PRE>template &lt;class BidirectionalIterator, class charT, class traits, class Allocator2&gt;
 bool regex_match(BidirectionalIterator first, BidirectionalIterator last,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Behaves "as if" by constructing an instance of <CODE><A href="match_results.html">
-            match_results</A>&lt;</CODE>BidirectionalIterator<CODE>&gt; what</CODE>, 
-      and then returning the result of <CODE>regex_match(first, last, what, e, flags)</CODE>.</P><PRE>template &lt;class charT, class Allocator, class traits, class Allocator2&gt;
+      <P><B> Effects:</B> Behaves "as if" by constructing an instance of <CODE><A href="match_results.html">
+               match_results</A>&lt;</CODE>BidirectionalIterator<CODE>&gt; what</CODE>, 
+         and then returning the result of <CODE>regex_match(first, last, what, e, flags)</CODE>.</P>
+      <PRE>template &lt;class charT, class Allocator, class traits, class Allocator2&gt;
 bool regex_match(const charT* str, <A href="match_results.html">match_results</A>&lt;const charT*, Allocator&gt;&amp; m,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the result of <CODE>regex_match(str, str + 
-         char_traits&lt;charT&gt;::length(str), m, e, flags)</CODE>.</P><PRE>template &lt;class ST, class SA, class Allocator, class charT,
+      <P><B> Effects:</B> Returns the result of <CODE>regex_match(str, str + 
+            char_traits&lt;charT&gt;::length(str), m, e, flags)</CODE>.</P>
+      <PRE>template &lt;class ST, class SA, class Allocator, class charT,
           class traits, class Allocator2&gt;
 bool regex_match(const basic_string&lt;charT, ST, SA&gt;&amp; s,
                  <A href="match_results.html">match_results</A>&lt;typename basic_string&lt;charT, ST, SA&gt;::const_iterator, Allocator&gt;&amp; m, 
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e, 
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the result of <CODE>regex_match(s.begin(), s.end(), m, e, 
-         flags)</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator2&gt;
+      <P><B> Effects:</B> Returns the result of <CODE>regex_match(s.begin(), s.end(), m, e, 
+            flags)</CODE>.</P>
+      <PRE>template &lt;class charT, class traits, class Allocator2&gt;
 bool regex_match(const charT* str,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the result of <CODE>regex_match(str, str + 
-         char_traits&lt;charT&gt;::length(str), e, flags)</CODE>.</P><PRE>template &lt;class ST, class SA, class charT, class traits, class Allocator2&gt;
+      <P><B> Effects:</B> Returns the result of <CODE>regex_match(str, str + 
+            char_traits&lt;charT&gt;::length(str), e, flags)</CODE>.</P>
+      <PRE>template &lt;class ST, class SA, class charT, class traits, class Allocator2&gt;
 bool regex_match(const basic_string&lt;charT, ST, SA&gt;&amp; s,
                  const <A href="basic_regex.html">basic_regex</A>&lt;charT, traits, Allocator2&gt;&amp; e,
                  <A href="match_flag_type.html">match_flag_type</A> flags = match_default);</PRE>
-      <B>
-         <P>
-         Effects:</B> Returns the result of <CODE>regex_match(s.begin(), s.end(), e, 
-         flags)</CODE>.
-      <H3><A name="examples"></A>Examples</H3>
+      <P><B> Effects:</B> Returns the result of <CODE>regex_match(s.begin(), s.end(), e, 
+            flags)</CODE>.
+         <H3><A name="examples"></A>Examples</H3>
       <P>The following <A href="../example/snippets/regex_match_example.cpp">example</A>
       processes an ftp response:
       <P></P>
@@ -311,7 +303,7 @@ regex expression(<FONT color=#000080>"([0-9]+)(\\-| |$)(.*)"</FONT>);
       <P></P>
       <p>Revised 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         11 April 2003 
+         17 May 2003 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
       </p>
       <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
