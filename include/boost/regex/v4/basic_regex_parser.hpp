@@ -2012,7 +2012,7 @@ bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_st
       m_alt_jumps.pop_back();
       this->m_pdata->m_data.align();
       re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
-      BOOST_ASSERT(jmp->type = syntax_element_jump);
+      BOOST_ASSERT(jmp->type == syntax_element_jump);
       jmp->alt.i = this->m_pdata->m_data.size() - jump_offset;
    }
    return true;

@@ -105,12 +105,18 @@ inline bool is_combining<wchar_t>(wchar_t c)
 template <class charT>
 inline bool is_separator(charT c)
 {
-   return BOOST_REGEX_MAKE_BOOL((c == static_cast<charT>('\n')) || (c == static_cast<charT>('\r')) || (static_cast<int>(c) == 0x2028) || (static_cast<int>(c) == 0x2029));
+   return BOOST_REGEX_MAKE_BOOL(
+      (c == static_cast<charT>('\n')) 
+      || (c == static_cast<charT>('\r')) 
+      || (c == static_cast<charT>('\f')) 
+      || (static_cast<boost::uint16_t>(c) == 0x2028u) 
+      || (static_cast<boost::uint16_t>(c) == 0x2029u) 
+      || (static_cast<boost::uint16_t>(c) == 0x85u));
 }
 template <>
 inline bool is_separator<char>(char c)
 {
-   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r'));
+   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r') || (c == '\f'));
 }
 
 //

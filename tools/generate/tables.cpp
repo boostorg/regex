@@ -18,6 +18,7 @@
   */
 
 #include <map>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -27,9 +28,16 @@
 std::string g_char_type;
 std::string g_data_type;
 std::map<std::string, std::string> g_table;
+std::map<std::string, std::pair<std::string, std::string> > g_help_table;
 
 void add(std::string key, std::string data)
 {
+   g_table[key] = data;
+   if(key.size() <= 2)
+      g_help_table[data].first = key;
+   else
+      g_help_table[data].second = key;
+
    std::string::size_type i = 0;
    while(i < key.size())
    {
@@ -41,7 +49,6 @@ void add(std::string key, std::string data)
          ++i;
       }
    }
-   g_table[key] = data;
 }
 
 #define ADD(x, y) add(BOOST_STRINGIZE(x), BOOST_STRINGIZE(y))
@@ -86,6 +93,33 @@ void generate_code()
    }
    std::cout << "};\n\n" << std::flush;
    g_table.clear();
+}
+
+void generate_html()
+{
+   // start by producing a sorted list:
+   std::vector<std::pair<std::string, std::string> > v;
+   std::map<std::string, std::pair<std::string, std::string> >::const_iterator i, j;
+   i = g_help_table.begin();
+   j = g_help_table.end();
+   while(i != j)
+   {
+      v.push_back(i->second);
+      ++i;
+   }
+   std::sort(v.begin(), v.end());
+
+   std::vector<std::pair<std::string, std::string> >::const_iterator h, k;
+   h = v.begin();
+   k = v.end();
+
+   std::cout << "<table width=\"100%\"><tr><td><b>Short Name</b></td><td><b>Long Name</b></td></tr>\n";
+   while(h != k)
+   {
+      std::cout << "<tr><td>" << (h->first.size() ? h->first : std::string(" ")) << "</td><td>" << h->second << "</td></tr>\n";
+      ++h;
+   }
+   std::cout << "</table>\n\n";
 }
 
 int main()
@@ -178,5 +212,6 @@ int main()
    ADD(Titlecase, U_GC_LT_MASK); 
 
    generate_code();
+   generate_html();
    return 0;
 }

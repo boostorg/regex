@@ -147,6 +147,14 @@ void test_unicode()
    TEST_REGEX_SEARCH_U(L"[\\N{MODIFIER LETTER LOW ACUTE ACCENT}]", perl, L"\x02CF", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH_U(L"[\\N{SUPERSCRIPT ONE}]", perl, L"\x00B9", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH_U(L"\\N{CJK UNIFIED IDEOGRAPH-7FED}", perl, L"\x7FED", match_default, make_array(0, 1, -2, -2));
+   
+   TEST_REGEX_SEARCH_U(L"\\w+", perl, L" e\x301" L"coute ", match_default, make_array(1, 8, -2, -2));
+   TEST_REGEX_SEARCH_U(L"^", perl, L" \x2028 \x2029 \x000D\x000A \x000A \x000C \x000D \x0085 ", 
+      match_default | match_not_bol, make_array(2, 2, -2, 4, 4, -2, 7, 7, -2, 9, 9, -2, 11, 11, -2, 13, 13, -2, 15, 15, -2, -2));
+   TEST_REGEX_SEARCH_U(L"$", perl, L" \x2028 \x2029 \x000D\x000A \x000A \x000C \x000D \x0085 ", 
+      match_default | match_not_eol, make_array(1, 1, -2, 3, 3, -2, 5, 5, -2, 8, 8, -2, 10, 10, -2, 12, 12, -2, 14, 14, -2, -2));
+   TEST_REGEX_SEARCH_U(L".", perl, L" \x2028\x2029\x000D\x000A\x000A\x000C\x000D\x0085 ", 
+      match_default | match_not_dot_newline, make_array(0, 1, -2, 9, 10, -2, -2));
 }
 
 #else

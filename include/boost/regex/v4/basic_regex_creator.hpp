@@ -842,6 +842,8 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             l_map[0] |= mask_init;
             l_map['\n'] |= mask;
             l_map['\r'] |= mask;
+            l_map['\f'] |= mask;
+            l_map[0x85] |= mask;
          }
          // now figure out if we can match a NULL string at this point:
          if(pnull)

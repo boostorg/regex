@@ -347,8 +347,8 @@ icu_regex_traits::char_class_type icu_regex_traits::lookup_classname(const char_
       U_GC_LU_MASK,
       mask_unicode,
       U_GC_LU_MASK,
-      char_class_type(U_GC_L_MASK | U_GC_ND_MASK) | mask_underscore, 
-      char_class_type(U_GC_L_MASK | U_GC_ND_MASK) | mask_underscore, 
+      char_class_type(U_GC_L_MASK | U_GC_ND_MASK | U_GC_MN_MASK) | mask_underscore, 
+      char_class_type(U_GC_L_MASK | U_GC_ND_MASK | U_GC_MN_MASK) | mask_underscore, 
       char_class_type(U_GC_ND_MASK) | mask_xdigit,
    };
 

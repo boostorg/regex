@@ -169,7 +169,7 @@ aaaa</PRE>
          <P>matches a NUL character.</P>
          <H5>Equivalence classes:</H5>
          <P>
-            An expression of the form[[=col=]], matches any character or collating element 
+            An expression of theform[[=col=]], matches any character or collating element 
             whose primary sort key is the same as that for collating element <EM>col</EM>, 
             as with colating elements the name <EM>col</EM> may be a <A href="collating_names.html">
                symbolic name</A>.&nbsp; A primary sort key is one that ignores case, 
@@ -250,6 +250,12 @@ aaaa</PRE>
                   <TD>An octal escape sequence - matches the single character whose code point is 
                      0ddd.</TD>
                </TR>
+               <TR>
+                  <TD>\N{name}</TD>
+                  <TD>Matches the single character which has the <A href="collating_names.html">symbolic 
+                        name</A> <EM>name.&nbsp; </EM>For example \N{newline} matches the single 
+                     character \n.</TD>
+               </TR>
             </TABLE>
          </P>
          <H5>"Single character" character&nbsp;classes:</H5>
@@ -303,6 +309,38 @@ aaaa</PRE>
                <TR>
                   <TD>\W</TD>
                   <TD>[^[:word:]]</TD>
+               </TR>
+            </TABLE>
+         </P>
+         <H5>Character Properties</H5>
+         <P>The character property names in the following table are all equivalent to the <A href="character_class_names.html">
+               names used in character classes</A>.</P>
+         <P>
+            <TABLE id="Table9" cellSpacing="1" cellPadding="1" width="100%" border="0">
+               <TR>
+                  <TD><STRONG>Form</STRONG></TD>
+                  <TD><STRONG>Description</STRONG></TD>
+                  <TD><STRONG>Equivalent character set form</STRONG></TD>
+               </TR>
+               <TR>
+                  <TD>\pX</TD>
+                  <TD>Matches any character that has the property X.</TD>
+                  <TD>[[:X:]]</TD>
+               </TR>
+               <TR>
+                  <TD>\p{Name}</TD>
+                  <TD>Matches any character that has the property <EM>Name</EM>.</TD>
+                  <TD>[[:Name:]]</TD>
+               </TR>
+               <TR>
+                  <TD>\PX</TD>
+                  <TD>Matches any character that does not have the property X.</TD>
+                  <TD>[^[:X:]]</TD>
+               </TR>
+               <TR>
+                  <TD>\P{Name}</TD>
+                  <TD>Matches any character that does not have the property <EM>Name</EM>.</TD>
+                  <TD>[^[:Name:]]</TD>
                </TR>
             </TABLE>
          </P>

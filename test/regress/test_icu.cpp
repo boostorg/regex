@@ -86,6 +86,64 @@ void compare_result(const MR1& w1, const MR2& w2, boost::mpl::int_<1> const*)
    }
 }
 
+void test_icu_grep(const boost::u32regex& r, const std::vector< ::UChar32>& search_text)
+{
+   typedef std::vector< ::UChar32>::const_iterator const_iterator;
+   typedef boost::u32regex_iterator<const_iterator> test_iterator;
+   boost::regex_constants::match_flag_type opts = test_info<wchar_t>::match_options();
+   const int* answer_table = test_info<wchar_t>::answer_table();
+   test_iterator start(search_text.begin(), search_text.end(), r, opts), end;
+   test_iterator copy(start);
+   const_iterator last_end = search_text.begin();
+   while(start != end)
+   {
+      if(start != copy)
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator != comparison.", wchar_t);
+      }
+      if(!(start == copy))
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator == comparison.", wchar_t);
+      }
+      test_result(*start, search_text.begin(), answer_table);
+      // test $` and $' :
+      if(start->prefix().first != last_end)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for start of $`", wchar_t);
+      }
+      if(start->prefix().second != (*start)[0].first)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for end of $`", wchar_t);
+      }
+      if(start->prefix().matched != (start->prefix().first != start->prefix().second))
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for matched member of $`", wchar_t);
+      }
+      if(start->suffix().first != (*start)[0].second)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for start of $'", wchar_t);
+      }
+      if(start->suffix().second != search_text.end())
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for end of $'", wchar_t);
+      }
+      if(start->suffix().matched != (start->suffix().first != start->suffix().second))
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for matched member of $'", wchar_t);
+      }
+      last_end = (*start)[0].second;
+      ++start;
+      ++copy;
+      // move on the answer table to next set of answers;
+      if(*answer_table != -2)
+         while(*answer_table++ != -2){}
+   }
+   if(answer_table[0] >= 0)
+   {
+      // we should have had a match but didn't:
+      BOOST_REGEX_TEST_ERROR("Expected match was not found.", wchar_t);
+   }
+}
 
 void test_icu(const wchar_t&, const test_regex_search_tag& )
 {
@@ -204,6 +262,10 @@ void test_icu(const wchar_t&, const test_regex_search_tag& )
             }
          }
       }
+      //
+      // finally try a grep:
+      //
+      test_icu_grep(r, search_text);
    }
    catch(const boost::bad_expression& e)
    {
