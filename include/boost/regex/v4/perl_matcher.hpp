@@ -174,7 +174,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
          {
             if(STR_COMP(s1, p) >= 0)
             {
-               while(*p)++p;
+               do{ ++p; }while(*p);
                ++p;
                if(STR_COMP(s1, p) <= 0)
                   return set_->isnot ? next : ++next;
@@ -182,11 +182,11 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
             else
             {
                // skip first string
-               while(*p)++p;
+               do{ ++p; }while(*p);
                ++p;
             }
             // skip second string
-            while(*p)++p;
+            do{ ++p; }while(*p);
             ++p;
          }
       }
@@ -201,7 +201,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
             if(STR_COMP(s1, p) == 0)
                return set_->isnot ? next : ++next;
             // skip string
-            while(*p)++p;
+            do{ ++p; }while(*p);
             ++p;
          }
       }
@@ -286,6 +286,11 @@ enum saved_state_type
    saved_state_non_greedy_long_repeat = 13, 
    saved_state_count = 14
 };
+
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4251 4231 4660)
+#endif
 
 template <class BidiIterator, class Allocator, class traits>
 class perl_matcher
@@ -400,6 +405,8 @@ private:
    bool m_has_partial_match;
    // set to true whenever we get a match:
    bool m_has_found_match;
+   // set to true whenever we're inside an independent sub-expression:
+   bool m_independent;
    // the current repeat being examined:
    repeater_count<BidiIterator>* next_count;
    // the first repeat being examined (top of linked list):
@@ -461,6 +468,10 @@ private:
    perl_matcher(const perl_matcher& that)
       : m_result(that.m_result), re(that.re), traits_inst(that.traits_inst), rep_obj(0) {}
 };
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
 } // namespace re_detail
 

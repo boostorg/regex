@@ -25,10 +25,10 @@
       <HR>
       <H3>Contents</H3>
       <dl class="index">
-         <dt><A href="#synopsis">Synopsis</A> <dt><A href="#Perl">Perl&nbsp;Syntax</A> <dt><A href="#variations">
-                     Variations</A>
-                  <dd>
-                     <dt><A href="#options">Options</A> <dt><A href="#mods">Modifiers</A> <dt><A href="#refs">References</A></dt>
+         <dt><A href="#synopsis">Synopsis</A> <dt><A href="#Perl">Perl&nbsp;Syntax</A> <dt><A href="#what">
+                     What Gets Matched</A> <dt><A href="#variations">Variations</A>
+                     <dd>
+                        <dt><A href="#options">Options</A> <dt><A href="#mods">Modifiers</A> <dt><A href="#refs">References</A></dt>
       </dl>
       <H3><A name="synopsis"></A>Synopsis</H3>
       <P>The Perl regular expression syntax is based on that used by the programming 
@@ -57,8 +57,8 @@ boost::regex e2(my_expression, boost::regex::perl|boost::regex::icase);</PRE>
       <H4>Marked sub-expressions:</H4>
       <P>A section beginning ( and ending ) acts as a marked sub-expression.&nbsp; 
          Whatever matched the sub-expression is split out in a separate field by the 
-         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or referred 
-         to by a back-reference.</P>
+         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or 
+         referred to by a back-reference.</P>
       <H4>Non-marking grouping:</H4>
       <P>A marked sub-expression is useful to lexically group part of a regular 
          expression, but has the side-effect of spitting out an extra field in the 
@@ -74,8 +74,8 @@ boost::regex e2(my_expression, boost::regex::perl|boost::regex::icase);</PRE>
       <PRE>b
 ab
 aaaaaaaab</PRE>
-      <P>The + operator will match the preceding atom one or more times, for example 
-         the expression a+b will match any of the following:</P>
+      <P>The + operator will match the preceding atom one or more times, for example the 
+         expression a+b will match any of the following:</P>
       <PRE>ab
 aaaaaaaab</PRE>
       <P>But will not match:</P>
@@ -161,15 +161,15 @@ aaaa</PRE>
             A collating element is any single character, or any sequence of characters that 
             collates as a single unit.&nbsp; Collating elements may also be used as the end 
             point of a range, for example: [[.ae.]-c] matches the character sequence "ae", 
-            plus any single character in the range "ae"-c, assuming that "ae" is treated 
-            as a single collating element in the current locale.</P>
+            plus any single character in the range "ae"-c, assuming that "ae" is treated as 
+            a single collating element in the current locale.</P>
          <P>As an extension, a collating element may also be specified via it's <A href="collating_names.html">
                symbolic name</A>, for example:</P>
          <P>[[.NUL.]]</P>
          <P>matches a NUL character.</P>
          <H5>Equivalence classes:</H5>
          <P>
-            An expression of theform[[=col=]], matches any character or collating element 
+            An expression of the form[[=col=]], matches any character or collating element 
             whose primary sort key is the same as that for collating element <EM>col</EM>, 
             as with colating elements the name <EM>col</EM> may be a <A href="collating_names.html">
                symbolic name</A>.&nbsp; A primary sort key is one that ignores case, 
@@ -186,48 +186,6 @@ aaaa</PRE>
       <H5>Combinations:</H5>
       <P>All of the above can be combined in one character set declaration, for example: 
          [[:digit:]a-c[.NUL.]].</P>
-      <H4>Operator precedence</H4>
-      <P>&nbsp;The order of precedence for of operators is as shown in the following 
-         table:</P>
-      <P>
-         <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="1">
-            <TR>
-               <TD>Collation-related bracket symbols</TD>
-               <TD>[==] [::] [..]</TD>
-            </TR>
-            <TR>
-               <TD>Escaped characters
-               </TD>
-               <TD>\</TD>
-            </TR>
-            <TR>
-               <TD>Character set&nbsp;(bracket expression)
-               </TD>
-               <TD>[]</TD>
-            </TR>
-            <TR>
-               <TD>Grouping</TD>
-               <TD>()</TD>
-            </TR>
-            <TR>
-               <TD>Single-character-ERE duplication
-               </TD>
-               <TD>* + ? {m,n}</TD>
-            </TR>
-            <TR>
-               <TD>Concatenation</TD>
-               <TD></TD>
-            </TR>
-            <TR>
-               <TD>Anchoring</TD>
-               <TD>^$</TD>
-            </TR>
-            <TR>
-               <TD>Alternation</TD>
-               <TD>|</TD>
-            </TR>
-         </TABLE>
-      </P>
       <H4>Escapes</H4>
       <P>Any special character preceded by an escape shall match itself.
       </P>
@@ -449,6 +407,12 @@ aaaa</PRE>
          <P dir="ltr">(?=pattern) consumes zero characters, only if <EM>pattern</EM> matches.</P>
          <P dir="ltr">(?!pattern) consumes zero characters, only if <EM>pattern</EM> does 
             not match.</P>
+         <P dir="ltr">Lookahead is typically used to create the logical AND of two regular 
+            expressions, for example if a password must contain a lower case letter, an 
+            upper case letter, a punctuation symbol, and be at least 6 characters long, 
+            then the expression:</P>
+         <PRE dir="ltr">(?=.*[[:lower:]])(?=.*[[:upper:]])(?=.*[[:punct:]]).{6,}</PRE>
+         <P dir="ltr">could be used to validate the password.</P>
          <H5 dir="ltr">Lookbehind</H5>
          <P dir="ltr">(?&lt;=pattern) consumes zero characters, only if <EM>pattern</EM> could 
             be matched against the characters preceding the current position (<EM>pattern</EM>
@@ -458,7 +422,10 @@ aaaa</PRE>
             must be of fixed length).</P>
          <H5 dir="ltr">Independent sub-expressions</H5>
          <P dir="ltr">(?&gt;pattern) <EM>pattern</EM> is matched independently of the 
-            surrounding patterns, the expression will never backtrack into <EM>pattern</EM>.</P>
+            surrounding patterns, the expression will never backtrack into <EM>pattern</EM>.&nbsp; 
+            Independent sub-expressions are typically used to improve performance; only the 
+            best possible match for <EM>pattern</EM> will be considered, if this doesn't 
+            allow the expression as a whole to match then no match is found at all.</P>
          <H5 dir="ltr">Conditional Expressions</H5>
          <P dir="ltr">(?(condition)yes-pattern|no-pattern) attempts to match <EM>yes-pattern</EM>
             if the <EM>condition </EM>is true, otherwise attempts to match <EM>no-pattern</EM>.</P>
@@ -467,8 +434,120 @@ aaaa</PRE>
          <P dir="ltr"><EM>Condition</EM> may be either a forward lookahead assert, or the 
             index of a marked sub-expression (the condition becomes true if the 
             sub-expression has been matched).</P>
-      </BLOCKQUOTE>
-      <H3><A name="variations"></A>Variations</H3>
+      </BLOCKQUOTE><A name="what">
+         <H4>Operator precedence</H4>
+         <P>&nbsp;The order of precedence for of operators is as shown in the following 
+            table:</P>
+         <P>
+            <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="1">
+               <TR>
+                  <TD>Collation-related bracket symbols</TD>
+                  <TD>[==] [::] [..]</TD>
+               </TR>
+               <TR>
+                  <TD>Escaped characters
+                  </TD>
+                  <TD>\</TD>
+               </TR>
+               <TR>
+                  <TD>Character set&nbsp;(bracket expression)
+                  </TD>
+                  <TD>[]</TD>
+               </TR>
+               <TR>
+                  <TD>Grouping</TD>
+                  <TD>()</TD>
+               </TR>
+               <TR>
+                  <TD>Single-character-ERE duplication
+                  </TD>
+                  <TD>* + ? {m,n}</TD>
+               </TR>
+               <TR>
+                  <TD>Concatenation</TD>
+                  <TD></TD>
+               </TR>
+               <TR>
+                  <TD>Anchoring</TD>
+                  <TD>^$</TD>
+               </TR>
+               <TR>
+                  <TD>Alternation</TD>
+                  <TD>|</TD>
+               </TR>
+            </TABLE>
+         </P>
+      </A>
+      <H3>What gets matched</H3>
+      <P>If you view the regular expression as a directed (possibly cyclic) graph, then 
+         the best match found is the first match found by a depth-first-search performed 
+         on that graph, while matching the input text.</P>
+      <P>Alternatively:</P>
+      <P>the best match found is the leftmost match, with individual elements matched as 
+         follows;</P>
+      <P>
+         <TABLE id="Table8" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <TD><STRONG>Construct</STRONG></TD>
+               <TD><STRONG>What gets matches</STRONG></TD>
+            </TR>
+            <TR>
+               <TD>AtomA AtomB</TD>
+               <TD>Locates the best match for AtomA that has a following match for&nbsp;AtomB.</TD>
+            </TR>
+            <TR>
+               <TD>Expression1 | Expression2</TD>
+               <TD>If Expresion1 can be matched then returns that match, otherwise attempts to 
+                  match Expression2.</TD>
+            </TR>
+            <TR>
+               <TD>S{N}</TD>
+               <TD>Matches S repeated exactly N times.</TD>
+            </TR>
+            <TR>
+               <TD>S{N,M}</TD>
+               <TD>Matches S repeated between N and M times, and as many times as possible.</TD>
+            </TR>
+            <TR>
+               <TD>S{N,M}?</TD>
+               <TD>Matches S repeated between N and M times, and as few times as possible.</TD>
+            </TR>
+            <TR>
+               <TD><!--StartFragment --> S?, S*, S+</TD>
+               <TD><!--StartFragment --> The same as <CODE>S{0,1}</CODE>, <CODE>S{0,UINT_MAX}</CODE>,
+                  <CODE>S{1,UINT_MAX}</CODE> respectively.
+               </TD>
+            </TR>
+            <TR>
+               <TD>S??, S*?, S+?</TD>
+               <TD>The same as <CODE>S{0,1}?</CODE>, <CODE>S{0,UINT_MAX}?</CODE>, <CODE>S{1,UINT_MAX}?</CODE>
+                  respectively.
+               </TD>
+            </TR>
+            <TR>
+               <TD><!--StartFragment --> (?&gt;S)
+               </TD>
+               <TD>Matches the best match for S, and only that.</TD>
+            </TR>
+            <TR>
+               <TD>
+                  (?=S), (?&lt;=S)
+               </TD>
+               <TD>Matches only the best match for S (this is only visible if there are capturing 
+                  parenthesis within S).</TD>
+            </TR>
+            <TR>
+               <TD><!--StartFragment --> (?!S), (?&lt;!S)</TD>
+               <TD>Considers only whether a match for S exists or not.</TD>
+            </TR>
+            <TR>
+               <TD><!--StartFragment --> (?(condition)yes-pattern | no-pattern)</TD>
+               <TD>If condition is <EM>true</EM>, then only <EM>yes-pattern</EM> is considered, 
+                  otherwise only <EM>no-pattern</EM> is considered.</TD>
+            </TR>
+         </TABLE>
+      </P>
+      <H3>Variations</H3>
       <P>The options <A href="syntax_option_type.html#perl"><EM>normal, ECMAScript, JavaScript</EM>
             and <EM>JScript</EM></A> are all synonyms for <EM>Perl</EM>.</P>
       <H3><A name="options"></A>Options</H3>
@@ -499,4 +578,3 @@ aaaa</PRE>
       </I>
    </body>
 </html>
-

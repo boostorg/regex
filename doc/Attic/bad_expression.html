@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
    <head>
-      <title>Boost.Regex: bad_expression</title>
+      <title>Boost.Regex: regex_error</title>
       <meta name="generator" content="HTML Tidy, see www.w3.org">
       <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
       <link rel="stylesheet" type="text/css" href="../../../boost.css">
@@ -42,7 +42,7 @@
    std::ptrdiff_t position()<b>const</b>;
 };
 
-typedef regex_error bad_pattern; // for backwards compatibily
+typedef regex_error bad_pattern; // for backwards compatibility
 typedef regex_error bad_expression; // for backwards compatibility
 
 } // namespace boost
@@ -54,7 +54,7 @@ regex_error(<a href="error_type.html">boost::regex_constants::error_type err</a>
       <p><b>Effects:</b> Constructs an object of class <code>regex_error</code>.</p>
       <pre>
 <a href="error_type.html">boost::regex_constants::error_type</a> code()<b>const</b>;</pre>
-      <p><b>Effects:</b> returns the error code that represents parsing error that occured.</p>
+      <p><b>Effects:</b> returns the error code that represents parsing error that occurred.</p>
       <pre>
 std::ptrdiff_t position()<b>const</b>; </pre>
       <p><b>Effects:</b> returns the location in the expression where parsing stopped.</p>
@@ -63,7 +63,7 @@ std::ptrdiff_t position()<b>const</b>; </pre>
          exceptions may be either logic errors (programmer supplied expressions) or run 
          time errors (user supplied expressions).&nbsp; The library previously used <code>bad_pattern</code>
          and <code>bad_expression</code> for errors, these have been replaced by the 
-         single class <code>regex_error</code> to keep the library in synchronisation 
+         single class <code>regex_error</code> to keep the library in synchronization 
          with the standardization proposal.</P>
       <p></p>
       <hr>
@@ -78,3 +78,4 @@ std::ptrdiff_t position()<b>const</b>; </pre>
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
    </body>
 </html>
+

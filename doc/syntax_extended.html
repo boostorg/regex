@@ -35,7 +35,7 @@
       <H3><A name="synopsis"></A>Synopsis</H3>
       <P>The POSIX-Extended regular expression syntax is supported by the POSIX C 
          regular expression API's, and variations are used by the utilities <EM>egrep</EM>
-         and <EM>awk</EM>.  You can construct POSIX extended regular expressions in 
+         and <EM>awk</EM>. You can construct POSIX extended regular expressions in 
          Boost.Regex by passing the flag <EM>extended</EM> to the regex constructor, for 
          example:</P>
       <PRE>// e1 is a case sensitive POSIX-Extended expression:
@@ -61,8 +61,8 @@ boost::regex e2(my_expression, boost::regex::extended|boost::regex::icase);</PRE
       <H4>Marked sub-expressions:</H4>
       <P>A section beginning ( and ending ) acts as a marked sub-expression.&nbsp; 
          Whatever matched the sub-expression is split out in a separate field by the 
-         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or referred 
-         to by a back-reference.</P>
+         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or 
+         referred to by a back-reference.</P>
       <H4>Repeats:</H4>
       <P>Any atom (a single character, a marked sub-expression, or a character class) 
          can be repeated with the *, +, ?, and {}&nbsp;operators.</P>
@@ -71,8 +71,8 @@ boost::regex e2(my_expression, boost::regex::extended|boost::regex::icase);</PRE
       <PRE>b
 ab
 aaaaaaaab</PRE>
-      <P>The + operator will match the preceding atom one or more times, for example 
-         the expression a+b will match any of the following:</P>
+      <P>The + operator will match the preceding atom one or more times, for example the 
+         expression a+b will match any of the following:</P>
       <PRE>ab
 aaaaaaaab</PRE>
       <P>But will not match:</P>
@@ -147,15 +147,15 @@ aaaa</PRE>
             A collating element is any single character, or any sequence of characters that 
             collates as a single unit.&nbsp; Collating elements may also be used as the end 
             point of a range, for example: [[.ae.]-c] matches the character sequence "ae", 
-            plus any single character in the range "ae"-c, assuming that "ae" is treated 
-            as a single collating element in the current locale.</P>
+            plus any single character in the range "ae"-c, assuming that "ae" is treated as 
+            a single collating element in the current locale.</P>
          <P>As an extension, a collating element may also be specified via its <A href="collating_names.html">
                symbolic name</A>, for example:</P>
          <P>[[.NUL.]]</P>
          <P>matches a NUL character.</P>
          <H5>Equivalence classes:</H5>
          <P>
-            An expression of the form [[=col=]], matches any character or collating element 
+            An expression of the form[[=col=]], matches any character or collating element 
             whose primary sort key is the same as that for collating element <EM>col</EM>, 
             as with colating elements the name <EM>col</EM> may be a <A href="collating_names.html">
                symbolic name</A>.&nbsp; A primary sort key is one that ignores case, 
@@ -168,48 +168,6 @@ aaaa</PRE>
       <H5>Combinations:</H5>
       <P>All of the above can be combined in one character set declaration, for example: 
          [[:digit:]a-c[.NUL.]].</P>
-      <H4>Operator precedence</H4>
-      <P>&nbsp;The order of precedence for of operators is as shown in the following 
-         table:</P>
-      <P>
-         <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="1">
-            <TR>
-               <TD>Collation-related bracket symbols</TD>
-               <TD>[==] [::] [..]</TD>
-            </TR>
-            <TR>
-               <TD>Escaped characters
-               </TD>
-               <TD>\</TD>
-            </TR>
-            <TR>
-               <TD>Character set&nbsp;(bracket expression)
-               </TD>
-               <TD>[]</TD>
-            </TR>
-            <TR>
-               <TD>Grouping</TD>
-               <TD>()</TD>
-            </TR>
-            <TR>
-               <TD>Single-character-ERE duplication
-               </TD>
-               <TD>* + ? {m,n}</TD>
-            </TR>
-            <TR>
-               <TD>Concatenation</TD>
-               <TD></TD>
-            </TR>
-            <TR>
-               <TD>Anchoring</TD>
-               <TD>^$</TD>
-            </TR>
-            <TR>
-               <TD>Alternation</TD>
-               <TD>|</TD>
-            </TR>
-         </TABLE>
-      </P>
       <H4>Escapes</H4>
       <P>The POSIX standard defines no escape sequences for POSIX-Extended regular 
          expressions, except that:</P>
@@ -420,8 +378,55 @@ aaaa</PRE>
          <H5>Any other escape</H5>
          <P>Any other escape sequence matches the character that is escaped, for example \@ 
             matches a literal <A href="mailto:'@'">'@'</A>.</P>
-      </BLOCKQUOTE>
-      <H3><A name="variations"></A>Variations</H3>
+      </BLOCKQUOTE><A name="variations">
+         <H4>Operator precedence</H4>
+         <P>&nbsp;The order of precedence for of operators is as shown in the following 
+            table:</P>
+         <P>
+            <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="1">
+               <TR>
+                  <TD>Collation-related bracket symbols</TD>
+                  <TD>[==] [::] [..]</TD>
+               </TR>
+               <TR>
+                  <TD>Escaped characters
+                  </TD>
+                  <TD>\</TD>
+               </TR>
+               <TR>
+                  <TD>Character set&nbsp;(bracket expression)
+                  </TD>
+                  <TD>[]</TD>
+               </TR>
+               <TR>
+                  <TD>Grouping</TD>
+                  <TD>()</TD>
+               </TR>
+               <TR>
+                  <TD>Single-character-ERE duplication
+                  </TD>
+                  <TD>* + ? {m,n}</TD>
+               </TR>
+               <TR>
+                  <TD>Concatenation</TD>
+                  <TD></TD>
+               </TR>
+               <TR>
+                  <TD>Anchoring</TD>
+                  <TD>^$</TD>
+               </TR>
+               <TR>
+                  <TD>Alternation</TD>
+                  <TD>|</TD>
+               </TR>
+            </TABLE>
+         </P>
+      </A>
+      <H4>What Gets Matched</H4>
+      <P>When there is more that one way to match a regular expression, the "best" 
+         possible match is obtained using the <A href="syntax_leftmost_longest.html">leftmost-longest 
+            rule</A>.</P>
+      <H3>Variations</H3>
       <H4>Egrep<A name="egrep"></H4>
       <P>When an expression is compiled with the flag <EM>egrep</EM> set, then the 
          expression is treated as a newline separated list of POSIX-Extended 
@@ -468,4 +473,3 @@ aaaa</PRE>
       </I>
    </body>
 </html>
-

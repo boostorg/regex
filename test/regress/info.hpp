@@ -172,7 +172,7 @@ public:
    {
       if(m_saved_error_count != error_count)
       {
-         std::cerr << "the above " << (error_count - m_saved_error_count) << " errors are treated as warnings only." << std::endl;
+         std::cerr << "<note>The above " << (error_count - m_saved_error_count) << " errors are treated as warnings only.</note>" << std::endl;
          error_count = m_saved_error_count;
       }
    }

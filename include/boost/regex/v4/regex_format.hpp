@@ -351,27 +351,42 @@ void basic_regex_formatter<OutputIterator, Results, traits>::format_escape()
       put(static_cast<char_type>(27));
       ++m_position;
       break;
-   case 'l':
-      ++m_position;
-      m_state = output_next_lower;
-      break;
-   case 'L':
-      ++m_position;
-      m_state = output_lower;
-      break;
-   case 'u':
-      ++m_position;
-      m_state = output_next_upper;
-      break;
-   case 'U':
-      ++m_position;
-      m_state = output_upper;
-      break;
-   case 'E':
-      ++m_position;
-      m_state = output_copy;
-      break;
    default:
+      // see if we have a perl specific escape:
+      if((m_flags & boost::regex_constants::format_sed) == 0)
+      {
+         bool breakout = false;
+         switch(*m_position)
+         {
+         case 'l':
+            ++m_position;
+            m_state = output_next_lower;
+            breakout = true;
+            break;
+         case 'L':
+            ++m_position;
+            m_state = output_lower;
+            breakout = true;
+            break;
+         case 'u':
+            ++m_position;
+            m_state = output_next_upper;
+            breakout = true;
+            break;
+         case 'U':
+            ++m_position;
+            m_state = output_upper;
+            breakout = true;
+            break;
+         case 'E':
+            ++m_position;
+            m_state = output_copy;
+            breakout = true;
+            break;
+         }
+         if(breakout)
+            break;
+      }
       // see if we have a \n sed style backreference:
       int v = m_traits.toi(m_position, m_position+1, 10);
       if((v > 0) || ((v == 0) && (m_flags & ::boost::regex_constants::format_sed)))
@@ -531,6 +546,11 @@ OutputIterator regex_format_imp(OutputIterator out,
                           const traits& t
                          )
 {
+   if(flags & regex_constants::format_literal)
+   {
+      return std::copy(p1, p2, out);
+   }
+
    re_detail::basic_regex_formatter<
       OutputIterator, 
       match_results<Iterator, Alloc>, 

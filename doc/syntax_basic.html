@@ -60,7 +60,8 @@ boost::regex e2(my_expression, boost::regex::basic|boost::regex::icase);</PRE>
       <H4>Marked sub-expressions:</H4>
       <P>A section beginning \( and ending \) acts as a marked sub-expression.&nbsp; 
          Whatever matched the sub-expression is split out in a separate field by the 
-         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or referred-to by a back-reference.</P>
+         matching algorithms.&nbsp; Marked sub-expressions can also repeated, or 
+         referred-to by a back-reference.</P>
       <H4>Repeats:</H4>
       <P>Any atom (a single character, a marked sub-expression, or a character class) 
          can be repeated with the * operator.</P>
@@ -133,7 +134,7 @@ aaaa</PRE>
          <P>matches a NUL character.</P>
          <H5>Equivalence classes:</H5>
          <P>
-            An expression of the form [[=col=]], matches any character or collating element 
+            An expression of the form[[=col=]], matches any character or collating element 
             whose primary sort key is the same as that for collating element <EM>col</EM>, 
             as with collating elements the name <EM>col</EM> may be a <A href="collating_names.html">
                symbolic name</A>.&nbsp; A primary sort key is one that ignores case, 
@@ -152,7 +153,11 @@ aaaa</PRE>
          character.&nbsp; This can be used to make the special characters .[\*^$, 
          "ordinary".&nbsp; Note that the escape character loses its special meaning 
          inside a character set, so [\^] will match either a literal '\' or a '^'.</P>
-      <H3><A name="variations"></A>Variations</H3>
+      <H4>What Gets Matched</H4>
+      <P>When there is more that one way to match a regular expression, the "best" 
+         possible match is obtained using the <A href="syntax_leftmost_longest.html">leftmost-longest 
+            rule</A>.</P>
+      <H3>Variations</H3>
       <H4><A name="grep"></A>Grep</H4>
       <P>When an expression is compiled with the flag <EM>grep</EM> set, then the 
          expression is treated as a newline separated list of <A href="#Basic">POSIX-Basic</A>
@@ -192,6 +197,11 @@ aaaa</PRE>
          <P>\&lt; matches zero characters only at the start of a word.</P>
          <P>\&gt; matches zero characters only at the end of a word.</P>
       </BLOCKQUOTE>
+      <P dir="ltr">Finally, you should note that emacs style regular expressions are 
+         matched according to the <A href="syntax_perl.html#what">Perl "depth first search" 
+            rules</A>.&nbsp; Emacs expressions are matched this way because they contain 
+         Perl-like extensions, that do not interact well with the <A href="syntax_leftmost_longest.html">
+            POSIX-style leftmost-longest rule</A>.</P>
       <H3><A name="options"></A>Options</H3>
       <P>There are a <A href="syntax_option_type.html#basic">variety of flags</A> that 
          may be combined with the <EM>basic</EM> and <EM>grep</EM> options when 

@@ -26,6 +26,11 @@
 namespace boost{
 namespace re_detail{
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4244)
+#endif
+
 template <class charT, class traits>
 class basic_regex_parser : public basic_regex_creator<charT, traits>
 {
@@ -52,6 +57,7 @@ public:
    bool parse_QE();
    bool parse_perl_extension();
    bool add_emacs_code(bool negate);
+   bool unwind_alts(std::ptrdiff_t last_paren_start);
    digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
    charT unescape_character();
    regex_constants::syntax_option_type parse_options();
@@ -68,6 +74,14 @@ private:
    std::ptrdiff_t             m_paren_start;    // where the last seen ')' began (where repeats are inserted).
    std::ptrdiff_t             m_alt_insert_point; // where to insert the next alternative
    bool                       m_has_case_change; // true if somewhere in the current block the case has changed
+#ifdef BOOST_MSVC
+   // This is an ugly warning suppression workaround (for warnings *inside* std::vector
+   // that can not otherwise be suppressed)...
+   BOOST_STATIC_ASSERT(sizeof(long) >= sizeof(void*));
+   std::vector<long>           m_alt_jumps;      // list of alternative in the current scope.
+#else
+   std::vector<std::ptrdiff_t> m_alt_jumps;      // list of alternative in the current scope.
+#endif
 
    basic_regex_parser& operator=(const basic_regex_parser&);
    basic_regex_parser(const basic_regex_parser&);
@@ -109,6 +123,10 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
 
    // parse all our characters:
    bool result = parse_all();
+   //
+   // Unwind our alternatives:
+   //
+   unwind_alts(-1);
    // reset flags as a global scope (?imsx) may have altered them:
    this->flags(flags);
    // if we haven't gobbled up all the characters then we must
@@ -350,6 +368,11 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    // matching ')' :
    //
    parse_all();
+   //
+   // Unwind pushed alternatives:
+   //
+   if(0 == unwind_alts(last_paren_start))
+      return false;
    //
    // restore flags:
    //
@@ -910,26 +933,13 @@ bool basic_regex_parser<charT, traits>::parse_alt()
          )->icase = this->m_icase;
    }
    //
-   // recursively add states:
+   // push the alternative onto our stack, a recursive
+   // implementation here is easier to understand (and faster
+   // as it happens), but causes all kinds of stack overflow problems
+   // on programs with small stacks (COM+).
    //
-   bool result = this->parse_all();
-   //
-   // if we didn't actually add any trailing states then that's an error:
-   //
-   if(this->m_alt_insert_point == static_cast<std::ptrdiff_t>(this->m_pdata->m_data.size()))
-   {
-      fail(regex_constants::error_empty, this->m_position - this->m_base);
-      return false;
-   }
-   //
-   // fix up the jump we added to point to the end of the states
-   // that we've just added:
-   //
-   this->m_pdata->m_data.align();
-   re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
-   jmp->alt.i = this->m_pdata->m_data.size() - jump_offset;
-
-   return result;
+   m_alt_jumps.push_back(jump_offset);
+   return true;
 }
 
 template <class charT, class traits>
@@ -1745,6 +1755,11 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    //
    parse_all();
    //
+   // Unwind alternatives:
+   //
+   if(0 == unwind_alts(last_paren_start))
+      return false;
+   //
    // we either have a ')' or we have run out of characters prematurely:
    //
    if(m_position == m_end)
@@ -1971,6 +1986,41 @@ regex_constants::syntax_option_type basic_regex_parser<charT, traits>::parse_opt
    return f;
 }
 
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_start)
+{
+   //
+   // If we didn't actually add any states after the last 
+   // alternative then that's an error:
+   //
+   if((this->m_alt_insert_point == static_cast<std::ptrdiff_t>(this->m_pdata->m_data.size()))
+      && m_alt_jumps.size() && (m_alt_jumps.back() > last_paren_start))
+   {
+      fail(regex_constants::error_empty, this->m_position - this->m_base);
+      return false;
+   }
+   // 
+   // Fix up our alternatives:
+   //
+   while(m_alt_jumps.size() && (m_alt_jumps.back() > last_paren_start))
+   {
+      //
+      // fix up the jump to point to the end of the states
+      // that we've just added:
+      //
+      std::ptrdiff_t jump_offset = m_alt_jumps.back();
+      m_alt_jumps.pop_back();
+      this->m_pdata->m_data.align();
+      re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
+      BOOST_ASSERT(jmp->type = syntax_element_jump);
+      jmp->alt.i = this->m_pdata->m_data.size() - jump_offset;
+   }
+   return true;
+}
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
 } // namespace re_detail
 } // namespace boost

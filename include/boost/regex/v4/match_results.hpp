@@ -24,6 +24,10 @@
 #endif
 
 namespace boost{
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4251 4231 4660)
+#endif
 
 template <class BidiIterator, class Allocator>
 class match_results
@@ -250,6 +254,10 @@ public:
    {
       m_base = pos;
    }
+   BidiIterator base()const
+   {
+      return m_base;
+   }
    void BOOST_REGEX_CALL set_first(BidiIterator i)
    {
       // set up prefix:
@@ -342,6 +350,9 @@ std::ostream& operator << (std::ostream& os,
 }
 #endif
 
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 } // namespace boost
 
 #ifdef BOOST_HAS_ABI_HEADERS

@@ -66,6 +66,11 @@ void test_conditionals()
    TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "aB", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "bA", match_default, make_array(-2, -2));
 
+   TEST_REGEX_SEARCH("(a)?(?(1)A)B", perl, "aAB", match_default, make_array(0, 3, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(a)?(?(1)A)B", perl, "B", match_default, make_array(0, 1, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(a)?(?(1)|A)B", perl, "aB", match_default, make_array(0, 2, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(a)?(?(1)|A)B", perl, "AB", match_default, make_array(0, 2, -1, -1, -2, -2));
+
    TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "aa", match_default, make_array(0, 2, 0, 1, -2, -2));
    TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "b", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "bb", match_default, make_array(0, 2, -2, -2));

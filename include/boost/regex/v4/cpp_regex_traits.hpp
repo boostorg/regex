@@ -396,17 +396,18 @@ public:
 #ifdef __GNUC__
    BOOST_STATIC_CONSTANT(native_mask_type, 
       mask_base = 
-         std::ctype<charT>::alnum 
-         | std::ctype<charT>::alpha
-         | std::ctype<charT>::cntrl
-         | std::ctype<charT>::digit
-         | std::ctype<charT>::graph
-         | std::ctype<charT>::lower
-         | std::ctype<charT>::print
-         | std::ctype<charT>::punct
-         | std::ctype<charT>::space
-         | std::ctype<charT>::upper
-         | std::ctype<charT>::xdigit);
+         static_cast<native_mask_type>(
+            std::ctype<charT>::alnum 
+            | std::ctype<charT>::alpha
+            | std::ctype<charT>::cntrl
+            | std::ctype<charT>::digit
+            | std::ctype<charT>::graph
+            | std::ctype<charT>::lower
+            | std::ctype<charT>::print
+            | std::ctype<charT>::punct
+            | std::ctype<charT>::space
+            | std::ctype<charT>::upper
+            | std::ctype<charT>::xdigit));
 #else
    BOOST_STATIC_CONSTANT(char_class_type, 
       mask_base = 

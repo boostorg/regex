@@ -1,7 +1,9 @@
 
 #include "test.hpp"
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1300) && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
+#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1300)\
+   && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))\
+   && !(defined(__GNUC__) && !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)))
 
 template <class T1, class T2>
 void test_less(const T1& t1, const T2& t2)

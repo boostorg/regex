@@ -215,7 +215,7 @@ static const regex_constants::syntax_option_type newline_alt      = regex_consta
          then a constant with the same name, type and value is declared within the scope 
          of <code>basic_regex</code>.</p>
       <h4>basic_regex constructors</h4>
-      <pre> basic_regex();
+      <pre><A name=c1> basic_regex();
 </pre>
       <P><b>Effects:</b> Constructs an object of class <code>basic_regex</code>. The 
          postconditions of this function are indicated in the table:</P>
@@ -259,7 +259,7 @@ static const regex_constants::syntax_option_type newline_alt      = regex_consta
             </table>
          </center>
       </div>
-      <pre><BR> basic_regex(const charT* p, flag_type f = regex_constants::normal);
+      <pre><A name=c2><BR> basic_regex(const charT* p, flag_type f = regex_constants::normal);
  
 </pre>
       <P><b>Requires:</b> <i>p</i> shall not be a null pointer.</P>
@@ -704,7 +704,7 @@ bool empty() const;
       <p><b>Effects:</b> Returns the number of marked sub-expressions within the regular 
          expresion.</p>
       <h4>basic_regex assign</h4>
-      <pre>
+      <pre><A name=a1>
 basic_regex&amp; assign(const basic_regex&amp; that);
 </pre>
       <p><b>Effects:</b> Returns <code>assign(that.str(), that.flags())</code>.</p>

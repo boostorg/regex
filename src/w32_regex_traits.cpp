@@ -174,7 +174,7 @@ void free_module(void* mod)
 
 BOOST_REGEX_DECL cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name)
 {
-   cat_type result(::LoadLibrary(name.c_str()), &free_module);
+   cat_type result(::LoadLibraryA(name.c_str()), &free_module);
    return result;
 }
 

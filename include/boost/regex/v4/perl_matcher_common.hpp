@@ -38,7 +38,7 @@ perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, 
    match_flag_type f)
    :  m_result(what), base(first), last(end), 
       position(first), re(e), traits_inst(e.get_traits()), 
-      next_count(&rep_obj), rep_obj(&next_count)
+      m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
 { 
    typedef typename regex_iterator_traits<BidiIterator>::iterator_category category;
    
@@ -429,10 +429,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
    m_presult->set_second(position);
    pstate = 0;
    m_has_found_match = true;
-   if((m_match_flags & (match_posix|match_any)) == match_posix)
+   if((m_match_flags & match_posix) == match_posix)
    {
       m_result.maybe_assign(*m_presult);
-      return false;
+      if((m_match_flags & match_any) == 0)
+         return false;
    }
 #ifdef BOOST_REGEX_MATCH_EXTRA
    if(match_extra & m_match_flags)
@@ -684,11 +685,12 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
 }
 
 template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref()
+inline bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref()
 {
    // return true if marked sub-expression N has been matched:
+   bool result = (*m_presult)[static_cast<const re_brace*>(pstate)->index].matched;
    pstate = pstate->next.p;
-   return (*m_presult)[static_cast<const re_brace*>(pstate)->index].matched;
+   return result;
 }
 
 template <class BidiIterator, class Allocator, class traits>

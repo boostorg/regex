@@ -33,7 +33,7 @@ icu_regex_traits_implementation::string_type icu_regex_traits_implementation::do
    std::vector< ::UChar> t(i, j);
    ::uint8_t result[100];
    ::int32_t len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), result, sizeof(result));
-   if(len > sizeof(result))
+   if(std::size_t(len) > sizeof(result))
    {
       scoped_array< ::uint8_t> presult(new ::uint8_t[len+1]);
       len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), presult.get(), len+1);
@@ -153,7 +153,7 @@ icu_regex_traits::char_class_type icu_regex_traits::lookup_icu_mask(const ::UCha
       /* zs */  'z', 's', 
    };
 
-   static const re_detail::character_pointer_range<::UChar32> range_data[] = {
+   static const re_detail::character_pointer_range< ::UChar32> range_data[] = {
       { prop_name_table+0, prop_name_table+3, }, // any
       { prop_name_table+3, prop_name_table+8, }, // ascii
       { prop_name_table+8, prop_name_table+16, }, // assigned
@@ -381,7 +381,7 @@ icu_regex_traits::char_class_type icu_regex_traits::lookup_classname(const char_
       if(result != 0)
          return result;
    }
-   BOOST_ASSERT(id+1 < sizeof(masks) / sizeof(masks[0]));
+   BOOST_ASSERT(std::size_t(id+1) < sizeof(masks) / sizeof(masks[0]));
    return masks[id+1];
 }
 

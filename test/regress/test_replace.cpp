@@ -65,6 +65,7 @@ void test_replace()
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "()?:", "()?:");
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\\\", "\\");
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\&", "&");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\l\\u\\L\\U\\E", "luLUE");
 
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$0", "aabb");
    TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$1", "aa");
@@ -107,6 +108,12 @@ void test_replace()
    TEST_REGEX_REPLACE("([^\\d]+).*", normal|icase, "tesd 999 test", match_default|format_all, "($1)replace", "tesd replace");
    TEST_REGEX_REPLACE("(a)(b)", perl, "ab", match_default|format_all, "$1:$2", "a:b");
    TEST_REGEX_REPLACE("(a(c)?)|(b)", perl, "acab", match_default|format_all, "(?1(?2(C:):A):B:)", "C:AB:");
-
+   TEST_REGEX_REPLACE("x", icase, "xx", match_default|format_all, "a", "aa");
+   TEST_REGEX_REPLACE("x", basic|icase, "xx", match_default|format_all, "a", "aa");
+   TEST_REGEX_REPLACE("x", extended|icase, "xx", match_default|format_all, "a", "aa");
+   TEST_REGEX_REPLACE("x", emacs|icase, "xx", match_default|format_all, "a", "aa");
+   TEST_REGEX_REPLACE("x", literal|icase, "xx", match_default|format_all, "a", "aa");
+   // literals:
+   TEST_REGEX_REPLACE("(a(c)?)|(b)", perl, "acab", match_default|format_literal, "\\&$", "\\&$\\&$\\&$");
 }
 

@@ -85,7 +85,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
 
    if(f & REG_NOSUB)
    {
-      expression->eflags |= match_any;
+      //expression->eflags |= match_any;
       flags |= wregex::nosubs;
    }
 

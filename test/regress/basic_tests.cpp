@@ -124,6 +124,11 @@ void test_partial_match()
    TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "aaaa", match_default|match_partial, make_array(-2, -2));
    TEST_REGEX_SEARCH(".abc", perl, "aaab", match_default|match_partial, make_array(1, 4, -2, -2));
    TEST_REGEX_SEARCH("a[_]", perl, "xxa", match_default|match_partial, make_array(2, 3, -2, -2));
+   TEST_REGEX_SEARCH(".{4,}", perl, "xxa", match_default|match_partial, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH(".{4,}", perl, "xxa", match_default|match_partial|match_not_dot_null, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("[\\x0-\\xff]{4,}", perl, "xxa", match_default|match_partial, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a{4,}", perl, "aaa", match_default|match_partial, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\w{4,}", perl, "aaa", match_default|match_partial, make_array(0, 3, -2, -2));
 }
 
 void test_nosubs()

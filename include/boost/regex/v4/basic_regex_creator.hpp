@@ -466,6 +466,25 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    return result;
 }
 
+namespace{
+
+template<class T>
+inline bool char_less(T t1, T t2)
+{
+   return t1 < t2;
+}
+template<>
+inline bool char_less<char>(char t1, char t2)
+{
+   return static_cast<unsigned char>(t1) < static_cast<unsigned char>(t2);
+}
+template<>
+inline bool char_less<signed char>(signed char t1, signed char t2)
+{
+   return static_cast<unsigned char>(t1) < static_cast<unsigned char>(t2);
+}
+}
+
 template <class charT, class traits>
 re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    const basic_char_set<charT, traits>& char_set, mpl::true_*)
@@ -527,7 +546,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       }
       else
       {
-         if(c1 > c2)
+         if(!char_less<charT>(c1, c2))
          {
             // Oops error:
             return 0;
@@ -655,12 +674,16 @@ void basic_regex_creator<charT, traits>::fixup_pointers(re_syntax_base* state)
 template <class charT, class traits>
 void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
 {
-   // recursive implementation:
+   // non-recursive implementation:
    // create the last map in the machine first, so that earlier maps
    // can make use of the result...
+   //
+   // This was originally a recursive implementation, but that caused stack
+   // overflows with complex expressions on small stacks (think COM+).
 
    // start by saving the case setting:
    bool l_icase = m_icase;
+   std::vector<std::pair<bool, re_syntax_base*> > v;
 
    while(state)
    {
@@ -677,18 +700,10 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
       case syntax_element_char_rep:
       case syntax_element_short_set_rep:
       case syntax_element_long_set_rep:
-         // create other startmaps *first*, since we can use the
-         // results from these when creating out own:
-         create_startmaps(state->next.p);
-         m_bad_repeats = 0;
-         create_startmap(state->next.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_take);
-         m_bad_repeats = 0;
-         create_startmap(static_cast<re_alt*>(state)->alt.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_skip);
-         // adjust the type of the state to allow for faster matching:
-         state->type = this->get_repeat_type(state);
-         // restore case sensitivity:
-         m_icase = l_icase;
-         return;
+         // just push the state onto our stack for now:
+         v.push_back(std::pair<bool, re_syntax_base*>(m_icase, state));
+         state = state->next.p;
+         break;
       case syntax_element_backstep:
          // we need to calculate how big the backstep is:
          static_cast<re_brace*>(state)->index
@@ -709,6 +724,20 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
       default:
          state = state->next.p;
       }
+   }
+   // now work through our list, building all the maps as we go:
+   while(v.size())
+   {
+      const std::pair<bool, re_syntax_base*>& p = v.back();
+      m_icase = p.first;
+      state = p.second;
+      v.pop_back();
+
+      create_startmap(state->next.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_take);
+      m_bad_repeats = 0;
+      create_startmap(static_cast<re_alt*>(state)->alt.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_skip);
+      // adjust the type of the state to allow for faster matching:
+      state->type = this->get_repeat_type(state);
    }
    // restore case sensitivity:
    m_icase = l_icase;

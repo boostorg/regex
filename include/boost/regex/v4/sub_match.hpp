@@ -171,6 +171,13 @@ public:
 #endif
 };
 
+typedef sub_match<const char*> csub_match;
+typedef sub_match<std::string::const_iterator> ssub_match;
+#ifndef BOOST_NO_WREGEX
+typedef sub_match<const wchar_t*> wcsub_match;
+typedef sub_match<std::wstring::const_iterator> wssub_match;
+#endif
+
 // comparison to std::basic_string<> part 1:
 template <class RandomAccessIterator, class traits, class Allocator>
 inline bool operator == (const std::basic_string<typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type, traits, Allocator>& s,

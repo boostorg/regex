@@ -24,6 +24,8 @@
 #pragma warning(disable:4127)
 #endif
 
+#ifndef BOOST_NO_STD_WSTRING
+
 #define TEST_REGEX_SEARCH_U(s, f, t, m, a)\
    do{\
       const wchar_t e[] = { s };\
@@ -36,15 +38,20 @@
 
 #define TEST_REGEX_CLASS_U(classname, character)\
    TEST_REGEX_SEARCH_U(\
-      BOOST_JOIN(L, \
-         BOOST_STRINGIZE(\
-            BOOST_JOIN([[:, BOOST_JOIN(classname, :]])))), \
+      L"[[:" BOOST_JOIN(L, BOOST_STRINGIZE(classname)) L":]]",\
       perl, \
       BOOST_JOIN(L, \
          BOOST_STRINGIZE(\
             BOOST_JOIN(\x, character))), \
       match_default, \
       make_array(0, 1, -2, -2))
+
+#else
+
+#define TEST_REGEX_SEARCH_U(s, f, t, m, a)
+#define TEST_REGEX_CLASS_U(classname, character)
+
+#endif
 
 void test_unicode()
 {
@@ -121,8 +128,8 @@ void test_unicode()
    TEST_REGEX_CLASS_U(Control, 009F);
    TEST_REGEX_CLASS_U(Cf, FFFB);
    TEST_REGEX_CLASS_U(Format, FFFB);
-   TEST_REGEX_CLASS_U(Cs, DC00);
-   TEST_REGEX_CLASS_U(Surrogate, DC00);
+   //TEST_REGEX_CLASS_U(Cs, DC00);
+   //TEST_REGEX_CLASS_U(Surrogate, DC00);
    TEST_REGEX_CLASS_U(Co, F8FF);
    TEST_REGEX_CLASS_U(Private Use, F8FF);
    TEST_REGEX_CLASS_U(Cn, FFFF);

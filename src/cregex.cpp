@@ -567,9 +567,9 @@ std::string RegEx::What(int i)const
 }
 
 #ifdef BOOST_HAS_LONG_LONG
-const std::size_t RegEx::npos = ~0ULL;
+const std::size_t RegEx::npos = static_cast<std::size_t>(~0ULL);
 #else
-const std::size_t RegEx::npos = ~0UL;
+const std::size_t RegEx::npos = static_cast<std::size_t>(~0UL);
 #endif
 
 } // namespace boost

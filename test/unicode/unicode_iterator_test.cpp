@@ -70,13 +70,13 @@ void test(const std::vector< ::boost::uint32_t>& v)
    typedef std::vector< ::boost::uint8_t>  vector8_type;
    typedef boost::u32_to_u16_iterator<vector32_type::const_iterator, ::boost::uint16_t> u32to16type;
    typedef boost::u16_to_u32_iterator<vector16_type::const_iterator, ::boost::uint32_t> u16to32type;
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_NO_STD_ITERATOR)
    typedef std::reverse_iterator<u32to16type> ru32to16type;
    typedef std::reverse_iterator<u16to32type> ru16to32type;
 #endif
    typedef boost::u32_to_u8_iterator<vector32_type::const_iterator, ::boost::uint8_t> u32to8type;
    typedef boost::u8_to_u32_iterator<vector8_type::const_iterator, ::boost::uint32_t> u8to32type;
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_NO_STD_ITERATOR)
    typedef std::reverse_iterator<u32to8type> ru32to8type;
    typedef std::reverse_iterator<u8to32type> ru8to32type;
 #endif
@@ -87,14 +87,14 @@ void test(const std::vector< ::boost::uint32_t>& v)
    //
    // begin by testing forward iteration, of 32-16 bit interconversions:
    //
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
    v16.assign(u32to16type(v.begin()), u32to16type(v.end()));
 #else
    v16.clear();
    std::copy(u32to16type(v.begin()), u32to16type(v.end()), std::back_inserter(v16));
 #endif
    BOOST_CHECK_EQUAL(std::distance(u32to16type(v.begin()), u32to16type(v.end())), v16.size());
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
    v32.assign(u16to32type(v16.begin()), u16to32type(v16.end()));
 #else
    v32.clear();
@@ -113,7 +113,7 @@ void test(const std::vector< ::boost::uint32_t>& v)
    //
    // test backward iteration, of 32-16 bit interconversions:
    //
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_NO_STD_ITERATOR)
    v16.assign(ru32to16type(u32to16type(v.end())), ru32to16type(u32to16type(v.begin())));
    BOOST_CHECK_EQUAL(std::distance(ru32to16type(u32to16type(v.end())), ru32to16type(u32to16type(v.begin()))), v16.size());
    std::reverse(v16.begin(), v16.end());
@@ -133,14 +133,14 @@ void test(const std::vector< ::boost::uint32_t>& v)
    //
    // Test forward iteration, of 32-8 bit interconversions:
    //
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
    v8.assign(u32to8type(v.begin()), u32to8type(v.end()));
 #else
    v8.clear();
    std::copy(u32to8type(v.begin()), u32to8type(v.end()), std::back_inserter(v8));
 #endif
    BOOST_CHECK_EQUAL(std::distance(u32to8type(v.begin()), u32to8type(v.end())), v8.size());
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
    v32.assign(u8to32type(v8.begin()), u8to32type(v8.end()));
 #else
    v32.clear();
@@ -159,7 +159,7 @@ void test(const std::vector< ::boost::uint32_t>& v)
    //
    // test backward iteration, of 32-8 bit interconversions:
    //
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_NO_STD_ITERATOR)
    v8.assign(ru32to8type(u32to8type(v.end())), ru32to8type(u32to8type(v.begin())));
    BOOST_CHECK_EQUAL(std::distance(ru32to8type(u32to8type(v.end())), ru32to8type(u32to8type(v.begin()))), v8.size());
    std::reverse(v8.begin(), v8.end());

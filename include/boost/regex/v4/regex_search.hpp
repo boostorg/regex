@@ -63,7 +63,7 @@ inline bool regex_search(const std::basic_string<charT, ST, SA>& s,
 {
    return regex_search(s.begin(), s.end(), m, e, flags);
 }
-#else  // partial specialisation
+#else  // partial overloads:
 inline bool regex_search(const char* str, 
                         cmatch& m, 
                         const regex& e, 
@@ -71,6 +71,14 @@ inline bool regex_search(const char* str,
 {
    return regex_search(str, str + regex::traits_type::length(str), m, e, flags);
 }
+inline bool regex_search(const char* first, const char* last, 
+                  const regex& e, 
+                  match_flag_type flags = match_default)
+{
+   cmatch m;
+   return regex_search(first, last, m, e, flags | regex_constants::match_any);
+}
+
 #ifndef BOOST_NO_WREGEX
 inline bool regex_search(const wchar_t* str, 
                         wcmatch& m, 
@@ -78,6 +86,13 @@ inline bool regex_search(const wchar_t* str,
                         match_flag_type flags = match_default)
 {
    return regex_search(str, str + wregex::traits_type::length(str), m, e, flags);
+}
+inline bool regex_search(const wchar_t* first, const wchar_t* last, 
+                  const wregex& e, 
+                  match_flag_type flags = match_default)
+{
+   wcmatch m;
+   return regex_search(first, last, m, e, flags | regex_constants::match_any);
 }
 #endif
 inline bool regex_search(const std::string& s, 
@@ -109,7 +124,7 @@ bool regex_search(BidiIterator first, BidiIterator last,
 
    match_results<BidiIterator> m;
    typedef typename match_results<BidiIterator>::allocator_type match_alloc_type;
-   re_detail::perl_matcher<BidiIterator, match_alloc_type, traits> matcher(first, last, m, e, flags);
+   re_detail::perl_matcher<BidiIterator, match_alloc_type, traits> matcher(first, last, m, e, flags | regex_constants::match_any);
    return matcher.find();
 }
 
@@ -131,31 +146,12 @@ inline bool regex_search(const std::basic_string<charT, ST, SA>& s,
    return regex_search(s.begin(), s.end(), e, flags);
 }
 #else  // non-template function overloads
-#if 0
-inline bool regex_search(const char* first, const char* last, 
-                  const regex& e, 
-                  match_flag_type flags = match_default)
-{
-   cmatch m;
-   return regex_search(first, last, m, e, flags);
-}
-
-#ifndef BOOST_NO_WREGEX
-inline bool regex_search(const wchar_t* first, const wchar_t* last, 
-                  const wregex& e, 
-                  match_flag_type flags/* = match_default*/)
-{
-   wcmatch m;
-   return regex_search(first, last, m, e, flags);
-}
-#endif
-#endif
 inline bool regex_search(const char* str, 
                         const regex& e, 
                         match_flag_type flags = match_default)
 {
    cmatch m;
-   return regex_search(str, str + regex::traits_type::length(str), m, e, flags);
+   return regex_search(str, str + regex::traits_type::length(str), m, e, flags | regex_constants::match_any);
 }
 #ifndef BOOST_NO_WREGEX
 inline bool regex_search(const wchar_t* str, 
@@ -163,7 +159,7 @@ inline bool regex_search(const wchar_t* str,
                         match_flag_type flags = match_default)
 {
    wcmatch m;
-   return regex_search(str, str + wregex::traits_type::length(str), m, e, flags);
+   return regex_search(str, str + wregex::traits_type::length(str), m, e, flags | regex_constants::match_any);
 }
 #endif
 inline bool regex_search(const std::string& s, 
@@ -171,7 +167,7 @@ inline bool regex_search(const std::string& s,
                         match_flag_type flags = match_default)
 {
    smatch m;
-   return regex_search(s.begin(), s.end(), m, e, flags);
+   return regex_search(s.begin(), s.end(), m, e, flags | regex_constants::match_any);
 }
 #if !defined(BOOST_NO_WREGEX)
 inline bool regex_search(const std::basic_string<wchar_t>& s, 
@@ -179,11 +175,12 @@ inline bool regex_search(const std::basic_string<wchar_t>& s,
                         match_flag_type flags = match_default)
 {
    wsmatch m;
-   return regex_search(s.begin(), s.end(), m, e, flags);
+   return regex_search(s.begin(), s.end(), m, e, flags | regex_constants::match_any);
 }
-#endif
 
-#endif
+#endif // BOOST_NO_WREGEX
+
+#endif // partial overload
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX

@@ -30,7 +30,8 @@ test_locale::test_locale(const char* c_name, boost::uint32_t lcid)
    m_old_name = m_name;
    m_name = c_name;
    // back up C locale and then set it's new name:
-   m_old_c_locale = std::setlocale(LC_ALL, 0);
+   const char* pl = std::setlocale(LC_ALL, 0);
+   m_old_c_locale = pl ? pl : "";
    m_old_c_state = s_c_locale;
    if(std::setlocale(LC_ALL, c_name))
    {
@@ -129,24 +130,24 @@ void test_en_locale(const char* name, boost::uint32_t lcid)
    using namespace boost::regex_constants;
    errors_as_warnings w;
    test_locale l(name, lcid);
-   TEST_REGEX_SEARCH_L("[[:lower:]]+", perl, "Şßàáâãäåæçèéêëìíîïğñòóôõöøùúûüış÷", match_default, make_array(1, 32, -2, -2));
-   TEST_REGEX_SEARCH_L("[[:upper:]]+", perl, "¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞß", match_default, make_array(1, 31, -2, -2));
-//   TEST_REGEX_SEARCH_L("[[:punct:]]+", perl, "¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿À", match_default, make_array(0, 31, -2, -2));
-   TEST_REGEX_SEARCH_L("[[:print:]]+", perl, "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüış", match_default, make_array(0, 93, -2, -2));
-   TEST_REGEX_SEARCH_L("[[:graph:]]+", perl, "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüış", match_default, make_array(0, 93, -2, -2));
-   TEST_REGEX_SEARCH_L("[[:word:]]+", perl, "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûüış", match_default, make_array(0, 61, -2, -2));
+   TEST_REGEX_SEARCH_L("[[:lower:]]+", perl, "\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xf7", match_default, make_array(1, 32, -2, -2));
+   TEST_REGEX_SEARCH_L("[[:upper:]]+", perl, "\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf", match_default, make_array(1, 31, -2, -2));
+//   TEST_REGEX_SEARCH_L("[[:punct:]]+", perl, "\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0", match_default, make_array(0, 31, -2, -2));
+   TEST_REGEX_SEARCH_L("[[:print:]]+", perl, "\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe", match_default, make_array(0, 93, -2, -2));
+   TEST_REGEX_SEARCH_L("[[:graph:]]+", perl, "\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe", match_default, make_array(0, 93, -2, -2));
+   TEST_REGEX_SEARCH_L("[[:word:]]+", perl, "\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xfe", match_default, make_array(0, 61, -2, -2));
    // collation sensitive ranges:
 #if !BOOST_WORKAROUND(__BORLANDC__, < 0x600)
    // these tests are disabled for Borland C++: a bug in std::collate<wchar_t>
    // causes these tests to crash (pointer overrun in std::collate<wchar_t>::do_transform).
-   TEST_REGEX_SEARCH_L("[a-z]+", perl|collate, "ßàáâãäåçèéêëìíîïğñòóôõöøùúûü", match_default, make_array(0, 28, -2, -2));
-   TEST_REGEX_SEARCH_L("[a-z]+", perl|collate, "¿ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜ", match_default, make_array(1, 28, -2, -2));
+   TEST_REGEX_SEARCH_L("[a-z]+", perl|collate, "\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc", match_default, make_array(0, 28, -2, -2));
+   TEST_REGEX_SEARCH_L("[a-z]+", perl|collate, "\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc", match_default, make_array(1, 28, -2, -2));
    // and equivalence classes:
-   TEST_REGEX_SEARCH_L("[[=a=]]+", perl, "aAàáâãäåÀÁÂÃÄÅ", match_default, make_array(0, 14, -2, -2));
+   TEST_REGEX_SEARCH_L("[[=a=]]+", perl, "aA\xe0\xe1\xe2\xe3\xe4\xe5\xc0\xc1\xc2\xc3\xc4\xc5", match_default, make_array(0, 14, -2, -2));
    // case mapping:
-   TEST_REGEX_SEARCH_L("[A-Z]+", perl|icase|collate, "ßàáâãäåçèéêëìíîïğñòóôõöøùúûü", match_default, make_array(0, 28, -2, -2));
-   TEST_REGEX_SEARCH_L("[a-z]+", perl|icase|collate, "¿ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜ", match_default, make_array(1, 28, -2, -2));
-   TEST_REGEX_SEARCH_L("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİ", perl|icase, "ßàáâãäåæçèéêëìíîïğñòóôõöøùúûüış", match_default, make_array(1, 30, -2, -2));
+   TEST_REGEX_SEARCH_L("[A-Z]+", perl|icase|collate, "\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc", match_default, make_array(0, 28, -2, -2));
+   TEST_REGEX_SEARCH_L("[a-z]+", perl|icase|collate, "\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc", match_default, make_array(1, 28, -2, -2));
+   TEST_REGEX_SEARCH_L("\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd8\xd9\xda\xdb\xdc\xdd", perl|icase, "\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf8\xf9\xfa\xfb\xfc\xfd\xfe", match_default, make_array(1, 30, -2, -2));
 #endif
 }
 
@@ -156,4 +157,5 @@ void test_en_locale()
    test_en_locale("en_UK", 0x09 | 0x02 << 10);
    test_en_locale("en", 0x09);
 }
+
 

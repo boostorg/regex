@@ -31,10 +31,18 @@
                   and setup</a> <dt><a href="install.html">Installation</a>
                   <dd>
                      <dl class="index">
-                        <dt><a href="install.html#bcb">Borland C++ Builder</a> <dt><a href="install.html#vc">Microsoft 
-                                 Visual C++</a> <dt><a href="install.html#gcc">GNU G++</a> <dt><a href="install.html#sun">
-                                       Sun Forte Compiler</a> <dt><a href="install.html#other">Other compilers (building 
-                                          with bjam)</a></dt>
+                        <dt><a href="install.html#bjam">Building with bjam (prefered)</a> 
+                        <dt><a href="install.html#unicode">Building with Unicode/ICU support</a>
+                        <dt><a href="install.html#make">Building via Makefiles</a> 
+                        <dd><dl class="index">
+                           <dt><a href="install.html#bcb">Borland C++ Builder</a> 
+                           <dt><a href="install.html#vc">Microsoft 
+                                    Visual C++</a> 
+                           <dt><a href="install.html#gcc">GNU G++</a> 
+                           <dt><a href="install.html#sun">
+                                          Sun Forte Compiler</a> 
+                           <dt><a href="install.html#other">Other compilers</a>
+                        </dl></dd></dt>
                      </dl>
                      <dt>Backgrounders
                         <dd>
@@ -48,6 +56,25 @@
                                     </dl>
                                  </dd>
                               </dt>
+                              <dt><a href="format_syntax.html">Format String Syntax</a>
+                                 <dd>
+                                    <dl class="index">
+                                       <dt><a href="format_perl_syntax.html">Perl Format Syntax</a></dt>
+                                       <dt><a href="format_sed_syntax.html">Sed Format Syntax</a></dt>
+                                       <dt><a href="format_boost_syntax.html">Boost-Extended Format Syntax</a></dt>
+                                    </dl>
+                                 </dd>
+                              </dt>
+                              <dt><a href="partial_matches.html">Partial matches: matches against incomplete or infinitely long texts</a> 
+                              <dt><a href="captures.html">Understanding Captures</a></dt>
+                              <dt><a href="unicode.html">Unicode Support (requires ICU)</a></dt>
+                              <dt><a href="non_standard_strings.html">Working With Non-Standard String Types</a></dt>
+                                 <dd>
+                                    <dl>
+                                       <dt><a href="mfc_strings.html">MFC/ATL Strings</a></dt>
+                                       <dt><a href="icu_strings.html">ICU Strings</a></dt>
+                                    </dl>
+                                 </dd>
                            </dl>
                         </dd></dt>
                      <dt>Reference
@@ -100,23 +127,17 @@
                                                                                                       wsregex_token_iterator</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ = 
                                                                                                    regex_token_iterator&lt;std::wstring::const_iterator&gt;]</dt>
                                                       </dl>
-                                                      <dt>Misc.
-                                                         <dd>
-                                                            <dl class="index">
-                                                               <dt><a href="posix_api.html">POSIX API Compatibility Functions</a> <dt><a href="partial_matches.html">
-                                                                        Partial matches</a> <dt><a href="syntax.html">Regular Expression Syntax</a> <dt><a href="format_syntax.html">
-                                                                              Format String Syntax</a> <dt><a href="captures.html">Understanding Captures</a></dt>
-                                                            </dl>
-                                                            <dt>Deprecated interfaces
-                                                               <dd>
-                                                                  <dl class="index">
-                                                                     <dt><a href="regbase.html">class regbase</a> <dt><a href="reg_expression.html">class 
-                                                                              template reg_expression</a> <dt><a href="regex_grep.html">Algorithm regex_grep</a>
-                                                                              <dt><a href="regex_format.html">Algorithm regex_format</a> <dt><a href="regex_merge.html">
-                                                                                       Algorithm regex_merge</a> <dt><a href="regex_split.html">Algorithm regex_split</a>
-                                                                                       <dt><a href="regex.html">class RegEx</a></dt>
-                                                                  </dl>
-                                                               </dd>
+                                          <dt>Deprecated interfaces
+                                             <dd>
+                                                <dl class="index">
+                                             <dt><a href="posix_api.html">POSIX API Compatibility Functions</a> 
+                                                   <dt><a href="regbase.html">class regbase</a> <dt><a href="reg_expression.html">class 
+                                                            template reg_expression</a> <dt><a href="regex_grep.html">Algorithm regex_grep</a>
+                                                            <dt><a href="regex_format.html">Algorithm regex_format</a> <dt><a href="regex_merge.html">
+                                                                     Algorithm regex_merge</a> <dt><a href="regex_split.html">Algorithm regex_split</a>
+                                                                     <dt><a href="regex.html">class RegEx</a></dt>
+                                                </dl>
+                                             </dd>
                            </dl>
                            <dt><a href="faq.html">FAQ</a> <dt>Appendix
                                  <dd>

@@ -32,13 +32,50 @@ test_operators.cpp
 ;
 
 #
+# test for MFC by looking inside VC++ include directories:
+#
+if ! $(gMFC_CHECK)
+{
+   gMFC_CHECK = true ;
+   if $(VS71COMNTOOLS)
+   {
+      VS71COMNTOOLS = $(VS71COMNTOOLS:J=" ") ;
+      if [ GLOB $(VS71COMNTOOLS)..\\..\\VC7\\atlmfc\\include : cstringt.h ]
+      {
+         ECHO MFC/ATL regex wrappers will be tested when building with VC7.1 ;
+         REGEX_MFC_OPTS += "<vc-7_1><*><define>TEST_MFC=1" ;
+      }
+   }
+   if $(VSCOMNTOOLS)
+   {
+      VSCOMNTOOLS = $(VSCOMNTOOLS:J=" ") ;
+      if [ GLOB $(VSCOMNTOOLS)\\..\\..\\VC7\\atlmfc\\include : cstringt.h ]
+      {
+         ECHO MFC/ATL regex wrappers will be tested when building with VC7 ;
+         REGEX_MFC_OPTS += "<vc7><*><define>TEST_MFC=1" ;
+      }
+   }
+   if $(VS80COMNTOOLS)
+   {
+      VS80COMNTOOLS = $(VS80COMNTOOLS:J=" ") ;
+      if [ GLOB $(VS80COMNTOOLS)..\\..\\VC8\\atlmfc\\include : cstringt.h ]
+      {
+         ECHO MFC/ATL regex wrappers will be tested when building with VC8 ;
+         REGEX_MFC_OPTS += "<vc-8_0><*><define>TEST_MFC=1" ;
+      }
+   }
+}
+
+#
 # this template defines the options common to
 # all regex tests:
 #
 template test 
    : <template>../build/regex-options 
+     <template>../build/regex-test-options
      <lib>../build/boost_regex            # sources
    : <threading>multi
+     $(REGEX_MFC_OPTS)
    ;
  
 #
@@ -69,6 +106,7 @@ rule regex-test ( name : sources + : requirements * : input-files * )
 #
 template test-dll 
    : <template>../build/regex-dll-options 
+     <template>../build/regex-test-options
      <dll>../build/boost_regex            # sources
    : <threading>multi
    ;

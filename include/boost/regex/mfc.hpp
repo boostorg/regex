@@ -145,7 +145,7 @@ OutputIterator regex_replace(OutputIterator out,
                            const ATL::CSimpleStringT<SIMPLE_STRING_ARG_LIST>& fmt,
                            match_flag_type flags = match_default)
 {
-   return regex_replace(out, first, last, e, fmt.GetString(), flags);
+   return ::boost::regex_replace(out, first, last, e, fmt.GetString(), flags);
 }
 
 namespace re_detail{

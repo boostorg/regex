@@ -241,7 +241,7 @@ class u16_to_u32_iterator
 {
    typedef boost::iterator_facade<u16_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type> base_type;
    // special values for pending iterator reads:
-   BOOST_STATIC_CONSTANT(::boost::uint32_t, pending_read = 0xffffffffu);
+   BOOST_STATIC_CONSTANT(U32Type, pending_read = 0xffffffffu);
 
 #if !defined(BOOST_NO_STD_ITERATOR_TRAITS) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
@@ -447,7 +447,7 @@ class u8_to_u32_iterator
 {
    typedef boost::iterator_facade<u8_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type> base_type;
    // special values for pending iterator reads:
-   BOOST_STATIC_CONSTANT(::boost::uint32_t, pending_read = 0xffffffffu);
+   BOOST_STATIC_CONSTANT(U32Type, pending_read = 0xffffffffu);
 
 #if !defined(BOOST_NO_STD_ITERATOR_TRAITS) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
@@ -531,7 +531,7 @@ private:
       };
       m_value &= masks[extra];
       // check the result:
-      if(m_value > 0x10FFFFu)
+      if(m_value > static_cast<U32Type>(0x10FFFFu))
          invalid_sequnce();
    }
    BaseIterator m_position;

@@ -76,6 +76,48 @@ typedef regex_token_iterator&lt;std::string::const_iterator&gt;   sregex_token_i
 typedef regex_token_iterator&lt;const wchar_t*&gt;                wcregex_token_iterator;
 typedef regex_token_iterator&lt;&lt;std::wstring::const_iterator&gt; wsregex_token_iterator;
 #endif
+
+template &lt;class charT, class traits&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+   <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const charT* p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             int submatch = 0, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, class ST, class SA&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             int submatch = 0, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, std::size_t N&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+  <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const charT* p, 
+                            const basic_regex&lt;charT, traits&gt;&amp; e, 
+                            const int (&amp;submatch)[N], 
+                            regex_constants::match_flag_type m = regex_constants::match_default);
+                            
+template &lt;class charT, class traits, class ST, class SA, std::size_t N&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const int (&amp;submatch)[N], 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+   <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const charT* p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const std::vector&lt;int&gt;&amp; submatch, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, class ST, class SA&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   <A href="#make_regex_token_iterator">make_regex_token_iterator</A>(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const std::vector&lt;int&gt;&amp; submatch, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
 </PRE>
       <H3><A name="description"></A>Description</H3>
       <PRE><A name=c1></A>regex_token_iterator();</PRE>
@@ -169,7 +211,54 @@ regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const reg
       <P><B> Effects:</B> constructs a copy <CODE>result</CODE> of <CODE>*this</CODE>, 
          then calls <CODE>++(*this)</CODE>.</P>
       <P><B> Returns:</B> <CODE>result</CODE>.<A name="examples"></A>
-         <H3>Examples</H3>
+         <PRE><A name=make_regex_token_iterator></A>template &lt;class charT, class traits&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+   make_regex_token_iterator(const charT* p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             int submatch = 0, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, class ST, class SA&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   make_regex_token_iterator(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             int submatch = 0, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, std::size_t N&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+  make_regex_token_iterator(const charT* p, 
+                            const basic_regex&lt;charT, traits&gt;&amp; e, 
+                            const int (&amp;submatch)[N], 
+                            regex_constants::match_flag_type m = regex_constants::match_default);
+                            
+template &lt;class charT, class traits, class ST, class SA, std::size_t N&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   make_regex_token_iterator(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const int (&amp;submatch)[N], 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits&gt;
+regex_token_iterator&lt;const charT*, charT, traits&gt; 
+   make_regex_token_iterator(const charT* p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const std::vector&lt;int&gt;&amp; submatch, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+                             
+template &lt;class charT, class traits, class ST, class SA&gt;
+regex_token_iterator&lt;typename std::basic_string&lt;charT, ST, SA&gt;::const_iterator, charT, traits&gt; 
+   make_regex_token_iterator(const std::basic_string&lt;charT, ST, SA&gt;&amp; p, 
+                             const basic_regex&lt;charT, traits&gt;&amp; e, 
+                             const std::vector&lt;int&gt;&amp; submatch, 
+                             regex_constants::match_flag_type m = regex_constants::match_default);
+</PRE>
+      <P>Effects: returns a <A href="#synopsis">regex_token_iterator</A> that enumerates 
+         one <A href="sub_match.html">sub_match</A> for each value in <EM>submatch</EM> for 
+         each occurrence of regular expression <EM>e</EM> in string <EM>p</EM>, matched 
+         using <A href="match_flag_type.html">match_flags</A> <EM>m</EM>.</P>
+      <P></P>
+      <H3>Examples</H3>
       <P>The following <A href="../example/snippets/regex_token_iterator_eg_1.cpp">example</A>
          takes a string and splits it into a series of tokens:</P>
       <pre>
@@ -289,3 +378,4 @@ boost::regex e(<FONT color=#0000ff>"&lt;\\s*A\\s+[^&gt;]*href\\s*=\\s*\"([^\"]*)
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
    </body>
 </html>
+
