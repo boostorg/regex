@@ -42,7 +42,7 @@ int test_main( int argc, char* argv[] )
    BOOST_CHECK_THROW(boost::regex_match(bad_text, what, e1), std::runtime_error);
    BOOST_CHECK(boost::regex_match(good_text, what, e1));
 
-   boost::regex e2("abc|[[:space:]]+xyz");
+   boost::regex e2("abc|[[:space:]]+(xyz)?[[:space:]]+xyz");
 
    BOOST_CHECK(boost::regex_search(good_text, what, e2));
    BOOST_CHECK_THROW(boost::regex_search(bad_text, what, e2), std::runtime_error);

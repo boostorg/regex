@@ -50,8 +50,8 @@
          LC_TYPE and LC_COLLATE categories.
       </P>
       <P>There are three separate localization mechanisms supported by boost.regex:</P>
-      <P><I>Win32 localization model.</I>
-      </P>
+      <H3>Win32 localization model.
+      </H3>
       <P>This is the default model when the library is compiled under Win32, and is 
          encapsulated by the traits class w32_regex_traits. When this model is in effect 
          there is a single global locale as defined by the user's control panel 
@@ -65,7 +65,7 @@
       </P>
       <P>which needs to be called with a string identifying the name of the resource 
          dll, <I>before</I> your code compiles any regular expressions (but not 
-         necessarily before you construct any <I>reg_expression</I> instances):
+         necessarily before you construct any <I>basic_regex</I> instances):
       </P>
       <P>boost::w32_regex_traits&lt;char&gt;::set_message_catalogue("mydll.dll");
       </P>
@@ -77,8 +77,8 @@
          under NT, under Windows 9x the library degrades gracefully - characters 0 to 
          255 are supported, the remainder are treated as "unknown" graphic characters.
       </P>
-      <P><I>C localization model.</I>
-      </P>
+      <H3>C localization model.
+      </H3>
       <P>This is the default model when the library is compiled under an operating 
          system other than Win32, and is encapsulated by the traits class <I>c_regex_traits</I>, 
          Win32 users can force this model to take effect by defining the pre-processor 
@@ -92,7 +92,7 @@
       </P>
       <P>which needs to be called with a string identifying the name of the message 
          catalogue, <I>before</I> your code compiles any regular expressions (but not 
-         necessarily before you construct any <I>reg_expression</I> instances):
+         necessarily before you construct any <I>basic_regex</I> instances):
       </P>
       <P>boost::c_regex_traits&lt;char&gt;::set_message_catalogue("mycatalogue");
       </P>
@@ -107,12 +107,12 @@
          behave equivalent to most traditional regular expression libraries including 
          version 1 of this library.
       </P>
-      <P><I><TT>C++ </TT></I><I>localization</I><I><TT> </TT></I><I>model</I><I><TT>.</TT></I>
-      </P>
+      <H3>C++ localization model.
+      </H3>
       <P>This model is only in effect if the library is built with the pre-processor 
          symbol BOOST_REGEX_USE_CPP_LOCALE defined. When this model is in effect each 
-         instance of reg_expression&lt;&gt; has its own instance of std::locale, class 
-         reg_expression&lt;&gt; also has a member function <I>imbue</I> which allows the 
+         instance of basic_regex&lt;&gt; has its own instance of std::locale, class 
+         basic_regex&lt;&gt; also has a member function <I>imbue</I> which allows the 
          locale for the expression to be set on a per-instance basis. Front end 
          localization requires a POSIX message catalogue, which will be loaded via the 
          std::messages facet of the expression's locale, the traits class exports the 
@@ -122,14 +122,14 @@
       </P>
       <P>which needs to be called with a string identifying the name of the message 
          catalogue, <I>before</I> your code compiles any regular expressions (but not 
-         necessarily before you construct any <I>reg_expression</I> instances):
+         necessarily before you construct any <I>basic_regex</I> instances):
       </P>
       <P>boost::cpp_regex_traits&lt;char&gt;::set_message_catalogue("mycatalogue");
       </P>
-      <P>Note that calling reg_expression&lt;&gt;::imbue will invalidate any expression 
-         currently compiled in that instance of reg_expression&lt;&gt;. This model is 
-         the one which closest fits the ethos of the C++ standard library, however it is 
-         the model which will produce the slowest code, and which is the least well 
+      <P>Note that calling basic_regex&lt;&gt;::imbue will invalidate any expression 
+         currently compiled in that instance of basic_regex&lt;&gt;. This model is the 
+         one which closest fits the ethos of the C++ standard library, however it is the 
+         model which will produce the slowest code, and which is the least well 
          supported by current standard library implementations, for example I have yet 
          to find an implementation of std::locale which supports either message 
          catalogues, or locales other than "C" or "POSIX".
@@ -141,8 +141,8 @@
          &lt;boost/cregex.hpp&gt; in your code. The best way to ensure this is to add 
          the #define to &lt;boost/regex/user.hpp&gt;.
       </P>
-      <P><I>Providing a message catalogue:</I>
-      </P>
+      <H3>Providing a message catalogue:
+      </H3>
       <P>In order to localize the front end of the library, you need to provide the 
          library with the appropriate message strings contained either in a resource 
          dll's string table (Win32 model), or a POSIX message catalogue (C or C++ 
@@ -728,12 +728,7 @@
             </TR>
          </TABLE>
       </P>
-      <P><BR>
-         &nbsp;
-      </P>
-      <P>Custom error messages are loaded as follows:
-         <BR>
-         &nbsp;
+      <P>Custom error messages are loaded as follows:&nbsp;
       </P>
       <P>
          <TABLE id="Table3" cellSpacing="0" cellPadding="7" width="624" border="0">
@@ -929,12 +924,7 @@
             </TR>
          </TABLE>
       </P>
-      <P><BR>
-         &nbsp;
-      </P>
-      <P>Custom character class names are loaded as followed:
-         <BR>
-         &nbsp;
+      <P>Custom character class names are loaded as followed:&nbsp;
       </P>
       <P>
          <TABLE id="Table4" cellSpacing="0" cellPadding="7" width="624" border="0">
@@ -1089,9 +1079,6 @@
                <TD vAlign="top" width="7%">&nbsp;</TD>
             </TR>
          </TABLE>
-      </P>
-      <P><BR>
-         &nbsp;
       </P>
       <P>Finally, custom collating element names are loaded starting from message id 
          400, and terminating when the first load thereafter fails. Each message looks 

@@ -10,6 +10,10 @@
 #include <boost/version.hpp>
 #include "regex_comparison.hpp"
 
+#ifdef BOOST_HAS_PCRE
+#include "pcre.h" // for pcre version number
+#endif
+
 //
 // globals:
 //
@@ -31,6 +35,20 @@ std::string html_template_file;
 std::string html_out_file;
 std::string html_contents;
 std::list<results> result_list;
+
+// the following let us compute averages:
+double greta_total = 0;
+double safe_greta_total = 0;
+double boost_total = 0;
+double locale_boost_total = 0;
+double posix_total = 0;
+double pcre_total = 0;
+unsigned greta_test_count = 0;
+unsigned safe_greta_test_count = 0;
+unsigned boost_test_count = 0;
+unsigned locale_boost_test_count = 0;
+unsigned posix_test_count = 0;
+unsigned pcre_test_count = 0;
 
 int handle_argument(const std::string& what)
 {
@@ -196,7 +214,7 @@ std::string html_quote(const std::string& in)
 {
    static const boost::regex e("(<)|(>)|(&)|(\")");
    static const std::string format("(?1&lt;)(?2&gt;)(?3&amp;)(?4&quot;)");
-   return regex_replace(in, e, format);
+   return regex_replace(in, e, format, boost::match_default | boost::format_all);
 }
 
 void output_html_results(bool show_description, const std::string& tagname)
@@ -244,21 +262,63 @@ void output_html_results(bool show_description, const std::string& tagname)
             os << "<td>" << html_quote(first->description) << "</td>";
 #if defined(BOOST_HAS_GRETA)
          if(time_greta == true)
+         {
             print_result(os, first->greta_time, first->factor);
+            if(first->greta_time > 0)
+            {
+               greta_total += first->greta_time / first->factor;
+               ++greta_test_count;
+            }
+         }
          if(time_safe_greta == true)
+         {
             print_result(os, first->safe_greta_time, first->factor);
+            if(first->safe_greta_time > 0)
+            {
+               safe_greta_total += first->safe_greta_time / first->factor;
+               ++safe_greta_test_count;
+            }
+         }
 #endif
 #if defined(BOOST_HAS_POSIX)
          if(time_boost == true)
+         {
             print_result(os, first->boost_time, first->factor);
+            if(first->boost_time > 0)
+            {
+               boost_total += first->boost_time / first->factor;
+               ++boost_test_count;
+            }
+         }
          if(time_localised_boost == true)
+         {
             print_result(os, first->localised_boost_time, first->factor);
+            if(first->localised_boost_time > 0)
+            {
+               locale_boost_total += first->localised_boost_time / first->factor;
+               ++locale_boost_test_count;
+            }
+         }
 #endif
          if(time_posix == true)
+         {
             print_result(os, first->posix_time, first->factor);
+            if(first->posix_time > 0)
+            {
+               posix_total += first->posix_time / first->factor;
+               ++posix_test_count;
+            }
+         }
 #if defined(BOOST_HAS_PCRE)
          if(time_pcre == true)
+         {
             print_result(os, first->pcre_time, first->factor);
+            if(first->pcre_time > 0)
+            {
+               pcre_total += first->pcre_time / first->factor;
+               ++pcre_test_count;
+            }
+         }
 #endif
          os << "</tr>\n";
          ++first;
@@ -278,6 +338,81 @@ void output_html_results(bool show_description, const std::string& tagname)
    {
       html_contents.replace(pos, tagname.size(), result);
    }
+}
+
+std::string get_boost_version()
+{
+   std::stringstream os;
+   os << (BOOST_VERSION / 100000) << '.' << ((BOOST_VERSION / 100) % 1000) << '.' << (BOOST_VERSION % 100);
+   return os.str();
+}
+
+std::string get_averages_table()
+{
+   std::stringstream os;
+   //
+   // start by outputting the table header:
+   //
+   os << "<table border=\"1\" cellspacing=\"1\">\n";
+   os << "<tr>";
+#if defined(BOOST_HAS_GRETA)
+   if(time_greta == true)
+   {
+      os << "<td><strong>GRETA</strong></td>";
+   }
+   if(time_safe_greta == true)
+   {
+      os << "<td><strong>GRETA<BR>(non-recursive mode)</strong></td>";
+   }
+
+#endif
+   if(time_boost == true)
+   {
+      os << "<td><strong>Boost</strong></td>";
+   }
+   if(time_localised_boost == true)
+   {
+      os << "<td><strong>Boost + C++ locale</strong></td>";
+   }
+#if defined(BOOST_HAS_POSIX)
+   if(time_posix == true)
+   {
+      os << "<td><strong>POSIX</strong></td>";
+   }
+#endif
+#ifdef BOOST_HAS_PCRE
+   if(time_pcre == true)
+   {
+      os << "<td><strong>PCRE</strong></td>";
+   }
+#endif
+   os << "</tr>\n";
+
+   //
+   // Now enumerate through all averages:
+   //
+   os << "<tr>";
+#if defined(BOOST_HAS_GRETA)
+   if(time_greta == true)
+      os << "<td>" << (greta_total / greta_test_count) << "</td>\n";
+   if(time_safe_greta == true)
+      os << "<td>" << (safe_greta_total / safe_greta_test_count) << "</td>\n";
+#endif
+#if defined(BOOST_HAS_POSIX)
+   if(time_boost == true)
+      os << "<td>" << (boost_total / boost_test_count) << "</td>\n";
+   if(time_localised_boost == true)
+      os << "<td>" << (locale_boost_total / locale_boost_test_count) << "</td>\n";
+#endif
+   if(time_posix == true)
+      os << "<td>" << (posix_total / posix_test_count) << "</td>\n";
+#if defined(BOOST_HAS_PCRE)
+   if(time_pcre == true)
+      os << "<td>" << (pcre_total / pcre_test_count) << "</td>\n";
+#endif
+   os << "</tr>\n";
+   os << "</table>\n";
+   return os.str();
 }
 
 void output_final_html()
@@ -306,7 +441,7 @@ void output_final_html()
       pos = html_contents.find("%boost%");
       if(pos != std::string::npos)
       {
-         html_contents.replace(pos, 7, BOOST_STRINGIZE(BOOST_VERSION));
+         html_contents.replace(pos, 7, get_boost_version());
       }
       pos = html_contents.find("%pcre%");
       if(pos != std::string::npos)
@@ -317,7 +452,12 @@ void output_final_html()
          html_contents.replace(pos, 6, "N/A");
 #endif
       }
-      //
+      pos = html_contents.find("%averages%");
+      if(pos != std::string::npos)
+      {
+         html_contents.replace(pos, 10, get_averages_table());
+      }
+     //
       // now right the output to file:
       //
       std::ofstream os(html_out_file.c_str());

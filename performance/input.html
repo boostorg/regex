@@ -8,13 +8,14 @@
    </head>
    <body bgcolor="#ffffff" link="#0000ff" vlink="#800080">
       <h2>Regular Expression Performance Comparison</h2>
-      <p>The Boost and GRETA regular expression libraries have slightly different 
-         interfaces, and it has been suggested that GRETA's interface allows for a more 
-         efficient implementation. The following tables provide comparisons between:</p>
+      <p>
+         The following tables provide comparisons between the following regular 
+         expression libraries:</p>
       <p><a href="http://research.microsoft.com/projects/greta">GRETA</a>.</p>
       <p><a href="http://www.boost.org/">The Boost regex library</a>.</p>
       <p><a href="http://arglist.com/regex/">Henry Spencer's regular expression library</a>
          - this is provided for comparison as a typical non-backtracking implementation.</p>
+      <P>Philip Hazel's <A href="http://www.pcre.org">PCRE</A> library.</P>
       <H3>Details</H3>
       <P>Machine: Intel Pentium 4 2.8GHz PC.</P>
       <P>Compiler: %compiler%.</P>
@@ -30,6 +31,11 @@
          performance of these libraries can be expected on other machines - as memory 
          access and processor caching effects can be quite large for most finite state 
          machine algorithms.</P>
+      <H3>Averages</H3>
+      <P>The following are the average relative scores for all the tests: the perfect 
+         regular expression library&nbsp;would score 1, in practice anything less than 2 
+         is pretty good.</P>
+      <P>%averages%</P>
       <h3>Comparison 1: Long Search</h3>
       <p>For each of the following regular expressions the time taken to find all 
          occurrences of the expression within a long English language text was measured 

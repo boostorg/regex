@@ -26,16 +26,16 @@
       <p></p>
       <P>Regular expressions are a form of pattern-matching that are often used in text 
          processing; many users will be familiar with the Unix utilities <I>grep</I>, <I>sed</I>
-         and <I>awk</I>, and the programming language <I>perl</I>, each of which make 
+         and <I>awk</I>, and the programming language <I>Perl</I>, each of which make 
          extensive use of regular expressions. Traditionally C++ users have been limited 
          to the POSIX C API's for manipulating regular expressions, and while regex++ 
          does provide these API's, they do not represent the best way to use the 
          library. For example regex++ can cope with wide character strings, or search 
-         and replace operations (in a manner analogous to either sed or perl), something 
+         and replace operations (in a manner analogous to either sed or Perl), something 
          that traditional C libraries can not do.</P>
       <P>The class <A href="basic_regex.html">boost::basic_regex</A> is the key class in 
          this library; it represents a "machine readable" regular expression, and is 
-         very closely modelled on std::basic_string, think of it as a string plus the 
+         very closely modeled on std::basic_string, think of it as a string plus the 
          actual state-machine required by the regular expression algorithms. Like 
          std::basic_string there are two typedefs that are almost always the means by 
          which this class is referenced:</P>
@@ -58,18 +58,18 @@
          number is in the correct format. To match any digit we could use the regular 
          expression [0-9], however ranges of characters like this are actually locale 
          dependent. Instead we should use the POSIX standard form [[:digit:]], or the 
-         regex++ and perl shorthand for this \d (note that many older libraries tended 
+         regex++ and Perl shorthand for this \d (note that many older libraries tended 
          to be hard-coded to the C-locale, consequently this was not an issue for them). 
          That leaves us with the following regular expression to validate credit card 
          number formats:</P>
       <P>(\d{4}[- ]){3}\d{4}</P>
       <P>Here the parenthesis act to group (and mark for future reference) 
          sub-expressions, and the {4} means "repeat exactly 4 times". This is an example 
-         of the extended regular expression syntax used by perl, awk and egrep. Regex++ 
+         of the extended regular expression syntax used by Perl, awk and egrep. Regex++ 
          also supports the older "basic" syntax used by sed and grep, but this is 
          generally less useful, unless you already have some basic regular expressions 
          that you need to reuse.</P>
-      <P>Now lets take that expression and place it in some C++ code to validate the 
+      <P>Now let's take that expression and place it in some C++ code to validate the 
          format of a credit card number:</P>
       <PRE><B>bool</B> validate_card_format(<B>const</B> std::string s)
 {
@@ -83,13 +83,13 @@
          examples assume that your compiler supports Koenig lookup, if yours doesn't 
          (for example VC6), then you will have to add some boost:: prefixes to some of 
          the function calls in the examples.</P>
-      <P>Those of you who are familiar with credit card processing, will have realised 
+      <P>Those of you who are familiar with credit card processing, will have realized 
          that while the format used above is suitable for human readable card numbers, 
          it does not represent the format required by online credit card systems; these 
          require the number as a string of 16 (or possibly 15) digits, without any 
          intervening spaces. What we need is a means to convert easily between the two 
          formats, and this is where search and replace comes in. Those who are familiar 
-         with the utilities <I>sed</I> and <I>perl</I> will already be ahead here; we 
+         with the utilities <I>sed</I> and <I>Perl</I> will already be ahead here; we 
          need two strings - one a regular expression - the other a "<A href="format_syntax.html">format 
             string</A>" that provides a description of the text to replace the match 
          with. In regex++ this search and replace operation is performed with the 
@@ -152,7 +152,7 @@ std::string human_readable_card_number(<B>const</B> std::string s)
          advanced features like multi-character collating elements and equivalence 
          classes - as well as providing compatibility with other regular expression 
          libraries including GNU and BSD4 regex packages, and to a more limited extent 
-         perl 5.
+         Perl 5.
       </P>
       <P>
          <HR>
@@ -171,4 +171,5 @@ std::string human_readable_card_number(<B>const</B> std::string s)
             for any purpose. It is provided "as is" without express or implied warranty.</I></P>
    </body>
 </html>
+
 

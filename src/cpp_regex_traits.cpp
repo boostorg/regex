@@ -254,8 +254,9 @@ message_data<char>::message_data(const std::locale& l, const std::string& regex_
    // STLport users as well (gcc3.1+STLport5), so enable the
    // workaround for all STLport users...
    //
-#if defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
+#if (defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)) && !defined(BOOST_MSVC)
    using namespace std;
+   using stlport::isspace;
 #  define BOOST_REGEX_STD
 #else
 #  define BOOST_REGEX_STD std::

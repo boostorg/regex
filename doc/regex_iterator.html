@@ -62,7 +62,7 @@ public:
 </PRE>
       <H3><A name="description"></A>Description</H3>
       <P>A regex_iterator is constructed from a pair of iterators, and enumerates all 
-         occurances of a regular expression within that iterator range.</P>
+         occurrences of a regular expression within that iterator range.</P>
       <PRE>regex_iterator();</PRE>
       <B>
          <P>
@@ -71,7 +71,7 @@ public:
                match_flag_type m = match_default);</PRE>
       <B>
          <P>
-         Effects: </B>constructs a regex_iterator that will enumerate all occurances 
+         Effects: </B>constructs a regex_iterator that will enumerate all occurrences 
       of the expression <EM>re</EM>, within the sequence <EM>[a,b)</EM>, and found 
       using match flags <EM>m</EM>.&nbsp; The object <EM>re </EM>must exist for the 
       lifetime of the regex_iterator.</P><PRE>regex_iterator(const regex_iterator&amp; that);</PRE>
@@ -93,11 +93,10 @@ public:
          Effects: </B>returns <CODE>!(*this == that)</CODE>.</P>
       <H5>RE.8.1.1 regex_iterator dereference</H5>
       <PRE>const value_type&amp; operator*();</PRE>
-      <B>
-         <P>
-         Effects: d</B>ereferencing a regex_iterator object <EM>it</EM> yields a 
-      const reference to a <A href="match_results.html">match_results</A> object, 
-      whose members are set as follows:</P>
+      <P>
+         <B>Effects:</B> dereferencing a regex_iterator object <EM>it</EM> yields a 
+         const reference to a <A href="match_results.html">match_results</A> object, 
+         whose members are set as follows:</P>
       <P>
          <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
             <TBODY>
@@ -196,9 +195,9 @@ public:
          <TD vAlign="top" width="50%">
             <P>(*it)[0].matched</P>
          </TD>
-         <TD vAlign="top" width="50%"><CODE>
+         <TD vAlign="top" width="50%">
                <P>
-               true</CODE> if a full match was found, and <CODE>false</CODE> if it was a 
+               <CODE>true</CODE> if a full match was found, and <CODE>false</CODE> if it was a 
             partial match (found as a result of the <CODE>match_partial</CODE> flag being 
             set).</P></TD>
       </TR>
@@ -229,7 +228,6 @@ public:
          <TD vAlign="top" width="50%">
             <P>For all integers n &lt; (*it).size(), true if sub-expression <I>n</I> participated 
                in the match, false otherwise.</P>
-            <P></P>
          </TD>
       <TR>
          <TD vAlign="top" width="50%">(*it).position(n)</TD>
