@@ -359,7 +359,7 @@ void cpp_tests(const basic_regex<C, T, A>& e, bool recurse = true)
                (m[-2].first - x) << "," << (m[-2].second - x) << ") expected (" <<
                matches[1] << "," << (y-x) << ")" << endl;
          }
-#if !(defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)) && !defined(BOOST_REGEX_V3)
+#if !(defined(BOOST_MSVC) && (BOOST_MSVC <= 1300)) && !defined(BOOST_REGEX_V3) && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
          //
          // now try comparison operators:
          string_type s(m[0]);
