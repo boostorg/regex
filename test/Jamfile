@@ -115,8 +115,6 @@ test-suite regex
 
       [ compile concepts/concept_check.cpp
       ]
-      [ compile concepts/wide_concept_check.cpp
-      ]
       
      [ run
     # sources

@@ -17,9 +17,10 @@
 #pragma option -w-8019 -w-8004 -w-8008
 #endif
 #include <boost/regex.hpp>
-#include <boost/regex/concepts.hpp>
 #include <boost/detail/workaround.hpp>
-
+#if !BOOST_WORKAROUND(_MSC_VER, < 1310) && !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__) && !BOOST_WORKAROUND(__GNUC__, < 3)
+#include <boost/regex/concepts.hpp>
+#endif
 
 boost::re_detail::digraph<boost::char_architype> get_next_set_literal();
 
@@ -33,6 +34,7 @@ int main()
          boost::regex_traits<char>
       >
    >();
+#ifndef BOOST_NO_STD_LOCALE
    boost::function_requires<
       boost::BoostRegexConcept<
          boost::basic_regex<char, boost::cpp_regex_traits<char> >
@@ -45,6 +47,8 @@ int main()
       >
    >();
 #endif
+#endif
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
    boost::function_requires<
       boost::BoostRegexConcept<
          boost::basic_regex<char, boost::c_regex_traits<char> >
@@ -57,11 +61,8 @@ int main()
       >
    >();
 #endif
-   boost::function_requires<
-      boost::RegexTraitsConcept<
-         boost::regex_traits<char>
-      >
-   >();
+#endif
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
    boost::function_requires<
       boost::BoostRegexConcept<
          boost::basic_regex<char, boost::w32_regex_traits<char> >
@@ -74,7 +75,7 @@ int main()
       >
    >();
 #endif
-
+#endif
    //
    // now test the regex_traits concepts:
    //

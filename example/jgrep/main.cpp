@@ -18,15 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/regex.hpp>
-#ifdef JM_OLD_IOSTREAM
-#include <iostream.h>
-#else
 #include <iostream>
-using std::cout;
-using std::cin;
-using std::cerr;
-using std::endl;
-#endif
+using namespace std;
 #ifdef __BORLANDC__
 #  pragma hrdstop
 #endif
@@ -38,12 +31,13 @@ using std::endl;
 #endif
 #include "jgrep.h"
 #ifndef BOOST_REGEX_NO_FILEITER
-
-#ifndef JM_ALGO_INCLUDED
-// HP and SGI STL's use <algo.h> instead
-// this will have been pulled in by <jm_cfg.h>
-// for std::distance
 #include <algorithm>
+
+#ifdef BOOST_NO_STDC_NAMESPACE
+namespace std{
+   using ::strcpy; using ::strcat;
+   using ::sprintf;
+}
 #endif
 
 re_type e;

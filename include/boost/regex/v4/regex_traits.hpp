@@ -31,14 +31,20 @@
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v4/error_type.hpp>
 #endif
-#ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
-#include <boost/regex/v4/cpp_regex_traits.hpp>
+#ifndef BOOST_NO_STD_LOCALE
+#  ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
+#     include <boost/regex/v4/cpp_regex_traits.hpp>
+#  endif
 #endif
-#ifndef BOOST_C_REGEX_TRAITS_HPP_INCLUDED
-#include <boost/regex/v4/c_regex_traits.hpp>
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#  ifndef BOOST_C_REGEX_TRAITS_HPP_INCLUDED
+#     include <boost/regex/v4/c_regex_traits.hpp>
+#  endif
 #endif
-#ifndef BOOST_W32_REGEX_TRAITS_HPP_INCLUDED
-#include <boost/regex/v4/w32_regex_traits.hpp>
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+#  ifndef BOOST_W32_REGEX_TRAITS_HPP_INCLUDED
+#     include <boost/regex/v4/w32_regex_traits.hpp>
+#  endif
 #endif
 #ifndef BOOST_REGEX_FWD_HPP_INCLUDED
 #include <boost/regex_fwd.hpp>

@@ -39,7 +39,6 @@ using std::getline;
 
 #if defined(_WIN32) && defined(BOOST_REGEX_USE_WIN32_LOCALE)
 #include <windows.h>
-#pragma comment(lib, "user32.lib")
 #endif
 
 #if (defined(_MSC_VER) && (_MSC_VER <= 1300)) || defined(__sgi)

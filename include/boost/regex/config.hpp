@@ -115,7 +115,6 @@
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__CYGWIN__))
 // gcc on win32 has problems if you include <windows.h>
 // (sporadically generates bad code).
-#  define BOOST_REGEX_USE_C_LOCALE
 #  define BOOST_REGEX_NO_W32
 #endif
 #if defined(__COMO__) && !defined(BOOST_REGEX_NO_W32) && !defined(_MSC_EXTENSIONS)
@@ -214,7 +213,11 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 #if defined(_WIN32) && !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_USE_WIN32_LOCALE
 #endif
-// otherwise use C locale:
+// otherwise use C++ locale if supported:
+#if !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_NO_STD_LOCALE)
+#  define BOOST_REGEX_USE_CPP_LOCALE
+#endif
+// otherwise use C+ locale:
 #if !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE)
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif

@@ -15,12 +15,18 @@
 template <class charT, class tagT>
 void test(const charT& c, const tagT& tag)
 {
+#ifndef BOOST_NO_STD_LOCALE
    boost::basic_regex<charT, boost::cpp_regex_traits<charT> > e1;
    test(e1, tag);
+#endif
+#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
    boost::basic_regex<charT, boost::c_regex_traits<charT> > e2;
    test(e2, tag);
+#endif
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
    boost::basic_regex<charT, boost::w32_regex_traits<charT> > e3;
    test(e3, tag);
+#endif
    // test old depecated code:
    test_deprecated(c, tag);
 }

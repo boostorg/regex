@@ -502,7 +502,7 @@ basic_regex<charT, traits>& basic_regex<charT, traits>::assign(const charT* p1,
    {
       temp = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>());
    }
-   else if(!m_pimpl.unique())
+   else
    {
       temp = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>(m_pimpl->m_ptraits));
    }

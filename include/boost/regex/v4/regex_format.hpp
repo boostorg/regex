@@ -31,7 +31,7 @@ namespace boost{
 //
 // Forward declaration:
 //
-template <class BidiIterator, class Allocator = BOOST_DEFAULT_ALLOCATOR(sub_match<BidiIterator> ) >
+   template <class BidiIterator, class Allocator = BOOST_DEDUCED_TYPENAME std::vector<sub_match<BidiIterator> >::allocator_type >
 class match_results;
 
 namespace re_detail{
@@ -483,9 +483,9 @@ public:
    }
 };
 
-template <class OutputIterator, class Iterator, class charT, class traits>
+template <class OutputIterator, class Iterator, class Alloc, class charT, class traits>
 OutputIterator regex_format_imp(OutputIterator out,
-                          const match_results<Iterator>& m,
+                          const match_results<Iterator, Alloc>& m,
                           const charT* p1, const charT* p2,
                           match_flag_type flags,
                           const traits& t
@@ -493,7 +493,7 @@ OutputIterator regex_format_imp(OutputIterator out,
 {
    re_detail::basic_regex_formatter<
       OutputIterator, 
-      match_results<Iterator>, 
+      match_results<Iterator, Alloc>, 
       traits > f(out, m, t);
    return f.format(p1, p2, flags);
 }

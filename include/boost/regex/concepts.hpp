@@ -528,7 +528,7 @@ struct BaseRegexConcept
    BidiIterator m_in;
    global_regex_namespace::regex_constants::match_flag_type m_mft;
    global_regex_namespace::match_results<pointer_type> m_pmatch;
-private:
+
    BaseRegexConcept();
    BaseRegexConcept(const BaseRegexConcept&);
    BaseRegexConcept& operator=(const BaseRegexConcept&);
@@ -727,7 +727,7 @@ struct RegexConcept
    BidiIterator m_in;
    global_regex_namespace::regex_constants::match_flag_type m_mft;
    global_regex_namespace::match_results<typename string_type::const_iterator> m_smatch;
-private:
+
    RegexConcept();
    RegexConcept(const RegexConcept&);
    RegexConcept& operator=(const RegexConcept&);
@@ -818,7 +818,7 @@ struct BoostRegexConcept
    const value_type m_char;
    match_results_type m_results;
    const match_results_type m_cresults;
-private:
+
    BoostRegexConcept();
    BoostRegexConcept(const BoostRegexConcept&);
    BoostRegexConcept& operator=(const BoostRegexConcept&);

@@ -64,7 +64,7 @@ struct BOOST_REGEX_DECL c_regex_traits<char>
    }
    char translate_nocase(char c) const 
    { 
-      return (std::tolower)(c); 
+      return static_cast<char>((std::tolower)(static_cast<unsigned char>(c))); 
    }
 
    static string_type BOOST_REGEX_CALL transform(const char* p1, const char* p2);

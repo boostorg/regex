@@ -21,7 +21,7 @@
 #define BOOST_REGEX_FWD_HPP_INCLUDED
 
 #ifndef BOOST_REGEX_CONFIG_HPP
-#include <boost/config.hpp>
+#include <boost/regex/config.hpp>
 #endif
 
 //
@@ -34,21 +34,25 @@
 #  endif
 #else
 
-//
-// If there isn't good enough wide character support then there will
-// be no wide character regular expressions:
-//
-#if (defined(BOOST_NO_CWCHAR) || defined(BOOST_NO_CWCTYPE) || defined(BOOST_NO_STD_WSTRING)) && !defined(BOOST_NO_WREGEX)
-#  define BOOST_NO_WREGEX
-#endif
-
 namespace boost{
 
 template <class charT>
 class cpp_regex_traits;
+template <class charT>
+struct c_regex_traits;
+template <class charT>
+class w32_regex_traits;
 
+#ifdef BOOST_REGEX_USE_WIN32_LOCALE
+template <class charT, class implementationT = w32_regex_traits<charT> >
+struct regex_traits;
+#elif defined(BOOST_REGEX_USE_CPP_LOCALE)
 template <class charT, class implementationT = cpp_regex_traits<charT> >
 struct regex_traits;
+#else
+template <class charT, class implementationT = c_regex_traits<charT> >
+struct regex_traits;
+#endif
 
 template <class charT, class traits = regex_traits<charT> >
 class basic_regex;

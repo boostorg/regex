@@ -89,18 +89,18 @@
 #ifdef BOOST_REGEX_NARROW_INSTANTIATE
 #  define BOOST_REGEX_INSTANTIATE
 #endif
-//#include <boost/regex/v4/instances.hpp>
+#include <boost/regex/v4/instances.hpp>
 #undef BOOST_REGEX_CHAR_T
 #ifdef BOOST_REGEX_INSTANTIATE
 #  undef BOOST_REGEX_INSTANTIATE
 #endif
 
 #ifndef BOOST_NO_WREGEX
-#define BOOST_REGEX_CHAR_T boost::regex_wchar_type
+#define BOOST_REGEX_CHAR_T wchar_t
 #ifdef BOOST_REGEX_WIDE_INSTANTIATE
 #  define BOOST_REGEX_INSTANTIATE
 #endif
-//#include <boost/regex/v4/instances.hpp>
+#include <boost/regex/v4/instances.hpp>
 #undef BOOST_REGEX_CHAR_T
 #ifdef BOOST_REGEX_INSTANTIATE
 #  undef BOOST_REGEX_INSTANTIATE

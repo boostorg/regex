@@ -19,6 +19,10 @@
 #ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 
+#include <boost/config.hpp>
+
+#ifndef BOOST_NO_STD_LOCALE
+
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #include <boost/regex/v4/regex_traits_defaults.hpp>
 #endif
@@ -798,6 +802,8 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
+#endif
+
 #endif
 
 #endif

@@ -34,7 +34,6 @@
 #include <limits>
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/detail/allocator.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>

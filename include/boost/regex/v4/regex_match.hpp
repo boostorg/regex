@@ -135,6 +135,22 @@ inline bool regex_match(const char* str,
    match_results<const char*> m;
    return regex_match(str, str + regex::traits_type::length(str), m, e, flags);
 }
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+inline bool regex_match(const char* str, 
+                        cmatch& m, 
+                        const basic_regex<char, w32_regex_traits<char> >& e, 
+                        match_flag_type flags = match_default)
+{
+   return regex_match(str, str + regex::traits_type::length(str), m, e, flags);
+}
+inline bool regex_match(const char* str, 
+                        const basic_regex<char, w32_regex_traits<char> >& e, 
+                        match_flag_type flags = match_default)
+{
+   match_results<const char*> m;
+   return regex_match(str, str + regex::traits_type::length(str), m, e, flags);
+}
+#endif
 #ifndef BOOST_NO_WREGEX
 inline bool regex_match(const wchar_t* str, 
                         wcmatch& m, 
@@ -178,6 +194,22 @@ inline bool regex_match(const wchar_t* str,
    match_results<const wchar_t*> m;
    return regex_match(str, str + wregex::traits_type::length(str), m, e, flags);
 }
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+inline bool regex_match(const wchar_t* str, 
+                        wcmatch& m, 
+                        const basic_regex<wchar_t, w32_regex_traits<wchar_t> >& e, 
+                        match_flag_type flags = match_default)
+{
+   return regex_match(str, str + wregex::traits_type::length(str), m, e, flags);
+}
+inline bool regex_match(const wchar_t* str, 
+                        const basic_regex<wchar_t, w32_regex_traits<wchar_t> >& e, 
+                        match_flag_type flags = match_default)
+{
+   match_results<const wchar_t*> m;
+   return regex_match(str, str + wregex::traits_type::length(str), m, e, flags);
+}
+#endif
 #endif
 inline bool regex_match(const std::string& s, 
                         smatch& m,
@@ -221,6 +253,22 @@ inline bool regex_match(const std::string& s,
    match_results<std::string::const_iterator> m;
    return regex_match(s.begin(), s.end(), m, e, flags);
 }
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+inline bool regex_match(const std::string& s, 
+                        smatch& m,
+                        const basic_regex<char, w32_regex_traits<char> >& e, 
+                        match_flag_type flags = match_default)
+{
+   return regex_match(s.begin(), s.end(), m, e, flags);
+}
+inline bool regex_match(const std::string& s, 
+                        const basic_regex<char, w32_regex_traits<char> >& e, 
+                        match_flag_type flags = match_default)
+{
+   match_results<std::string::const_iterator> m;
+   return regex_match(s.begin(), s.end(), m, e, flags);
+}
+#endif
 #if !defined(BOOST_NO_WREGEX)
 inline bool regex_match(const std::basic_string<wchar_t>& s, 
                         match_results<std::basic_string<wchar_t>::const_iterator>& m,
@@ -264,6 +312,22 @@ inline bool regex_match(const std::basic_string<wchar_t>& s,
    match_results<std::basic_string<wchar_t>::const_iterator> m;
    return regex_match(s.begin(), s.end(), m, e, flags);
 }
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+inline bool regex_match(const std::basic_string<wchar_t>& s, 
+                        match_results<std::basic_string<wchar_t>::const_iterator>& m,
+                        const basic_regex<wchar_t, w32_regex_traits<wchar_t> >& e, 
+                        match_flag_type flags = match_default)
+{
+   return regex_match(s.begin(), s.end(), m, e, flags);
+}
+inline bool regex_match(const std::basic_string<wchar_t>& s, 
+                        const basic_regex<wchar_t, w32_regex_traits<wchar_t> >& e, 
+                        match_flag_type flags = match_default)
+{
+   match_results<std::basic_string<wchar_t>::const_iterator> m;
+   return regex_match(s.begin(), s.end(), m, e, flags);
+}
+#endif
 #endif
 
 #endif
