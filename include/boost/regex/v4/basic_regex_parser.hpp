@@ -1127,6 +1127,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    std::ptrdiff_t last_alt_point = m_alt_insert_point;
    this->m_pdata->m_data.align();
    m_alt_insert_point = this->m_pdata->m_data.size();
+   std::ptrdiff_t expected_alt_point = m_alt_insert_point;
    //
    // select the actual extension used:
    //
@@ -1191,6 +1192,48 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       this->m_pdata->m_data.align();
       m_alt_insert_point = this->m_pdata->m_data.size();
       break;
+   case regex_constants::syntax_open_mark:
+      {
+      // a conditional expression:
+      pb->index = markid = -4;
+      if(++m_position == m_end)
+         fail(REG_BADRPT, m_position - m_base);
+      int v = this->m_traits.toi(m_position, m_end, 10);
+      if(v > 0)
+      {
+         re_brace* br = static_cast<re_brace*>(this->append_state(syntax_element_assert_backref, sizeof(re_brace)));
+         br->index = v;
+         if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark)
+            fail(REG_BADRPT, m_position - m_base);
+         if(++m_position == m_end)
+            fail(REG_BADRPT, m_position - m_base);
+      }
+      else
+      {
+         // verify that we have a lookahead or lookbehind assert:
+         if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_question)
+            fail(REG_BADRPT, m_position - m_base);
+         if(++m_position == m_end)
+            fail(REG_BADRPT, m_position - m_base);
+         if(this->m_traits.syntax_type(*m_position) == regex_constants::escape_type_left_word)
+         {
+            if(++m_position == m_end)
+               fail(REG_BADRPT, m_position - m_base);
+            if((this->m_traits.syntax_type(*m_position) != regex_constants::syntax_equal)
+               && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_not))
+               fail(REG_BADRPT, m_position - m_base);
+            m_position -= 3;
+         }
+         else
+         {
+            if((this->m_traits.syntax_type(*m_position) != regex_constants::syntax_equal)
+               && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_not))
+               fail(REG_BADRPT, m_position - m_base);
+            m_position -= 2;
+         }
+      }
+      break;
+      }
    default:
       fail(REG_BADRPT, m_position - m_base);
    }
@@ -1218,6 +1261,19 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       {
          // Oops... we didn't have anything inside the assertion:
          fail(REG_EMPTY, m_position - m_base);
+      }
+   }
+   //
+   // verify that if this is conditional expression, that we do have
+   // an alternative, if not add one:
+   //
+   if(markid == -4)
+   {
+      re_syntax_base* b = this->getaddress(expected_alt_point);
+      if(b->type != syntax_element_alt)
+      {
+         re_alt* alt = static_cast<re_alt*>(this->insert_state(expected_alt_point, syntax_element_alt, sizeof(re_alt)));
+         alt->alt.i = this->m_pdata->m_data.size() - this->getoffset(alt);
       }
    }
    //

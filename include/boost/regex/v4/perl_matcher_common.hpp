@@ -81,11 +81,11 @@ void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std
    difference_type dist = boost::re_detail::distance(base, last);
    traits_size_type states = static_cast<traits_size_type>(re.size());
    states *= states;
-   difference_type lim = (std::numeric_limits<difference_type>::max)() - 1000 - states;
+   difference_type lim = (std::numeric_limits<difference_type>::max)() - 100000 - states;
    if(dist > (difference_type)(lim / states))
       max_state_count = lim;
    else
-      max_state_count = 1000 + states * dist;
+      max_state_count = 100000 + states * dist;
 }
 template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(void*)
@@ -294,7 +294,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_endmark()
       if((m_match_flags & match_nosubs) == 0)
          m_presult->set_second(position, index);
    }
-   else if(index < 0)
+   else if((index < 0) && (index != -4))
    {
       // matched forward lookahead:
       pstate = 0;
@@ -668,6 +668,14 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
    std::advance(position, -static_cast<const re_brace*>(pstate)->index);
    pstate = pstate->next.p;
    return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref()
+{
+   // return true if marked sub-expression N has been matched:
+   pstate = pstate->next.p;
+   return (*m_presult)[static_cast<const re_brace*>(pstate)->index].matched;
 }
 
 template <class BidiIterator, class Allocator, class traits>

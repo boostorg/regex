@@ -334,6 +334,7 @@ private:
    bool match_dot_repeat_fast();
    bool match_dot_repeat_slow();
    bool match_backstep();
+   bool match_assert_backref();
    bool backtrack_till_match(unsigned count);
 
    // find procs stored in s_find_vtable:

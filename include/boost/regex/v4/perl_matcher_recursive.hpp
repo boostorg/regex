@@ -48,7 +48,7 @@ public:
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[27] = 
+   static matcher_proc_type const s_match_vtable[28] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -77,6 +77,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::match_backstep,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref,
    };
 
    if(state_count > max_state_count)
@@ -156,6 +157,37 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          }
 #endif
          break;
+      }
+   case -4:
+      {
+      // conditional expression:
+      const re_alt* alt = static_cast<const re_alt*>(pstate->next.p);
+      BOOST_ASSERT(alt->type == syntax_element_alt);
+      pstate = alt->next.p;
+      if(pstate->type == syntax_element_assert_backref)
+      {
+         if(!match_assert_backref())
+            pstate = alt->alt.p;
+         break;
+      }
+      else
+      {
+         // zero width assertion, have to match this recursively:
+         BOOST_ASSERT(pstate->type == syntax_element_startmark);
+         bool negated = static_cast<const re_brace*>(pstate)->index == -2;
+         BidiIterator saved_position = position;
+         const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
+         pstate = pstate->next.p->next.p;
+         bool r = match_all_states();
+         position = saved_position;
+         if(negated)
+            r = !r;
+         if(r)
+            pstate = next_pstate;
+         else
+            pstate = alt->alt.p;
+         break;
+      }
       }
    default:
    {

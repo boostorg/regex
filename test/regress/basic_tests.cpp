@@ -784,6 +784,8 @@ void test_tricky_cases2()
    TEST_REGEX_SEARCH("([a-c]+)\\1", perl, "abcbc", match_default, make_array(1, 5, 1, 3, -2, -2));
    TEST_REGEX_SEARCH(".+abc", perl, "xxxxxxxxyyyyyyyyab", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(.+)\\1", perl, "abcdxxxyyyxxxyyy", match_default, make_array(4, 16, 4, 10, -2, -2));
+   // this should not throw:
+   TEST_REGEX_SEARCH("[_]+$", perl, "___________________________________________x", match_default, make_array(-2, -2));
 
    //
    // the strings in the next test case are too long for most compilers to cope with,
@@ -1315,5 +1317,55 @@ void test_nosubs()
    TEST_REGEX_SEARCH("a(bbb+|bb+|b)bb", perl|nosubs, "abbb", match_default, make_array(0, 4, -2, -2));
    TEST_REGEX_SEARCH("(.*).*", perl|nosubs, "abcdef", match_default, make_array(0, 6, -2, 6, 6, -2, -2));
    TEST_REGEX_SEARCH("(a*)*", perl|nosubs, "bc", match_default, make_array(0, 0, -2, 1, 1, -2, 2, 2, -2, -2));
+}
 
+void test_conditionals()
+{
+   using namespace boost::regex_constants;
+   TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "aA", match_default, make_array(0, 2, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "bB", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "aB", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?:(a)|b)(?(1)A|B)", perl, "bA", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "aa", match_default, make_array(0, 2, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "b", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "bb", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(a)?(?(1)a|b)+$", perl, "ab", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("^(?(?=abc)\\w{3}:|\\d\\d)$", perl, "abc:", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("^(?(?=abc)\\w{3}:|\\d\\d)$", perl, "12", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(?(?=abc)\\w{3}:|\\d\\d)$", perl, "123", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?(?=abc)\\w{3}:|\\d\\d)$", perl, "xyz", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("^(?(?!abc)\\d\\d|\\w{3}:)$", perl, "abc:", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("^(?(?!abc)\\d\\d|\\w{3}:)$", perl, "12", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(?(?!abc)\\d\\d|\\w{3}:)$", perl, "123", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?(?!abc)\\d\\d|\\w{3}:)$", perl, "xyz", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(?(?<=foo)bar|cat)", perl, "foobar", match_default, make_array(3, 6, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<=foo)bar|cat)", perl, "cat", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<=foo)bar|cat)", perl, "fcat", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<=foo)bar|cat)", perl, "focat", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<=foo)bar|cat)", perl, "foocat", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(?(?<!foo)cat|bar)", perl, "foobar", match_default, make_array(3, 6, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<!foo)cat|bar)", perl, "cat", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<!foo)cat|bar)", perl, "fcat", match_default, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<!foo)cat|bar)", perl, "focat", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?(?<!foo)cat|bar)", perl, "foocat", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(\\()?[^()]+(?(1)\\))", perl, "abcd", match_default, make_array(0, 4, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(\\()?[^()]+(?(1)\\))", perl, "(abcd)", match_default, make_array(0, 6, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(\\()?[^()]+(?(1)\\))", perl, "the quick (abcd) fox", match_default, make_array(0, 10, -1, -1, -2, 10, 16, 10, 11, -2, 16, 20, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(\\()?[^()]+(?(1)\\))", perl, "(abcd", match_default, make_array(1, 5, -1, -1, -2, -2));
+
+   TEST_REGEX_SEARCH("^(?(2)a|(1)(2))+$", perl, "12", match_default, make_array(0, 2, 0, 1, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(?(2)a|(1)(2))+$", perl, "12a", match_default, make_array(0, 3, 0, 1, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(?(2)a|(1)(2))+$", perl, "12aa", match_default, make_array(0, 4, 0, 1, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(?(2)a|(1)(2))+$", perl, "1234", match_default, make_array(-2, -2));
+
+   //TEST_REGEX_SEARCH("", perl, "", match_default, make_array(-2, -2));
+
+#if 0
+#endif
 }

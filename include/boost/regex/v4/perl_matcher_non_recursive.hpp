@@ -113,7 +113,7 @@ struct saved_single_repeat : public saved_state
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[27] = 
+   static matcher_proc_type const s_match_vtable[28] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -142,6 +142,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::match_backstep,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref,
    };
 
    push_recursion_stopper();
@@ -343,6 +344,37 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          }
 #endif
          return r;
+      }
+   case -4:
+      {
+      // conditional expression:
+      const re_alt* alt = static_cast<const re_alt*>(pstate->next.p);
+      BOOST_ASSERT(alt->type == syntax_element_alt);
+      pstate = alt->next.p;
+      if(pstate->type == syntax_element_assert_backref)
+      {
+         if(!match_assert_backref())
+            pstate = alt->alt.p;
+         break;
+      }
+      else
+      {
+         // zero width assertion, have to match this recursively:
+         BOOST_ASSERT(pstate->type == syntax_element_startmark);
+         bool negated = static_cast<const re_brace*>(pstate)->index == -2;
+         BidiIterator saved_position = position;
+         const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
+         pstate = pstate->next.p->next.p;
+         bool r = match_all_states();
+         position = saved_position;
+         if(negated)
+            r = !r;
+         if(r)
+            pstate = next_pstate;
+         else
+            pstate = alt->alt.p;
+         break;
+      }
       }
    default:
    {
@@ -929,8 +961,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_greedy_single_repeat(
 
    const re_repeat* rep = pmp->rep;
    std::size_t count = pmp->count;
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
 
    count -= rep->min;
    
@@ -979,8 +1011,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_slow_dot_repeat(bool 
    const re_repeat* rep = pmp->rep;
    std::size_t count = pmp->count;
    assert(rep->type == syntax_element_dot_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_wild);
 
    assert(count < rep->max);
@@ -1097,8 +1129,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_char_repeat(bool r)
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_char_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_literal);
    assert(count < rep->max);
 
@@ -1161,8 +1193,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_short_set_repeat(bool
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_short_set_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_set);
    assert(count < rep->max);
    
@@ -1226,8 +1258,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat(bool 
    position = pmp->last_position;
 
    assert(rep->type == syntax_element_long_set_rep);
-   assert(rep->next.p);
-   assert(rep->alt.p);
+   assert(rep->next.p != 0);
+   assert(rep->alt.p != 0);
    assert(rep->next.p->type == syntax_element_long_set);
    assert(position != last);
    assert(count < rep->max);

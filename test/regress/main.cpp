@@ -24,6 +24,7 @@ int cpp_main(int argc, char * argv[])
    test_fast_repeats();
    test_independent_subs();
    test_nosubs();
+   test_conditionals();
    return error_count;
 }
 

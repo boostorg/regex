@@ -108,7 +108,9 @@ enum syntax_element_type
    syntax_element_short_set_rep = syntax_element_char_rep + 1,
    syntax_element_long_set_rep = syntax_element_short_set_rep + 1,
    // a backstep for lookbehind repeats:
-   syntax_element_backstep = syntax_element_long_set_rep + 1
+   syntax_element_backstep = syntax_element_long_set_rep + 1,
+   // an assertion that a mark was matched:
+   syntax_element_assert_backref = syntax_element_backstep +1
 };
 
 #ifdef BOOST_REGEX_DEBUG
