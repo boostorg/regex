@@ -57,7 +57,7 @@ double time_match(const std::string& re, const std::string& text, bool icase)
       tim.restart();
       for(counter = 0; counter < iter; ++counter)
       {
-         erroffset = pcre_exec(ppcre, pe, text.c_str(), text.size(), 0, 0, what, sizeof(what));
+         erroffset = pcre_exec(ppcre, pe, text.c_str(), text.size(), 0, 0, what, sizeof(what)/sizeof(int));
       }
       result = tim.elapsed();
       iter *= 2;
@@ -70,7 +70,7 @@ double time_match(const std::string& re, const std::string& text, bool icase)
       tim.restart();
       for(counter = 0; counter < iter; ++counter)
       {
-         erroffset = pcre_exec(ppcre, pe, text.c_str(), text.size(), 0, 0, what, sizeof(what));
+         erroffset = pcre_exec(ppcre, pe, text.c_str(), text.size(), 0, 0, what, sizeof(what)/sizeof(int));
       }
       run = tim.elapsed();
       result = std::min(run, result);
@@ -119,12 +119,12 @@ double time_find_all(const std::string& re, const std::string& text, bool icase)
       {
          matches = 0;
          startoff = 0;
-         exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what));
+         exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what)/sizeof(int));
          while(exec_result >= 0)
          { 
             ++matches;
             startoff = what[1];
-            exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what));
+            exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what)/sizeof(int));
          }
       }
       result = tim.elapsed();
@@ -147,12 +147,12 @@ double time_find_all(const std::string& re, const std::string& text, bool icase)
       {
          matches = 0;
          startoff = 0;
-         exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what));
+         exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what)/sizeof(int));
          while(exec_result >= 0)
          { 
             ++matches;
             startoff = what[1];
-            exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what));
+            exec_result = pcre_exec(ppcre, pe, text.c_str(), text.size(), startoff, 0, what, sizeof(what)/sizeof(int));
          }
       }
       run = tim.elapsed();

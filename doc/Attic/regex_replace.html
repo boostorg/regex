@@ -85,8 +85,8 @@ basic_string&lt;charT&gt; regex_replace(const basic_string&lt;charT&gt;&amp; s,
       calls <CODE>regex_replace(back_inserter(result), s.begin(), s.end(), e, fmt, 
          flags)</CODE>, and then returns <CODE>result</CODE>.
       <H3><A name="examples"></A>Examples</H3>
-      <P>The following <A href="../example/snippets/regex_replace_example.cpp">example</A> takes 
-         C/C++ source code as input, and outputs syntax highlighted HTML code.</P>
+      <P>The following <A href="../example/snippets/regex_replace_example.cpp">example</A>
+         takes C/C++ source code as input, and outputs syntax highlighted HTML code.</P>
       <P></P>
       <PRE><FONT color=#008080>#include &lt;fstream&gt;
 #include &lt;sstream&gt;
@@ -139,12 +139,14 @@ boost::regex e1, e2;
 </I></FONT>      <FONT color=#000080><I>// temporary string stream
 </I></FONT>      std::ostringstream t(std::ios::out | std::ios::binary);
       std::ostream_iterator&lt;<B>char</B>, <B>char</B>&gt; oi(t);
-      boost::regex_replace(oi, in.begin(), in.end(), e2, pre_format);
+      boost::regex_replace(oi, in.begin(), in.end(),
+      e2, pre_format, boost::match_default | boost::format_all);
       <FONT color=#000080><I>// then output to final output stream
 </I></FONT>      <FONT color=#000080><I>// adding syntax highlighting:
 </I></FONT>      std::string s(t.str());
       std::ostream_iterator&lt;<B>char</B>, <B>char</B>&gt; out(os);
-      boost::regex_replace(out, s.begin(), s.end(), e1, format_string);
+      boost::regex_replace(out, s.begin(), s.end(),
+      e1, format_string, boost::match_default | boost::format_all);
       os &lt;&lt; footer_text;
    }
    }

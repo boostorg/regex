@@ -1,0 +1,370 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: regex_iterator</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <LINK href="../../../boost.css" type="text/css" rel="stylesheet"></head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td vAlign="top" width="300">
+                  <h3><A href="../../../index.htm"><IMG height="86" alt="C++ Boost" src="../../../c++boost.gif" width="277" border="0"></A></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">regex_iterator</H2>
+               </TD>
+               <td width="50">
+                  <h3><A href="index.html"><IMG height="45" alt="Boost.Regex Index" src="uarrow.gif" width="43" border="0"></A></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <H3>Contents</H3>
+      <dl class="index">
+         <dt><A href="#synopsis">Synopsis</A> <dt><a href="#description">Description</a> <dt><A href="#examples">
+                     Examples</A></dt></dl>
+      <H3><A name="synopsis"></A>Synopsis</H3>
+      <P>The iterator type regex_iterator will enumerate all of the regular expression 
+         matches found in some sequence: dereferencing a regex_iterator yields a 
+         reference to a&nbsp;<A href="match_results.html">match_results</A> object.</P>
+      <PRE>
+template &lt;class BidirectionalIterator, 
+          class charT = iterator_traits&lt;BidirectionalIterator&gt;::value_type,
+          class traits = regex_traits&lt;charT&gt;,
+          class Allocator = allocator&lt;charT&gt; &gt;
+class regex_iterator 
+{
+public:
+   typedef          basic_regex&lt;charT, traits, Allocator&gt;                   regex_type;
+   typedef          match_results&lt;BidirectionalIterator&gt;                    value_type;
+   typedef typename iterator_traits&lt;BidirectionalIterator&gt;::difference_type difference_type;
+   typedef          const value_type*                                       pointer;
+   typedef          const value_type&amp;                                       reference;
+   typedef          std::forward_iterator_tag                               iterator_category;
+   
+   regex_iterator();
+   regex_iterator(BidirectionalIterator a, BidirectionalIterator b, 
+                  const regex_type&amp; re, 
+                  match_flag_type m = match_default);
+   regex_iterator(const regex_iterator&amp;);
+   regex_iterator&amp; operator=(const regex_iterator&amp;);
+   bool operator==(const regex_iterator&amp;);
+   bool operator!=(const regex_iterator&amp;);
+   const value_type&amp; operator*();
+   const value_type* operator-&gt;();
+   regex_iterator&amp; operator++();
+   regex_iterator operator++(int);
+};
+
+</PRE>
+      <H3><A name="description"></A>Description</H3>
+      <P>A regex_iterator is constructed from a pair of iterators, and enumerates all 
+         occurances of a regular expression within that iterator range.</P>
+      <PRE>regex_iterator();</PRE>
+      <B>
+         <P>
+         Effects:</B> constructs an end of sequence regex_iterator.</P><PRE>regex_iterator(BidirectionalIterator a, BidirectionalIterator b, 
+               const regex_type&amp; re, 
+               match_flag_type m = match_default);</PRE>
+      <B>
+         <P>
+         Effects: </B>constructs a regex_iterator that will enumerate all occurances 
+      of the expression <EM>re</EM>, within the sequence <EM>[a,b)</EM>, and found 
+      using match flags <EM>m</EM>.&nbsp; The object <EM>re </EM>must exist for the 
+      lifetime of the regex_iterator.</P><PRE>regex_iterator(const regex_iterator&amp; that);</PRE>
+      <B>
+         <P>
+         Effects: </B>constructs a copy of <CODE>that</CODE>.</P><B>
+         <P>
+         Postconditions:</B> <CODE>*this == that</CODE>.</P><PRE>regex_iterator&amp; operator=(const regex_iterator&amp;);</PRE>
+      <B>
+         <P>
+         Effects: </B>sets&nbsp;<CODE>*this</CODE> equal to those in <CODE>that</CODE>.</P><B>
+         <P>
+         Postconditions:</B> <CODE>*this == that</CODE>.</P><PRE>bool operator==(const regex_iterator&amp; that);</PRE>
+      <B>
+         <P>
+         Effects: </B>returns true if *this is equal to that.</P><PRE>bool operator!=(const regex_iterator&amp;);</PRE>
+      <B>
+         <P>
+         Effects: </B>returns <CODE>!(*this == that)</CODE>.</P>
+      <H5>RE.8.1.1 regex_iterator dereference</H5>
+      <PRE>const value_type&amp; operator*();</PRE>
+      <B>
+         <P>
+         Effects: d</B>ereferencing a regex_iterator object <EM>it</EM> yields a 
+      const reference to a <A href="match_results.html">match_results</A> object, 
+      whose members are set as follows:</P>
+      <P>
+         <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
+            <TBODY>
+               <TR>
+                  <TD vAlign="top" width="50%"><B>
+                        <P>
+                        Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>re.mark_count()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).prefix().first</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The end of the last match found, or the start of the underlying sequence if 
+               this is the first match enumerated</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).prefix().last</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[0].first</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).prefix().matched</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>(*it).prefix().first != (*it).prefix().second</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).suffix().first</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[0].second</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).suffix().last</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The end of the underlying sequence.</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it).suffix().matched</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>(*it).suffix().first != (*it).suffix().second</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[0].first</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The start of the sequence of characters that matched the regular expression</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[0].second</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The end of the sequence of characters that matched the regular expression</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[0].matched</P>
+         </TD>
+         <TD vAlign="top" width="50%"><CODE>
+               <P>
+               true</CODE> if a full match was found, and <CODE>false</CODE> if it was a 
+            partial match (found as a result of the <CODE>match_partial</CODE> flag being 
+            set).</P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[n].first</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>For all integers n &lt; (*it).size(), the start of the sequence that matched 
+               sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+               in the match, then <I>last</I>.</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[n].second</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>For all integers n &lt; (*it).size(), the end of the sequence that matched 
+               sub-expression <I>n</I>. Alternatively, if sub-expression n did not participate 
+               in the match, then <I>last</I>.</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>(*it)[n].matched</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>For all integers n &lt; (*it).size(), true if sub-expression <I>n</I> participated 
+               in the match, false otherwise.</P>
+            <P></P>
+         </TD>
+      <TR>
+         <TD vAlign="top" width="50%">(*it).position(n)</TD>
+         <TD vAlign="top" width="50%">For all integers n &lt; (*it).size(), then the 
+            distance from the start of the underlying sequence to the start of 
+            sub-expression match <EM>n</EM>.</TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></P><PRE>const value_type* operator-&gt;();</PRE>
+      <B>
+         <P>
+         Effects: </B>returns <CODE>&amp;(*this)</CODE>.</P><PRE>regex_iterator&amp; operator++();</PRE>
+      <P><STRONG>Effects:</STRONG> moves the iterator to the next match in the 
+         underlying sequence, or the end of sequence iterator if none if found. 
+         &nbsp;When the last match found matched a zero length string, then the 
+         regex_iterator will find the next match as follows: if there exists a non-zero 
+         length match that starts at the same location as the last one, then returns it, 
+         otherwise starts looking for the next (possibly zero length) match from one 
+         position to the right of the last match.</P>
+      <B>
+         <P>
+         Returns:</B> <CODE>*this</CODE>.</P><PRE>regex_iterator operator++(int);</PRE>
+      <B>
+         <P>
+         Effects:</B> constructs a copy <CODE>result</CODE> of <CODE>*this</CODE>, 
+      then calls <CODE>++(*this)</CODE>.</P><B>
+         <P>
+         Returns:</B> <CODE>result</CODE>.</P>
+      <H3>Examples</H3>
+      <P>The following <A href="../example/snippets/regex_iterator_example.cpp">example</A>
+         takes a C++ source file and builds up an index of class names, and the location 
+         of that class in the file.</P>
+      <pre>
+<FONT color=#008040>#include &lt;string&gt;</FONT>
+<FONT color=#008040>#include &lt;map&gt;</FONT>
+<FONT color=#008040>#include &lt;fstream&gt;</FONT>
+<FONT color=#008040>#include &lt;iostream&gt;</FONT>
+<FONT color=#008040>#include &lt;boost/regex.hpp&gt;</FONT>
+
+<B>using</B> <B>namespace</B> std;
+
+<I><FONT color=#000080>// purpose:</FONT></I>
+<I><FONT color=#000080>// takes the contents of a file in the form of a string</FONT></I>
+<I><FONT color=#000080>// and searches for all the C++ class definitions, storing</FONT></I>
+<I><FONT color=#000080>// their locations in a map of strings/int's</FONT></I>
+
+<B>typedef</B> std::map&lt;std::string, std::string::difference_type, std::less&lt;std::string&gt; &gt; map_type;
+
+<B>const</B> <B>char</B>* re = 
+   <I><FONT color=#000080>// possibly leading whitespace:   </FONT></I>
+   <FONT color=#0000ff>"^[[:space:]]*"</FONT> 
+   <I><FONT color=#000080>// possible template declaration:</FONT></I>
+   <FONT color=#0000ff>"(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?"</FONT>
+   <I><FONT color=#000080>// class or struct:</FONT></I>
+   <FONT color=#0000ff>"(class|struct)[[:space:]]*"</FONT> 
+   <I><FONT color=#000080>// leading declspec macros etc:</FONT></I>
+   <FONT color=#0000ff>"("</FONT>
+      <FONT color=#0000ff>"\\&lt;\\w+\\&gt;"</FONT>
+      <FONT color=#0000ff>"("</FONT>
+         <FONT color=#0000ff>"[[:blank:]]*\\([^)]*\\)"</FONT>
+      <FONT color=#0000ff>")?"</FONT>
+      <FONT color=#0000ff>"[[:space:]]*"</FONT>
+   <FONT color=#0000ff>")*"</FONT> 
+   <I><FONT color=#000080>// the class name</FONT></I>
+   <FONT color=#0000ff>"(\\&lt;\\w*\\&gt;)[[:space:]]*"</FONT> 
+   <I><FONT color=#000080>// template specialisation parameters</FONT></I>
+   <FONT color=#0000ff>"(&lt;[^;:{]+&gt;)?[[:space:]]*"</FONT>
+   <I><FONT color=#000080>// terminate in { or :</FONT></I>
+   <FONT color=#0000ff>"(\\{|:[^;\\{()]*\\{)"</FONT>;
+
+
+boost::regex expression(re);
+map_type class_index;
+
+<B>bool</B> regex_callback(<B>const</B> boost::match_results&lt;std::string::const_iterator&gt;&amp; what)
+{
+   <I><FONT color=#000080>// what[0] contains the whole string</FONT></I>
+   <I><FONT color=#000080>// what[5] contains the class name.</FONT></I>
+   <I><FONT color=#000080>// what[6] contains the template specialisation if any.</FONT></I>
+   <I><FONT color=#000080>// add class name and position to map:</FONT></I>
+   class_index[what[<FONT color=#0000a0>5</FONT>].str() + what[<FONT color=#0000a0>6</FONT>].str()] = what.position(<FONT color=#0000a0>5</FONT>);
+   <B>return</B> <B>true</B>;
+}
+
+<B>void</B> load_file(std::string&amp; s, std::istream&amp; is)
+{
+   s.erase();
+   s.reserve(is.rdbuf()-&gt;in_avail());
+   <B>char</B> c;
+   <B>while</B>(is.get(c))
+   {
+      <B>if</B>(s.capacity() == s.size())
+         s.reserve(s.capacity() * <FONT color=#0000a0>3</FONT>);
+      s.append(<FONT color=#0000a0>1</FONT>, c);
+   }
+}
+
+<B>int</B> main(<B>int</B> argc, <B>const</B> <B>char</B>** argv)
+{
+   std::string text;
+   <B>for</B>(<B>int</B> i = <FONT color=#0000a0>1</FONT>; i &lt; argc; ++i)
+   {
+      cout &lt;&lt; <FONT color=#0000ff>"Processing file "</FONT> &lt;&lt; argv[i] &lt;&lt; endl;
+      std::ifstream fs(argv[i]);
+      load_file(text, fs);
+      <I><FONT color=#000080>// construct our iterators:</FONT></I>
+      boost::regex_iterator&lt;std::string::const_iterator&gt; m1(text.begin(), text.end(), expression);
+      boost::regex_iterator&lt;std::string::const_iterator&gt; m2;
+      std::for_each(m1, m2, ®ex_callback);
+      <I><FONT color=#000080>// copy results:</FONT></I>
+      cout &lt;&lt; class_index.size() &lt;&lt; <FONT color=#0000ff>" matches found"</FONT> &lt;&lt; endl;
+      map_type::iterator c, d;
+      c = class_index.begin();
+      d = class_index.end();
+      <B>while</B>(c != d)
+      {
+         cout &lt;&lt; <FONT color=#0000ff>"class \""</FONT> &lt;&lt; (*c).first &lt;&lt; <FONT color=#0000ff>"\" found at index: "</FONT> &lt;&lt; (*c).second &lt;&lt; endl;
+         ++c;
+      }
+      class_index.erase(class_index.begin(), class_index.end());
+   }
+   <B>return</B> <FONT color=#0000a0>0</FONT>;
+}
+</pre>
+      <HR>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         11 April 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
+      </p>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
+            and its documentation for any purpose is hereby granted without fee, provided 
+            that the above copyright notice appear in all copies and that both that 
+            copyright notice and this permission notice appear in supporting documentation. 
+            Dr John Maddock makes no representations about the suitability of this software 
+            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
+   </body>
+</html>
