@@ -49,9 +49,9 @@ public:
    explicit bad_expression(const std::string& s, regex_constants::error_type err, std::ptrdiff_t pos) 
       : bad_pattern(s), m_error_code(err), m_position(pos) {}
    ~bad_expression() throw();
-   regex_constants::error_type errorno()
+   regex_constants::error_type errorno()const
    { return m_error_code; }
-   std::ptrdiff_t position()
+   std::ptrdiff_t position()const
    { return m_position; }
 private:
    regex_constants::error_type m_error_code;

@@ -111,6 +111,39 @@ typedef enum{
    REG_STARTEND =  00004
 } reg_exec_flags;
 
+//
+// POSIX error codes:
+//
+typedef unsigned reg_error_t;
+typedef reg_error_t reg_errcode_t;  // backwards compatibility
+
+static const reg_error_t REG_NOERROR = 0;   /* Success.  */
+static const reg_error_t REG_NOMATCH = 1;   /* Didn't find a match (for regexec).  */
+
+  /* POSIX regcomp return error codes.  (In the order listed in the
+     standard.)  */
+static const reg_error_t REG_BADPAT = 2;    /* Invalid pattern.  */
+static const reg_error_t REG_ECOLLATE = 3;  /* Undefined collating element.  */
+static const reg_error_t REG_ECTYPE = 4;    /* Invalid character class name.  */
+static const reg_error_t REG_EESCAPE = 5;   /* Trailing backslash.  */
+static const reg_error_t REG_ESUBREG = 6;   /* Invalid back reference.  */
+static const reg_error_t REG_EBRACK = 7;    /* Unmatched left bracket.  */
+static const reg_error_t REG_EPAREN = 8;    /* Parenthesis imbalance.  */
+static const reg_error_t REG_EBRACE = 9;    /* Unmatched \{.  */
+static const reg_error_t REG_BADBR = 10;    /* Invalid contents of \{\}.  */
+static const reg_error_t REG_ERANGE = 11;   /* Invalid range end.  */
+static const reg_error_t REG_ESPACE = 12;   /* Ran out of memory.  */
+static const reg_error_t REG_BADRPT = 13;   /* No preceding re for repetition op.  */
+static const reg_error_t REG_EEND = 14;     /* unexpected end of expression */
+static const reg_error_t REG_ESIZE = 15;    /* expression too big */
+static const reg_error_t REG_ERPAREN = 8;   /* = REG_EPAREN : unmatched right parenthesis */
+static const reg_error_t REG_EMPTY = 17;    /* empty expression */
+static const reg_error_t REG_E_MEMORY = 15; /* = REG_ESIZE : out of memory */
+static const reg_error_t REG_ECOMPLEXITY = 18; /* complexity too high */
+static const reg_error_t REG_ESTACK = 19;   /* out of stack space */
+static const reg_error_t REG_E_UNKNOWN = 20; /* unknown error */
+static const reg_error_t REG_ENOSYS = 20;   /* = REG_E_UNKNOWN : Reserved. */
+
 BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA*, const char*, int);
 BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int, const regex_tA*, char*, regsize_t);
 BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecA(const regex_tA*, const char*, regsize_t, regmatch_t*, int);

@@ -5,6 +5,7 @@
 #include "test_not_regex.hpp"
 #include "test_regex_search.hpp"
 #include "test_regex_replace.hpp"
+#include "test_deprecated.hpp"
 
 
 //
@@ -12,10 +13,12 @@
 // real test:
 //
 template <class charT, class tagT>
-void test(const charT&, const tagT& tag)
+void test(const charT& c, const tagT& tag)
 {
    boost::basic_regex<charT> e;
    test(e, tag);
+   // test old depecated code:
+   test_deprecated(c, tag);
 }
 
 //

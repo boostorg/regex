@@ -155,7 +155,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
          if(!(this->*proc)())
          {
             if(state_count > max_state_count)
-               raise_error(traits_inst, REG_ESPACE);
+               raise_error(traits_inst, regex_constants::error_space);
             if((m_match_flags & match_partial) && (position == last) && (position != search_base))
                m_has_partial_match = true;
             if(false == unwind(false))
@@ -183,7 +183,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::extend_stack()
       m_backup_state = block;
    }
    else
-      raise_error(traits_inst, REG_E_MEMORY);
+      raise_error(traits_inst, regex_constants::error_size);
 }
 
 template <class BidiIterator, class Allocator, class traits>

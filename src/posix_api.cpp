@@ -66,7 +66,10 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA* expression, const char
    }
 
    if(f & REG_NOSUB)
+   {
       expression->eflags |= match_any;
+      flags |= regex::nosubs;
+   }
 
    if(f & REG_NOSPEC)
       flags |= regex::literal;
@@ -92,7 +95,12 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA* expression, const char
       expression->re_nsub = static_cast<regex*>(expression->guts)->mark_count() - 1;
       result = static_cast<regex*>(expression->guts)->error_code();
 #ifndef BOOST_NO_EXCEPTIONS
-   } catch(...)
+   } 
+   catch(const boost::bad_expression& be)
+   {
+      result = be.errorno();
+   }
+   catch(...)
    {
       result = REG_E_UNKNOWN;
    }

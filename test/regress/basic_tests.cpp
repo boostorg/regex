@@ -785,6 +785,9 @@ void test_tricky_cases2()
    TEST_REGEX_SEARCH("(.+)\\1", perl, "abcdxxxyyyxxxyyy", match_default, make_array(4, 16, 4, 10, -2, -2));
    // this should not throw:
    TEST_REGEX_SEARCH("[_]+$", perl, "___________________________________________x", match_default, make_array(-2, -2));
+   // bug in V4 code detected 2004/05/12:
+   TEST_REGEX_SEARCH("\\l+", perl|icase, "abcXYZ", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("\\u+", perl|icase, "abcXYZ", match_default, make_array(0, 6, -2, -2));
 
    //
    // the strings in the next test case are too long for most compilers to cope with,

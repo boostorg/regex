@@ -74,7 +74,10 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
    }
 
    if(f & REG_NOSUB)
+   {
       expression->eflags |= match_any;
+      flags |= wregex::nosubs;
+   }
 
    if(f & REG_NOSPEC)
       flags |= wregex::literal;
@@ -100,7 +103,12 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
       expression->re_nsub = static_cast<wregex*>(expression->guts)->mark_count() - 1;
       result = static_cast<wregex*>(expression->guts)->error_code();
 #ifndef BOOST_NO_EXCEPTIONS
-   } catch(...)
+   } 
+   catch(const boost::bad_expression& be)
+   {
+      result = be.errorno();
+   }
+   catch(...)
    {
       result = REG_E_UNKNOWN;
    }

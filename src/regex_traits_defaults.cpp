@@ -92,12 +92,12 @@ BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_error_string(regex_con
       "Invalid regular expression",    /* REG_BADPAT */
       "Invalid collation character",      /* REG_ECOLLATE */
       "Invalid character class name",     /* REG_ECTYPE */
-      "Trailing backslash",         /* REG_EESCAPE */
+      "Invalid or trailing backslash",         /* REG_EESCAPE */
       "Invalid back reference",        /* REG_ESUBREG */
       "Unmatched [ or [^",       /* REG_EBRACK */
       "Unmatched ( or \\(",         /* REG_EPAREN */
       "Unmatched { or \\{",           /* REG_EBRACE */
-      "Invalid content of \\{\\}",     /* REG_BADBR */
+      "Invalid content of repeat range",     /* REG_BADBR */
       "Invalid range end",       /* REG_ERANGE */
       "Memory exhausted",           /* REG_ESPACE */
       "Invalid preceding regular expression",   /* REG_BADRPT */

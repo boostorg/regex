@@ -108,7 +108,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::protected_call(
       reset_stack_guard_page();
    }
    // we only get here after a stack overflow:
-   raise_error<traits>(traits_inst, REG_E_MEMORY);
+   raise_error<traits>(traits_inst, regex_constants::error_size);
    // and we never really get here at all:
    return false;
 }
