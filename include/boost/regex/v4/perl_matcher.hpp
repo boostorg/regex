@@ -378,11 +378,20 @@ private:
    bool unwind_alt(bool);
    bool unwind_repeater_counter(bool);
    bool unwind_extra_block(bool);
+   bool unwind_greedy_single_repeat(bool);
+   bool unwind_slow_dot_repeat(bool);
+   bool unwind_fast_dot_repeat(bool);
+   bool unwind_char_repeat(bool);
+   bool unwind_short_set_repeat(bool);
+   bool unwind_long_set_repeat(bool);
+   void destroy_single_repeat();
    void push_matched_paren(int index, const sub_match<BidiIterator>& sub);
    void push_recursion_stopper();
    void push_assertion(const re_syntax_base* ps, bool positive);
    void push_alt(const re_syntax_base* ps);
    void push_repeater_count(int i, repeater_count<BidiIterator>** s);
+   void push_single_repeat(unsigned c, const re_repeat* r, BidiIterator last_position, int id);
+
 
    // pointer to base of stack:
    saved_state* m_stack_base;
