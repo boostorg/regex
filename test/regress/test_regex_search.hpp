@@ -16,7 +16,10 @@ void test_sub_match(const boost::sub_match<BidirectionalIterator>& sub, Bidirect
 #pragma warning(disable:4244)
 #endif
    typedef typename boost::sub_match<BidirectionalIterator>::value_type charT;
-   if(sub.matched == 0)
+   if((sub.matched == 0) 
+      && 
+         !((i == 0)
+          && (test_info<charT>::match_options() & boost::match_partial)) )
    {
       if(answer_table[2*i] >= 0)
       {
@@ -81,6 +84,101 @@ void test_simple_search(boost::basic_regex<charT, traits>& r)
 }
 
 template<class charT, class traits>
+void test_regex_iterator(boost::basic_regex<charT, traits>& r)
+{
+   typedef typename std::basic_string<charT>::const_iterator const_iterator;
+   typedef boost::regex_iterator<const_iterator> test_iterator;
+   const std::basic_string<charT>& search_text = test_info<charT>::search_text();
+   boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
+   const int* answer_table = test_info<charT>::answer_table();
+   test_iterator start(search_text.begin(), search_text.end(), r, opts), end;
+   while(start != end)
+   {
+      test_result(*start, search_text.begin(), answer_table);
+      ++start;
+      // move on the answer table to next set of answers;
+      while(*answer_table++ != -2){}
+   }
+   if(answer_table[0] >= 0)
+   {
+      // we should have had a match but didn't:
+      BOOST_REGEX_TEST_ERROR("Expected match was not found.", charT);
+   }
+}
+
+template <class charT, class traits>
+struct grep_test_predicate
+{
+   typedef typename std::basic_string<charT>::const_iterator test_iter;
+
+   grep_test_predicate(test_iter b, const int* a)
+      : m_base(b), m_table(a)
+   {}
+   bool operator()(const boost::match_results<test_iter>& what)
+   {
+      test_result(what, m_base, m_table);
+      // move on the answer table to next set of answers;
+      while(*m_table++ != -2){}
+      return true;
+   }
+private:
+   test_iter m_base;
+   const int* m_table;
+};
+
+template<class charT, class traits>
+void test_regex_grep(boost::basic_regex<charT, traits>& r)
+{
+   typedef typename std::basic_string<charT>::const_iterator const_iterator;
+   const std::basic_string<charT>& search_text = test_info<charT>::search_text();
+   boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
+   const int* answer_table = test_info<charT>::answer_table();
+   grep_test_predicate<charT, traits> pred(search_text.begin(), answer_table);
+   boost::regex_grep(pred, search_text, r, opts);
+}
+
+template<class charT, class traits>
+void test_regex_match(boost::basic_regex<charT, traits>& r)
+{
+   typedef typename std::basic_string<charT>::const_iterator const_iterator;
+   const std::basic_string<charT>& search_text = test_info<charT>::search_text();
+   boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
+   const int* answer_table = test_info<charT>::answer_table();
+   boost::match_results<const_iterator> what;
+   if(answer_table[0] < 0)
+   {
+      if(boost::regex_match(search_text, r, opts))
+      {
+         BOOST_REGEX_TEST_ERROR("boost::regex_match found a match when it should not have done so.", charT);
+      }
+   }
+   else
+   {
+      if((answer_table[0] > 0) && boost::regex_match(search_text, r, opts))
+      {
+         BOOST_REGEX_TEST_ERROR("boost::regex_match found a match when it should not have done so.", charT);
+      }
+      else if((answer_table[0] == 0) && (answer_table[1] == search_text.size()))
+      {
+         if(boost::regex_match(
+            search_text.begin(),
+            search_text.end(),
+            what,
+            r,
+            opts))
+         {
+            test_result(what, search_text.begin(), answer_table);
+         }
+         else if(answer_table[0] >= 0)
+         {
+            // we should have had a match but didn't:
+            BOOST_REGEX_TEST_ERROR("Expected match was not found.", charT);
+         }
+      }
+   }
+}
+
+template<class charT, class traits>
 void test(boost::basic_regex<charT, traits>& r, const test_regex_search_tag&)
 {
    const std::basic_string<charT>& expression = test_info<charT>::expression();
@@ -88,6 +186,9 @@ void test(boost::basic_regex<charT, traits>& r, const test_regex_search_tag&)
    try{
       r.assign(expression, syntax_options);
       test_simple_search(r);
+      test_regex_iterator(r);
+      test_regex_grep(r);
+      test_regex_match(r);
    }
    catch(const boost::bad_expression& e)
    {

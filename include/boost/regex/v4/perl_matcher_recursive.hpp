@@ -86,7 +86,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       ++state_count;
       if(!(this->*proc)())
       {
-         if((m_match_flags & match_partial) && (position == last))
+         if((m_match_flags & match_partial) && (position == last) && (position != search_base))
             m_has_partial_match = true;
          return 0;
       }

@@ -153,7 +153,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
          {
             if(state_count > max_state_count)
                raise_error(traits_inst, REG_ESPACE);
-            if((m_match_flags & match_partial) && (position == last))
+            if((m_match_flags & match_partial) && (position == last) && (position != search_base))
                m_has_partial_match = true;
             if(false == unwind(false))
                return m_recursive_result;

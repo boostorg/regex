@@ -96,7 +96,7 @@ enum{
 // this is used by basic_regex for expression storage
 //
 
-class raw_storage
+class BOOST_REGEX_DECL raw_storage
 {
 public:
    typedef std::size_t           size_type;

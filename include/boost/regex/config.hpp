@@ -236,9 +236,9 @@ namespace boost{ typedef wchar_t regex_wchar_type; }
 #  if defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)
 #     define BOOST_DYN_LINK
 #  endif
-#ifdef BOOST_REGEX_DIAG
-#  define BOOST_LIB_DIAGNOSTIC
-#endif
+#  ifdef BOOST_REGEX_DIAG
+#     define BOOST_LIB_DIAGNOSTIC
+#  endif
 #  include <boost/config/auto_link.hpp>
 #endif
 

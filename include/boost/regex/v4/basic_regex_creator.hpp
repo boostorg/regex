@@ -45,8 +45,8 @@ template <class charT, class traits>
 class basic_char_set
 {
 public:
-   typedef digraph<charT>             digraph_type;
-   typedef std::basic_string<charT>   string_type;
+   typedef digraph<charT>                   digraph_type;
+   typedef typename traits::string_type     string_type;
    typedef typename traits::char_class_type mask_type;
 
    basic_char_set()
@@ -68,8 +68,16 @@ public:
    {
       m_ranges.push_back(first);
       m_ranges.push_back(end);
-      if(first.second || end.second)
+      if(first.second)
+      {
          m_has_digraphs = true;
+         add_single(first);
+      }
+      if(end.second)
+      {
+         m_has_digraphs = true;
+         add_single(end);
+      }
       m_empty = false;
    }
    void add_class(mask_type m)
@@ -77,10 +85,20 @@ public:
       m_classes |= m;
       m_empty = false;
    }
+   void add_equivalent(const digraph_type& s)
+   {
+      m_equivalents.push_back(s);
+      if(s.second)
+      {
+         m_has_digraphs = true;
+         add_single(s);
+      }
+      m_empty = false;
+   }
    void negate()
    { 
       m_negate = true;
-      m_empty = false;
+      //m_empty = false;
    }
 
    //
@@ -111,6 +129,14 @@ public:
    {
       return m_ranges.end();
    }
+   list_iterator equivalents_begin()const
+   {
+      return m_equivalents.begin();
+   }
+   list_iterator equivalents_end()const
+   {
+      return m_equivalents.end();
+   }
    mask_type classes()const
    {
       return m_classes;
@@ -126,6 +152,7 @@ private:
    bool                      m_has_digraphs;   // true if we have digraphs present
    mask_type                 m_classes;        // character classes to match
    bool                      m_empty;          // whether we've added anything yet
+   std::vector<digraph_type> m_equivalents;    // a list of equivalence classes
 };
    
 template <class charT, class traits>
@@ -189,6 +216,7 @@ private:
    void set_all_masks(unsigned char* bits, unsigned char);
    bool is_bad_repeat(re_syntax_base* pt);
    void set_bad_repeat(re_syntax_base* pt);
+   syntax_element_type get_repeat_type(re_syntax_base* state);
 };
 
 template <class charT, class traits>
@@ -297,7 +325,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    //
    result->csingles = static_cast<unsigned int>(std::distance(char_set.singles_begin(), char_set.singles_end()));
    result->cranges = static_cast<unsigned int>(std::distance(char_set.ranges_begin(), char_set.ranges_end())) / 2;
-   result->cequivalents = 0;
+   result->cequivalents = static_cast<unsigned int>(std::distance(char_set.equivalents_begin(), char_set.equivalents_end()));
    result->cclasses = char_set.classes();
    if(flags() & regbase::icase)
    {
@@ -375,6 +403,27 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       std::memcpy(p, s1.c_str(), sizeof(charT) * (s1.size() + 1));
       p += s1.size() + 1;
       std::memcpy(p, s2.c_str(), sizeof(charT) * (s2.size() + 1));
+   }
+   //
+   // now process the equivalence classes:
+   //
+   first = char_set.equivalents_begin();
+   last = char_set.equivalents_end();
+   while(first != last)
+   {
+      string_type s;
+      if(first->second)
+      {
+         charT cs[2] = { first->first, first->second, };
+         s = m_traits.transform_primary(cs, cs+2);
+      }
+      else
+         s = m_traits.transform_primary(&first->first, &first->first+1);
+      if(s.empty())
+         return 0;  // invalid or unsupported equivalence class
+      charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s.size()+1) ) );
+      std::memcpy(p, s.c_str(), sizeof(charT) * (s.size() + 1));
+      ++first;
    }
    //
    // finally reset the address of our last state:
@@ -469,6 +518,32 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          if(this->m_traits.is_class(static_cast<charT>(i), m))
             result->_map[i] = true;
       }
+   }
+   //
+   // now process the equivalence classes:
+   //
+   first = char_set.equivalents_begin();
+   last = char_set.equivalents_end();
+   while(first != last)
+   {
+      string_type s;
+      if(first->second)
+      {
+         charT cs[2] = { first->first, first->second, };
+         s = m_traits.transform_primary(cs, cs+2);
+      }
+      else
+         s = m_traits.transform_primary(&first->first, &first->first+1);
+      if(s.empty())
+         return 0;  // invalid or unsupported equivalence class
+      for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
+      {
+         charT c(i);
+         string_type s2 = this->m_traits.transform_primary(&c, &c+1);
+         if(s == s2)
+            result->_map[i] = true;
+      }
+      ++first;
    }
    if(negate)
    {
@@ -567,6 +642,8 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          create_startmap(state->next.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_take);
          m_bad_repeats = 0;
          create_startmap(static_cast<re_alt*>(state)->alt.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_skip);
+         // adjust the type of the state to allow for faster matching:
+         state->type = this->get_repeat_type(state);
          return;
       default:
          state = state->next.p;
@@ -613,6 +690,10 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          return;
       }
       case syntax_element_backref:
+         // can be null, and any character can match:
+         if(pnull)
+            *pnull |= mask;
+         // fall through:
       case syntax_element_wild:
       {
          // can't be null, any character can match:
@@ -668,13 +749,18 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          if(map)
          {
             typedef typename traits::char_class_type mask_type;
-            map[0] |= mask_init;
-            for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
+            if(static_cast<re_set_long<mask_type>*>(state)->singleton)
             {
-               charT c = static_cast<charT>(i);
-               if(&c != re_is_set_member(&c, &c + 1, static_cast<re_set_long<mask_type>*>(state), *m_pdata))
-                  map[i] |= mask;
+               map[0] |= mask_init;
+               for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
+               {
+                  charT c = static_cast<charT>(i);
+                  if(&c != re_is_set_member(&c, &c + 1, static_cast<re_set_long<mask_type>*>(state), *m_pdata))
+                     map[i] |= mask;
+               }
             }
+            else
+               set_all_masks(map, mask);
          }
          return;
       case syntax_element_set:
@@ -772,7 +858,6 @@ unsigned basic_regex_creator<charT, traits>::get_restart_type(re_syntax_base* st
          continue;
       case syntax_element_start_line:
          return regbase::restart_line;
-      case syntax_element_word_boundary:
       case syntax_element_word_start:
          return regbase::restart_word;
       case syntax_element_buffer_start:
@@ -846,6 +931,35 @@ void basic_regex_creator<charT, traits>::set_bad_repeat(re_syntax_base* pt)
    default:
       break;
    }
+}
+
+template <class charT, class traits>
+syntax_element_type basic_regex_creator<charT, traits>::get_repeat_type(re_syntax_base* state)
+{
+   typedef typename traits::char_class_type mask_type;
+   if(state->type == syntax_element_rep)
+   {
+      // check to see if we are repeating a single state:
+      if(state->next.p->next.p->next.p == static_cast<re_alt*>(state)->alt.p)
+      {
+         switch(state->next.p->type)
+         {
+         case re_detail::syntax_element_wild:
+            return re_detail::syntax_element_dot_rep;
+         case re_detail::syntax_element_literal:
+            return re_detail::syntax_element_char_rep;
+         case re_detail::syntax_element_set:
+            return re_detail::syntax_element_short_set_rep;
+         case re_detail::syntax_element_long_set:
+            if(static_cast<re_detail::re_set_long<mask_type>*>(state->next.p)->singleton)
+               return re_detail::syntax_element_long_set_rep;
+            break;
+         default:
+            break;
+         }
+      }
+   }
+   return state->type;
 }
 
 } // namespace re_detail

@@ -21,11 +21,11 @@
 
 namespace boost{ namespace re_detail{
 
-const char* get_default_syntax(regex_constants::syntax_type n);
-const char* get_default_error_string(regex_constants::error_type n);
+BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n);
+BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_error_string(regex_constants::error_type n);
 
 // is charT c a combining character?
-bool is_combining_implementation(uint_least16_t s);
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL is_combining_implementation(uint_least16_t s);
 
 template <class charT>
 inline bool is_combining(charT c)
@@ -75,8 +75,13 @@ inline bool is_combining<wchar_t>(wchar_t c)
 template <class charT>
 inline bool is_separator(charT c)
 {
-   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r'));
+   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r') || (static_cast<int>(c) == 0x2028) || (static_cast<int>(c) == 0x2029));
 }
+
+//
+// get a default collating element:
+//
+BOOST_REGEX_DECL std::string BOOST_REGEX_CALL lookup_default_collate_name(const std::string& name);
 
 //
 // get the id of a character clasification, the individual

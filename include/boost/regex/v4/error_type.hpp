@@ -52,13 +52,13 @@ static const reg_error_t REG_ESPACE = 12;   /* Ran out of memory.  */
 static const reg_error_t REG_BADRPT = 13;   /* No preceding re for repetition op.  */
 static const reg_error_t REG_EEND = 14;     /* unexpected end of expression */
 static const reg_error_t REG_ESIZE = 15;    /* expression too big */
-static const reg_error_t REG_ERPAREN = REG_EPAREN;   /* unmatched right parenthesis */
+static const reg_error_t REG_ERPAREN = 8;   /* = REG_EPAREN : unmatched right parenthesis */
 static const reg_error_t REG_EMPTY = 17;    /* empty expression */
-static const reg_error_t REG_E_MEMORY = REG_ESIZE; /* out of memory */
+static const reg_error_t REG_E_MEMORY = 15; /* = REG_ESIZE : out of memory */
 static const reg_error_t REG_ECOMPLEXITY = 18; /* complexity too high */
 static const reg_error_t REG_ESTACK = 19;   /* out of stack space */
 static const reg_error_t REG_E_UNKNOWN = 20; /* unknown error */
-static const reg_error_t REG_ENOSYS = REG_E_UNKNOWN; /* Reserved. */
+static const reg_error_t REG_ENOSYS = 20;   /* = REG_E_UNKNOWN : Reserved. */
 
 #ifdef __cplusplus
 namespace regex_constants{

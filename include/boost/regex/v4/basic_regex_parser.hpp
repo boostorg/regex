@@ -49,11 +49,15 @@ public:
    bool parse_backref();
    void parse_set_literal(basic_char_set<charT, traits>& char_set);
    bool parse_inner_set(basic_char_set<charT, traits>& char_set);
-   digraph<charT> get_next_set_literal();
+   bool parse_QE();
+   bool parse_perl_extension();
+   digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
    charT unescape_character();
 
 private:
    typedef bool (basic_regex_parser::*parser_proc_type)();
+   typedef typename traits::string_type string_type;
+   typedef typename traits::char_class_type char_class_type;
    parser_proc_type           m_parser_proc;    // the main parser to use
    const charT*               m_base;           // the start of the string being parsed
    const charT*               m_end;            // the end of the string being parsed
@@ -236,12 +240,28 @@ template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_open_paren()
 {
    //
+   // skip the '(' and error check:
+   //
+   if(++m_position == m_end)
+      fail(REG_EPAREN, m_position - m_base);
+   //
+   // begin by checking for a perl-style (?...) extension:
+   //
+   if((this->flags() & (regbase::main_option_type | regbase::no_perl_ex)) == 0)
+   {
+      if(m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
+         return parse_perl_extension();
+   }
+   //
    // update our mark count, and append the required state:
    //
-   unsigned markid = ++m_mark_count;
+   unsigned markid;
+   if(this->flags() & regbase::nosubs)
+      markid = 0;
+   else
+      markid = ++m_mark_count;
    re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_startmark, sizeof(re_brace)));
    pb->index = markid;
-   ++m_position;
    std::ptrdiff_t last_paren_start = this->getoffset(pb);
    // back up insertion point for alternations, and set new point:
    std::ptrdiff_t last_alt_point = m_alt_insert_point;
@@ -392,6 +412,18 @@ bool basic_regex_parser<charT, traits>::parse_extended_escape()
       ++m_position;
       this->append_state(syntax_element_soft_buffer_end);
       break;
+   case regex_constants::escape_type_Q:
+      return parse_QE();
+   case regex_constants::escape_type_C:
+      return parse_match_any();
+   case regex_constants::escape_type_X:
+      ++m_position;
+      this->append_state(syntax_element_combining);
+      break;
+   case regex_constants::escape_type_G:
+      ++m_position;
+      this->append_state(syntax_element_restart_continue);
+      break;
    default:
       this->append_literal(unescape_character());
       break;
@@ -465,6 +497,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
       case syntax_element_alt:
       case syntax_element_soft_buffer_end:
       case syntax_element_restart_continue:
+      case syntax_element_jump:
          // can't legally repeat any of the above:
          fail(REG_BADRPT, m_position - m_base);
       default:
@@ -653,6 +686,38 @@ bool basic_regex_parser<charT, traits>::parse_set()
          if(parse_inner_set(char_set))
             break;
          return true;
+      case regex_constants::syntax_escape:
+         {
+            // 
+            // look ahead and see if this is a character class shortcut
+            // \d \w \s etc...
+            //
+            ++m_position;
+            if(this->m_traits.escape_syntax_type(*m_position)
+               == regex_constants::escape_type_class)
+            {
+               char_class_type m = this->m_traits.lookup_classname(m_position, m_position+1);
+               if(m)
+               {
+                  char_set.add_class(m);
+                  break;
+               }
+            }
+            else if(this->m_traits.escape_syntax_type(*m_position)
+               == regex_constants::escape_type_not_class)
+            {
+               // negated character classes aren't supported:
+               char_class_type m = this->m_traits.lookup_classname(m_position, m_position+1);
+               if(m)
+               {
+                  fail(REG_EESCAPE, m_position - m_base);
+               }
+            }
+            // not a character class, just a regular escape:
+            --m_position;
+            parse_set_literal(char_set);
+            break;
+         }
       default:
          parse_set_literal(char_set);
          break;
@@ -673,6 +738,13 @@ bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, tr
       fail(REG_EBRACK, m_position - m_base);
    switch(this->m_traits.syntax_type(*m_position))
    {
+   case regex_constants::syntax_dot:
+      //
+      // a collating element is treated as a literal:
+      //
+      --m_position;
+      parse_set_literal(char_set);
+      return true;
    case regex_constants::syntax_colon:
       {
       // check that character classes are actually enabled:
@@ -733,6 +805,37 @@ bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, tr
       ++m_position;
       break;
    }
+   case regex_constants::syntax_equal:
+      {
+      // skip the '='
+      if(m_end == ++m_position)
+         fail(REG_EBRACK, m_position - m_base);
+      const charT* name_first = m_position;
+      // skip at least one character, then find the matching '=]'
+      if(m_end == ++m_position)
+         fail(REG_EBRACK, m_position - m_base);
+      while((m_position != m_end) 
+         && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_equal)) 
+         ++m_position;
+      const charT* name_last = m_position;
+      if(m_end == m_position)
+         fail(REG_EBRACK, m_position - m_base);
+      if((m_end == ++m_position) 
+         || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_set))
+         fail(REG_EBRACK, m_position - m_base);
+      string_type m = this->m_traits.lookup_collatename(name_first, name_last);
+      if((0 == m.size()) || (m.size() > 2))
+         fail(REG_ECOLLATE, name_first - m_base);
+      digraph<charT> d;
+      d.first = m[0];
+      if(m.size() > 1)
+         d.second = m[1];
+      else
+         d.second = 0;
+      char_set.add_equivalent(d);
+      ++m_position;
+      break;
+   }
    default:
       --m_position;
       parse_set_literal(char_set);
@@ -744,7 +847,7 @@ bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, tr
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::parse_set_literal(basic_char_set<charT, traits>& char_set)
 {
-   digraph<charT> start_range = get_next_set_literal();
+   digraph<charT> start_range = get_next_set_literal(char_set);
    if(m_end == m_position)
       fail(REG_EBRACK, m_position - m_base);
    if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_dash)
@@ -754,7 +857,7 @@ void basic_regex_parser<charT, traits>::parse_set_literal(basic_char_set<charT, 
          fail(REG_EBRACK, m_position - m_base);
       if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_set)
       {
-         digraph<charT> end_range = get_next_set_literal();
+         digraph<charT> end_range = get_next_set_literal(char_set);
          char_set.add_range(start_range, end_range);
          if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_dash)
             fail(REG_ERANGE, m_position - m_base);
@@ -766,11 +869,22 @@ void basic_regex_parser<charT, traits>::parse_set_literal(basic_char_set<charT, 
 }
 
 template <class charT, class traits>
-digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal()
+digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal(basic_char_set<charT, traits>& char_set)
 {
+   typedef typename traits::string_type string_type;
    digraph<charT> result;
    switch(this->m_traits.syntax_type(*m_position))
    {
+   case regex_constants::syntax_dash:
+      if(!char_set.empty())
+      {
+         // see if we are at the end of the set:
+         if((++m_position == m_end) || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_set))
+            fail(REG_ERANGE, m_position - m_base);
+         --m_position;
+      }
+      result.first = *m_position++;
+      return result;
    case regex_constants::syntax_escape:
       // check to see if escapes are supported first:
       if(this->flags() & regex_constants::no_escape_in_lists)
@@ -781,6 +895,43 @@ digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal()
       ++m_position;
       result = unescape_character();
       break;
+   case regex_constants::syntax_open_set:
+   {
+      if(m_end == ++m_position)
+         fail(REG_ECOLLATE, m_position - m_base);
+      if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_dot)
+      {
+         --m_position;
+         result.first = *m_position;
+         ++m_position;
+         return result;
+      }
+      if(m_end == ++m_position)
+         fail(REG_ECOLLATE, m_position - m_base);
+      const charT* name_first = m_position;
+      // skip at least one character, then find the matching ':]'
+      if(m_end == ++m_position)
+         fail(REG_ECOLLATE, name_first - m_base);
+      while((m_position != m_end) 
+         && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_dot)) 
+         ++m_position;
+      const charT* name_last = m_position;
+      if(m_end == m_position)
+         fail(REG_ECOLLATE, name_first - m_base);
+      if((m_end == ++m_position) 
+         || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_set))
+         fail(REG_ECOLLATE, name_first - m_base);
+      ++m_position;
+      string_type s = this->m_traits.lookup_collatename(name_first, name_last);
+      if(s.empty() || (s.size() > 2))
+         fail(REG_ECOLLATE, name_first - m_base);
+      result.first = s[0];
+      if(s.size() > 1)
+         result.second = s[1];
+      else
+         result.second = 0;
+      return result;
+   }
    default:
       result = *m_position++;
    }
@@ -913,6 +1064,133 @@ bool basic_regex_parser<charT, traits>::parse_backref()
    }
    else
       fail(REG_ESUBREG, m_position - m_end);
+   return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::parse_QE()
+{
+   //
+   // parse a \Q...\E sequence:
+   //
+   ++m_position; // skip the Q
+   const charT* start = m_position;
+   const charT* end;
+   do
+   {
+      while((m_position != m_end) 
+         && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_escape))
+         ++m_position;
+      if((m_position == m_end) || (++m_position == m_end)) // skip the escape
+      {
+         fail(REG_EESCAPE, m_position - m_base);
+         return false;
+      }
+      // check to see if it's a \E:
+      if(this->m_traits.syntax_type(*m_position) == regex_constants::escape_type_E)
+      {
+         ++m_position;
+         end = m_position - 2;
+         break;
+      }
+      // otherwise go round again:
+   }while(true);
+   //
+   // now add all the character between the two escapes as literals:
+   //
+   while(start != end)
+   {
+      this->append_literal(*start);
+      ++start;
+   }
+   return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::parse_perl_extension()
+{
+   if(++m_position == m_end)
+      fail(REG_BADRPT, m_position - m_base);
+   //
+   // backup some state, and prepare the way:
+   //
+   int markid;
+   std::ptrdiff_t jump_offset = 0;
+   re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_startmark, sizeof(re_brace)));
+   std::ptrdiff_t last_paren_start = this->getoffset(pb);
+   // back up insertion point for alternations, and set new point:
+   std::ptrdiff_t last_alt_point = m_alt_insert_point;
+   this->m_pdata->m_data.align();
+   m_alt_insert_point = this->m_pdata->m_data.size();
+   //
+   // select the actual extension used:
+   //
+   switch(this->m_traits.syntax_type(*m_position))
+   {
+   case regex_constants::syntax_colon:
+      //
+      // a non-capturing mark:
+      //
+      pb->index = markid = 0;
+      ++m_position;
+      break;
+   case regex_constants::syntax_hash:
+      //
+      // a comment; this actually becomes an empty non-capturing mark:
+      //
+      pb->index = markid = 0;
+      while((m_position != m_end) 
+         && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark))
+         ++m_position;
+      break;
+   case regex_constants::syntax_equal:
+      pb->index = markid = -1;
+      ++m_position;
+      jump_offset = this->getoffset(this->append_state(syntax_element_jump, sizeof(re_jump)));
+      this->m_pdata->m_data.align();
+      m_alt_insert_point = this->m_pdata->m_data.size();
+      break;
+   case regex_constants::syntax_not:
+      pb->index = markid = -2;
+      ++m_position;
+      jump_offset = this->getoffset(this->append_state(syntax_element_jump, sizeof(re_jump)));
+      this->m_pdata->m_data.align();
+      m_alt_insert_point = this->m_pdata->m_data.size();
+      break;
+   default:
+      fail(REG_BADRPT, m_position - m_base);
+   }
+   //
+   // now recursively add more states, this will terminate when we get to a
+   // matching ')' :
+   //
+   parse_all();
+   //
+   // we either have a ')' or we have run out of characters prematurely:
+   //
+   if(m_position == m_end)
+      this->fail(REG_EPAREN, std::distance(m_base, m_end));
+   BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
+   ++m_position;
+   //
+   // set up the jump pointer if we have one:
+   //
+   if(jump_offset)
+   {
+      this->m_pdata->m_data.align();
+      re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
+      jmp->alt.i = this->m_pdata->m_data.size() - this->getoffset(jmp);
+   }
+   //
+   // append closing parenthesis state:
+   //
+   pb = static_cast<re_brace*>(this->append_state(syntax_element_endmark, sizeof(re_brace)));
+   pb->index = markid;
+   this->m_paren_start = last_paren_start;
+   //
+   // restore the alternate insertion point:
+   //
+   this->m_alt_insert_point = last_alt_point;
    return true;
 }
 

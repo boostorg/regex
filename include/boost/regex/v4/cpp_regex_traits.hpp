@@ -25,6 +25,9 @@
 #ifdef BOOST_HAS_THREADS
 #include <boost/regex/static_mutex.hpp>
 #endif
+#ifndef BOOST_REGEX_PRIMARY_TRANSFORM
+#include <boost/regex/v4/primary_transform.hpp>
+#endif
 
 namespace boost{ 
 
@@ -272,7 +275,7 @@ typename cpp_regex_traits_char_layer<charT>::string_type
 // specialised version for narrow characters:
 //
 template <>
-class cpp_regex_traits_char_layer<char> : public cpp_regex_traits_base<char>
+class BOOST_REGEX_DECL cpp_regex_traits_char_layer<char> : public cpp_regex_traits_base<char>
 {
    typedef std::string string_type;
 public:
@@ -326,6 +329,7 @@ public:
 
 
    typedef std::basic_string<charT> string_type;
+   typedef charT char_type;
    //cpp_regex_traits_implementation();
    cpp_regex_traits_implementation(const std::locale& l);
    std::string error_string(regex_constants::error_type n) const
@@ -348,15 +352,87 @@ public:
       }
       return result;
    }
+   string_type lookup_collatename(const charT* p1, const charT* p2) const;
+   string_type transform_primary(const charT* p1, const charT* p2) const;
+   string_type transform(const charT* p1, const charT* p2) const
+   {
+      return this->m_pcollate->transform(p1, p2);
+   }
    re_detail::parser_buf<charT>   m_sbuf;            // buffer for parsing numbers.
    std::basic_istream<charT>      m_is;              // stream for parsing numbers.
 private:
    std::map<int, std::string>     m_error_strings;   // error messages indexed by numberic ID
+   std::map<string_type, char_class_type>  m_custom_class_names; // character class names
+   std::map<string_type, string_type>      m_custom_collate_names; // collating element names
+   unsigned                       m_collate_type;    // the form of the collation string
+   charT                          m_collate_delim;   // the collation group delimiter
    //
    // helpers:
    //
    char_class_type lookup_classname_imp(const charT* p1, const charT* p2) const;
 };
+
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::string_type 
+   cpp_regex_traits_implementation<charT>::transform_primary(const charT* p1, const charT* p2) const
+{
+   string_type result;
+   //
+   // What we do here depends upon the format of the sort key returned by
+   // sort key returned by this->transform:
+   //
+   switch(m_collate_type)
+   {
+   case sort_C:
+   case sort_unknown:
+      // the best we can do is translate to lower case, then get a regular sort key:
+      {
+         result.assign(p1, p2);
+         m_pctype->tolower(&*result.begin(), &*result.end());
+         result = this->m_pcollate->transform(&*result.begin(), &*result.end());
+         break;
+      }
+   case sort_fixed:
+      {
+         // get a regular sort key, and then truncate it:
+         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.end()));
+         result.erase(this->m_collate_delim);
+         break;
+      }
+   case sort_delim:
+         // get a regular sort key, and then truncate everything after the delim:
+         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.end()));
+         std::size_t i;
+         for(i = 0; i < result.size(); ++i)
+         {
+            if(result[i] == m_collate_delim)
+               break;
+         }
+         result.erase(i);
+         break;
+   }
+   return result;
+}
+
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::string_type 
+   cpp_regex_traits_implementation<charT>::lookup_collatename(const charT* p1, const charT* p2) const
+{
+   typedef typename std::map<string_type, string_type>::const_iterator iter_type;
+   if(m_custom_collate_names.size())
+   {
+      iter_type pos = m_custom_collate_names.find(string_type(p1, p2));
+      if(pos != m_custom_collate_names.end())
+         return pos->second;
+   }
+   std::string name(p1, p2);
+   name = lookup_default_collate_name(name);
+   if(name.size())
+      return string_type(name.begin(), name.end());
+   if(p2 - p1 == 1)
+      return string_type(1, *p1);
+   return string_type();
+}
 
 template <class charT>
 cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const std::locale& l)
@@ -385,6 +461,9 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
    //
    if((int)cat >= 0)
    {
+      //
+      // Error messages:
+      //
       for(boost::regex_constants::error_type i = 0; i <= boost::regex_constants::error_unknown; ++i)
       {
          const char* p = get_default_error_string(i);
@@ -402,7 +481,38 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
          }
          m_error_strings[i] = result;
       }
+      //
+      // Custom class names:
+      //
+      static const char_class_type masks[] = 
+      {
+         std::ctype<charT>::alnum,
+         std::ctype<charT>::alpha,
+         std::ctype<charT>::cntrl,
+         std::ctype<charT>::digit,
+         std::ctype<charT>::graph,
+         std::ctype<charT>::lower,
+         std::ctype<charT>::print,
+         std::ctype<charT>::punct,
+         std::ctype<charT>::space,
+         std::ctype<charT>::upper,
+         std::ctype<charT>::xdigit,
+         cpp_regex_traits_implementation<charT>::mask_blank,
+         cpp_regex_traits_implementation<charT>::mask_word,
+         cpp_regex_traits_implementation<charT>::mask_unicode,
+      };
+      static const string_type null_string;
+      for(unsigned int j = 0; j <= 13; ++j)
+      {
+         string_type s(this->m_pmessages->get(cat, 0, j+300, null_string));
+         if(s.size())
+            this->m_custom_class_names[s] = masks[j];
+      }
    }
+   //
+   // get the collation format used by m_pcollate:
+   //
+   m_collate_type = re_detail::find_sort_syntax(this, &m_collate_delim);
 }
 
 template <class charT>
@@ -432,6 +542,13 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
       std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
       std::ctype<char>::xdigit,
    };
+   if(m_custom_class_names.size())
+   {
+      typedef typename std::map<std::basic_string<charT>, char_class_type>::const_iterator map_iter;
+      map_iter pos = m_custom_class_names.find(string_type(p1, p2));
+      if(pos != m_custom_class_names.end())
+         return pos->second;
+   }
    std::size_t id = 1 + re_detail::get_default_class_id(p1, p2);
    assert(id < sizeof(masks) / sizeof(masks[0]));
    return masks[id];
@@ -491,9 +608,9 @@ public:
    {
       return m_pimpl->m_pcollate->transform(p1, p2);
    }
-   string_type transform_primary(const charT* , const charT* ) const
+   string_type transform_primary(const charT* p1, const charT* p2) const
    {
-      return string_type();
+      return m_pimpl->transform_primary(p1, p2);
    }
    char_class_type lookup_classname(const charT* p1, const charT* p2) const
    {
@@ -501,7 +618,7 @@ public:
    }
    string_type lookup_collatename(const charT* p1, const charT* p2) const
    {
-      return string_type();
+      return m_pimpl->lookup_collatename(p1, p2);
    }
    bool is_class(charT c, char_class_type f) const
    {

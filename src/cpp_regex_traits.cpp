@@ -16,6 +16,7 @@
   *   DESCRIPTION: Implements cpp_regex_traits<char> (and associated helper classes).
   */
 
+#define BOOST_REGEX_SOURCE
 #include <boost/regex/regex_traits.hpp>
 
 namespace boost{ namespace re_detail{

@@ -22,6 +22,7 @@
 #define BOOST_REGEX_STATIC_MUTEX_HPP
 
 #include <boost/config.hpp>
+#include <boost/regex/config.hpp> // dll import/export options.
 
 #ifdef BOOST_HAS_PTHREADS
 #include <pthread.h>
@@ -35,7 +36,7 @@
 //
 namespace boost{
 
-class scoped_static_mutex_lock;
+class BOOST_REGEX_DECL scoped_static_mutex_lock;
 
 class static_mutex
 {
@@ -46,7 +47,7 @@ public:
 
 #define BOOST_STATIC_MUTEX_INIT { PTHREAD_MUTEX_INITIALIZER, }
 
-class scoped_static_mutex_lock
+class BOOST_REGEX_DECL scoped_static_mutex_lock
 {
 public:
    scoped_static_mutex_lock(static_mutex& mut, bool lk = true);
@@ -82,7 +83,7 @@ inline bool scoped_static_mutex_lock::locked()const
 
 namespace boost{
 
-class scoped_static_mutex_lock;
+class BOOST_REGEX_DECL scoped_static_mutex_lock;
 
 class static_mutex
 {
@@ -93,7 +94,7 @@ public:
 
 #define BOOST_STATIC_MUTEX_INIT { 0, }
 
-class scoped_static_mutex_lock
+class BOOST_REGEX_DECL scoped_static_mutex_lock
 {
 public:
    scoped_static_mutex_lock(static_mutex& mut, bool lk = true);
@@ -134,10 +135,10 @@ inline bool scoped_static_mutex_lock::locked()const
 
 namespace boost{
 
-class scoped_static_mutex_lock;
-extern "C" void free_static_mutex();
+class BOOST_REGEX_DECL scoped_static_mutex_lock;
+extern "C" BOOST_REGEX_DECL void free_static_mutex();
 
-class static_mutex
+class BOOST_REGEX_DECL static_mutex
 {
 public:
    typedef scoped_static_mutex_lock scoped_lock;
@@ -148,7 +149,7 @@ public:
 
 #define BOOST_STATIC_MUTEX_INIT {  }
 
-class scoped_static_mutex_lock
+class BOOST_REGEX_DECL scoped_static_mutex_lock
 {
 public:
    scoped_static_mutex_lock(static_mutex& mut, bool lk = true);

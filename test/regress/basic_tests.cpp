@@ -10,8 +10,8 @@ void basic_tests()
    TEST_REGEX_SEARCH("Z", perl, "aaa", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("Z", perl, "xxxxZZxxx", match_default, make_array(4, 5, -2, 5, 6, -2, -2));
    // and some simple brackets:
-   TEST_REGEX_SEARCH("(a)", perl, "zzzaazz", match_default, make_array(3, 4, 3, 4, 4, 5, 4, 5, -2, -2));
-   TEST_REGEX_SEARCH("()", perl, "zzz", match_default, make_array(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, -2, -2));
+   TEST_REGEX_SEARCH("(a)", perl, "zzzaazz", match_default, make_array(3, 4, 3, 4, -2, 4, 5, 4, 5, -2, -2));
+   TEST_REGEX_SEARCH("()", perl, "zzz", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, -2));
    TEST_REGEX_SEARCH("()", perl, "", match_default, make_array(0, 0, 0, 0, -2, -2));
    TEST_INVALID_REGEX("(", perl);
    TEST_INVALID_REGEX(")", perl);
@@ -23,11 +23,11 @@ void basic_tests()
    TEST_INVALID_REGEX("\\()", perl);
    TEST_INVALID_REGEX("(\\)", perl);
    TEST_REGEX_SEARCH("p(a)rameter", perl, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
-   //TEST_REGEX_SEARCH("[pq](a)rameter", perl, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
+   TEST_REGEX_SEARCH("[pq](a)rameter", perl, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
 
    // now try escaped brackets:
-   TEST_REGEX_SEARCH("\\(a\\)", basic, "zzzaazz", match_default, make_array(3, 4, 3, 4, 4, 5, 4, 5, -2, -2));
-   TEST_REGEX_SEARCH("\\(\\)", basic, "zzz", match_default, make_array(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\(a\\)", basic, "zzzaazz", match_default, make_array(3, 4, 3, 4, -2, 4, 5, 4, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\(\\)", basic, "zzz", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, -2));
    TEST_REGEX_SEARCH("\\(\\)", basic, "", match_default, make_array(0, 0, 0, 0, -2, -2));
    TEST_INVALID_REGEX("\\(", basic);
    TEST_INVALID_REGEX("\\)", basic);
@@ -38,7 +38,7 @@ void basic_tests()
    TEST_INVALID_REGEX("\\()", basic);
    TEST_INVALID_REGEX("(\\)", basic);
    TEST_REGEX_SEARCH("p\\(a\\)rameter", basic, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
-   //TEST_REGEX_SEARCH("[pq]\\(a\\)rameter", basic, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
+   TEST_REGEX_SEARCH("[pq]\\(a\\)rameter", basic, "ABCparameterXYZ", match_default, make_array(3, 12, 4, 5, -2, -2));
 
    // now move on to "." wildcards
    TEST_REGEX_SEARCH(".", perl, "a", match_default, make_array(0, 1, -2, -2));
@@ -65,7 +65,7 @@ void basic_tests()
    TEST_REGEX_SEARCH(".", basic, "\0", match_not_dot_null | match_not_dot_newline, make_array(-2, -2));
 
    // simple repeats:
-   TEST_REGEX_SEARCH("a*", perl, "b", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("a*", perl, "b", match_default, make_array(0, 0, -2, 1, 1, -2, -2));
    TEST_REGEX_SEARCH("ab*", perl, "ab", match_default, make_array(0, 2, -2, -2));
    TEST_REGEX_SEARCH("ab*", perl, "sssabbbbbbsss", match_default, make_array(3, 10, -2, -2));
    TEST_REGEX_SEARCH("ab*c*", perl, "a", match_default, make_array(0, 1, -2, -2));
@@ -75,10 +75,10 @@ void basic_tests()
    TEST_INVALID_REGEX("*a", perl);
    TEST_INVALID_REGEX("\\<*", perl);
    TEST_INVALID_REGEX("\\>*", perl);
-   TEST_REGEX_SEARCH("\n*", perl, "\n\n", match_default, make_array(0, 2, -2, -2));
-   TEST_REGEX_SEARCH("\\**", perl, "**", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("\n*", perl, "\n\n", match_default, make_array(0, 2, -2, 2, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\**", perl, "**", match_default, make_array(0, 2, -2, 2, 2, -2, -2));
    TEST_REGEX_SEARCH("\\*", perl, "*", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("(ab)*", perl, "abab", match_default, make_array(0, 4, 2, 4, -2, -2));
+   TEST_REGEX_SEARCH("(ab)*", perl, "abab", match_default, make_array(0, 4, 2, 4, -2, 4, 4, -2, -2));
 
    // now try operator + :
    TEST_REGEX_SEARCH("ab+", perl, "a", match_default, make_array(-2, -2));
@@ -100,7 +100,7 @@ void basic_tests()
    TEST_REGEX_SEARCH("a\\+", basic|bk_plus_qm, "aa", match_default, make_array(0, 2, -2, -2));
 
    // now try operator ?
-   TEST_REGEX_SEARCH("a?", perl, "b", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("a?", perl, "b", match_default, make_array(0, 0, -2, 1, 1, -2, -2));
    TEST_REGEX_SEARCH("ab?", perl, "a", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("ab?", perl, "ab", match_default, make_array(0, 2, -2, -2));
    TEST_REGEX_SEARCH("ab?", perl, "sssabbbbbbsss", match_default, make_array(3, 5, -2, -2));
@@ -111,14 +111,14 @@ void basic_tests()
    TEST_INVALID_REGEX("?a", perl);
    TEST_INVALID_REGEX("\\<?", perl);
    TEST_INVALID_REGEX("\\>?", perl);
-   TEST_REGEX_SEARCH("\n?", perl, "\n\n", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\n?", perl, "\n\n", match_default, make_array(0, 1, -2, 1, 2, -2, 2, 2, -2, -2));
    TEST_REGEX_SEARCH("\\?", perl, "?", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\?", perl, "?", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("\\??", perl, "??", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\??", perl, "??", match_default, make_array(0, 1, -2, 1, 2, -2, 2, 2, -2, -2));
    TEST_REGEX_SEARCH("?", basic|bk_plus_qm, "?", match_default, make_array(0, 1, -2, -2));
    TEST_INVALID_REGEX("\\?", basic|bk_plus_qm);
-   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "aa", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "b", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "aa", match_default, make_array(0, 1, -2, 1, 2, -2, 2, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\?", basic|bk_plus_qm, "b", match_default, make_array(0, 0, -2, 1, 1, -2, -2));
 
    TEST_REGEX_SEARCH("a?", basic, "a?", match_default, make_array(0, 2, -2, -2));
    TEST_REGEX_SEARCH("a+", basic, "a+", match_default, make_array(0, 2, -2, -2));
@@ -310,6 +310,75 @@ void test_sets()
    TEST_REGEX_SEARCH("\\W", perl, "`", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\W", perl, "[", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\W", perl, "@", match_default, make_array(0, 1, -2, -2));
+
+   // collating elements
+   TEST_REGEX_SEARCH("[[.zero.]]", perl, "0", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.one.]]", perl, "1", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.two.]]", perl, "2", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.three.]]", perl, "3", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.a.]]", perl, "bac", match_default, make_array(1, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.right-curly-bracket.]]", perl, "}", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.NUL.]]", perl, "\0", match_default, make_array(0, 1, -2, -2));
+   TEST_INVALID_REGEX("[[:<:]z]", perl);
+   TEST_INVALID_REGEX("[a[:>:]]", perl);
+   TEST_REGEX_SEARCH("[[.A.]]", extended|icase, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.A.]]", extended|icase, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.A.]-b]+", extended|icase, "AaBb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("[A-[.b.]]+", extended|icase, "AaBb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("[[.a.]-B]+", extended|icase, "AaBb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("[a-[.B.]]+", extended|icase, "AaBb", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("[\x61]", extended, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[\x61-c]+", extended, "abcd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("[a-\x63]+", extended, "abcd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("[[.a.]-c]+", extended, "abcd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("[a-[.c.]]+", extended, "abcd", match_default, make_array(0, 3, -2, -2));
+   TEST_INVALID_REGEX("[[:alpha:]-a]", extended);
+   TEST_INVALID_REGEX("[a-[:alpha:]]", extended);
+   TEST_REGEX_SEARCH("[[.ae.]]", basic, "ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]]", basic, "aE", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("[[.AE.]]", basic, "AE", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.Ae.]]", basic, "Ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]-b]", basic, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]-b]", basic, "b", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]-b]", basic, "ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[a-[.ae.]]", basic, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[a-[.ae.]]", basic, "b", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("[a-[.ae.]]", basic, "ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]]", basic|icase, "AE", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]]", basic|icase, "Ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.AE.]]", basic|icase, "Ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.Ae.]]", basic|icase, "aE", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[.AE.]-B]", basic|icase, "a", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("[[.Ae.]-b]", basic|icase, "b", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.Ae.]-b]", basic|icase, "B", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[.ae.]-b]", basic|icase, "AE", match_default, make_array(0, 2, -2, -2));
+   //
+   // try some equivalence classes:
+   //
+   TEST_REGEX_SEARCH("[[=a=]]", basic, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[=a=]]", basic, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[=ae=]]", basic, "ae", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("[[=right-curly-bracket=]]", basic, "}", match_default, make_array(0, 1, -2, -2));
+   //
+   // now some perl style single character classes:
+   //
+   TEST_REGEX_SEARCH("\\l+", perl, "ABabcAB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("[\\l]+", perl, "ABabcAB", match_default, make_array(2, 5, -2, -2));
+   TEST_INVALID_REGEX("[\\l-a]", perl);
+   TEST_INVALID_REGEX("[\\L]", perl);
+   TEST_REGEX_SEARCH("\\L+", perl, "abABCab", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\u+", perl, "abABCab", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("[\\u]+", perl, "abABCab", match_default, make_array(2, 5, -2, -2));
+   TEST_INVALID_REGEX("[\\U]", perl);
+   TEST_REGEX_SEARCH("\\U+", perl, "ABabcAB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\d+", perl, "AB012AB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("[\\d]+", perl, "AB012AB", match_default, make_array(2, 5, -2, -2));
+   TEST_INVALID_REGEX("[\\D]", perl);
+   TEST_REGEX_SEARCH("\\D+", perl, "01abc01", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\s+", perl, "AB   AB", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("[\\s]+", perl, "AB   AB", match_default, make_array(2, 5, -2, -2));
+   TEST_INVALID_REGEX("[\\S]", perl);
+   TEST_REGEX_SEARCH("\\S+", perl, "  abc  ", match_default, make_array(2, 5, -2, -2));
 }
 
 void test_anchors()
@@ -343,6 +412,13 @@ void test_anchors()
    TEST_REGEX_SEARCH("ab$", extended, "ab", match_default | match_not_bol | match_not_eol | match_single_line, make_array(-2, -2));
    TEST_REGEX_SEARCH("ab$", extended, "abxx", match_default | match_not_bol | match_not_eol | match_single_line, make_array(-2, -2));
    TEST_REGEX_SEARCH("ab$", extended, "ab\nzz", match_default | match_not_bol | match_not_eol | match_single_line, make_array(-2, -2));
+   //
+   // changes to newline handling with 2.11:
+   //
+   TEST_REGEX_SEARCH("^.", extended, "  \n  \r\n  ", match_default, make_array(0, 1, -2, 3, 4, -2, 7, 8, -2, -2));
+   TEST_REGEX_SEARCH(".$", extended, "  \n  \r\n  ", match_default, make_array(1, 2, -2, 4, 5, -2, 8, 9, -2, -2));
+   TEST_REGEX_SEARCH_W(L"^.", extended, L"\u2028 \u2028", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH_W(L".$", extended, L" \u2028 \u2028", match_default, make_array(0, 1, -2, 2, 3, -2, 3, 4, -2, -2));
 }
 
 void test_backrefs()
@@ -360,7 +436,7 @@ void test_backrefs()
    TEST_REGEX_SEARCH("a(([bc])\\2)*d", perl, "abbccd", match_default, make_array(0, 6, 3, 5, 3, 4, -2, -2));
    TEST_REGEX_SEARCH("a(([bc])\\2)*d", perl, "abbcbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a((b)*\\2)*d", perl, "abbbd", match_default, make_array(0, 5, 1, 4, 2, 3, -2, -2));
-   TEST_REGEX_SEARCH("(ab*)[ab]*\\1", perl, "ababaaa", match_default, make_array(0, 4, 0, 2, -2, -2));
+   TEST_REGEX_SEARCH("(ab*)[ab]*\\1", perl, "ababaaa", match_default, make_array(0, 4, 0, 2, -2, 4, 7, 4, 5, -2, -2));
    TEST_REGEX_SEARCH("(a)\\1bcd", perl, "aabcd", match_default, make_array(0, 5, 0, 1, -2, -2));
    TEST_REGEX_SEARCH("(a)\\1bc*d", perl, "aabcd", match_default, make_array(0, 5, 0, 1, -2, -2));
    TEST_REGEX_SEARCH("(a)\\1bc*d", perl, "aabd", match_default, make_array(0, 4, 0, 1, -2, -2));
@@ -396,6 +472,26 @@ void test_character_escapes()
    TEST_INVALID_REGEX("\\c=", extended);
    TEST_INVALID_REGEX("\\c?", extended);
    TEST_REGEX_SEARCH("=:", perl, "=:", match_default, make_array(0, 2, -2, -2));
+
+   TEST_REGEX_SEARCH("\\e", perl, "\x1B", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\x1b", perl, "\x1B", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\x{1b}", perl, "\x1B", match_default, make_array(0, 1, -2, -2));
+   TEST_INVALID_REGEX("\\x{}", perl);
+   TEST_INVALID_REGEX("\\x{", perl);
+   TEST_INVALID_REGEX("\\x}", perl);
+   TEST_INVALID_REGEX("\\x", perl);
+   TEST_INVALID_REGEX("\\x{yy", perl);
+   TEST_INVALID_REGEX("\\x{1b", perl);
+   // \Q...\E sequences:
+   TEST_INVALID_REGEX("\\Qabc", perl);
+   TEST_INVALID_REGEX("\\Qabc\\", perl);
+   TEST_REGEX_SEARCH("\\Qabc\\E", perl, "abcd", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\Qabc\\Ed", perl, "abcde", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\Q+*?\\\\E", perl, "+*?\\", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("a\\Q+*?\\\\Eb", perl, "a+*?\\b", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("\\C+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("\\X+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH_W(L"\\X", perl, L"a\u0300\u0301", match_default, make_array(0, 3, -2, -2));
 }
 
 void test_assertion_escapes()
@@ -444,12 +540,22 @@ void test_assertion_escapes()
    TEST_REGEX_SEARCH("abc[[:>:]]", perl, "abcd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("abc[[:>:]]", perl, "abc\n", match_default, make_array(0, 3, -2, -2));
    TEST_REGEX_SEARCH("abc[[:>:]]", perl, "abc::", match_default, make_array(0, 3, -2, -2));
+
+   TEST_REGEX_SEARCH("\\Aabc", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\Aabc", perl, "aabc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("abc\\z", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("abc\\z", perl, "abcd", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("abc\\Z", perl, "abc\n\n", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("abc\\Z", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\Gabc", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\Gabc", perl, "dabcd", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a\\Gbc", perl, "abc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a\\Aab", perl, "abc", match_default, make_array(-2, -2));
 }
 
 void test_tricky_cases()
 {
    using namespace boost::regex_constants;
-   //TEST_REGEX_SEARCH("", perl, "", match_default, make_array(-2, -2));
    //
    // now follows various complex expressions designed to try and bust the matcher:
    //
@@ -481,7 +587,7 @@ void test_tricky_cases()
    TEST_REGEX_SEARCH("a(b)?c\\1d", perl, "acd", match_default, make_array(0, 3, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("a(b?c)+d", perl, "accd", match_default, make_array(0, 4, 2, 3, -2, -2));
    TEST_REGEX_SEARCH("(wee|week)(knights|night)", perl, "weeknights", match_default, make_array(0, 10, 0, 3, 3, 10, -2, -2));
-   TEST_REGEX_SEARCH(".*", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH(".*", perl, "abc", match_default, make_array(0, 3, -2, 3, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b|(c))d", perl, "abd", match_default, make_array(0, 3, 1, 2, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("a(b|(c))d", perl, "acd", match_default, make_array(0, 3, 1, 2, 1, 2, -2, -2));
    TEST_REGEX_SEARCH("a(b*|c|e)d", perl, "abbd", match_default, make_array(0, 4, 1, 3, -2, -2));
@@ -502,8 +608,8 @@ void test_tricky_cases()
    TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl, "abb", match_default, make_array(0, 3, 1, 2, -2, -2));
    TEST_REGEX_SEARCH("a(bbb+|bb+|b)b", perl, "abbb", match_default, make_array(0, 4, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(bbb+|bb+|b)bb", perl, "abbb", match_default, make_array(0, 4, 1, 2, -2, -2));
-   TEST_REGEX_SEARCH("(.*).*", perl, "abcdef", match_default, make_array(0, 6, 0, 6, -2, -2));
-   TEST_REGEX_SEARCH("(a*)*", perl, "bc", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("(.*).*", perl, "abcdef", match_default, make_array(0, 6, 0, 6, -2, 6, 6, 6, 6, -2, -2));
+   TEST_REGEX_SEARCH("(a*)*", perl, "bc", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, -2));
    TEST_REGEX_SEARCH("xyx*xz", perl, "xyxxxxyxxxz", match_default, make_array(5, 11, -2, -2));
    // do we get the right subexpression when it is used more than once?
    TEST_REGEX_SEARCH("a(b|c)*d", perl, "ad", match_default, make_array(0, 2, -1, -1, -2, -2));
@@ -557,6 +663,10 @@ void test_tricky_cases()
    // perl only:
    TEST_REGEX_SEARCH("^[[:blank:]]*#([^\\n]*\\\\[[:space:]]+)*[^\\n]*", perl, "#define some_symbol(x) \\  \r\n  foo();\\\r\n   printf(#x);", match_default, make_array(0, 53, 30, 42, -2, -2));
    // literals:
+}
+
+void test_tricky_cases2()
+{
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "0xFF", match_default, make_array(0, 4, 0, 4,	0, 4,	-1, -1, -1, -1, -1, -1, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "35", match_default, make_array(0, 2, 0, 2, -1, -1, 0, 2, -1, -1, -1, -1, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?", perl, "0xFFu", match_default, make_array(0, 5, 0, 4, 0, 4, -1, -1, -1, -1, -1, -1, -1, -1, -2, -2));
@@ -633,527 +743,445 @@ void test_tricky_cases()
    TEST_REGEX_SEARCH("x", perl, "x", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH(":", perl, ":", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("(\\.[[:alnum:]]+){2}", perl, "w.a.b ", match_default, make_array(1, 5, 3, 5, -2, -2));
+
+   // new bugs detected in spring 2003:
+   TEST_REGEX_SEARCH("b", perl, "abc", match_default|match_continuous, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?!foo)bar", perl, "foobar", match_default, make_array(3, 6, -2, -2));
+   TEST_REGEX_SEARCH("(?!foo)bar", perl, "??bar", match_default, make_array(2, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?!foo)bar", perl, "barfoo", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?!foo)bar", perl, "bar??", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?!foo)bar", perl, "bar", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("a\\Z", perl, "a\nb", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("()", perl, "abc", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, 2, 2, 2, 2, -2, 3, 3, 3, 3, -2, -2));
+   TEST_REGEX_SEARCH("^()", perl, "abc", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("^()+", perl, "abc", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("^(){1}", perl, "abc", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("^(){2}", perl, "abc", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("^((){2})", perl, "abc", match_default, make_array(0, 0, 0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("()", perl, "", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("()\\1", perl, "", match_default, make_array(0, 0, 0, 0, -2, -2));
+   TEST_REGEX_SEARCH("()\\1", perl, "a", match_default, make_array(0, 0, 0, 0, -2, 1, 1, 1, 1, -2, -2));
+   TEST_REGEX_SEARCH("a()\\1b", perl, "ab", match_default, make_array(0, 2, 1, 1, -2, -2));
+   TEST_REGEX_SEARCH("a()b\\1", perl, "ab", match_default, make_array(0, 2, 1, 1, -2, -2));
+
+   //
+   // the strings in the next test case are too long for most compilers to cope with,
+   // we have to break them up and call the testing procs directly rather than rely on the macros:
+   //
+   static const char* big_text = "00001 01 \r\n00002 02 1         2         3         4         5         6"
+      "7         8         9         0\r\n00003 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n"
+      "00004 04 \r\n00005 05 \r\n00006 06                                                                      "
+      "Seite: 0001\r\n00007 07                                                             "
+      "StartSeitEEnde: 0001\r\n00008 08                                                             "
+      "StartSeiTe Ende: 0001\r\n00009 09                                                             "
+      "Start seiteEnde: 0001\r\n00010 10                                                             "
+      "28.2.03\r\n00011 11                                                             "
+      "Page: 0001\r\n00012 12                                                             "
+      "Juhu die Erste: 0001\r\n00013 13                                                             "
+      "Es war einmal! 0001\r\n00014 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0001\r\n"
+      "00015 15                               abcdefghijklmnopqrstuvwxyz0001\r\n"
+      "00016 16                               lars.schmeiser@gft.com\r\n00017 17 \r\n"
+      "00018 18 \r\n00019 19 \r\n00020 20 \r\n00021 21 1         2         3         4         5         "
+      "6         7         8         9         0\r\n"
+      "00022 22 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n"
+      "00023 01 \r\n00024 02 1         2         3         4         5         6         7         8         9         0\r\n"
+      "00025 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n"
+      "00026 04 \r\n00027 05 \r\n00028 06                                                             "
+      "Seite: 0002\r\n00029 07                                                             StartSeitEEnde: 0002\r\n"
+      "00030 08                                                             "
+      "StartSeiTe Ende: 0002\r\n00031 09                                                             "
+      "Start seiteEnde: 0002\r\n00032 10                                                             "
+      "28.02.2003\r\n00033 11                                                             "
+      "Page: 0002\r\n00034 12                                                             "
+      "Juhu die Erste: 0002\r\n00035 13                                                             "
+      "Es war einmal! 0002\r\n00036 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0002\r\n00037 "
+      "15                               abcdefghijklmnopqrstuvwxyz0002\r\n00038 16                               "
+      "lars.schmeiser@194.1.12.111\r\n00039 17 \r\n00040 18 \r\n00041 19 \r\n"
+      "00042 20 \r\n00043 21 1         2         3         4         5         6         7         8         9         0\r\n";
+   
+   do{
+      test_info<char>::set_info(__FILE__, __LINE__, 
+         "(.*\\r\\n){3}.* abcdefghijklmnopqrstuvwxyz.*\\r\\n", 
+         perl, big_text, match_default|match_not_dot_newline, 
+         make_array(753, 1076, 934, 1005, -2, 2143, 2466, 2324, 2395, -2, -2));
+      test(char(0), test_regex_search_tag());
+   }while(0);
+#ifndef BOOST_NO_WREGEX
+   do{
+      std::string st(big_text);
+      test_info<wchar_t>::set_info(__FILE__, __LINE__, 
+         L"(.*\\r\\n){3}.* abcdefghijklmnopqrstuvwxyz.*\\r\\n", 
+         perl, std::wstring(st.begin(), st.end()), match_default|match_not_dot_newline, 
+         make_array(753, 1076, 934, 1005, -2, 2143, 2466, 2324, 2395, -2, -2));
+      test(char(0), test_regex_search_tag());
+   }while(0);
+#endif
+}
+
+void test_grep()
+{
+   //
+   // now test grep,
+   // basically check all our restart types - line, word, etc
+   // checking each one for null and non-null matches.
+   //
+   using namespace boost::regex_constants;
+   TEST_REGEX_SEARCH("a", perl|nosubs, " a a a aa", match_default, make_array(1, 2, -2, 3, 4, -2, 5, 6, -2, 7, 8, -2, 8, 9, -2, -2));
+   TEST_REGEX_SEARCH("a+b+", perl|nosubs, "aabaabbb ab", match_default, make_array(0, 3, -2, 3, 8, -2, 9, 11, -2, -2));
+   TEST_REGEX_SEARCH("a(b*|c|e)d", perl|nosubs, "adabbdacd", match_default, make_array(0, 2, -2, 2, 6, -2, 6, 9, -2, -2));
+   TEST_REGEX_SEARCH("a", perl|nosubs, "\na\na\na\naa", match_default, make_array(1, 2, -2, 3, 4, -2, 5, 6, -2, 7, 8, -2, 8, 9, -2, -2));
+   TEST_REGEX_SEARCH("^", perl|nosubs, "   \n\n  \n\n\n", match_default, make_array(0, 0, -2, 4, 4, -2, 5, 5, -2, 8, 8, -2, 9, 9, -2, 10, 10, -2, -2));
+   TEST_REGEX_SEARCH("^ab", perl|nosubs, "ab  \nab  ab\n", match_default, make_array(0, 2, -2, 5, 7, -2, -2));
+   TEST_REGEX_SEARCH("^[^\\n]*\n", perl|nosubs, "   \n  \n\n  \n", match_default, make_array(0, 4, -2, 4, 7, -2, 7, 8, -2, 8, 11, -2, -2));
+   TEST_REGEX_SEARCH("\\<abc", perl|nosubs, "abcabc abc\n\nabc", match_default, make_array(0, 3, -2, 7, 10, -2, 12, 15, -2, -2));
+   TEST_REGEX_SEARCH("\\<", perl|nosubs, "  ab a aaa  ", match_default, make_array(2, 2, -2, 5, 5, -2, 7, 7, -2, -2));
+   TEST_REGEX_SEARCH("\\<\\w+\\W+", perl|nosubs, " aa  aa  a ", match_default, make_array(1, 5, -2, 5, 9, -2, 9, 11, -2, -2));
+
+   TEST_REGEX_SEARCH("\\Aabc", perl|nosubs, "abc   abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\G\\w+\\W+", perl|nosubs, "abc  abc a cbbb   ", match_default, make_array(0, 5, -2, 5, 9, -2, 9, 11, -2, 11, 18, -2, -2));
+   TEST_REGEX_SEARCH("\\Ga+b+", perl|nosubs, "aaababb  abb", match_default, make_array(0, 4, -2, 4, 7, -2, -2));
+   TEST_REGEX_SEARCH("abc", perl|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("abc", perl|nosubs, " abc abcabc", match_default, make_array(1, 4, -2, 5, 8, -2, 8, 11, -2, -2));
+   TEST_REGEX_SEARCH("\\n\\n", perl|nosubs, " \n\n\n       \n      \n\n\n\n  ", match_default, make_array(1, 3, -2, 18, 20, -2, 20, 22, -2, -2));
+   TEST_REGEX_SEARCH("$", perl|nosubs, "   \n\n  \n\n\n", match_default, make_array(3, 3, -2, 4, 4, -2, 7, 7, -2, 8, 8, -2, 9, 9, -2, 10, 10, -2, -2));
+   TEST_REGEX_SEARCH("\\b", perl|nosubs, "  abb a abbb ", match_default, make_array(2, 2, -2, 5, 5, -2, 6, 6, -2, 7, 7, -2, 8, 8, -2, 12, 12, -2, -2));
+   TEST_REGEX_SEARCH("A", perl|icase|nosubs, " a a a aa", match_default, make_array(1, 2, -2, 3, 4, -2, 5, 6, -2, 7, 8, -2, 8, 9, -2, -2));
+   TEST_REGEX_SEARCH("A+B+", perl|icase|nosubs, "aabaabbb ab", match_default, make_array(0, 3, -2, 3, 8, -2, 9, 11, -2, -2));
+   TEST_REGEX_SEARCH("A(B*|c|e)D", perl|icase|nosubs, "adabbdacd", match_default, make_array(0, 2, -2, 2, 6, -2, 6, 9, -2, -2));
+   TEST_REGEX_SEARCH("A", perl|icase|nosubs, "\na\na\na\naa", match_default, make_array(1, 2, -2, 3, 4, -2, 5, 6, -2, 7, 8, -2, 8, 9, -2, -2));
+   TEST_REGEX_SEARCH("^aB", perl|icase|nosubs, "Ab  \nab  Ab\n", match_default, make_array(0, 2, -2, 5, 7, -2, -2));
+   TEST_REGEX_SEARCH("\\<abc", perl|icase|nosubs, "Abcabc aBc\n\nabc", match_default, make_array(0, 3, -2, 7, 10, -2, 12, 15, -2, -2));
+   TEST_REGEX_SEARCH("ABC", perl|icase|nosubs, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("abc", perl|icase|nosubs, " ABC ABCABC ", match_default, make_array(1, 4, -2, 5, 8, -2, 8, 11, -2, -2));
+}
+
+void test_replace()
+{
+   using namespace boost::regex_constants;
+   // start by testing subs:
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$`", "...");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$'", ",,,");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$&", "aaa");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$0", "aaa");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$1", "");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$15", "");
+   TEST_REGEX_REPLACE("(a+)b+", perl, "...aaabbb,,,", match_default|format_no_copy, "$1", "aaa");
+   TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab", match_default|format_no_copy, "<$0>", "<123><><><>");
+   TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab1", match_default|format_no_copy, "<$0>", "<123><><><1>");
+   // and now escapes:
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$x", "$x");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\a", "\a");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\f", "\f");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\n", "\n");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\r", "\r");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\t", "\t");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\x21", "!");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\x{21}", "!");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\c@", "\0");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\e", "\x1B");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\0101", "A");
+   // sed format sequences:
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\0", "aabb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\1", "aa");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\2", "bb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "&", "aabb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "$", "$");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "$1", "$1");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "()?:", "()?:");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\\\", "\\");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_sed|format_no_copy, "\\&", "&");
+
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$0", "aabb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$1", "aa");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$2", "bb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "$&", "aabb");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "&", "&");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "\\0", "\0");
+   TEST_REGEX_REPLACE("(a+)(b+)", perl, " ...aabb,,", match_default|format_perl|format_no_copy, "()?:", "()?:");
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,", match_default|format_perl|format_no_copy, "\\0101", "A");
+
+   // move to copying unmatched data:
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_all, "bbb", "...bbb,,,");
+   TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,", match_default|format_all, "$1", "...bb,,,");
+   TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "$1", "...bb,,,b*bbb?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "(?1A)(?2B)", "...AB,,,AB*AB?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "?1A:B", "...AB,,,AB*AB?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "(?1A:B)C", "...ACBC,,,ACBC*ACBC?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "?1:B", "...B,,,B*B?");
+   // move to copying unmatched data, but replace first occurance only:
+   TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_all|format_first_only, "bbb", "...bbb,,,");
+   TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,", match_default|format_all|format_first_only, "$1", "...bb,,,");
+   TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all|format_first_only, "$1", "...bb,,,ab*abbb?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all|format_first_only, "(?1A)(?2B)", "...Abb,,,ab*abbb?");
+}
+
+void test_non_greedy_repeats()
+{
+   //
+   // non-greedy repeats added 21/04/00
+   //
+   using namespace boost::regex_constants;
+   TEST_REGEX_SEARCH("a*?", perl, "aa", match_default, make_array(0, 0, -2, 0, 1, -2, 1, 1, -2, 1, 2, -2, 2, 2, -2, -2));
+   TEST_REGEX_SEARCH("^a*?$", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("^.*?$", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("^(a)*?$", perl, "aa", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("^[ab]*?$", perl, "aa", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a??", perl, "aa", match_default, make_array(0, 0, -2, 0, 1, -2, 1, 1, -2, 1, 2, -2, 2, 2, -2, -2));
+   TEST_REGEX_SEARCH("a+?", perl, "aa", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("a{1,3}?", perl, "aaa", match_default, make_array(0, 1, -2, 1, 2, -2, 2, 3, -2, -2));
+   TEST_REGEX_SEARCH("\\w+?w", perl, "...ccccccwcccccw", match_default, make_array(3, 10, -2, 10, 16, -2, -2));
+   TEST_REGEX_SEARCH("\\W+\\w+?w", perl, "...ccccccwcccccw", match_default, make_array(0, 10, -2, -2));
+   TEST_REGEX_SEARCH("abc|\\w+?", perl, "abd", match_default, make_array(0, 1, -2, 1, 2, -2, 2, 3, -2, -2));
+   TEST_REGEX_SEARCH("abc|\\w+?", perl, "abcd", match_default, make_array(0, 3, -2, 3, 4, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*tag[^>]*>(.*?)<\\s*/tag\\s*>", perl, " <tag>here is some text</tag> <tag></tag>", match_default, make_array(1, 29, 6, 23, -2, 30, 41, 35, 35, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*tag[^>]*>(.*?)<\\s*/tag\\s*>", perl, " < tag attr=\"something\">here is some text< /tag > <tag></tag>", match_default, make_array(1, 49, 24, 41, -2, 50, 61, 55, 55, -2, -2));
+   TEST_INVALID_REGEX("a{1,3}{1}", perl);
+   TEST_INVALID_REGEX("a**", perl);
+   TEST_INVALID_REGEX("a++", perl);
+}
+
+void test_non_marking_paren()
+{
+   using namespace boost::regex_constants;
+   //
+   // non-marking parenthesis added 25/04/00
+   //
+   TEST_REGEX_SEARCH("(?:abc)+", perl, "xxabcabcxx", match_default, make_array(2, 8, -2, -2));
+   TEST_REGEX_SEARCH("(?:a+)(b+)", perl, "xaaabbbx", match_default, make_array(1, 7, 4, 7, -2, -2));
+   TEST_REGEX_SEARCH("(a+)(?:b+)", perl, "xaaabbba", match_default, make_array(1, 7, 1, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?:(a+)b+)", perl, "xaaabbba", match_default, make_array(1, 7, 1, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?:a+(b+))", perl, "xaaabbba", match_default, make_array(1, 7, 4, 7, -2, -2));
+   TEST_REGEX_SEARCH("a+(?#b+)b+", perl, "xaaabbba", match_default, make_array(1, 7, -2, -2));
+   TEST_REGEX_SEARCH("(a)(?:b|$)", perl, "ab", match_default, make_array(0, 2, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(a)(?:b|$)", perl, "a", match_default, make_array(0, 1, 0, 1, -2, -2));
+}
+
+void test_partial_match()
+{
+   using namespace boost::regex_constants;
+   //
+   // try some partial matches:
+   //
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "xyzaaab", match_default|match_partial, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "xyz", match_default|match_partial, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "xy", match_default|match_partial, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "x", match_default|match_partial, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "", match_default|match_partial, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(xyz)(.*)abc", perl, "aaaa", match_default|match_partial, make_array(-2, -2));
+   TEST_REGEX_SEARCH(".abc", perl, "aaab", match_default|match_partial, make_array(1, 4, -2, -2));
+   TEST_REGEX_SEARCH("a[_]", perl, "xxa", match_default|match_partial, make_array(2, 3, -2, -2));
+}
+
+void test_forward_lookahead_asserts()
+{
+   //
+   // forward lookahead asserts added 21/01/02
+   //
+   using namespace boost::regex_constants;
+   TEST_REGEX_SEARCH("((?:(?!a|b)\\w)+)(\\w+)", perl, "  xxxabaxxx  ", match_default, make_array(2, 11, 2, 5, 5, 11, -2, -2));
+   TEST_REGEX_SEARCH("/\\*(?:(?!\\*/).)*\\*/", perl, "  /**/  ", match_default, make_array(2, 6, -2, -2));
+   TEST_REGEX_SEARCH("/\\*(?:(?!\\*/).)*\\*/", perl, "  /***/  ", match_default, make_array(2, 7, -2, -2));
+   TEST_REGEX_SEARCH("/\\*(?:(?!\\*/).)*\\*/", perl, "  /********/  ", match_default, make_array(2, 12, -2, -2));
+   TEST_REGEX_SEARCH("/\\*(?:(?!\\*/).)*\\*/", perl, "  /* comment */  ", match_default, make_array(2, 15, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*a[^>]*>((?:(?!<\\s*/\\s*a\\s*>).)*)<\\s*/\\s*a\\s*>", perl, " <a href=\"here\">here</a> ", match_default, make_array(1, 24, 16, 20, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*a[^>]*>((?:(?!<\\s*/\\s*a\\s*>).)*)<\\s*/\\s*a\\s*>", perl, " <a href=\"here\">here< /  a > ", match_default, make_array(1, 28, 16, 20, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*a[^>]*>((?:(?!<\\s*/\\s*a\\s*>).)*)(?=<\\s*/\\s*a\\s*>)", perl, " <a href=\"here\">here</a> ", match_default, make_array(1, 20, 16, 20, -2, -2));
+   TEST_REGEX_SEARCH("<\\s*a[^>]*>((?:(?!<\\s*/\\s*a\\s*>).)*)(?=<\\s*/\\s*a\\s*>)", perl, " <a href=\"here\">here< /  a > ", match_default, make_array(1, 20, 16, 20, -2, -2));
+   TEST_REGEX_SEARCH("^(?!^(?:PRN|AUX|CLOCK\\$|NUL|CON|COM\\d|LPT\\d|\\..*)(?:\\..+)?$)[^\\x00-\\x1f\\\\?*:\"|/]+$", perl, "command.com", match_default, make_array(0, 11, -2, -2));
+   TEST_REGEX_SEARCH("^(?!^(?:PRN|AUX|CLOCK\\$|NUL|CON|COM\\d|LPT\\d|\\..*)(?:\\..+)?$)[^\\x00-\\x1f\\\\?*:\"|/]+$", perl, "PRN", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?!^(?:PRN|AUX|CLOCK\\$|NUL|CON|COM\\d|LPT\\d|\\..*)(?:\\..+)?$)[^\\x00-\\x1f\\\\?*:\"|/]+$", perl, "COM2", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d).{4,8}$", perl, "abc3", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d).{4,8}$", perl, "abc3def4", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d).{4,8}$", perl, "ab2", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d).{4,8}$", perl, "abcdefg", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "abc3", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "abC3", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", perl, "ABCD3", match_default, make_array(-2, -2));
+}
+
+void test_fast_repeats()
+{
+   using namespace boost::regex_constants;
+   // extended repeat checking to exercise new algorithms:
+   TEST_REGEX_SEARCH("ab.*xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab.*", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}", perl, "ab_______", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?", perl, "ab__", match_default, make_array(0, 2, -2, -2));
+   
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?", perl, "ab_______", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+
+   // again but with slower algorithm variant:
+   TEST_REGEX_SEARCH("ab.*xy", perl, "abxy_", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "ab_xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "abxy", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*xy", perl, "ab_xy", match_not_dot_newline|match_not_dot_null, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*", perl, "ab", match_not_dot_newline|match_not_dot_null, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab.*", perl, "ab__", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab__xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab____xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_____xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab__xy", match_not_dot_newline|match_not_dot_null, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_____xy", match_not_dot_newline|match_not_dot_null, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}", perl, "ab__", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}", perl, "ab_______", match_not_dot_newline|match_not_dot_null, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab______xy", match_not_dot_newline|match_not_dot_null, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_xy", match_not_dot_newline|match_not_dot_null, make_array(-2, -2));
+   
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "abxy_", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "ab_xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "abxy", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?xy", perl, "ab_xy", match_not_dot_newline|match_not_dot_null, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?", perl, "ab", match_not_dot_newline|match_not_dot_null, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab.*?", perl, "ab__", match_not_dot_newline|match_not_dot_null, make_array(0, 2, -2, -2));
+   
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab__xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab____xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab_____xy_", match_not_dot_newline|match_not_dot_null, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab__xy", match_not_dot_newline|match_not_dot_null, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab_____xy", match_not_dot_newline|match_not_dot_null, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?", perl, "ab__", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?", perl, "ab_______", match_not_dot_newline|match_not_dot_null, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}?xy", perl, "ab______xy", match_not_dot_newline|match_not_dot_null, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab.{2,5}xy", perl, "ab_xy", match_not_dot_newline|match_not_dot_null, make_array(-2, -2));
+
+   // now again for single character repeats:
+   TEST_REGEX_SEARCH("ab_*xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_*xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab_*xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_*xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab_*", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab_*", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}", perl, "ab_______", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   
+   TEST_REGEX_SEARCH("ab_*?xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_*?xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab_*?xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_*?xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab_*?", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab_*?", perl, "ab__", match_default, make_array(0, 2, -2, -2));
+   
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?", perl, "ab_______", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}?xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab_{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(5*?).somesite", perl, "//555.somesite", match_default, make_array(2, 14, 2, 5, -2, -2));
+
+   // and again for sets:
+   TEST_REGEX_SEARCH("ab[_,;]*xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}", perl, "ab_______", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   
+   TEST_REGEX_SEARCH("ab[_,;]*?xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*?xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*?xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*?xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*?", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]*?", perl, "ab__", match_default, make_array(0, 2, -2, -2));
+   
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?", perl, "ab_______", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}?xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab[_,;]{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+
+   // and again for tricky sets with digraphs:
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}", perl, "ab_______", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?xy", perl, "abxy_", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?xy", perl, "ab_xy_", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?xy", perl, "abxy", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?xy", perl, "ab_xy", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?", perl, "ab", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]*?", perl, "ab__", match_default, make_array(0, 2, -2, -2));
+   
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab__xy_", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab____xy_", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab_____xy_", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab__xy", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab_____xy", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?", perl, "ab__", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?", perl, "ab_______", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}?xy", perl, "ab______xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("ab[_[.ae.]]{2,5}xy", perl, "ab_xy", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("([5[.ae.]]*?).somesite", perl, "//555.somesite", match_default, make_array(2, 14, 2, 5, -2, -2));
+
+   //TEST_REGEX_SEARCH("", perl, "", match_default, make_array(-2, -2));
 #if 0
-; collating elements and rewritten set code:
-- match_default normal REG_EXTENDED REG_STARTEND
-[[.zero.]] 0 0 1
-[[.one.]] 1 0 1
-[[.two.]] 2 0 1
-[[.three.]] 3 0 1
-[[.a.]] baa 1 2
-[[.right-curly-bracket.]] } 0 1
-[[.NUL.]] \0 0 1
-[[:<:]z] !
-[a[:>:]] !
-[[=a=]] a 0 1
-[[=right-curly-bracket=]] } 0 1
-- match_default normal REG_EXTENDED REG_STARTEND REG_ICASE
-[[.A.]] A 0 1
-[[.A.]] a 0 1
-[[.A.]-b]+ AaBb 0 4
-[A-[.b.]]+ AaBb 0 4
-[[.a.]-B]+ AaBb 0 4
-[a-[.B.]]+ AaBb 0 4
-- match_default normal REG_EXTENDED REG_NO_POSIX_TEST
-[\x61] a 0 1
-[\x61-c]+ abcd 0 3
-[a-\x63]+ abcd 0 3
-- match_default normal REG_EXTENDED REG_STARTEND
-[[.a.]-c]+ abcd 0 3
-[a-[.c.]]+ abcd 0 3
-[[:alpha:]-a] !
-[a-[:alpha:]] !
-
-; try mutli-character ligatures:
-[[.ae.]] ae 0 2
-[[.ae.]] aE -1 -1
-[[.AE.]] AE 0 2
-[[.Ae.]] Ae 0 2
-[[.ae.]-b] a -1 -1
-[[.ae.]-b] b 0 1
-[[.ae.]-b] ae 0 2
-[a-[.ae.]] a 0 1
-[a-[.ae.]] b -1 -1
-[a-[.ae.]] ae 0 2
-- match_default normal REG_EXTENDED REG_STARTEND REG_ICASE
-[[.ae.]] AE 0 2
-[[.ae.]] Ae 0 2
-[[.AE.]] Ae 0 2
-[[.Ae.]] aE 0 2
-[[.AE.]-B] a -1 -1
-[[.Ae.]-b] b 0 1
-[[.Ae.]-b] B 0 1
-[[.ae.]-b] AE 0 2
-
-- match_default normal REG_EXTENDED REG_STARTEND
-;extended perl style escape sequences:
-\e \27 0 1
-\x1b \27 0 1
-\x{1b} \27 0 1
-\x{} !
-\x{ !
-\x} !
-\x !
-\x{yy !
-\x{1b !
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_NO_POSIX_TEST
-\l+ ABabcAB 2 5
-[\l]+ ABabcAB 2 5
-[a-\l] !
-[\l-a] !
-[\L] !
-\L+ abABCab 2 5
-\u+ abABCab 2 5
-[\u]+ abABCab 2 5
-[\U] !
-\U+ ABabcAB 2 5
-\d+ ab012ab 2 5
-[\d]+ ab012ab 2 5
-[\D] !
-\D+ 01abc01 2 5
-\s+ "ab   ab" 2 5
-[\s]+ "ab   ab" 2 5
-[\S] !
-\S+ "  abc  " 2 5
-- match_default normal REG_EXTENDED REG_STARTEND
-\Qabc !
-\Qabc\E abcd 0 3
-\Qabc\Ed abcde 0 4
-\Q+*?\\E +*?\\ 0 4
-
-\C+ abcde 0 5
-\X+ abcde 0 5
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_UNICODE_ONLY
-\X+ a\768\769 0 3
-\X+ \2309\2307 0 2   ;DEVANAGARI script
-\X+ \2489\2494 0 2   ;BENGALI script
-
-- match_default normal REG_EXTENDED REG_STARTEND
-\Aabc abc 0 3
-\Aabc aabc -1 -1
-abc\z abc 0 3
-abc\z abcd -1 -1
-abc\Z abc\n\n 0 3
-abc\Z abc 0 3
-
-
-\Gabc abc 0 3
-\Gabc dabcd -1 -1
-a\Gbc abc -1 -1
-a\Aab abc -1 -1
-
-;
-; now test grep,
-; basically check all our restart types - line, word, etc
-; checking each one for null and non-null matches.
-;
-- match_default normal REG_EXTENDED REG_STARTEND REG_GREP
-a " a a a aa" 1 2 3 4 5 6 7 8 8 9
-a+b+ "aabaabbb ab" 0 3 3 8 9 11
-a(b*|c|e)d adabbdacd 0 2 2 6 6 9
-a "\na\na\na\naa" 1 2 3 4 5 6 7 8 8 9
-
-^ "   \n\n  \n\n\n" 0 0 4 4 5 5 8 8 9 9 10 10
-^ab  "ab  \nab  ab\n" 0 2 5 7
-^[^\n]*\n "   \n  \n\n  \n" 0 4 4 7 7 8 8 11
-\<abc "abcabc abc\n\nabc" 0 3 7 10 12 15
-\< "  ab a aaa  "  2 2 5 5 7 7
-\<\w+\W+ " aa  aa  a " 1 5 5 9 9 11
-
-\Aabc "abc   abc"  0 3
-\G\w+\W+ "abc  abc a cbbb   " 0 5 5 9 9 11 11 18
-\Ga+b+ "aaababb  abb" 0 4 4 7
-
-abc abc 0 3
-abc " abc abcabc " 1 4 5 8 8 11
-\n\n " \n\n\n       \n      \n\n\n\n  " 1 3 18 20 20 22
-
-$ "   \n\n  \n\n\n" 3 3 4 4 7 7 8 8 9 9 10 10
-\b "  abb a abbb " 2 2 5 5 6 6 7 7 8 8 12 12
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_GREP REG_ICASE
-A " a a a aa" 1 2 3 4 5 6 7 8 8 9
-A+B+ "aabaabbb ab" 0 3 3 8 9 11
-A(B*|c|e)D adabbdacd 0 2 2 6 6 9
-A "\na\na\na\naa" 1 2 3 4 5 6 7 8 8 9
-
-^aB  "Ab  \nab  Ab\n" 0 2 5 7
-\<abc "Abcabc aBc\n\nabc" 0 3 7 10 12 15
-
-ABC abc 0 3
-abc " ABC ABCABC " 1 4 5 8 8 11
-
-
-;
-; now test merge,
-;
-- match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_no_copy
-; start by testing subs:
-a+ "...aaa,,," $` "..." 
-a+ "...aaa,,," $' ",,," 
-a+ "...aaa,,," $& "aaa" 
-a+ "...aaa,,," $0 aaa
-a+ "...aaa,,," $1 ""
-a+ "...aaa,,," $15 ""
-(a+)b+ "...aaabbb,,," $1 aaa
-[[:digit:]]* 123ab <$0> <123><><><>
-[[:digit:]]* 123ab1 <$0> <123><><><1>
-
-; and now escapes:
-a+ "...aaa,,," $x "$x" 
-a+ "...aaa,,," \a "\a" 
-a+ "...aaa,,," \f "\f" 
-a+ "...aaa,,," \n "\n" 
-a+ "...aaa,,," \r "\r" 
-a+ "...aaa,,," \t "\t" 
-a+ "...aaa,,," \v "\v" 
-
-a+ "...aaa,,," \x21 "!" 
-a+ "...aaa,,," \x{21} "!" 
-a+ "...aaa,,," \c@ \0
-a+ "...aaa,,," \e \27
-a+ "...aaa,,," \0101 A
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_sed format_no_copy
-(a+)(b+) ...aabb,, \0 aabb
-(a+)(b+) ...aabb,, \1 aa
-(a+)(b+) ...aabb,, \2 bb
-(a+)(b+) ...aabb,, & aabb
-(a+)(b+) ...aabb,, $ $
-(a+)(b+) ...aabb,, $1 $1
-(a+)(b+) ...aabb,, ()?: ()?:
-(a+)(b+) ...aabb,, \\ \\
-(a+)(b+) ...aabb,, \& &
-
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_perl format_no_copy
-(a+)(b+) ...aabb,, $0 aabb
-(a+)(b+) ...aabb,, $1 aa
-(a+)(b+) ...aabb,, $2 bb
-(a+)(b+) ...aabb,, $& aabb
-(a+)(b+) ...aabb,, & &
-(a+)(b+) ...aabb,, \0 \0
-(a+)(b+) ...aabb,, ()?: ()?:
-a+ "...aaa,,," \0101 A
-
-- match_default format_all normal REG_EXTENDED REG_STARTEND REG_MERGE
-; move to copying unmatched data:
-a+ "...aaa,,," bbb "...bbb,,," 
-a+(b+) "...aaabb,,," $1 "...bb,,," 
-a+(b+) "...aaabb,,,ab*abbb?" $1 "...bb,,,b*bbb?" 
-
-(a+)|(b+) "...aaabb,,,ab*abbb?" (?1A)(?2B) "...AB,,,AB*AB?" 
-(a+)|(b+) "...aaabb,,,ab*abbb?" ?1A:B "...AB,,,AB*AB?" 
-(a+)|(b+) "...aaabb,,,ab*abbb?" (?1A:B)C "...ACBC,,,ACBC*ACBC?" 
-(a+)|(b+) "...aaabb,,,ab*abbb?" ?1:B "...B,,,B*B?" 
-
-- match_default format_all normal REG_EXTENDED REG_STARTEND REG_MERGE format_first_only
-; move to copying unmatched data, but replace first occurance only:
-a+ "...aaa,,," bbb "...bbb,,," 
-a+(b+) "...aaabb,,," $1 "...bb,,," 
-a+(b+) "...aaabb,,,ab*abbb?" $1 "...bb,,,ab*abbb?" 
-(a+)|(b+) "...aaabb,,,ab*abbb?" (?1A)(?2B) "...Abb,,,ab*abbb?" 
-
-;
-; changes to newline handling with 2.11:
-;
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_GREP
-
-^. "  \n  \r\n  " 0 1 3 4 7 8
-.$ "  \n  \r\n  " 1 2 4 5 8 9
-
-- match_default normal REG_EXTENDED REG_STARTEND REG_GREP REG_UNICODE_ONLY
-^. "  \8232 \8233  " 0 1 3 4 5 6
-.$ "  \8232 \8233  " 1 2 3 4 6 7
-
-;
-; non-greedy repeats added 21/04/00
-- match_default normal REG_EXTENDED REG_PERL
-a** !
-a*? aa 0 0
-^a*?$ aa 0 2
-^.*?$ aa 0 2
-^(?:a)*?$ aa 0 2
-^[ab]*?$ aa 0 2
-a?? aa 0 0
-a++ !
-a+? aa 0 1
-a{1,3}{1} !
-a{1,3}? aaa 0 1
-\w+?w ...ccccccwcccccw 3 10
-\W+\w+?w ...ccccccwcccccw 0 10
-abc|\w+? abd 0 1
-abc|\w+? abcd 0 3
-<\s*tag[^>]*>(.*?)<\s*/tag\s*> " <tag>here is some text</tag> <tag></tag>" 1 29 6 23
-<\s*tag[^>]*>(.*?)<\s*/tag\s*> " < tag attr=\"something\">here is some text< /tag > <tag></tag>" 1 49 24 41
-
-;
-; non-marking parenthesis added 25/04/00
-- match_default normal REG_EXTENDED REG_PERL
-(?:abc)+ xxabcabcxx 2 8
-(?:a+)(b+) xaaabbbx 1 7 4 7
-(a+)(?:b+) xaaabbba 1 7 1 4
-(?:(a+)b+) xaaabbba 1 7 1 4
-(?:a+(b+)) xaaabbba 1 7 4 7
-a+(?#b+)b+ xaaabbba 1 7
-(a)(?:b|$) ab 0 2 0 1
-(a)(?:b|$) a 0 1 0 1
-
-
-;
-; try some partial matches:
-- match_partial match_default normal REG_EXTENDED REG_NO_POSIX_TEST REG_PARTIAL_MATCH REG_PERL
-(xyz)(.*)abc xyzaaab 0 7
-(xyz)(.*)abc xyz 0 3
-(xyz)(.*)abc xy 0 2
-(xyz)(.*)abc x 0 1
-(xyz)(.*)abc "" -1 -1
-(xyz)(.*)abc aaaa -1 -1
-.abc aaab 1 4
-a[_] xxa 2 3
-
-;
-; forward lookahead asserts added 21/01/02
-- match_default normal REG_EXTENDED REG_NO_POSIX_TEST REG_PERL
-((?:(?!a|b)\w)+)(\w+) "  xxxabaxxx  " 2 11 2 5 5 11
-
-/\*(?:(?!\*/).)*\*/ "  /**/  " 2 6
-/\*(?:(?!\*/).)*\*/ "  /***/  " 2 7
-/\*(?:(?!\*/).)*\*/ "  /********/  " 2 12
-/\*(?:(?!\*/).)*\*/ "  /* comment */  " 2 15
-
-<\s*a[^>]*>((?:(?!<\s*/\s*a\s*>).)*)<\s*/\s*a\s*> " <a href=\"here\">here</a> " 1 24 16 20
-<\s*a[^>]*>((?:(?!<\s*/\s*a\s*>).)*)<\s*/\s*a\s*> " <a href=\"here\">here< /  a > " 1 28 16 20
-
-<\s*a[^>]*>((?:(?!<\s*/\s*a\s*>).)*)(?=<\s*/\s*a\s*>) " <a href=\"here\">here</a> " 1 20 16 20
-<\s*a[^>]*>((?:(?!<\s*/\s*a\s*>).)*)(?=<\s*/\s*a\s*>) " <a href=\"here\">here< /  a > " 1 20 16 20
-
-; filename matching:
-^(?!^(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(?:\..+)?$)[^\x00-\x1f\\?*:\"|/]+$ command.com 0 11
-^(?!^(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(?:\..+)?$)[^\x00-\x1f\\?*:\"|/]+$ PRN -1 -1
-^(?!^(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(?:\..+)?$)[^\x00-\x1f\\?*:\"|/]+$ COM2 -1 -1
-
-; password checking:
-^(?=.*\d).{4,8}$ abc3 0 4
-^(?=.*\d).{4,8}$ abc3def4 0 8
-^(?=.*\d).{4,8}$ ab2 -1 -1
-^(?=.*\d).{4,8}$ abcdefg -1 -1
-^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$ abc3 -1 -1
-^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$ abC3 0 4
-^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$ ABCD3 -1 -1
-
-; extended repeat checking to exercise new algorithms:
-ab.*xy abxy_ 0 4
-ab.*xy ab_xy_ 0 5
-ab.*xy abxy 0 4
-ab.*xy ab_xy 0 5
-ab.* ab 0 2
-ab.* ab__ 0 4
-
-ab.{2,5}xy ab__xy_ 0 6
-ab.{2,5}xy ab____xy_ 0 8
-ab.{2,5}xy ab_____xy_ 0 9
-ab.{2,5}xy ab__xy 0 6
-ab.{2,5}xy ab_____xy 0 9
-ab.{2,5} ab__ 0 4
-ab.{2,5} ab_______ 0 7
-ab.{2,5}xy ab______xy -1 -1
-ab.{2,5}xy ab_xy -1 -1
-
-ab.*?xy abxy_ 0 4
-ab.*?xy ab_xy_ 0 5
-ab.*?xy abxy 0 4
-ab.*?xy ab_xy 0 5
-ab.*? ab 0 2
-ab.*? ab__ 0 2
-
-ab.{2,5}?xy ab__xy_ 0 6
-ab.{2,5}?xy ab____xy_ 0 8
-ab.{2,5}?xy ab_____xy_ 0 9
-ab.{2,5}?xy ab__xy 0 6
-ab.{2,5}?xy ab_____xy 0 9
-ab.{2,5}? ab__ 0 4
-ab.{2,5}? ab_______ 0 4
-ab.{2,5}?xy ab______xy -1 -1
-ab.{2,5}xy ab_xy -1 -1
-
-; again but with slower algorithm variant:
-- match_default normal REG_PERL REG_NO_POSIX_TEST match_not_dot_newline match_not_dot_null
-ab.*xy abxy_ 0 4
-ab.*xy ab_xy_ 0 5
-ab.*xy abxy 0 4
-ab.*xy ab_xy 0 5
-ab.* ab 0 2
-ab.* ab__ 0 4
-
-ab.{2,5}xy ab__xy_ 0 6
-ab.{2,5}xy ab____xy_ 0 8
-ab.{2,5}xy ab_____xy_ 0 9
-ab.{2,5}xy ab__xy 0 6
-ab.{2,5}xy ab_____xy 0 9
-ab.{2,5} ab__ 0 4
-ab.{2,5} ab_______ 0 7
-ab.{2,5}xy ab______xy -1 -1
-ab.{2,5}xy ab_xy -1 -1
-
-ab.*?xy abxy_ 0 4
-ab.*?xy ab_xy_ 0 5
-ab.*?xy abxy 0 4
-ab.*?xy ab_xy 0 5
-ab.*? ab 0 2
-ab.*? ab__ 0 2
-
-ab.{2,5}?xy ab__xy_ 0 6
-ab.{2,5}?xy ab____xy_ 0 8
-ab.{2,5}?xy ab_____xy_ 0 9
-ab.{2,5}?xy ab__xy 0 6
-ab.{2,5}?xy ab_____xy 0 9
-ab.{2,5}? ab__ 0 4
-ab.{2,5}? ab_______ 0 4
-ab.{2,5}?xy ab______xy -1 -1
-ab.{2,5}xy ab_xy -1 -1
-(.*?).somesite \n\n555.somesite 2 14 2 5
-
-; now again for single character repeats:
-
-ab_*xy abxy_ 0 4
-ab_*xy ab_xy_ 0 5
-ab_*xy abxy 0 4
-ab_*xy ab_xy 0 5
-ab_* ab 0 2
-ab_* ab__ 0 4
-
-ab_{2,5}xy ab__xy_ 0 6
-ab_{2,5}xy ab____xy_ 0 8
-ab_{2,5}xy ab_____xy_ 0 9
-ab_{2,5}xy ab__xy 0 6
-ab_{2,5}xy ab_____xy 0 9
-ab_{2,5} ab__ 0 4
-ab_{2,5} ab_______ 0 7
-ab_{2,5}xy ab______xy -1 -1
-ab_{2,5}xy ab_xy -1 -1
-
-ab_*?xy abxy_ 0 4
-ab_*?xy ab_xy_ 0 5
-ab_*?xy abxy 0 4
-ab_*?xy ab_xy 0 5
-ab_*? ab 0 2
-ab_*? ab__ 0 2
-
-ab_{2,5}?xy ab__xy_ 0 6
-ab_{2,5}?xy ab____xy_ 0 8
-ab_{2,5}?xy ab_____xy_ 0 9
-ab_{2,5}?xy ab__xy 0 6
-ab_{2,5}?xy ab_____xy 0 9
-ab_{2,5}? ab__ 0 4
-ab_{2,5}? ab_______ 0 4
-ab_{2,5}?xy ab______xy -1 -1
-ab_{2,5}xy ab_xy -1 -1
-(5*?).somesite //555.somesite 2 14 2 5
-
-; and again for sets:
-ab[_,;]*xy abxy_ 0 4
-ab[_,;]*xy ab_xy_ 0 5
-ab[_,;]*xy abxy 0 4
-ab[_,;]*xy ab_xy 0 5
-ab[_,;]* ab 0 2
-ab[_,;]* ab__ 0 4
-
-ab[_,;]{2,5}xy ab__xy_ 0 6
-ab[_,;]{2,5}xy ab____xy_ 0 8
-ab[_,;]{2,5}xy ab_____xy_ 0 9
-ab[_,;]{2,5}xy ab__xy 0 6
-ab[_,;]{2,5}xy ab_____xy 0 9
-ab[_,;]{2,5} ab__ 0 4
-ab[_,;]{2,5} ab_______ 0 7
-ab[_,;]{2,5}xy ab______xy -1 -1
-ab[_,;]{2,5}xy ab_xy -1 -1
-
-ab[_,;]*?xy abxy_ 0 4
-ab[_,;]*?xy ab_xy_ 0 5
-ab[_,;]*?xy abxy 0 4
-ab[_,;]*?xy ab_xy 0 5
-ab[_,;]*? ab 0 2
-ab[_,;]*? ab__ 0 2
-
-ab[_,;]{2,5}?xy ab__xy_ 0 6
-ab[_,;]{2,5}?xy ab____xy_ 0 8
-ab[_,;]{2,5}?xy ab_____xy_ 0 9
-ab[_,;]{2,5}?xy ab__xy 0 6
-ab[_,;]{2,5}?xy ab_____xy 0 9
-ab[_,;]{2,5}? ab__ 0 4
-ab[_,;]{2,5}? ab_______ 0 4
-ab[_,;]{2,5}?xy ab______xy -1 -1
-ab[_,;]{2,5}xy ab_xy -1 -1
-(\d*?).somesite //555.somesite 2 14 2 5
-
-; and again for tricky sets with digraphs:
-ab[_[.ae.]]*xy abxy_ 0 4
-ab[_[.ae.]]*xy ab_xy_ 0 5
-ab[_[.ae.]]*xy abxy 0 4
-ab[_[.ae.]]*xy ab_xy 0 5
-ab[_[.ae.]]* ab 0 2
-ab[_[.ae.]]* ab__ 0 4
-
-ab[_[.ae.]]{2,5}xy ab__xy_ 0 6
-ab[_[.ae.]]{2,5}xy ab____xy_ 0 8
-ab[_[.ae.]]{2,5}xy ab_____xy_ 0 9
-ab[_[.ae.]]{2,5}xy ab__xy 0 6
-ab[_[.ae.]]{2,5}xy ab_____xy 0 9
-ab[_[.ae.]]{2,5} ab__ 0 4
-ab[_[.ae.]]{2,5} ab_______ 0 7
-ab[_[.ae.]]{2,5}xy ab______xy -1 -1
-ab[_[.ae.]]{2,5}xy ab_xy -1 -1
-
-ab[_[.ae.]]*?xy abxy_ 0 4
-ab[_[.ae.]]*?xy ab_xy_ 0 5
-ab[_[.ae.]]*?xy abxy 0 4
-ab[_[.ae.]]*?xy ab_xy 0 5
-ab[_[.ae.]]*? ab 0 2
-ab[_[.ae.]]*? ab__ 0 2
-
-ab[_[.ae.]]{2,5}?xy ab__xy_ 0 6
-ab[_[.ae.]]{2,5}?xy ab____xy_ 0 8
-ab[_[.ae.]]{2,5}?xy ab_____xy_ 0 9
-ab[_[.ae.]]{2,5}?xy ab__xy 0 6
-ab[_[.ae.]]{2,5}?xy ab_____xy 0 9
-ab[_[.ae.]]{2,5}? ab__ 0 4
-ab[_[.ae.]]{2,5}? ab_______ 0 4
-ab[_[.ae.]]{2,5}?xy ab______xy -1 -1
-ab[_[.ae.]]{2,5}xy ab_xy -1 -1
-([5[.ae.]]*?).somesite //555.somesite 2 14 2 5
-
-; new bugs detected in spring 2003:
-- normal match_continuous REG_NO_POSIX_TEST
-b abc -1 -1
-
-- normal REG_PERL
-(?!foo)bar foobar 3 6
-(?!foo)bar "??bar" 2 5
-(?!foo)bar "barfoo" 0 3
-(?!foo)bar "bar??" 0 3
-(?!foo)bar bar 0 3
-
-a\Z a\nb -1 -1
-() abc 0 0 0 0
-^() abc 0 0 0 0
-^()+ abc 0 0 0 0
-^(){1} abc 0 0 0 0
-^(){2} abc 0 0 0 0
-^((){2}) abc 0 0 0 0 0 0
-() "" 0 0 0 0
-()\1 "" 0 0 0 0
-()\1 a 0 0 0 0
-a()\1b ab 0 2 1 1
-a()b\1 ab 0 2 1 1
-
-- normal match_not_dot_newline REG_NO_POSIX_TEST
-
-"(.*\r\n){3}.* abcdefghijklmnopqrstuvwxyz.*\r\n" "00001 01 \r\n00002 02 1         2         3         4         5         6         7         8         9         0\r\n00003 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00004 04 \r\n00005 05 \r\n00006 06                                                             Seite: 0001\r\n00007 07                                                             StartSeitEEnde: 0001\r\n00008 08                                                             StartSeiTe Ende: 0001\r\n00009 09                                                             Start seiteEnde: 0001\r\n00010 10                                                             28.2.03\r\n00011 11                                                             Page: 0001\r\n00012 12                                                             Juhu die Erste: 0001\r\n00013 13                                                             Es war einmal! 0001\r\n00014 14      
-
+  
 - normal REG_PERL
 
 ; new (?: construct )

@@ -47,7 +47,11 @@ typedef size_t regsize_t;
 typedef struct
 {
    unsigned int re_magic;
+#ifdef __cplusplus
    std::size_t  re_nsub;      /* number of parenthesized subexpressions */
+#else
+   size_t re_nsub; 
+#endif
    const char*  re_endp;       /* end pointer for REG_PEND */
    void* guts;                /* none of your business :-) */
    match_flag_type eflags;        /* none of your business :-) */
@@ -57,7 +61,11 @@ typedef struct
 typedef struct
 {
    unsigned int re_magic;
+#ifdef __cplusplus
    std::size_t  re_nsub;         /* number of parenthesized subexpressions */
+#else
+   size_t re_nsub;
+#endif
    const wchar_t* re_endp;       /* end pointer for REG_PEND */
    void* guts;                   /* none of your business :-) */
    match_flag_type eflags;           /* none of your business :-) */

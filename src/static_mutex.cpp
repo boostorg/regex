@@ -16,6 +16,7 @@
   *   DESCRIPTION: Declares static_mutex lock type.
   */
 
+#define BOOST_REGEX_SOURCE
 #include <boost/config.hpp>
 
 #ifdef BOOST_HAS_THREADS
@@ -86,7 +87,7 @@ void scoped_static_mutex_lock::lock()
 {
    if(0 == m_have_lock)
    {
-#if defined(BOOST_MSVC) && (BOOST_MSVC <=1200)
+#if !defined(InterlockedCompareExchangePointer)
       while(0 != InterlockedCompareExchange(reinterpret_cast<void**>((boost::uint_least16_t*)&(m_mutex.m_mutex)), (void*)1, 0))
 #else
       while(0 != InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 1, 0))
@@ -102,7 +103,7 @@ void scoped_static_mutex_lock::unlock()
 {
    if(m_have_lock)
    {
-#if defined(BOOST_MSVC) && (BOOST_MSVC <=1200)
+#if !defined(InterlockedCompareExchangePointer)
       InterlockedExchange((LONG*)&(m_mutex.m_mutex), 0);
 #else
       InterlockedExchange(reinterpret_cast<volatile LONG*>(&(m_mutex.m_mutex)), 0);
@@ -121,7 +122,7 @@ void scoped_static_mutex_lock::unlock()
 boost::recursive_mutex* static_mutex::m_pmutex = 0;
 boost::once_flag static_mutex::m_once = BOOST_ONCE_INIT;
 
-extern "C" void free_static_mutex()
+extern "C" BOOST_REGEX_DECL void free_static_mutex()
 {
    delete static_mutex::m_pmutex;
    static_mutex::m_pmutex = 0;

@@ -16,11 +16,12 @@
   *   DESCRIPTION: Declares API's for access to regex_traits default properties.
   */
 
+#define BOOST_REGEX_SOURCE
 #include <boost/regex/regex_traits.hpp>
 
 namespace boost{ namespace re_detail{
 
-const char* get_default_syntax(regex_constants::syntax_type n)
+BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n)
 {
    // if the user hasn't supplied a message catalog, then this supplies
    // default "messages" for us to load in the range 1-100.
@@ -77,13 +78,13 @@ const char* get_default_syntax(regex_constants::syntax_type n)
          "X",
          "C",
          "Z",
-         "G"
+         "G",
          "!", };
 
    return ((n >= (sizeof(messages) / sizeof(messages[1]))) ? "" : messages[n]);
 }
 
-const char* get_default_error_string(regex_constants::error_type n)
+BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_error_string(regex_constants::error_type n)
 {
    static const char* const s_default_error_messages[] = {
       "Success",             /* REG_NOERROR */
@@ -115,7 +116,7 @@ const char* get_default_error_string(regex_constants::error_type n)
    return (n > REG_E_UNKNOWN) ? s_default_error_messages[REG_E_UNKNOWN] : s_default_error_messages[n];
 }
 
-bool is_combining_implementation(boost::uint_least16_t c)
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL is_combining_implementation(boost::uint_least16_t c)
 {
    const boost::uint_least16_t combining_ranges[] = { 0x0300, 0x0361, 
                            0x0483, 0x0486, 
@@ -163,6 +164,81 @@ bool is_combining_implementation(boost::uint_least16_t c)
          return true;
    return false;
 }
+
+//
+// these are the POSIX collating names:
+//
+BOOST_REGEX_DECL const char* def_coll_names[] = {
+"NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "alert", "backspace", "tab", "newline", 
+"vertical-tab", "form-feed", "carriage-return", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", 
+"SYN", "ETB", "CAN", "EM", "SUB", "ESC", "IS4", "IS3", "IS2", "IS1", "space", "exclamation-mark", 
+"quotation-mark", "number-sign", "dollar-sign", "percent-sign", "ampersand", "apostrophe", 
+"left-parenthesis", "right-parenthesis", "asterisk", "plus-sign", "comma", "hyphen", 
+"period", "slash", "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", 
+"colon", "semicolon", "less-than-sign", "equals-sign", "greater-than-sign", 
+"question-mark", "commercial-at", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", 
+"Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "left-square-bracket", "backslash", 
+"right-square-bracket", "circumflex", "underscore", "grave-accent", "a", "b", "c", "d", "e", "f", 
+"g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "left-curly-bracket", 
+"vertical-line", "right-curly-bracket", "tilde", "DEL", "", 
+};
+
+// these multi-character collating elements
+// should keep most Western-European locales
+// happy - we should really localise these a
+// little more - but this will have to do for
+// now:
+
+BOOST_REGEX_DECL const char* def_multi_coll[] = {
+   "ae",
+   "Ae",
+   "AE",
+   "ch",
+   "Ch",
+   "CH",
+   "ll",
+   "Ll",
+   "LL",
+   "ss",
+   "Ss",
+   "SS",
+   "nj",
+   "Nj",
+   "NJ",
+   "dz",
+   "Dz",
+   "DZ",
+   "lj",
+   "Lj",
+   "LJ",
+   "",
+};
+
+
+
+BOOST_REGEX_DECL std::string BOOST_REGEX_CALL lookup_default_collate_name(const std::string& name)
+{
+   unsigned int i = 0;
+   while(*def_coll_names[i])
+   {
+      if(def_coll_names[i] == name)
+      {
+         return std::string(1, char(i));
+      }
+      ++i;
+   }
+   i = 0;
+   while(*def_multi_coll[i])
+   {
+      if(def_multi_coll[i] == name)
+      {
+         return def_multi_coll[i];
+      }
+      ++i;
+   }
+   return std::string();
+}
+
 
 } // re_detail
 } // boost

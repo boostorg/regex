@@ -68,7 +68,7 @@ struct regex_data
 //
 template <class charT, class traits>
 class basic_regex_implementation
-   : protected regex_data<charT, traits>
+   : public regex_data<charT, traits>
 {
 public:
    typedef regex_constants::syntax_option_type   flag_type;

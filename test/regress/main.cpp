@@ -14,6 +14,14 @@ int cpp_main(int argc, char * argv[])
    test_character_escapes();
    test_assertion_escapes();
    test_tricky_cases();
+   test_tricky_cases2();
+   test_grep();
+   test_replace();
+   test_non_greedy_repeats();
+   test_non_marking_paren();
+   test_partial_match();
+   test_forward_lookahead_asserts();
+   test_fast_repeats();
    return error_count;
 }
 
