@@ -1,0 +1,944 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: basic_regex</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">basic_regex</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <H3>Synopsis</H3>
+      <PRE>#include &lt;<A href="../../boost/regex.hpp">boost/regex.hpp</A>&gt; </PRE>
+      <P>The template class <EM>basic_regex </EM>encapsulates regular expression parsing 
+         and compilation. The class takes three template parameters:
+      </P>
+      <P><B><I>charT</I></B>: determines the character type, i.e. either char or 
+         wchar_t.
+      </P>
+      <P><B><I>traits</I></B>: determines the behaviour of the character type, for 
+         example which character class names are recognized. A default traits class is 
+         provided: <A href="regex_traits.html">regex_traits&lt;charT&gt;</A>.
+      </P>
+      <P><B><I>Allocator</I></B>: the allocator class used to allocate memory by the 
+         class.
+      </P>
+      <P>For ease of use there are two typedefs that define the two standard <I>basic_regex </I>
+         instances, unless you want to use custom traits classes or allocators, you 
+         won't need to use anything other than these:
+      </P>
+      <PRE><B>namespace</B> boost{
+<B>template</B> &lt;<B>class</B> charT, <B>class</B> traits = regex_traits&lt;charT&gt;, <B>class</B> Allocator = std::allocator&lt;charT&gt;&nbsp; &gt;
+<B>class</B> reg_expression;
+<B>typedef</B> reg_expression&lt;<B>char</B>&gt; regex;
+<B>typedef</B> reg_expression&lt;<B>wchar_t&gt; </B>wregex;
+}</PRE>
+      <P>The definition of <I>reg_expression</I> follows: it is based very closely on 
+         class basic_string, and fulfils the requirements for a constant-container of <I>charT</I>.
+      </P>
+      <PRE>namespace boost{
+
+template &lt;class charT,
+          class traits = regex_traits&lt;charT&gt;,
+          class Allocator = allocator&lt;charT&gt; &gt;
+class basic_regex
+{
+public:
+   // types:
+   typedef          charT                                value_type;
+   typedef          implementation defined               const_iterator;
+   typedef          const_iterator                       iterator;
+   typedef typename Allocator::reference                 reference;
+   typedef typename Allocator::const_reference           const_reference;
+   typedef typename Allocator::difference_type           difference_type;
+   typedef typename Allocator::size_type                 size_type;
+   typedef          Allocator                            allocator_type;
+   typedef          regex_constants::syntax_option_type  flag_type;
+   typedef typename traits::locale_type                  locale_type;
+
+   // constants:
+   static const regex_constants::syntax_option_type normal = regex_constants::normal;
+   static const regex_constants::syntax_option_type icase = regex_constants::icase;
+   static const regex_constants::syntax_option_type nosubs = regex_constants::nosubs;
+   static const regex_constants::syntax_option_type optimize = regex_constants::optimize;
+   static const regex_constants::syntax_option_type collate = regex_constants::collate;
+   static const regex_constants::syntax_option_type ECMAScript = normal;
+   static const regex_constants::syntax_option_type JavaScript = normal;
+   static const regex_constants::syntax_option_type JScript = normal;
+   // these flags are optional, if the functionality is supported
+   // then the flags shall take these names.
+   static const regex_constants::syntax_option_type basic = regex_constants::basic;
+   static const regex_constants::syntax_option_type extended = regex_constants::extended;
+   static const regex_constants::syntax_option_type awk = regex_constants::awk;
+   static const regex_constants::syntax_option_type grep = regex_constants::grep;
+   static const regex_constants::syntax_option_type egrep = regex_constants::egrep;
+   static const regex_constants::syntax_option_type sed = basic = regex_constants::sed;
+   static const regex_constants::syntax_option_type perl = regex_constants::perl;
+
+   // construct/copy/destroy:
+   explicit basic_regex(const Allocator&amp; a = Allocator());
+   explicit basic_regex(const charT* p, flag_type f = regex_constants::normal,
+                        const Allocator&amp; a = Allocator());
+   basic_regex(const charT* p1, const charT* p2, flag_type f = regex_constants::normal,
+               const Allocator&amp; a = Allocator());
+   basic_regex(const charT* p, size_type len, flag_type f,
+               const Allocator&amp; a = Allocator());
+   basic_regex(const basic_regex&amp;);
+   template &lt;class ST, class SA&gt;
+   explicit basic_regex(const basic_string&lt;charT, ST, SA&gt;&amp; p,
+                        flag_type f = regex_constants::normal,
+                        const Allocator&amp; a = Allocator());
+   template &lt;class InputIterator&gt;
+   basic_regex(InputIterator first, inputIterator last,
+               flag_type f = regex_constants::normal,
+               const Allocator&amp; a = Allocator());
+
+   ~basic_regex();
+   basic_regex&amp; operator=(const basic_regex&amp;);
+   basic_regex&amp; operator=(const charT* ptr);
+   template &lt;class ST, class SA&gt;
+   basic_regex&amp; operator=(const basic_string&lt;charT, ST, SA&gt;&amp; p);
+
+   // iterators:
+   const_iterator begin() const;
+   const_iterator end() const;
+   // capacity:
+   size_type size() const;
+   size_type max_size() const;
+   bool empty() const;
+   unsigned mark_count() const;
+
+   //
+   // modifiers:
+   basic_regex&amp; assign(const basic_regex&amp; that);
+   basic_regex&amp; assign(const charT* ptr, flag_type f = regex_constants::normal);
+   basic_regex&amp; assign(const charT* first, const charT* last,
+                       flag_type f = regex_constants::normal);
+   template &lt;class string_traits, class A&gt;
+   basic_regex&amp; assign(const basic_string&lt;charT, string_traits, A&gt;&amp; s,
+                       flag_type f = regex_constants::normal);
+   template &lt;class InputIterator&gt;
+   basic_regex&amp; assign(InputIterator first, InputIterator last,
+                       flag_type f = regex_constants::normal);
+
+   // const operations:
+   Allocator get_allocator() const;
+   flag_type getflags() const;
+   basic_string&lt;charT&gt; str() const;
+   int compare(basic_regex&amp;) const;
+   // locale:
+   locale_type imbue(locale_type loc);
+   locale_type getloc() const;
+   // swap
+   void swap(basic_regex&amp;) throw();
+};
+
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator == (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator != (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator &lt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator &lt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator &gt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits, class Allocator&gt;
+bool operator &gt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+
+template &lt;class charT, class io_traits, class re_traits, class Allocator&gt;
+basic_ostream&lt;charT, io_traits&gt;&amp;
+   operator &lt;&lt; (basic_ostream&lt;charT, io_traits&gt;&amp; os,
+                const basic_regex&lt;charT, re_traits, Allocator&gt;&amp; e);
+
+template &lt;class charT, class traits, class Allocator&gt;
+void swap(basic_regex&lt;charT, traits, Allocator&gt;&amp; e1,
+          basic_regex&lt;charT, traits, Allocator&gt;&amp; e2);
+
+typedef basic_regex&lt;char&gt; regex;
+typedef basic_regex&lt;wchar_t&gt; wregex;
+
+} // namespace boost</PRE>
+      <H3>Description</H3>
+      <P>Class&nbsp;<EM>basic_regex</EM> has the following public member functions:
+      </P>
+      <H4>basic_regex constants</H4>
+      <PRE>static const regex_constants::syntax_option_type normal = regex_constants::normal;
+static const regex_constants::syntax_option_type icase = regex_constants::icase;
+static const regex_constants::syntax_option_type nosubs = regex_constants::nosubs;
+static const regex_constants::syntax_option_type optimize = regex_constants::optimize;
+static const regex_constants::syntax_option_type collate = regex_constants::collate;
+static const regex_constants::syntax_option_type ECMAScript = normal;
+static const regex_constants::syntax_option_type JavaScript = normal;
+static const regex_constants::syntax_option_type JScript = normal;
+static const regex_constants::syntax_option_type basic = regex_constants::basic;
+static const regex_constants::syntax_option_type extended = regex_constants::extended;
+static const regex_constants::syntax_option_type awk = regex_constants::awk;
+static const regex_constants::syntax_option_type grep = regex_constants::grep;
+static const regex_constants::syntax_option_type egrep = regex_constants::egrep;
+static const regex_constants::syntax_option_type sed = basic = regex_constants::sed;
+static const regex_constants::syntax_option_type perl = regex_constants::perl;</PRE>
+      <P>The static constant members are provided as synonyms for the constants declared 
+         in namespace <CODE>boost::regex_constants</CODE>; for each constant of type <CODE>syntax_option_type</CODE>
+         declared in namespace <CODE>boost::regex_constants</CODE> then a constant with 
+         the same name, type and value is declared within the scope of <CODE>basic_regex</CODE>.</P>
+      <H4>basic_regex constructors</H4>
+      <P>In all <CODE>basic_regex</CODE> constructors, a copy of the <CODE>Allocator</CODE>
+         argument is used for any memory allocation performed by the constructor or 
+         member functions during the lifetime of the object.
+      </P>
+      <PRE>basic_regex(const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>. The 
+      postconditions of this function are indicated in the table:<I></I><I></P>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table2" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value </B></P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>true</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>0</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>basic_string&lt;charT&gt;()</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>basic_regex(const charT* p, flag_type f = regex_constants::normal, const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Requires:</B> <I>p</I> shall not be a null pointer.</P><B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if <I>p</I> is not a valid regular 
+      expression.</P><B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>; the 
+      object's internal finite state machine is constructed from the regular 
+      expression contained in the null-terminated string <I>p</I>, and interpreted 
+      according to the <A href="syntax_option_type.html">option flags</A>&nbsp;specified 
+      in <I>f</I>. The postconditions of this function are indicated in the 
+      table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table3" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>char_traits&lt;charT&gt;::length(p)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>basic_string&lt;charT&gt;(p)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>basic_regex(const charT* p1, const charT* p2, flag_type f = regex_constants::normal, const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Requires:</B> <I>p1 </I>and<I> p2</I> are not null pointers, <CODE>p1 &lt; p2</CODE>.</P><B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if [p1,p2) is not a valid regular 
+      expression.</P><B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>; the 
+      object's internal finite state machine is constructed from the regular 
+      expression contained in the sequence of characters [p1,p2), and interpreted 
+      according the <A href="syntax_option_type.html">option flags</A> specified in <I>f</I>. 
+      The postconditions of this function are indicated in the table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table4" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>std::distance(p1,p2)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>basic_string&lt;charT&gt;(p1,p2)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>basic_regex(const charT* p, size_type len, flag_type f, const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Requires:</B> <I>p</I> shall not be a null pointer, <CODE>len &lt; max_size()</CODE>.</P><B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if <I>p</I> is not a valid regular 
+      expression.</P><B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>; the 
+      object's internal finite state machine is constructed from the regular 
+      expression contained in the sequence of characters [p, p+len), and interpreted 
+      according the <A href="syntax_option_type.html">option flags </A>specified in <I>f</I>. 
+      The postconditions of this function are indicated in the table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table5" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>len</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>basic_string&lt;charT&gt;(p, len)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>basic_regex(const basic_regex&amp; e);</PRE>
+      <B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE> as a 
+      copy of the object <I>e</I>. The postconditions of this function are indicated 
+      in the table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table6" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>e.empty()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>e.size()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>e.str()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>e.getflags()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>e.mark_count()</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>template &lt;class ST, class SA&gt;
+basic_regex(const basic_string&lt;charT, ST, SA&gt;&amp; s,
+            flag_type f = regex_constants::normal, const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if <I>s</I> is not a valid regular 
+      expression.</P><B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>; the 
+      object's internal finite state machine is constructed from the regular 
+      expression contained in the string <I>s</I>, and interpreted according to the <A href="syntax_option_type.html">
+         option flags </A>specified in <I>f</I>. The postconditions of this function 
+      are indicated in the table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table7" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>s.size()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>s</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>template &lt;class ForwardIterator&gt;
+basic_regex(ForwardIterator first, ForwardIterator last,
+            flag_type f = regex_constants::normal, const Allocator&amp; a = Allocator());</PRE>
+      <B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if the sequence <I>[first, last)</I> 
+      is not a valid regular expression.</P><B>
+         <P>
+         Effects:</B> Constructs an object of class <CODE>basic_regex</CODE>; the 
+      object's internal finite state machine is constructed from the regular 
+      expression contained in the sequence of characters [first, last), and 
+      interpreted according to the <A href="syntax_option_type.html">option flags </A>
+      specified in <I>f</I>. The postconditions of this function are indicated in the 
+      table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table8" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>distance(first,last)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>basic_string&lt;charT&gt;(first,last)</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>basic_regex&amp; operator=(const basic_regex&amp; e);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the result of <CODE>assign(e.str(), e.getflags())</CODE>.</P><PRE>basic_regex&amp; operator=(const charT* ptr);</PRE>
+      <B>
+         <P>
+         Requires:</B> <I>p</I> shall not be a null pointer.</P><B>
+         <P>
+         Effects:</B> Returns the result of <CODE>assign(ptr)</CODE>.</P><PRE>template &lt;class ST, class SA&gt;
+basic_regex&amp; operator=(const basic_string&lt;charT, ST, SA&gt;&amp; p);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the result of <CODE>assign(p)</CODE>.</P>
+      <H4>basic_regex iterators</H4>
+      <PRE>const_iterator begin() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns a starting iterator to a sequence of characters 
+      representing the regular expression.</P><PRE>const_iterator end() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns termination iterator to a sequence of characters 
+      representing the regular expression.</P>
+      <H4>basic_regex capacity</H4>
+      <PRE>size_type size() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the length of the sequence of characters representing 
+      the regular expression.</P><PRE>size_type max_size() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the maximum length of the sequence of characters 
+      representing the regular expression.</P><PRE>bool empty() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <B>true</B> if the object does not contain a valid 
+      regular expression, otherwise <B>false</B>.</P><PRE>unsigned mark_count() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the number of marked sub-expressions within the regular 
+      expresion.</P>
+      <H4>basic_regex assign</H4>
+      <PRE>basic_regex&amp; assign(const basic_regex&amp; that);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>assign(that.str(), that.getflags())</CODE>.</P><PRE>basic_regex&amp; assign(const charT* ptr, flag_type f = regex_constants::normal);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>assign(string_type(ptr), f)</CODE>.</P><PRE>basic_regex&amp; assign(const charT* first, const charT* last,
+                    flag_type f = regex_constants::normal);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>assign(string_type(first, last), f)</CODE>.</P><PRE>template &lt;class string_traits, class A&gt;
+basic_regex&amp; assign(const basic_string&lt;charT, string_traits, A&gt;&amp; s,
+                    flag_type f = regex_constants::normal);</PRE>
+      <B>
+         <P>
+         Throws: </B><CODE>bad_expression</CODE> if <I>s</I> is not a valid regular 
+      expression.</P><B>
+         <P>
+         Returns:</B> <CODE>*this</CODE>.</P><B>
+         <P>
+         Effects:</B> Assigns the regular expression contained in the string <I>s</I>, 
+      interpreted according the <A href="syntax_option_type.html">option flags</A> specified 
+      in <I>f</I>. The postconditions of this function are indicated in the 
+      table:</P><I>
+         <P>
+            <DIV align="center">
+               <P></P>
+      </I>
+      <P align="center">
+         <CENTER>
+            <TABLE id="Table9" cellSpacing="1" cellPadding="7" width="624" border="1">
+               <TBODY>
+                  <TR>
+                     <TD vAlign="top" width="50%"><B>
+                           <P>
+                           Element</B>
+      </P>
+      </TD>
+      <TD vAlign="top" width="50%"><B>
+            <P>
+            Value</B> </P></TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>empty()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>false</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>size()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>s.size()</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>str()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>s</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>getflags()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>f</P>
+         </TD>
+      </TR>
+      <TR>
+         <TD vAlign="top" width="50%">
+            <P>mark_count()</P>
+         </TD>
+         <TD vAlign="top" width="50%">
+            <P>The number of marked sub-expressions within the expression.</P>
+            <P></P>
+         </TD>
+      </TR>
+      </TBODY></TD></TR></TABLE></CENTER>
+      <P></P>
+      </DIV><PRE>template &lt;class InputIterator&gt;
+basic_regex&amp; assign(InputIterator first, InputIterator last,
+                    flag_type f = regex_constants::normal);</PRE>
+      <B>
+         <P>
+         Requires:</B> The type InputIterator corresponds to the Input Iterator 
+      requirements (24.1.1).</P><B>
+         <P>
+         Effects:</B> Returns <CODE>assign(string_type(first, last), f)</CODE>.</P>
+      <H4>basic_regex constant operations</H4>
+      <PRE>Allocator get_allocator() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns a copy of the Allocator that was passed to the object's 
+      constructor.</P><PRE>flag_type getflags() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns a copy of the regular expression syntax flags that were 
+      passed to the object's constructor, or the last call to <CODE>assign.</P></CODE><PRE>basic_string&lt;charT&gt; str() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns a copy of the character sequence passed to the object's 
+      constructor, or the last call to <CODE>assign.</P></CODE><PRE>int compare(basic_regex&amp; e)const;</PRE>
+      <B>
+         <P>
+         Effects:</B> If <CODE>getflags() == e.getflags()</CODE> then returns <CODE>str().compare(e.str())</CODE>, 
+      otherwise returns <CODE>getflags() - e.getflags()</CODE>.</P>
+      <H4>basic_regex locale</H4>
+      <PRE>locale_type imbue(locale_type l);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the result of <CODE>traits_inst.imbue(l)</CODE> where <CODE>
+         traits_inst </CODE>is a (default initialized) instance of the template 
+      parameter <CODE>traits</CODE> stored within the object. Calls to imbue 
+      invalidate any currently contained regular expression.</P><B>
+         <P>
+         Postcondition:</B> <CODE>empty() == true</CODE>.</P><PRE>locale_type getloc() const;</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns the result of <CODE>traits_inst.getloc()</CODE> where <CODE>
+         traits_inst </CODE>is a (default initialized) instance of the template 
+      parameter <CODE>traits</CODE> stored within the object.</P>
+      <H4>basic_regex swap</H4>
+      <PRE>void swap(basic_regex&amp; e) throw();</PRE>
+      <B>
+         <P>
+         Effects:</B> Swaps the contents of the two regular expressions. </P><B>
+         <P>
+         Postcondition:</B> <CODE>*this</CODE> contains the characters that were in <I>e</I>,
+      <I>e </I>contains the regular expression that was in <CODE>*this</CODE>. </P><B>
+         <P>
+         Complexity:</B> constant time. </P>
+      <H4>basic_regex non-member functions</H4>
+      <H5>basic_regex non-member comparison operators&nbsp;</H5>
+      <PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator == (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) == 0</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator != (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) != 0</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator &lt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) &lt; 0</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator &lt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) &lt;= 0</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator &gt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) &gt;= 0</CODE>.</P><PRE>template &lt;class charT, class traits, class Allocator&gt;
+bool operator &gt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns <CODE>lhs.compare(rhs) &gt; 0</CODE>.</P>
+      <H5>basic_regex inserter.</H5>
+      <PRE>template &lt;class charT, class io_traits, class re_traits, class Allocator&gt;
+basic_ostream&lt;charT, io_traits&gt;&amp;
+   operator &lt;&lt; (basic_ostream&lt;charT, io_traits&gt;&amp; os
+                const basic_regex&lt;charT, re_traits, Allocator&gt;&amp; e);</PRE>
+      <B>
+         <P>
+         Effects:</B> Returns (os &lt;&lt; e.str()).</P>
+      <H5>basic_regex non-member swap</H5>
+      <PRE>template &lt;class charT, class traits, class Allocator&gt;
+void swap(basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
+          basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);</PRE>
+      <B>
+         <P>
+         Effects:</B> calls <CODE>lhs.swap(rhs)</CODE>.</P>
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         11 April 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
+      </p>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan --> 2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
+            and its documentation for any purpose is hereby granted without fee, provided 
+            that the above copyright notice appear in all copies and that both that 
+            copyright notice and this permission notice appear in supporting documentation. 
+            Dr John Maddock makes no representations about the suitability of this software 
+            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
+   </body>
+</html>

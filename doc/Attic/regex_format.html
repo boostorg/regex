@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: Algorithm regex_format (deprecated)</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">Algorithm regex_format (deprecated)</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <P>The algorithm regex_format is deprecated, new code should use 
+         match_results::format instead.&nbsp; Existing code will continue to compile, 
+         the following documentation ius taken from the previous version of boost.regex 
+         and will not be further updated:</P>
+      <H3>Algorithm regex_format</H3>
+      <H3></H3>
+      <PRE>#include &lt;<A href="../../boost/regex.hpp">boost/regex.hpp</A>&gt; </PRE>
+      <P>The algorithm regex_format takes the results of a match and creates a new 
+         string based upon a <A href="format_syntax.html">format string</A>, 
+         regex_format can be used for search and replace operations:
+      </P>
+      <PRE><B>template</B> &lt;<B>class</B> OutputIterator, <B>class</B> iterator, <B>class</B> Allocator, <B>class</B> charT&gt;
+OutputIterator regex_format(OutputIterator out,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> match_results&lt;iterator, Allocator&gt;&amp; m,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> charT* fmt,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; match_flag_type flags = 0);
+<B>
+template</B> &lt;<B>class</B> OutputIterator, <B>class</B> iterator, <B>class</B> Allocator, <B>class</B> charT&gt;
+OutputIterator regex_format(OutputIterator out,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> match_results&lt;iterator, Allocator&gt;&amp; m,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> std::basic_string&lt;charT&gt;&amp; fmt,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; match_flag_type flags = 0);</PRE>
+      <P>The library also defines the following convenience variation of regex_format, 
+         which returns the result directly as a string, rather than outputting to an 
+         iterator [note - this version may not be available, or may be available in a 
+         more limited form, depending upon your compilers capabilities]:
+      </P>
+      <PRE><B>template</B> &lt;<B>class</B> iterator, <B>class</B> Allocator, <B>class</B> charT&gt;
+std::basic_string&lt;charT&gt; regex_format
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<B>const</B> match_results&lt;iterator, Allocator&gt;&amp; m,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> charT* fmt,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; match_flag_type flags = 0);
+
+<B>template</B> &lt;<B>class</B> iterator, <B>class</B> Allocator, <B>class</B> charT&gt;
+std::basic_string&lt;charT&gt; regex_format
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (<B>const</B> match_results&lt;iterator, Allocator&gt;&amp; m,&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <B>const</B> std::basic_string&lt;charT&gt;&amp; fmt,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; match_flag_type flags = 0);</PRE>
+      <P>Parameters to the main version of the function are passed as follows:
+         <BR>
+         &nbsp;
+      </P>
+      <P>
+         <TABLE id="Table2" cellSpacing="0" cellPadding="7" width="100%" border="0">
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%">OutputIterator out</TD>
+               <TD vAlign="top" width="44%">An output iterator type, the output string is sent to 
+                  this iterator. Typically this would be a std::ostream_iterator.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%"><B>const</B> match_results&lt;iterator, 
+                  Allocator&gt;&amp; m</TD>
+               <TD vAlign="top" width="44%">An instance of match_results&lt;&gt; obtained from 
+                  one of the matching algorithms above, and denoting what matched.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%"><B>const</B> charT* fmt</TD>
+               <TD vAlign="top" width="44%">A format string that determines how the match is 
+                  transformed into the new string.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%"><B>unsigned</B> flags</TD>
+               <TD vAlign="top" width="44%">Optional flags which describe how the format string 
+                  is to be interpreted.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+         </TABLE>
+      </P>
+      <P><A name="format_flags"></A>Format flags are defined as follows:
+         <BR>
+         &nbsp;
+      </P>
+      <P>
+         <TABLE id="Table3" cellSpacing="0" cellPadding="7" width="100%" border="0">
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%">format_all</TD>
+               <TD vAlign="top" width="43%">Enables all syntax options (perl-like plus 
+                  extentions).</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%">format_sed</TD>
+               <TD vAlign="top" width="43%">Allows only a sed-like syntax.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%">format_perl</TD>
+               <TD vAlign="top" width="43%">Allows only a perl-like syntax.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+               <TD vAlign="top" width="39%">format_no_copy</TD>
+               <TD vAlign="top" width="43%">Disables copying of unmatched sections to the output 
+                  string during <A href="regex_merge.html">regex_merge</A> operations.</TD>
+               <TD vAlign="top" width="9%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD>&nbsp;</TD>
+               <TD>format_first_only</TD>
+               <TD>When this flag is set only the first occurance will be replaced (applies to 
+                  regex_merge only).</TD>
+               <TD>&nbsp;</TD>
+            </TR>
+         </TABLE>
+      </P>
+      <P><BR>
+         &nbsp;
+      </P>
+      <P>The format string syntax (and available options) is described more fully under <A href="format_syntax.html">
+            format strings</A>
+      .
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         11 April 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
+      </p>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
+            and its documentation for any purpose is hereby granted without fee, provided 
+            that the above copyright notice appear in all copies and that both that 
+            copyright notice and this permission notice appear in supporting documentation. 
+            Dr John Maddock makes no representations about the suitability of this software 
+            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
+   </body>
+</html>

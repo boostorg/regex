@@ -205,6 +205,57 @@ bool operator >= (typename re_detail::regex_iterator_traits<RandomAccessIterator
                   const sub_match<RandomAccessIterator>& m)
 { return m.str().compare(s) <= 0; }
 
+// comparison to const charT& part 1:
+template <class RandomAccessIterator>
+bool operator == (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) == 0; }
+template <class RandomAccessIterator>
+bool operator != (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) != 0; }
+template <class RandomAccessIterator>
+bool operator > (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) > 0; }
+template <class RandomAccessIterator>
+bool operator < (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) < 0; }
+template <class RandomAccessIterator>
+bool operator >= (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) >= 0; }
+template <class RandomAccessIterator>
+bool operator <= (const sub_match<RandomAccessIterator>& m,
+                  typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s)
+{ return m.str().compare(0, m.length(), &s, 1) <= 0; }
+// comparison to const charT* part 2:
+template <class RandomAccessIterator>
+bool operator == (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) == 0; }
+template <class RandomAccessIterator>
+bool operator != (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) != 0; }
+template <class RandomAccessIterator>
+bool operator < (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) > 0; }
+template <class RandomAccessIterator>
+bool operator > (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) < 0; }
+template <class RandomAccessIterator>
+bool operator <= (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) >= 0; }
+template <class RandomAccessIterator>
+bool operator >= (typename re_detail::regex_iterator_traits<RandomAccessIterator>::value_type const& s,
+                  const sub_match<RandomAccessIterator>& m)
+{ return m.str().compare(0, m.length(), &s, 1) <= 0; }
+
 #ifndef BOOST_NO_STD_LOCALE
 template <class charT, class traits, class RandomAccessIterator>
 std::basic_ostream<charT, traits>&

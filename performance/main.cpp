@@ -232,7 +232,7 @@ int cpp_main(int argc, char * argv[])
 
    if(test_long_twain)
    {
-      load_file(file_contents, "mtent12.txt");
+      load_file(file_contents, "mtent13.txt");
 
       test_find_all("Twain", file_contents);
       test_find_all("Huck[[:alpha:]]+", file_contents);

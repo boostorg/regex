@@ -70,7 +70,7 @@ void cpp_eh_tests(const basic_regex<C, T, A>& )
 #endif
       A a;
       basic_regex<C, T, A> e(a);
-      e.set_expression(expression.c_str(), flags[2] | regbase::use_except);
+      e.set_expression(expression.c_str(), flags[2] | regex::use_except);
 #ifndef BOOST_NO_EXCEPTIONS
    }
    catch(const boost::bad_expression&)
@@ -92,7 +92,7 @@ void cpp_eh_tests(const basic_regex<C, T, A>& )
 #endif
    {
       A a;
-      basic_regex<C, T, A> e(expression.c_str(), flags[2] | regbase::use_except, a);
+      basic_regex<C, T, A> e(expression.c_str(), flags[2] | regex::use_except, a);
    }
 #ifndef BOOST_NO_EXCEPTIONS
    catch(const boost::bad_expression&)
@@ -360,14 +360,24 @@ void cpp_tests(const basic_regex<C, T, A>& e, bool recurse = true)
          //
          // now try comparison operators:
          string_type s(m[0]);
-         if((s != m[0]) || (m[0] != s))
+         if((s != m[0]) || (m[0] != s)
+            || !(s == m[0]) || !(m[0] == s)
+            || (s < m[0]) || (m[0] < s)
+            || (s > m[0]) || (m[0] > s)
+            || !(s <= m[0]) || !(m[0] <= s)
+            || !(s >= m[0]) || !(m[0] >= s))
          {
             begin_error();
             cout << "string comparison failed for result" << std::endl;
          }
          if(s.find_first_of((string_type::value_type)0) == string_type::npos)
          {
-            if((m[0] != s.c_str()) || (s.c_str() != m[0]))
+            if((m[0] != s.c_str()) || (s.c_str() != m[0])
+               || !(m[0] == s.c_str()) || !(s.c_str() == m[0])
+               || (m[0] > s.c_str()) || (s.c_str() > m[0])
+               || (m[0] < s.c_str()) || (s.c_str() < m[0])
+               || !(m[0] >= s.c_str()) || !(s.c_str() >= m[0])
+               || !(m[0] <= s.c_str()) || !(s.c_str() <= m[0]))
             {
                begin_error();
                cout << "string comparison failed for result" << std::endl;
@@ -394,6 +404,12 @@ void cpp_tests(const basic_regex<C, T, A>& e, bool recurse = true)
             {
                begin_error();
                cout << "regex++ API result mismatch in regex_search(const std::string&, match_results&, const basic_regex&, int)" << endl;
+            }
+            if(!regex_search(s, e, static_cast<boost::match_flag_type>(flags[3]))
+               || !regex_search(s.begin(), s.end(), e, static_cast<boost::match_flag_type>(flags[3])))
+            {
+               begin_error();
+               cout << "regex++ API result mismatch in regex_search(const std::string&, const basic_regex&, int)" << endl;
             }
             //
             // partial match should give same result as full match
@@ -430,6 +446,11 @@ void cpp_tests(const basic_regex<C, T, A>& e, bool recurse = true)
                {
                   begin_error();
                   cout << "regex++ API result mismatch in regex_search(const char_t*, match_results&, const basic_regex&, int)" << endl;
+               }
+               if(!regex_search(search_text.c_str(), e, static_cast<boost::match_flag_type>(flags[3])))
+               {
+                  begin_error();
+                  cout << "regex++ API result mismatch in regex_search(const char_t*, const basic_regex&, int)" << endl;
                }
             }
          }
@@ -718,9 +739,9 @@ void run_tests()
    try
    {
 #endif
-      unsigned int f = flags[2] & ~regbase::use_except;
+      unsigned int f = flags[2] & ~regex::use_except;
       if(flags[0] & REG_ICASE)
-         f |= regbase::icase;
+         f |= regex::icase;
       re_type e(expression.c_str(), f);
       cpp_tests(e, true);
 #ifndef BOOST_NO_EXCEPTIONS
@@ -748,7 +769,7 @@ void run_tests()
    try
    {
 #endif
-      if(((flags[3] & match_partial) == 0) && (flags[2] == regbase::normal) && (has_nulls(search_text.begin(), search_text.end()) == false))
+      if(((flags[3] & match_partial) == 0) && (flags[2] == regex::normal) && (has_nulls(search_text.begin(), search_text.end()) == false))
       {
          RegEx e;
          e.SetExpression(expression.c_str(), flags[0] & REG_ICASE);

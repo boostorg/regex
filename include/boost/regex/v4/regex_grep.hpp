@@ -42,7 +42,7 @@ inline unsigned int regex_grep(Predicate foo,
                                const reg_expression<charT, traits, Allocator>& e, 
                                match_flag_type flags = match_default)
 {
-   if(e.flags() & regbase::failbit)
+   if(e.flags() & regex_constants::failbit)
       return false;
    typedef          detail::rebind_allocator<sub_match<BidiIterator>, Allocator>  binder;
    typedef typename binder::type                                                  match_allocator_type;

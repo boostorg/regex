@@ -145,6 +145,9 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #ifndef BOOST_REGEX_V4_REGEX_GREP_HPP
 #include <boost/regex/v4/regex_grep.hpp>
 #endif
+#ifndef BOOST_REGEX_V4_REGEX_REPLACE_HPP
+#include <boost/regex/v4/regex_replace.hpp>
+#endif
 #ifndef BOOST_REGEX_V4_REGEX_MERGE_HPP
 #include <boost/regex/v4/regex_merge.hpp>
 #endif

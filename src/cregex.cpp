@@ -193,7 +193,7 @@ RegEx& RegEx::operator=(const char* p)
 unsigned int RegEx::SetExpression(const char* p, bool icase)
 {
    BOOST_RE_GUARD_STACK
-   boost::uint_fast32_t f = icase ? regbase::normal | regbase::use_except | regbase::icase : regbase::normal | regbase::use_except;
+   boost::uint_fast32_t f = icase ? regex::normal | regex::use_except | regex::icase : regex::normal | regex::use_except;
    return pdata->e.set_expression(p, f);
 }
 
@@ -459,7 +459,7 @@ std::string RegEx::Merge(const std::string& in, const std::string& fmt,
    std::string result;
    re_detail::string_out_iterator<std::string> i(result);
    if(!copy) flags |= format_no_copy;
-   regex_merge(i, in.begin(), in.end(), pdata->e, fmt.c_str(), flags);
+   regex_replace(i, in.begin(), in.end(), pdata->e, fmt.c_str(), flags);
    return result;
 }
 
@@ -469,7 +469,7 @@ std::string RegEx::Merge(const char* in, const char* fmt,
    std::string result;
    if(!copy) flags |= format_no_copy;
    re_detail::string_out_iterator<std::string> i(result);
-   regex_merge(i, in, in + std::strlen(in), pdata->e, fmt, flags);
+   regex_replace(i, in, in + std::strlen(in), pdata->e, fmt, flags);
    return result;
 }
 

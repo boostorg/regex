@@ -337,7 +337,7 @@ expand_sub:
          continue;
       }
       case traits_type::syntax_open_bracket:
-         if(flags & (format_sed|format_perl))
+         if(0 == (flags & format_all))
          {
             *out = *fmt;
             ++out;
@@ -351,7 +351,7 @@ expand_sub:
             continue;
          }
       case traits_type::syntax_close_bracket:
-         if(flags & (format_sed|format_perl))
+         if(0 == (flags & format_all))
          {
             *out = *fmt;
             ++out;
@@ -375,7 +375,7 @@ expand_sub:
          continue;
       case traits_type::syntax_question:
       {
-         if(flags & (format_sed|format_perl))
+         if(0 == (flags & format_all))
          {
             *out = *fmt;
             ++out;

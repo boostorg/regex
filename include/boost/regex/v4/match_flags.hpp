@@ -29,6 +29,7 @@
 
 #ifdef __cplusplus
 namespace boost{
+   namespace regex_constants{
 #endif
 
 typedef enum _match_flags
@@ -54,12 +55,14 @@ typedef enum _match_flags
    match_all = match_stop << 1,                      // must find the whole of input even if match_any is set
    match_perl = match_all << 1,                      // Use perl matching rules
    match_posix = match_perl << 1,                    // Use POSIX matching rules
-   match_max = match_posix,
+   match_nosubs = match_posix << 1,                 // don't trap marked subs
+   match_max = match_nosubs,
 
-   format_all = 0,                                   // enable all extentions to sytax
+   format_perl = 0,                                  // perl style replacement
+   format_default = 0,                               // ditto.
    format_sed = match_max << 1,                      // sed style replacement.
-   format_perl = format_sed << 1,                    // perl style replacement.
-   format_no_copy = format_perl << 1,                // don't copy non-matching segments.
+   format_all = format_sed << 1,                     // enable all extentions to sytax.
+   format_no_copy = format_all << 1,                // don't copy non-matching segments.
    format_first_only = format_no_copy << 1,          // Only replace first occurance.
    format_is_if = format_first_only << 1             // internal use only.
 
@@ -67,7 +70,6 @@ typedef enum _match_flags
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC <= 1200)
 typedef unsigned long match_flag_type;
-} // namespace boost
 #else
 typedef match_flags match_flag_type;
 
@@ -87,10 +89,43 @@ inline match_flags& operator|=(match_flags& m1, match_flags m2)
 { m1 = m1|m2; return m1; }
 inline match_flags& operator^=(match_flags& m1, match_flags m2)
 { m1 = m1^m2; return m1; }
+#endif
+#endif
 
+#ifdef __cplusplus
+} // namespace regex_constants
+//
+// import names into boost for backwards compatiblity:
+//
+using regex_constants::match_flag_type;
+using regex_constants::match_default;
+using regex_constants::match_not_bol;
+using regex_constants::match_not_eol;
+using regex_constants::match_not_bob;
+using regex_constants::match_not_eob;
+using regex_constants::match_not_bow;
+using regex_constants::match_not_eow;
+using regex_constants::match_not_dot_newline;
+using regex_constants::match_not_dot_null;
+using regex_constants::match_prev_avail;
+using regex_constants::match_init;
+using regex_constants::match_any;
+using regex_constants::match_not_null;
+using regex_constants::match_continuous;
+using regex_constants::match_partial;
+using regex_constants::match_stop;
+using regex_constants::match_all;
+using regex_constants::match_perl;
+using regex_constants::match_posix;
+using regex_constants::match_nosubs;
+using regex_constants::match_max;
+using regex_constants::format_all;
+using regex_constants::format_sed;
+using regex_constants::format_perl;
+using regex_constants::format_no_copy;
+using regex_constants::format_first_only;
+using regex_constants::format_is_if;
 
 } // namespace boost
 #endif // __cplusplus
-#endif // BOOST_MSVC
-
-#endif
+#endif // include guard

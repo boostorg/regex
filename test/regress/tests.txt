@@ -802,7 +802,6 @@ a+ "...aaa,,," \x{21} "!"
 a+ "...aaa,,," \c@ \0
 a+ "...aaa,,," \e \27
 a+ "...aaa,,," \0101 A
-a+ "...aaa,,," (\0101) A
 
 - match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_sed format_no_copy
 (a+)(b+) ...aabb,, \0 aabb
@@ -824,8 +823,9 @@ a+ "...aaa,,," (\0101) A
 (a+)(b+) ...aabb,, & &
 (a+)(b+) ...aabb,, \0 \0
 (a+)(b+) ...aabb,, ()?: ()?:
+a+ "...aaa,,," \0101 A
 
-- match_default normal REG_EXTENDED REG_STARTEND REG_MERGE
+- match_default format_all normal REG_EXTENDED REG_STARTEND REG_MERGE
 ; move to copying unmatched data:
 a+ "...aaa,,," bbb "...bbb,,," 
 a+(b+) "...aaabb,,," $1 "...bb,,," 
@@ -836,7 +836,7 @@ a+(b+) "...aaabb,,,ab*abbb?" $1 "...bb,,,b*bbb?"
 (a+)|(b+) "...aaabb,,,ab*abbb?" (?1A:B)C "...ACBC,,,ACBC*ACBC?" 
 (a+)|(b+) "...aaabb,,,ab*abbb?" ?1:B "...B,,,B*B?" 
 
-- match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_first_only
+- match_default format_all normal REG_EXTENDED REG_STARTEND REG_MERGE format_first_only
 ; move to copying unmatched data, but replace first occurance only:
 a+ "...aaa,,," bbb "...bbb,,," 
 a+(b+) "...aaabb,,," $1 "...bb,,," 
@@ -1133,6 +1133,8 @@ a()b\1 ab 0 2 1 1
 
 "(.*\r\n){3}.* abcdefghijklmnopqrstuvwxyz.*\r\n" "00001 01 \r\n00002 02 1         2         3         4         5         6         7         8         9         0\r\n00003 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00004 04 \r\n00005 05 \r\n00006 06                                                             Seite: 0001\r\n00007 07                                                             StartSeitEEnde: 0001\r\n00008 08                                                             StartSeiTe Ende: 0001\r\n00009 09                                                             Start seiteEnde: 0001\r\n00010 10                                                             28.2.03\r\n00011 11                                                             Page: 0001\r\n00012 12                                                             Juhu die Erste: 0001\r\n00013 13                                                             Es war einmal! 0001\r\n00014 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0001\r\n00015 15                               abcdefghijklmnopqrstuvwxyz0001\r\n00016 16                               lars.schmeiser@gft.com\r\n00017 17 \r\n00018 18 \r\n00019 19 \r\n00020 20 \r\n00021 21 1         2         3         4         5         6         7         8         9         0\r\n00022 22 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00023 01 \r\n00024 02 1         2         3         4         5         6         7         8         9         0\r\n00025 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00026 04 \r\n00027 05 \r\n00028 06                                                             Seite: 0002\r\n00029 07                                                             StartSeitEEnde: 0002\r\n00030 08                                                             StartSeiTe Ende: 0002\r\n00031 09                                                             Start seiteEnde: 0002\r\n00032 10                                                             28.02.2003\r\n00033 11                                                             Page: 0002\r\n00034 12                                                             Juhu die Erste: 0002\r\n00035 13                                                             Es war einmal! 0002\r\n00036 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0002\r\n00037 15                               abcdefghijklmnopqrstuvwxyz0002\r\n00038 16                               lars.schmeiser@194.1.12.111\r\n00039 17 \r\n00040 18 \r\n00041 19 \r\n00042 20 \r\n00043 21 1         2         3         4         5         6         7         8         9         0\r\n" 753 1076 934 1005
 
+- normal REG_PERL
+
 ; new (?: construct )
 (?>^abc) abc 0 3
 (?>^abc) def\nabc 4 7
@@ -1172,4 +1174,58 @@ a()b\1 ab 0 2 1 1
 ((?>Z)+|A)* ZABCDEFG 0 2 1 2
 ((?>)+|A)* !
 
+; subtleties of matching with no sub-expressions marked
+- normal match_nosubs REG_NO_POSIX_TEST
+a(b?c)+d accd 0 4 
+(wee|week)(knights|night) weeknights 0 10 
+.* abc 0 3
+a(b|(c))d abd 0 3 
+a(b|(c))d acd 0 3
+a(b*|c|e)d abbd 0 4
+a(b*|c|e)d acd 0 3 
+a(b*|c|e)d ad 0 2
+a(b?)c abc 0 3
+a(b?)c ac 0 2
+a(b+)c abc 0 3
+a(b+)c abbbc 0 5
+a(b*)c ac 0 2
+(a|ab)(bc([de]+)f|cde) abcdef 0 6
+a([bc]?)c abc 0 3
+a([bc]?)c ac 0 2
+a([bc]+)c abc 0 3
+a([bc]+)c abcc 0 4
+a([bc]+)bc abcbc 0 5
+a(bb+|b)b abb 0 3
+a(bbb+|bb+|b)b abb 0 3
+a(bbb+|bb+|b)b abbb 0 4
+a(bbb+|bb+|b)bb abbb 0 4
+(.*).* abcdef 0 6
+(a*)* bc 0 0
+
+- normal nosubs REG_NO_POSIX_TEST
+a(b?c)+d accd 0 4 
+(wee|week)(knights|night) weeknights 0 10 
+.* abc 0 3
+a(b|(c))d abd 0 3 
+a(b|(c))d acd 0 3
+a(b*|c|e)d abbd 0 4
+a(b*|c|e)d acd 0 3 
+a(b*|c|e)d ad 0 2
+a(b?)c abc 0 3
+a(b?)c ac 0 2
+a(b+)c abc 0 3
+a(b+)c abbbc 0 5
+a(b*)c ac 0 2
+(a|ab)(bc([de]+)f|cde) abcdef 0 6
+a([bc]?)c abc 0 3
+a([bc]?)c ac 0 2
+a([bc]+)c abc 0 3
+a([bc]+)c abcc 0 4
+a([bc]+)bc abcbc 0 5
+a(bb+|b)b abb 0 3
+a(bbb+|bb+|b)b abb 0 3
+a(bbb+|bb+|b)b abbb 0 4
+a(bbb+|bb+|b)bb abbb 0 4
+(.*).* abcdef 0 6
+(a*)* bc 0 0
 

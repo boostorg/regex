@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: bad_expression</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">class bad_expression</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <H3>Synopsis</H3>
+      <P>#include &lt;<A href="../../boost/regex/pattern_except.hpp">boost/pat_except.hpp</A>&gt;
+      </P>
+      <P>The class <CODE>bad_expression</CODE> defines the type of objects thrown as 
+         exceptions to report errors during the conversion from a string representing a 
+         regular expression to a finite state machine.&nbsp;&nbsp;</P>
+      <PRE><B>namespace</B> boost{
+
+<B>class</B> bad_pattern : <B>public</B> std::runtime_error
+{
+<B>public</B>:
+&nbsp;&nbsp; <B>explicit</B> bad_pattern(<B>const</B> std::string&amp; s) : std::runtime_error(s){};
+};
+
+<B>class</B> bad_expression : <B>public</B> bad_pattern
+{
+<B>public</B>:
+&nbsp;&nbsp; bad_expression(<B>const</B> std::string&amp; s) : bad_pattern(s) {}
+};
+
+
+} // namespace boost</PRE>
+      <H3>Description</H3>
+      <PRE>bad_expression(const string&amp; what_arg); </PRE>
+      <P><B>Effects:</B> Constructs an object of class <CODE>bad_expression</CODE>.</P>
+      <B>
+         <P>
+         Postcondition:</B> <CODE>strcmp(what(), what_arg.c_str()) == 0</CODE>.
+      <P>Footnotes: the class <I>bad_pattern </I>forms the base class for all 
+         pattern-matching exceptions, of which <I>bad_expression</I> is one. The choice 
+         of <I>std::runtime_error </I>as the base class for <I>bad_pattern</I>
+      is moot, depending upon how the library is used exceptions may be either logic 
+      errors (programmer supplied expressions) or run time errors (user supplied 
+      expressions).
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         11 April 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
+      </p>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
+            and its documentation for any purpose is hereby granted without fee, provided 
+            that the above copyright notice appear in all copies and that both that 
+            copyright notice and this permission notice appear in supporting documentation. 
+            Dr John Maddock makes no representations about the suitability of this software 
+            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
+   </body>
+</html>

@@ -311,8 +311,11 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark(
    default:
    {
       assert(index > 0);
-      push_matched_paren(index, (*m_presult)[index]);
-      m_presult->set_first(position, index);
+      if((m_match_flags & match_nosubs) == 0)
+      {
+         push_matched_paren(index, (*m_presult)[index]);
+         m_presult->set_first(position, index);
+      }
       pstate = pstate->next.p;
       break;
    }

@@ -58,27 +58,30 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA* expression, const char
 #endif
    }
    // set default flags:
-   boost::uint_fast32_t flags = (f & REG_EXTENDED) ? regbase::extended : regbase::basic;
+   boost::uint_fast32_t flags = (f & REG_EXTENDED) ? regex::extended : regex::basic;
    expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : match_default;
    // and translate those that are actually set:
 
    if(f & REG_NOCOLLATE)
-      flags |= regbase::nocollate;
+   {
+      flags |= regex::nocollate;
+      flags &= ~regex::collate;
+   }
 
    if(f & REG_NOSUB)
       expression->eflags |= match_any;
 
    if(f & REG_NOSPEC)
-      flags |= regbase::literal;
+      flags |= regex::literal;
    if(f & REG_ICASE)
-      flags |= regbase::icase;
+      flags |= regex::icase;
    if(f & REG_ESCAPE_IN_LISTS)
-      flags |= regbase::escape_in_lists;
+      flags |= regex::escape_in_lists;
    if(f & REG_NEWLINE_ALT)
-      flags |= regbase::newline_alt;
+      flags |= regex::newline_alt;
 #ifndef BOOST_REGEX_V3
    if(f & REG_PERLEX)
-      flags |= regbase::perlex;
+      flags |= regex::perlex;
 #endif
 
    const char* p2;

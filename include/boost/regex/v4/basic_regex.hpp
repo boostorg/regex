@@ -64,7 +64,7 @@ public:
    typedef typename Allocator::size_type         size_type;   
    typedef Allocator                             allocator_type;
    typedef Allocator                             alloc_type;
-   typedef regbase::flag_type                    flag_type;
+   typedef regex_constants::syntax_option_type   flag_type;
    // locale_type
    // placeholder for actual locale type used by the
    // traits class to localise *this.
@@ -72,15 +72,15 @@ public:
    
 public:
    explicit reg_expression(const Allocator& a = Allocator());
-   explicit reg_expression(const charT* p, flag_type f = regbase::normal, const Allocator& a = Allocator());
-   reg_expression(const charT* p1, const charT* p2, flag_type f = regbase::normal, const Allocator& a = Allocator());
+   explicit reg_expression(const charT* p, flag_type f = regex_constants::normal, const Allocator& a = Allocator());
+   reg_expression(const charT* p1, const charT* p2, flag_type f = regex_constants::normal, const Allocator& a = Allocator());
    reg_expression(const charT* p, size_type len, flag_type f, const Allocator& a = Allocator());
    reg_expression(const reg_expression&);
    ~reg_expression();
    reg_expression& BOOST_REGEX_CALL operator=(const reg_expression&);
    reg_expression& BOOST_REGEX_CALL operator=(const charT* ptr)
    {
-      set_expression(ptr, regbase::normal | regbase::use_except);
+      set_expression(ptr, regex_constants::normal | regex_constants::use_except);
       return *this;
    }
 
@@ -88,84 +88,84 @@ public:
    // assign:
    reg_expression& assign(const reg_expression& that)
    { return *this = that; }
-   reg_expression& assign(const charT* ptr, flag_type f = regbase::normal)
+   reg_expression& assign(const charT* ptr, flag_type f = regex_constants::normal)
    {
-      set_expression(ptr, f | regbase::use_except);
+      set_expression(ptr, f | regex_constants::use_except);
       return *this;
    }
 
    reg_expression& assign(const charT* first,
                           const charT* last,
-                          flag_type f = regbase::normal)
+                          flag_type f = regex_constants::normal)
    {
-      set_expression(first, last, f | regbase::use_except);
+      set_expression(first, last, f | regex_constants::use_except);
       return *this;
    }
 #if !defined(BOOST_NO_MEMBER_TEMPLATES) && !(defined(__IBMCPP__) && (__IBMCPP__ <= 502))
 
    template <class ST, class SA>
-   unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regbase::normal)
+   unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal)
    { return set_expression(p.data(), p.data() + p.size(), f); }
 
    template <class ST, class SA>
-   explicit reg_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regbase::normal, const Allocator& a = Allocator())
-    : data(a), pkmp(0), error_code_(REG_EMPTY), _expression(0) { set_expression(p, f | regbase::use_except); }
+   explicit reg_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
+    : data(a), pkmp(0), error_code_(REG_EMPTY), _expression(0) { set_expression(p, f | regex_constants::use_except); }
 
    template <class I>
-   reg_expression(I first, I last, flag_type f = regbase::normal, const Allocator& al = Allocator())
+   reg_expression(I first, I last, flag_type f = regex_constants::normal, const Allocator& al = Allocator())
     : data(al), pkmp(0), error_code_(REG_EMPTY), _expression(0)
    {
       size_type len = last-first;
       scoped_array<charT> a(new charT[len]);
       std::copy(first, last, a.get());
-      set_expression(a.get(), a.get() + len, f | regbase::use_except);
+      set_expression(a.get(), a.get() + len, f | regex_constants::use_except);
    }
 
    template <class ST, class SA>
    reg_expression& BOOST_REGEX_CALL operator=(const std::basic_string<charT, ST, SA>& p)
    {
-      set_expression(p.c_str(), p.c_str() + p.size(), regbase::normal | regbase::use_except);
+      set_expression(p.c_str(), p.c_str() + p.size(), regex_constants::normal | regex_constants::use_except);
       return *this;
    }
 
    template <class string_traits, class A>
    reg_expression& BOOST_REGEX_CALL assign(
        const std::basic_string<charT, string_traits, A>& s,
-       flag_type f = regbase::normal)
+       flag_type f = regex_constants::normal)
    {
-      set_expression(s.c_str(), s.c_str() + s.size(), f | regbase::use_except);
+      set_expression(s.c_str(), s.c_str() + s.size(), f | regex_constants::use_except);
       return *this;
    }
 
    template <class fwd_iterator>
    reg_expression& BOOST_REGEX_CALL assign(fwd_iterator first,
                           fwd_iterator last,
-                          flag_type f = regbase::normal)
+                          flag_type f = regex_constants::normal)
    {
       size_type len = last-first;
       scoped_array<charT> a(new charT[len]);
       std::copy(first, last, a.get());
-      set_expression(a.get(), a.get() + len, f | regbase::use_except);
+      set_expression(a.get(), a.get() + len, f | regex_constants::use_except);
       return *this;
    }
 #else
-   unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT>& p, flag_type f = regbase::normal)
-   { return set_expression(p.data(), p.data() + p.size(), f | regbase::use_except); }
+   unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
+   { return set_expression(p.data(), p.data() + p.size(), f | regex_constants::use_except); }
 
-   reg_expression(const std::basic_string<charT>& p, flag_type f = regbase::normal, const Allocator& a = Allocator())
-    : data(a), pkmp(0) { set_expression(p, f | regbase::use_except); }
+   reg_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
+    : data(a), pkmp(0) { set_expression(p, f | regex_constants::use_except); }
 
    reg_expression& BOOST_REGEX_CALL operator=(const std::basic_string<charT>& p)
    {
-      set_expression(p.c_str(), p.c_str() + p.size(), regbase::normal | regbase::use_except);
+      set_expression(p.c_str(), p.c_str() + p.size(), regex_constants::normal | regex_constants::use_except);
       return *this;
    }
 
    reg_expression& BOOST_REGEX_CALL assign(
        const std::basic_string<charT>& s,
-       flag_type f = regbase::normal)
+       flag_type f = regex_constants::normal)
    {
-      set_expression(s.c_str(), s.c_str() + s.size(), f | regbase::use_except);
+      set_expression(s.c_str(), s.c_str() + s.size(), f | regex_constants::use_except);
       return *this;
    }
 
@@ -234,8 +234,8 @@ public:
    // but are available for compatibility with earlier versions.
    allocator_type BOOST_REGEX_CALL allocator()const;
    const charT* BOOST_REGEX_CALL expression()const { return (this->error_code() ? 0 : _expression); }
-   unsigned int BOOST_REGEX_CALL set_expression(const charT* p, const charT* end, flag_type f = regbase::normal);
-   unsigned int BOOST_REGEX_CALL set_expression(const charT* p, flag_type f = regbase::normal) { return set_expression(p, p + traits_type::length(p), f); }
+   unsigned int BOOST_REGEX_CALL set_expression(const charT* p, const charT* end, flag_type f = regex_constants::normal);
+   unsigned int BOOST_REGEX_CALL set_expression(const charT* p, flag_type f = regex_constants::normal) { return set_expression(p, p + traits_type::length(p), f); }
    //
    // this should be private but template friends don't work:
    const traits_type& get_traits()const { return traits_inst; }
@@ -336,9 +336,9 @@ public:
    typedef typename reg_expression<charT, traits, Allocator>::size_type size_type;
    explicit basic_regex(const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(a){}
-   explicit basic_regex(const charT* p, flag_type f = regbase::normal, const Allocator& a = Allocator())
+   explicit basic_regex(const charT* p, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(p,f,a){}
-   basic_regex(const charT* p1, const charT* p2, flag_type f = regbase::normal, const Allocator& a = Allocator())
+   basic_regex(const charT* p1, const charT* p2, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(p1,p2,f,a){}
    basic_regex(const charT* p, size_type len, flag_type f, const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(p,len,f,a){}
@@ -357,11 +357,11 @@ public:
    }
 #if !defined(BOOST_NO_MEMBER_TEMPLATES) && !(defined(__IBMCPP__) && (__IBMCPP__ <= 502))
    template <class ST, class SA>
-   explicit basic_regex(const std::basic_string<charT, ST, SA>& p, flag_type f = regbase::normal, const Allocator& a = Allocator())
+   explicit basic_regex(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(p,f,a){}
 
    template <class I>
-   basic_regex(I first, I last, flag_type f = regbase::normal, const Allocator& al = Allocator())
+   basic_regex(I first, I last, flag_type f = regex_constants::normal, const Allocator& al = Allocator())
       : reg_expression<charT, traits, Allocator>(first, last, f, a){}
 
    template <class ST, class SA>
@@ -371,7 +371,7 @@ public:
       return *this;
    }
 #else
-   basic_regex(const std::basic_string<charT>& p, flag_type f = regbase::normal, const Allocator& a = Allocator())
+   basic_regex(const std::basic_string<charT>& p, flag_type f = regex_constants::normal, const Allocator& a = Allocator())
       : reg_expression<charT, traits, Allocator>(p,f,a){}
 
    basic_regex& BOOST_REGEX_CALL operator=(const std::basic_string<charT>& p)

@@ -1,0 +1,492 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>Boost.Regex: class RegEx (deprecated)</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+      <link rel="stylesheet" type="text/css" href="../../../boost.css">
+   </head>
+   <body>
+      <P>
+         <TABLE id="Table1" cellSpacing="1" cellPadding="1" width="100%" border="0">
+            <TR>
+               <td valign="top" width="300">
+                  <h3><a href="../../../index.htm"><img height="86" width="277" alt="C++ Boost" src="../../../c++boost.gif" border="0"></a></h3>
+               </td>
+               <TD width="353">
+                  <H1 align="center">Boost.Regex</H1>
+                  <H2 align="center">class RegEx (deprecated)</H2>
+               </TD>
+               <td width="50">
+                  <h3><a href="index.html"><img height="45" width="43" alt="Boost.Regex Index" src="uarrow.gif" border="0"></a></h3>
+               </td>
+            </TR>
+         </TABLE>
+      </P>
+      <HR>
+      <p></p>
+      <P>The high level wrapper class RegEx is now deprecated and does not form a part 
+         of the <A href="http://anubis.dkuug.dk/jtc1/sc22/wg21/docs/papers/2003/n1429.htm">regular 
+            expression standardization proposal</A>.&nbsp; This type still exists, and 
+         existing code will continue to compile, however the following documentation is 
+         unlikely to be further updated.</P>
+      <PRE>#include &lt;boost/cregex.hpp&gt; </PRE>
+      <P>The class RegEx provides a high level simplified interface to the regular 
+         expression library, this class only handles narrow character strings, and 
+         regular expressions always follow the "normal" syntax - that is the same as the 
+         perl / ECMAScript synatx.
+      </P>
+      <PRE><B>typedef</B> <B>bool</B> (*GrepCallback)(<B>const</B> RegEx&amp; expression);
+<B>typedef</B> <B>bool</B> (*GrepFileCallback)(<B>const</B> <B>char</B>* file, <B>const</B> RegEx&amp; expression);
+<B>typedef</B> <B>bool</B> (*FindFilesCallback)(<B>const</B> <B>char</B>* file);
+
+<B>class</B>&nbsp; RegEx
+{
+<B>public</B>:
+&nbsp;&nbsp; RegEx();
+&nbsp;&nbsp; RegEx(<B>const</B> RegEx&amp; o);
+&nbsp;&nbsp; ~RegEx();
+&nbsp;&nbsp; RegEx(<B>const</B> <B>char</B>* c, <B>bool</B> icase = <B>false</B>);
+&nbsp;&nbsp; <STRONG>explicit</STRONG> RegEx(<B>const</B> std::string&amp; s, <B>bool</B> icase = <B>false</B>);
+&nbsp;&nbsp; RegEx&amp; <B>operator</B>=(<B>const</B> RegEx&amp; o);
+&nbsp;&nbsp; RegEx&amp; <B>operator</B>=(<B>const</B> <B>char</B>* p);
+&nbsp;&nbsp; RegEx&amp; <B>operator</B>=(<B>const</B> std::string&amp; s);
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> SetExpression(<B>const</B> <B>char</B>* p, <B>bool</B> icase = <B>false</B>);
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> SetExpression(<B>const</B> std::string&amp; s, <B>bool</B> icase = <B>false</B>);
+&nbsp;&nbsp; std::string Expression()<B>const</B>;
+&nbsp;&nbsp; <FONT color=#000080><I>//
+ </I>&nbsp;&nbsp;<I>// now matching operators: </I>
+&nbsp;&nbsp; <I>// </I></FONT>
+&nbsp;&nbsp; <B>bool</B> Match(<B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default);
+&nbsp;&nbsp; <B>bool</B> Match(<B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>bool</B> Search(<B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>bool</B> Search(<B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(GrepCallback cb, <B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(GrepCallback cb, <B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(std::vector&lt;std::string&gt;&amp; v, <B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(std::vector&lt;std::string&gt;&amp; v, <B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(std::vector&lt;<B>unsigned</B> <B>int</B>&gt;&amp; v, <B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Grep(std::vector&lt;<B>unsigned</B> <B>int</B>&gt;&amp; v, <B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> GrepFiles(GrepFileCallback cb, <B>const</B> <B>char</B>* files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> GrepFiles(GrepFileCallback cb, <B>const</B> std::string&amp; files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> FindFiles(FindFilesCallback cb, <B>const</B> <B>char</B>* files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> FindFiles(FindFilesCallback cb, <B>const</B> std::string&amp; files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; std::string Merge(<B>const</B> std::string&amp; in, <B>const</B> std::string&amp; fmt, <B>bool</B> copy = <B>true</B>, <B>unsigned</B> <B>int</B> flags = match_default); 
+&nbsp;&nbsp; std::string Merge(<B>const</B> char* in, <B>const</B> char* fmt, <B>bool</B> copy = <B>true</B>, <B>unsigned int </B>flags = match_default); 
+&nbsp;&nbsp; <B>unsigned</B> Split(std::vector&lt;std::string&gt;&amp; v, std::string&amp; s, <B>unsigned</B> flags = match_default, <B>unsigned</B> max_count = ~0); 
+&nbsp;&nbsp; <FONT color=#000080><I>// 
+</I>&nbsp;&nbsp; <I>// now operators for returning what matched in more detail: 
+</I>&nbsp;&nbsp; <I>// 
+</I></FONT>&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Position(<B>int</B> i = 0)<B>const</B>; 
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Length(<B>int</B> i = 0)<B>const</B>; 
+   <STRONG>bool</STRONG> Matched(<STRONG>int</STRONG> i = 0)<STRONG>const</STRONG>;
+&nbsp;&nbsp; <B>unsigned</B> <B>int</B> Line()<B>const</B>; 
+&nbsp;&nbsp; <B>unsigned int</B> Marks() const; 
+&nbsp;&nbsp; std::string What(<B>int</B> i)<B>const</B>; 
+&nbsp;&nbsp; std::string <B>operator</B>[](<B>int</B> i)<B>const</B> ; 
+
+   <STRONG>static const unsigned int</STRONG> npos;
+}; &nbsp; &nbsp; </PRE>
+      <P>Member functions for class RegEx are defined as follows:
+         <BR>
+         &nbsp;
+      </P>
+      <P>
+         <TABLE id="Table2" cellSpacing="0" cellPadding="7" width="100%" border="0">
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx();</TD>
+               <TD vAlign="top" width="42%">Default constructor, constructs an instance of RegEx 
+                  without any valid expression.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx(<B>const</B> RegEx&amp; o);</TD>
+               <TD vAlign="top" width="42%">Copy constructor, all the properties of parameter <I>o</I>
+                  are copied.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx(<B>const</B> <B>char</B>* c, <B>bool</B> icase 
+                  = <B>false</B>);</TD>
+               <TD vAlign="top" width="42%">Constructs an instance of RegEx, setting the 
+                  expression to <I>c</I>, if <I>icase</I> is <I>true</I> then matching is 
+                  insensitive to case, otherwise it is sensitive to case. Throws <I>bad_expression</I>
+                  on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx(<B>const</B> std::string&amp; s, <B>bool</B> icase 
+                  = <B>false</B>);</TD>
+               <TD vAlign="top" width="42%">Constructs an instance of RegEx, setting the 
+                  expression to <I>s</I>, if <I>icase </I>is <I>true</I> then matching is 
+                  insensitive to case, otherwise it is sensitive to case. Throws <I>bad_expression</I>
+                  on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx&amp; <B>operator</B>=(<B>const</B> RegEx&amp; 
+                  o);</TD>
+               <TD vAlign="top" width="42%">Default assignment operator.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx&amp; <B>operator</B>=(<B>const</B> <B>char</B>* 
+                  p);</TD>
+               <TD vAlign="top" width="42%">Assignment operator, equivalent to calling <I>SetExpression(p, 
+                     false).</I> Throws <I>bad_expression</I> on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">RegEx&amp; <B>operator</B>=(<B>const</B> std::string&amp; 
+                  s);</TD>
+               <TD vAlign="top" width="42%">Assignment operator, equivalent to calling <I>SetExpression(s, 
+                     false).</I> Throws <I>bad_expression</I> on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> SetExpression(<B>constchar</B>* 
+                  p, <B>bool</B> icase = <B>false</B>);</TD>
+               <TD vAlign="top" width="42%">Sets the current expression to <I>p</I>, if <I>icase</I>
+                  is <I>true</I> then matching is insensitive to case, otherwise it is sensitive 
+                  to case. Throws <I>bad_expression</I> on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> SetExpression(<B>const</B> 
+                  std::string&amp; s, <B>bool</B> icase = <B>false</B>);</TD>
+               <TD vAlign="top" width="42%">Sets the current expression to <I>s</I>, if <I>icase</I>
+                  is <I>true</I> then matching is insensitive to case, otherwise it is sensitive 
+                  to case. Throws <I>bad_expression</I> on failure.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">std::string Expression()<B>const</B>;</TD>
+               <TD vAlign="top" width="42%">Returns a copy of the current regular expression.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>bool</B> Match(<B>const</B> <B>char</B>* p, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Attempts to match the current expression against the 
+                  text <I>p</I> using the match flags <I>flags</I> - see <A href="match_flag_type.html">
+                     match flags</A>. Returns <I>true</I> if the expression matches the whole of 
+                  the input string.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>bool</B> Match(<B>const</B> std::string&amp; s, <B>unsigned</B>
+                  <B>int</B> flags = match_default) ;</TD>
+               <TD vAlign="top" width="42%">Attempts to match the current expression against the 
+                  text <I>s</I> using the match flags <I>flags</I> - see <A href="match_flag_type.html">
+                     match flags</A>. Returns <I>true</I> if the expression matches the whole of 
+                  the input string.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>bool</B> Search(<B>const</B> <B>char</B>* p, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Attempts to find a match for the current expression 
+                  somewhere in the text <I>p</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. Returns <I>true</I> if the match succeeds.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>bool</B> Search(<B>const</B> std::string&amp; s, <B>unsigned</B>
+                  <B>int</B> flags = match_default) ;</TD>
+               <TD vAlign="top" width="42%">Attempts to find a match for the current expression 
+                  somewhere in the text <I>s</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. Returns <I>true</I> if the match succeeds.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(GrepCallback cb, <B>const</B>
+                  <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>p</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match found calls the call-back function <I>cb</I> 
+                  as: cb(*this);
+                  <P>If at any stage the call-back function returns false then the grep operation 
+                     terminates, otherwise continues until no further matches are found. Returns the 
+                     number of matches found.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(GrepCallback cb, <B>const</B>
+                  std::string&amp; s, <B>unsigned</B> <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>s</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match found calls the call-back function <I>cb</I> 
+                  as: cb(*this);
+                  <P>If at any stage the call-back function returns false then the grep operation 
+                     terminates, otherwise continues until no further matches are found. Returns the 
+                     number of matches found.
+                  </P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(std::vector&lt;std::string&gt;&amp; 
+                  v, <B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags = 
+                  match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>p</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match pushes a copy of what matched onto <I>v</I>. 
+                  Returns the number of matches found.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(std::vector&lt;std::string&gt;&amp; 
+                  v, <B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B> flags = 
+                  match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>s</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match pushes a copy of what matched onto <I>v</I>. 
+                  Returns the number of matches found.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(std::vector&lt;<B>unsigned 
+                     int</B>&gt;&amp; v, <B>const</B> <B>char</B>* p, <B>unsigned</B> <B>int</B> flags 
+                  = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>p</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match pushes the starting index of what matched 
+                  onto <I>v</I>. Returns the number of matches found.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Grep(std::vector&lt;<B>unsigned 
+                     int</B>&gt;&amp; v, <B>const</B> std::string&amp; s, <B>unsigned</B> <B>int</B>
+                  flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  text <I>s</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match pushes the starting index of what matched 
+                  onto <I>v</I>. Returns the number of matches found.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> GrepFiles(GrepFileCallback 
+                  cb, <B>const</B> <B>char</B>* files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  files <I>files</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match calls the call-back function cb.&nbsp;
+                  <P>If the call-back returns false then the algorithm returns without considering 
+                     further matches in the current file, or any further files.&nbsp;
+                  </P>
+                  <P>The parameter <I>files</I> can include wild card characters '*' and '?', if the 
+                     parameter <I>recurse</I> is true then searches sub-directories for matching 
+                     file names.&nbsp;
+                  </P>
+                  <P>Returns the total number of matches found.</P>
+                  <P>May throw an exception derived from std::runtime_error if file io fails.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> GrepFiles(GrepFileCallback 
+                  cb, <B>const</B> std::string&amp; files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Finds all matches of the current expression in the 
+                  files <I>files</I> using the match flags <I>flags </I>- see <A href="match_flag_type.html">
+                     match flags</A>. For each match calls the call-back function cb.&nbsp;
+                  <P>If the call-back returns false then the algorithm returns without considering 
+                     further matches in the current file, or any further files.&nbsp;
+                  </P>
+                  <P>The parameter <I>files</I> can include wild card characters '*' and '?', if the 
+                     parameter <I>recurse</I> is true then searches sub-directories for matching 
+                     file names.&nbsp;
+                  </P>
+                  <P>Returns the total number of matches found.</P>
+                  <P>May throw an exception derived from std::runtime_error if file io fails.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> FindFiles(FindFilesCallback 
+                  cb, <B>const</B> <B>char</B>* files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Searches <I>files</I> to find all those which contain 
+                  at least one match of the current expression using the match flags <I>flags </I>
+                  - see <A href="match_flag_type.html">match flags</A>. For each 
+                  matching file calls the call-back function cb.&nbsp;
+                  <P>If the call-back returns false then the algorithm returns without considering 
+                     any further files.&nbsp;
+                  </P>
+                  <P>The parameter <I>files</I> can include wild card characters '*' and '?', if the 
+                     parameter <I>recurse</I> is true then searches sub-directories for matching 
+                     file names.&nbsp;
+                  </P>
+                  <P>Returns the total number of files found.</P>
+                  <P>May throw an exception derived from std::runtime_error if file io fails.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> FindFiles(FindFilesCallback 
+                  cb, <B>const</B> std::string&amp; files, <B>bool</B> recurse = <B>false</B>, <B>unsigned</B>
+                  <B>int</B> flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Searches <I>files</I> to find all those which contain 
+                  at least one match of the current expression using the match flags <I>flags </I>
+                  - see <A href="match_flag_type.html">match flags</A>. For each 
+                  matching file calls the call-back function cb.&nbsp;
+                  <P>If the call-back returns false then the algorithm returns without considering 
+                     any further files.&nbsp;
+                  </P>
+                  <P>The parameter <I>files</I> can include wild card characters '*' and '?', if the 
+                     parameter <I>recurse</I> is true then searches sub-directories for matching 
+                     file names.&nbsp;
+                  </P>
+                  <P>Returns the total number of files found.</P>
+                  <P>May throw an exception derived from std::runtime_error if file io fails.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">std::string Merge(<B>const</B> std::string&amp; in, <B>const</B>
+                  std::string&amp; fmt, <B>bool</B> copy = <B>true</B>, <B>unsigned</B> <B>int</B>
+                  flags = match_default);</TD>
+               <TD vAlign="top" width="42%">Performs a search and replace operation: searches 
+                  through the string <I>in</I> for all occurrences of the current expression, for 
+                  each occurrence replaces the match with the format string <I>fmt</I>. Uses <I>flags</I>
+                  to determine what gets matched, and how the format string should be treated. If <I>
+                     copy</I> is true then all unmatched sections of input are copied unchanged 
+                  to output, if the flag <EM>format_first_only</EM> is set then only the first 
+                  occurance of the pattern found is replaced. Returns the new string. See <A href="format_synatx.html">
+                     also format string syntax</A>, <A href="match_flag_type.html">match 
+                     flags</A> and <A href="match_flag_type.html">format flags</A>.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">std::string Merge(<B>const</B> char* in, <B>const</B> 
+                  char* fmt, <B>bool</B> copy = <B>true</B>, <B>unsigned int </B>flags = 
+                  match_default);</TD>
+               <TD vAlign="top" width="42%">Performs a search and replace operation: searches 
+                  through the string <I>in</I> for all occurrences of the current expression, for 
+                  each occurrence replaces the match with the format string <I>fmt</I>. Uses <I>flags</I>
+                  to determine what gets matched, and how the format string should be treated. If <I>
+                     copy</I> is true then all unmatched sections of input are copied unchanged 
+                  to output, if the flag <EM>format_first_only</EM> is set then only the first 
+                  occurance of the pattern found is replaced. Returns the new string. See <A href="format_synatx.html">
+                     also format string syntax</A>, <A href="match_flag_type.html">match 
+                     flags</A> and <A href="match_flag_type.html">format flags</A>.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD>&nbsp;</TD>
+               <TD vAlign="top"><B>unsigned</B> Split(std::vector&lt;std::string&gt;&amp; v, 
+                  std::string&amp; s, <B>unsigned</B> flags = match_default, <B>unsigned</B> max_count 
+                  = ~0);</TD>
+               <TD vAlign="top">Splits the input string and pushes each one onto the vector. If 
+                  the expression contains no marked sub-expressions, then one string is outputted 
+                  for each section of the input that does not match the expression. If the 
+                  expression does contain marked sub-expressions, then outputs one string for 
+                  each marked sub-expression each time a match occurs. Outputs no more than <I>max_count
+                  </I>strings. Before returning, deletes from the input string <I>s</I> all of 
+                  the input that has been processed (all of the string if <I>max_count</I> was 
+                  not reached). Returns the number of strings pushed onto the vector.</TD>
+               <TD>&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Position(<B>int</B> i = 0)<B>const</B>;</TD>
+               <TD vAlign="top" width="42%">Returns the position of what matched sub-expression <I>i</I>. 
+                  If <I>i = 0</I> then returns the position of the whole match. Returns 
+                  RegEx::npos if the supplied index is invalid, or if the specified 
+                  sub-expression did not participate in the match.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Length(<B>int</B> i = 0)<B>const</B>;</TD>
+               <TD vAlign="top" width="42%">Returns the length of what matched sub-expression <I>i</I>. 
+                  If <I>i = 0</I> then returns the length of the whole match. Returns RegEx::npos 
+                  if the supplied index is invalid, or if the specified sub-expression did not 
+                  participate in the match.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD>&nbsp;</TD>
+               <TD><STRONG>bool</STRONG> Matched(<STRONG>int</STRONG> i = 0)<STRONG>const</STRONG>;</TD>
+               <TD>Returns true if sub-expression <EM>i</EM> was matched, false otherwise.</TD>
+               <TD>&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned</B> <B>int</B> Line()<B>const</B>;</TD>
+               <TD vAlign="top" width="42%">Returns the line on which the match occurred, indexes 
+                  start from 1 not zero, if no match occurred then returns RegEx::npos.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%"><B>unsigned int</B> Marks() const;</TD>
+               <TD vAlign="top" width="42%">Returns the number of marked sub-expressions 
+                  contained in the expression. Note that this includes the whole match 
+                  (sub-expression zero), so the value returned is always &gt;= 1.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">std::string What(<B>int</B> i)<B>const</B>;</TD>
+               <TD vAlign="top" width="42%">Returns a copy of what matched sub-expression <I>i</I>. 
+                  If <I>i = 0</I> then returns a copy of the whole match. Returns a null string 
+                  if the index is invalid or if the specified sub-expression did not participate 
+                  in a match.</TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+            <TR>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+               <TD vAlign="top" width="43%">std::string <B>operator</B>[](<B>int</B> i)<B>const</B>
+                  ;</TD>
+               <TD vAlign="top" width="42%">Returns <I>what(i);</I>
+                  <P>Can be used to simplify access to sub-expression matches, and make usage more 
+                     perl-like.</P>
+               </TD>
+               <TD vAlign="top" width="7%">&nbsp;</TD>
+            </TR>
+         </TABLE>
+      </P>
+      <P>
+         <HR>
+      <P></P>
+      <p>Revised 
+         <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
+         11 April 2003 
+         <!--webbot bot="Timestamp" endspan i-checksum="39359" -->
+      </p>
+      <P><I>© Copyright <a href="mailto:jm@regex.fsnet.co.uk">John Maddock</a>&nbsp;1998-<!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2003<!--webbot bot="Timestamp" endspan i-checksum="39359" --></I></P>
+      <P align="left"><I>Permission to use, copy, modify, distribute and sell this software 
+            and its documentation for any purpose is hereby granted without fee, provided 
+            that the above copyright notice appear in all copies and that both that 
+            copyright notice and this permission notice appear in supporting documentation. 
+            Dr John Maddock makes no representations about the suitability of this software 
+            for any purpose. It is provided "as is" without express or implied warranty.</I></P>
+   </body>
+</html>

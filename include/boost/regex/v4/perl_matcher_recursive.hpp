@@ -105,12 +105,19 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_startmark(
    default:
    {
       assert(index > 0);
-      backup_subex<BidiIterator> sub(*m_presult, index);
-      m_presult->set_first(position, index);
-      pstate = pstate->next.p;
-      r = match_all_states();
-      if(r == false)
-         sub.restore(*m_presult);
+      if((m_match_flags & match_nosubs) == 0)
+      {
+         backup_subex<BidiIterator> sub(*m_presult, index);
+         m_presult->set_first(position, index);
+         pstate = pstate->next.p;
+         r = match_all_states();
+         if(r == false)
+            sub.restore(*m_presult);
+      }
+      else
+      {
+         pstate = pstate->next.p;
+      }
       break;
    }
    }

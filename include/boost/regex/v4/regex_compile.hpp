@@ -51,7 +51,7 @@ bool BOOST_REGEX_CALL re_maybe_set_member(charT c,
                                  const reg_expression<charT, traits_type, Allocator>& e)
 {
    const charT* p = reinterpret_cast<const charT*>(set_+1);
-   bool icase = e.flags() & regbase::icase;
+   bool icase = e.flags() & regex_constants::icase;
    charT col = e.get_traits().translate(c, icase);
    for(unsigned int i = 0; i < set_->csingles; ++i)
    {
@@ -91,21 +91,21 @@ template <class charT, class traits, class Allocator>
 reg_expression<charT, traits, Allocator>::reg_expression(const charT* p, flag_type f, const Allocator& a)
     : data(a), pkmp(0), error_code_(REG_EMPTY), _expression(0)
 {
-   set_expression(p, f | regbase::use_except);
+   set_expression(p, f | regex_constants::use_except);
 }
 
 template <class charT, class traits, class Allocator>
 reg_expression<charT, traits, Allocator>::reg_expression(const charT* p1, const charT* p2, flag_type f, const Allocator& a)
     : data(a), pkmp(0), error_code_(REG_EMPTY), _expression(0)
 {
-    set_expression(p1, p2, f | regbase::use_except);
+    set_expression(p1, p2, f | regex_constants::use_except);
 }
 
 template <class charT, class traits, class Allocator>
 reg_expression<charT, traits, Allocator>::reg_expression(const charT* p, size_type len, flag_type f, const Allocator& a)
     : data(a), pkmp(0), error_code_(REG_EMPTY), _expression(0)
 {
-    set_expression(p, p + len, f | regbase::use_except);
+    set_expression(p, p + len, f | regex_constants::use_except);
 }
 
 template <class charT, class traits, class Allocator>
@@ -118,11 +118,11 @@ reg_expression<charT, traits, Allocator>::reg_expression(const reg_expression<ch
    if(e.error_code() == 0)
    {
       const charT* pe = e.expression();
-      set_expression(pe, pe + e._expression_len, e.flags() | regbase::use_except);
+      set_expression(pe, pe + e._expression_len, e.flags() | regex_constants::use_except);
    }
    else
    {
-      _flags = e.flags() & ~(regbase::use_except);
+      _flags = e.flags() & ~(regex_constants::use_except);
       fail(e.error_code());
    }
 }
@@ -144,7 +144,7 @@ reg_expression<charT, traits, Allocator>& BOOST_REGEX_CALL reg_expression<charT,
    _flags = use_except;
    fail(e.error_code());
    if(error_code() == 0)
-      set_expression(e._expression, e._expression + e._expression_len, e.flags() | regbase::use_except);
+      set_expression(e._expression, e._expression + e._expression_len, e.flags() | regex_constants::use_except);
    return *this;
 }
 
@@ -498,12 +498,12 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
    case re_detail::syntax_element_literal:
       // only the first character of the literal can match:
       // note these have already been translated:
-      if(*reinterpret_cast<charT*>(static_cast<re_detail::re_literal*>(node)+1) == traits_inst.translate(cc, (_flags & regbase::icase)))
+      if(*reinterpret_cast<charT*>(static_cast<re_detail::re_literal*>(node)+1) == traits_inst.translate(cc, (_flags & regex_constants::icase)))
          return true;
       return false;
    case re_detail::syntax_element_end_line:
       // next character (if there is one!) must be a newline:
-      if(traits_inst.is_separator(traits_inst.translate(cc, (_flags & regbase::icase))))
+      if(traits_inst.is_separator(traits_inst.translate(cc, (_flags & regex_constants::icase))))
          return true;
       return false;
    case re_detail::syntax_element_wild:
@@ -512,10 +512,10 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
       return true;
    case re_detail::syntax_element_within_word:
    case re_detail::syntax_element_word_start:
-      return traits_inst.is_class(traits_inst.translate(cc, (_flags & regbase::icase)), traits_type::char_class_word);
+      return traits_inst.is_class(traits_inst.translate(cc, (_flags & regex_constants::icase)), traits_type::char_class_word);
    case re_detail::syntax_element_word_end:
       // what follows must not be a word character,
-      return traits_inst.is_class(traits_inst.translate(cc, (_flags & regbase::icase)), traits_type::char_class_word) ? false : true;
+      return traits_inst.is_class(traits_inst.translate(cc, (_flags & regex_constants::icase)), traits_type::char_class_word) ? false : true;
    case re_detail::syntax_element_buffer_end:
       // we can be null, nothing must follow,
       // NB we assume that this is followed by
@@ -527,7 +527,7 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
       // NB we assume that this is followed by
       // re_detail::syntax_element_match, if its not then we can
       // never match anything anyway!!
-      return traits_inst.is_separator(traits_inst.translate(cc, (_flags & regbase::icase)));
+      return traits_inst.is_separator(traits_inst.translate(cc, (_flags & regex_constants::icase)));
    case re_detail::syntax_element_backref:
       // there's no easy way to determine this
       // which is not to say it can't be done!
@@ -540,7 +540,7 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
       return re_detail::re_maybe_set_member(cc, static_cast<const re_detail::re_set_long*>(node), *this) || (re_detail::re_is_set_member(static_cast<const charT*>(&cc), static_cast<const charT*>(&cc+1), static_cast<re_detail::re_set_long*>(node), *this) != &cc);
    case re_detail::syntax_element_set:
       // set all the elements that are set in corresponding set:
-      c = (traits_size_type)(traits_uchar_type)traits_inst.translate(cc, (_flags & regbase::icase));
+      c = (traits_size_type)(traits_uchar_type)traits_inst.translate(cc, (_flags & regex_constants::icase));
       return static_cast<re_detail::re_set*>(node)->_map[c] != 0;
    case re_detail::syntax_element_jump:
       if(static_cast<re_detail::re_jump*>(node)->alt.p < node)
@@ -583,7 +583,7 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start(
       else
          return probe_start(node->next.p, cc, static_cast<re_detail::re_jump*>(node)->alt.p);
    case re_detail::syntax_element_combining:
-      return !traits_inst.is_combining(traits_inst.translate(cc, (_flags & regbase::icase)));
+      return !traits_inst.is_combining(traits_inst.translate(cc, (_flags & regex_constants::icase)));
    }
    return false;
 }
@@ -777,7 +777,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
                   return 0;
                }
                boost::uint_fast32_t id = traits_inst.lookup_classname(base+2, first-2);
-               if(_flags & regbase::icase)
+               if(_flags & regex_constants::icase)
                {
                   if((id == traits_type::char_class_upper) || (id == traits_type::char_class_lower))
                   {
@@ -819,7 +819,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
                   unsigned i = 0;
                   while(i < len)
                   {
-                     s[i] = traits_inst.translate(s[i], (_flags & regbase::icase));
+                     s[i] = traits_inst.translate(s[i], (_flags & regex_constants::icase));
                      ++i;
                   }
                   traits_string_type s2;
@@ -901,7 +901,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
          l = last_dash;
          continue;
       case traits_type::syntax_slash:
-         if(_flags & regbase::escape_in_lists)
+         if(_flags & regex_constants::escape_in_lists)
          {
             ++first;
             if(first == last)
@@ -994,7 +994,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
          std::size_t len = s.size();
          while(i < len)
          {
-            s[i] = traits_inst.translate(s[i], (_flags & regbase::icase));
+            s[i] = traits_inst.translate(s[i], (_flags & regex_constants::icase));
             ++i;
          }
          started = true;
@@ -1025,7 +1025,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
       result = compile_set_aux(singles, ranges, classes, equivalents, isnot, width_type());
    #ifdef __BORLANDC__
    // delayed throw:
-   if((result == 0) && (_flags & regbase::use_except))
+   if((result == 0) && (_flags & regex_constants::use_except))
       fail(error_code());
    #endif
    return result;
@@ -1040,7 +1040,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
    unsigned int cranges = 0;
    boost::uint_fast32_t cclasses = 0;
    unsigned int cequivalents = 0;
-   bool nocollate_state = flags() & regbase::nocollate;
+   bool nocollate_state = !(flags() & regex_constants::collate);
    bool singleton = true;
 
    while(singles.empty() == false)
@@ -1074,7 +1074,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
          // delay throw to later:
          #ifdef __BORLANDC__
          boost::uint_fast32_t f = _flags;
-         _flags &= ~regbase::use_except;
+         _flags &= ~regex_constants::use_except;
          #endif
          fail(REG_ERANGE);
          #ifdef __BORLANDC__
@@ -1129,12 +1129,12 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
    {
       traits_string_type c1, c2, c3, c4;
 
-      if(flags() & regbase::nocollate)
+      if((flags() & regex_constants::collate) == 0)
          c1 = ranges.peek();
       else
          traits_inst.transform(c1, ranges.peek());
       ranges.pop();
-      if(flags() & regbase::nocollate)
+      if((flags() & regex_constants::collate) == 0)
          c2 = ranges.peek();
       else
          traits_inst.transform(c2, ranges.peek());
@@ -1148,7 +1148,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
          // delay throw to later:
          #ifdef __BORLANDC__
          boost::uint_fast32_t f = _flags;
-         _flags &= ~regbase::use_except;
+         _flags &= ~regex_constants::use_except;
          #endif
          fail(REG_ERANGE);
          #ifdef __BORLANDC__
@@ -1159,7 +1159,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
       for(unsigned int i = 0; i < 256; ++i)
       {
          c4 = (charT)i;
-         if(flags() & regbase::nocollate)
+         if((flags() & regex_constants::collate) == 0)
             c3 = c4;
          else
             traits_inst.transform(c3, c4);
@@ -1191,7 +1191,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
       for(unsigned int i = 0; i < 256; ++i)
       {
          if(traits_inst.is_class(charT(i), flags))
-            dat->_map[(traits_uchar_type)traits_inst.translate((charT)i, (_flags & regbase::icase))] = re_detail::mask_all;
+            dat->_map[(traits_uchar_type)traits_inst.translate((charT)i, (_flags & regex_constants::icase))] = re_detail::mask_all;
       }
    }
 
@@ -1317,7 +1317,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
 #endif
 #ifdef __OpenBSD__ 
    // strxfrm not working on OpenBSD?? 
-   f |= regbase::nocollate; 
+   f &= ~regex_constants::collate; 
 #endif 
 
    if(p == expression())
@@ -1357,11 +1357,11 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
    ++marks;
    dat = 0;
 
-   if(_flags & regbase::literal)
+   if(_flags & regex_constants::literal)
    {
       while(ptr != end)
       {
-         dat = add_literal(dat, traits_inst.translate(*ptr, (_flags & regbase::icase)));
+         dat = add_literal(dat, traits_inst.translate(*ptr, (_flags & regex_constants::icase)));
          ++ptr;
       }
    }
@@ -1384,8 +1384,16 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
          open_bracked_jump:
          // extend:
          dat = add_simple(dat, re_detail::syntax_element_startmark, sizeof(re_detail::re_brace));
-         markid.push(marks);
-         static_cast<re_detail::re_brace*>(dat)->index = marks++;
+         if(_flags & nosubs)
+         {
+            markid.push(0);
+            static_cast<re_detail::re_brace*>(dat)->index = 0;
+         }
+         else
+         {
+            markid.push(marks);
+            static_cast<re_detail::re_brace*>(dat)->index = marks++;
+         }
          mark.push(data.index(dat));
          ++ptr;
          //
@@ -1811,7 +1819,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
          dat = compile_set(ptr, end);
          if(dat == 0)
          {
-            if((_flags & regbase::failbit) == 0)
+            if((_flags & regex_constants::failbit) == 0)
                fail(REG_EBRACK);
             return error_code();
          }
@@ -1963,7 +1971,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
    fixup_apply(static_cast<re_detail::re_syntax_base*>(data.data()), marks);
 
    // check for error during fixup:
-   if(_flags & regbase::failbit)
+   if(_flags & regex_constants::failbit)
       return error_code();
 
    //
@@ -1985,7 +1993,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::set_expr
       {
          charT* p1 = reinterpret_cast<charT*>(reinterpret_cast<char*>(sbase) + sizeof(re_detail::re_literal));
          charT* p2 = p1 + static_cast<re_detail::re_literal*>(sbase)->length;
-         pkmp = re_detail::kmp_compile(p1, p2, charT(), re_detail::kmp_translator<traits>(_flags&regbase::icase, &traits_inst), data.allocator());
+         pkmp = re_detail::kmp_compile(p1, p2, charT(), re_detail::kmp_translator<traits>(_flags&regex_constants::icase, &traits_inst), data.allocator());
       }
    }
    return error_code();
@@ -2022,7 +2030,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
    {
       // add another charT to the list:
       std::ptrdiff_t pos = reinterpret_cast<unsigned char*>(dat) - reinterpret_cast<unsigned char*>(data.data());
-      *reinterpret_cast<charT*>(data.extend(sizeof(charT))) = traits_inst.translate(c, (_flags & regbase::icase));
+      *reinterpret_cast<charT*>(data.extend(sizeof(charT))) = traits_inst.translate(c, (_flags & regex_constants::icase));
       dat = reinterpret_cast<re_detail::re_syntax_base*>(reinterpret_cast<unsigned char*>(data.data()) + pos);
       ++(static_cast<re_detail::re_literal*>(dat)->length);
    }
@@ -2031,7 +2039,7 @@ re_detail::re_syntax_base* BOOST_REGEX_CALL reg_expression<charT, traits, Alloca
       // extend:
       dat = add_simple(dat, re_detail::syntax_element_literal, sizeof(re_detail::re_literal) + sizeof(charT));
       static_cast<re_detail::re_literal*>(dat)->length = 1;
-      *reinterpret_cast<charT*>(reinterpret_cast<re_detail::re_literal*>(dat)+1) = traits_inst.translate(c, (_flags & regbase::icase));
+      *reinterpret_cast<charT*>(reinterpret_cast<re_detail::re_literal*>(dat)+1) = traits_inst.translate(c, (_flags & regex_constants::icase));
    }
    return dat;
 }
@@ -2082,7 +2090,7 @@ unsigned int BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::fixup_le
             leading_lit = false;
             const charT* p1 = _leading_string;
             const charT* p2 = _leading_string + _leading_string_len;
-            pkmp = re_detail::kmp_compile(p1, p2, charT(), re_detail::kmp_translator<traits>(_flags&regbase::icase, &traits_inst), data.allocator());
+            pkmp = re_detail::kmp_compile(p1, p2, charT(), re_detail::kmp_translator<traits>(_flags&regex_constants::icase, &traits_inst), data.allocator());
          }
          leading_lit = false;
          break;
@@ -2140,16 +2148,16 @@ void BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::fail(unsigned in
    error_code_  = err;
    if(err)
    {
-      _flags |= regbase::failbit;
+      _flags |= regex_constants::failbit;
 #ifndef BOOST_NO_EXCEPTIONS
-      if(_flags & regbase::use_except)
+      if(_flags & regex_constants::use_except)
       {
          re_detail::raise_error(traits_inst, err);
       }
 #endif
    }
    else
-      _flags &= ~regbase::failbit;
+      _flags &= ~regex_constants::failbit;
 }
 
 

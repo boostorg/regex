@@ -65,7 +65,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
    const charT* p = reinterpret_cast<const charT*>(set_+1);
    iterator ptr;
    unsigned int i;
-   bool icase = e.flags() & regbase::icase;
+   bool icase = e.flags() & regex_constants::icase;
 
    if(next == last) return next;
 
@@ -119,7 +119,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
       // try and match a range, NB only a single character can match
       if(set_->cranges)
       {
-         if(e.flags() & regbase::nocollate)
+         if((e.flags() & regex_constants::collate) == 0)
             s1 = s2;
          else
             traits_inst.transform(s1, s2);

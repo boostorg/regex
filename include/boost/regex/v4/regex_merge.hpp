@@ -33,17 +33,14 @@ namespace boost{
 #endif
 
 template <class OutputIterator, class Iterator, class traits, class Allocator, class charT>
-OutputIterator regex_merge(OutputIterator out,
+inline OutputIterator regex_merge(OutputIterator out,
                          Iterator first,
                          Iterator last,
                          const reg_expression<charT, traits, Allocator>& e, 
                          const charT* fmt, 
                          match_flag_type flags = match_default)
 {
-   Iterator l = first;
-   re_detail::merge_out_predicate<OutputIterator, Iterator, charT, Allocator, traits> oi(out, l, fmt, flags, e.get_traits());
-   regex_grep(oi, first, last, e, flags);
-   return (flags & format_no_copy) ? out : re_detail::re_copy_out(out, l, last);
+   return regex_replace(out, first, last, e, fmt, flags);
 }
 
 template <class OutputIterator, class Iterator, class traits, class Allocator, class charT>
@@ -58,27 +55,21 @@ inline OutputIterator regex_merge(OutputIterator out,
 }
 
 template <class traits, class Allocator, class charT>
-std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
+inline std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
                          const reg_expression<charT, traits, Allocator>& e, 
                          const charT* fmt,
                          match_flag_type flags = match_default)
 {
-   std::basic_string<charT> result;
-   re_detail::string_out_iterator<std::basic_string<charT> > i(result);
-   regex_merge(i, s.begin(), s.end(), e, fmt, flags);
-   return result;
+   return regex_replace(s, e, fmt, flags);
 }
 
 template <class traits, class Allocator, class charT>
-std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
+inline std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
                          const reg_expression<charT, traits, Allocator>& e, 
                          const std::basic_string<charT>& fmt,
                          match_flag_type flags = match_default)
 {
-   std::basic_string<charT> result;
-   re_detail::string_out_iterator<std::basic_string<charT> > i(result);
-   regex_merge(i, s.begin(), s.end(), e, fmt.c_str(), flags);
-   return result;
+   return regex_replace(s, e, fmt, flags);
 }
 
 #ifdef __BORLANDC__

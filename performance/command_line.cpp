@@ -6,6 +6,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <iterator>
+#include <boost/regex.hpp>
+#include <boost/version.hpp>
 #include "regex_comparison.hpp"
 
 //
@@ -190,6 +192,13 @@ void print_result(std::ostream& os, double time, double best)
    os << "</td>";
 }
 
+std::string html_quote(const std::string& in)
+{
+   static const boost::regex e("(<)|(>)|(&)|(\")");
+   static const std::string format("(?1&lt;)(?2&gt;)(?3&amp;)(?4&quot;)");
+   return regex_replace(in, e, format);
+}
+
 void output_html_results(bool show_description, const std::string& tagname)
 {
    std::stringstream os;
@@ -230,9 +239,9 @@ void output_html_results(bool show_description, const std::string& tagname)
       last = result_list.end();
       while(first != last)
       {
-         os << "<tr><td><code>" << first->expression << "</code></td>";
+         os << "<tr><td><code>" << html_quote(first->expression) << "</code></td>";
          if(show_description)
-            os << "<td>" << first->description << "</td>";
+            os << "<td>" << html_quote(first->description) << "</td>";
 #if defined(BOOST_HAS_GRETA)
          if(time_greta == true)
             print_result(os, first->greta_time, first->factor);
@@ -264,7 +273,7 @@ void output_html_results(bool show_description, const std::string& tagname)
 
    std::string result = os.str();
 
-   unsigned int pos = html_contents.find(tagname);
+   std::string::size_type pos = html_contents.find(tagname);
    if(pos != std::string::npos)
    {
       html_contents.replace(pos, tagname.size(), result);
@@ -275,6 +284,42 @@ void output_final_html()
 {
    if(html_out_file.size())
    {
+      //
+      // start with search and replace ops:
+      //
+      std::string::size_type pos;
+      pos = html_contents.find("%compiler%");
+      if(pos != std::string::npos)
+      {
+         html_contents.replace(pos, 10, BOOST_COMPILER);
+      }
+      pos = html_contents.find("%library%");
+      if(pos != std::string::npos)
+      {
+         html_contents.replace(pos, 9, BOOST_STDLIB);
+      }
+      pos = html_contents.find("%os%");
+      if(pos != std::string::npos)
+      {
+         html_contents.replace(pos, 4, BOOST_PLATFORM);
+      }
+      pos = html_contents.find("%boost%");
+      if(pos != std::string::npos)
+      {
+         html_contents.replace(pos, 7, BOOST_STRINGIZE(BOOST_VERSION));
+      }
+      pos = html_contents.find("%pcre%");
+      if(pos != std::string::npos)
+      {
+#ifdef PCRE_MINOR
+         html_contents.replace(pos, 6, BOOST_STRINGIZE(PCRE_MAJOR.PCRE_MINOR));
+#else
+         html_contents.replace(pos, 6, "N/A");
+#endif
+      }
+      //
+      // now right the output to file:
+      //
       std::ofstream os(html_out_file.c_str());
       os << html_contents;
    }

@@ -52,18 +52,24 @@ public:
       failbit = use_except << 1,               // error flag
       literal = failbit << 1,                  // all characters are literals
       icase = literal << 1,                    // characters are matched regardless of case
-      nocollate = icase << 1,                  // don't use locale specific collation
-      perlex = nocollate << 1,                 // perl extensions
+      nocollate = 0,                           // don't use locale specific collation (deprecated)
+      collate = icase << 1,                    // use locale specific collation
+      perlex = collate << 1,                 // perl extensions
+      nosubs = perlex << 1,                    // don't mark sub-expressions
+      optimize = 0,                            // not really supported
 
-      basic = char_classes | intervals | limited_ops | bk_braces | bk_parens | bk_refs,
-      extended = char_classes | intervals | bk_refs,
+      basic = char_classes | intervals | limited_ops | bk_braces | bk_parens | bk_refs | collate,
+      extended = char_classes | intervals | bk_refs | collate,
       normal = perlex | escape_in_lists | char_classes | intervals | bk_refs | nocollate,
       emacs = bk_braces | bk_parens | bk_refs | bk_vbar,
       awk = extended | escape_in_lists,
       grep = basic | newline_alt,
       egrep = extended | newline_alt,
       sed = basic,
-      perl = normal
+      perl = normal,
+      ECMAScript = normal,
+      JavaScript = normal,
+      JScript = normal
    };
    typedef unsigned int flag_type;
 
@@ -90,6 +96,51 @@ public:
 protected:
    flag_type _flags;
 };
+
+//
+// provide std lib proposal compatible constants:
+//
+namespace regex_constants{
+
+   enum flag_type_
+   {
+      escape_in_lists = ::boost::regbase::escape_in_lists,
+      char_classes = ::boost::regbase::char_classes,
+      intervals = ::boost::regbase::intervals,
+      limited_ops = ::boost::regbase::limited_ops,
+      newline_alt = ::boost::regbase::newline_alt,
+      bk_plus_qm = ::boost::regbase::bk_plus_qm,
+      bk_braces = ::boost::regbase::bk_braces,
+      bk_parens = ::boost::regbase::bk_parens,
+      bk_refs = ::boost::regbase::bk_refs,
+      bk_vbar = ::boost::regbase::bk_vbar,
+
+      use_except = ::boost::regbase::use_except,
+      failbit = ::boost::regbase::failbit,
+      literal = ::boost::regbase::literal,
+      icase = ::boost::regbase::icase,
+      nocollate = ::boost::regbase::nocollate,
+      collate = ::boost::regbase::collate,
+      perlex = ::boost::regbase::perlex,
+      nosubs = ::boost::regbase::nosubs,
+      optimize = ::boost::regbase::optimize,
+
+      basic = ::boost::regbase::basic,
+      extended = ::boost::regbase::extended,
+      normal = ::boost::regbase::normal,
+      emacs = ::boost::regbase::emacs,
+      awk = ::boost::regbase::awk,
+      grep = ::boost::regbase::grep,
+      egrep = ::boost::regbase::egrep,
+      sed = basic,
+      perl = normal,
+      ECMAScript = normal,
+      JavaScript = normal,
+      JScript = normal
+   };
+   typedef ::boost::regbase::flag_type syntax_option_type;
+
+} // namespace regex_constants
 
 } // namespace boost
 

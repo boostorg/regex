@@ -232,14 +232,14 @@ void HandleArg(const char* arg)
       {
          if(words_only == 0)
          {
-            e.set_expression(arg, use_case ? regbase::normal : regbase::normal | regbase::icase);
+            e.set_expression(arg, use_case ? regex::normal : regbase::normal | regbase::icase);
             //ei.set_expression(arg);
          }
          else
          {
             char* buf = new char[std::strlen(arg) + 8];
             std::sprintf(buf, "\\<%s\\>", arg);
-            e.set_expression(buf, use_case ? regbase::normal : regbase::normal | regbase::icase);
+            e.set_expression(buf, use_case ? regex::normal : regbase::normal | regbase::icase);
             //ei.set_expression(buf);
             delete[] buf;
          }
@@ -261,7 +261,7 @@ void HandleArg(const char* arg)
          }
          if(words_only)
             std::strcat(buf2, "\\>");
-         e.set_expression(buf2, use_case ? regbase::normal : regbase::normal | regbase::icase);
+         e.set_expression(buf2, use_case ? regex::normal : regbase::normal | regbase::icase);
          //ei.set_expression(buf2);
          delete[] buf2;
       }

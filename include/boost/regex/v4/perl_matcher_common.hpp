@@ -44,11 +44,11 @@ perl_matcher<BidiIterator, Allocator, traits, Allocator2>::perl_matcher(BidiIter
 
    pstate = 0;
    m_match_flags = f;
-   icase = re.flags() & regbase::icase;
+   icase = re.flags() & regex_constants::icase;
    estimate_max_state_count(static_cast<category*>(0));
    if(!(m_match_flags & (match_perl|match_posix)))
    {
-      if(re.flags() & regbase::perlex)
+      if(re.flags() & regex_constants::perlex)
          m_match_flags |= match_perl;
       else
          m_match_flags |= match_posix;
@@ -104,7 +104,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match()
    position = base;
    search_base = base;
    state_count = 0;
-   m_presult->set_size(re.mark_count(), base, last);
+   m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), base, last);
    m_presult->set_base(base);
    if(m_match_flags & match_posix)
       m_result = *m_presult;
@@ -156,7 +156,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
       position = base;
       search_base = base;
       pstate = access::first(re);
-      m_presult->set_size(re.mark_count(), base, last);
+      m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), base, last);
       m_presult->set_base(base);
       m_match_flags |= match_init;
    }
@@ -174,7 +174,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
             ++position;
       }
       // reset $` start:
-      m_presult->set_size(re.mark_count(), search_base, last);
+      m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), search_base, last);
       if(base != search_base)
          m_match_flags |= match_prev_avail;
    }
@@ -242,7 +242,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_endmark()
    int index = static_cast<const re_brace*>(pstate)->index;
    if(index > 0)
    {
-      m_presult->set_second(position, index);
+      if((m_match_flags & match_nosubs) == 0)
+         m_presult->set_second(position, index);
    }
    else if(index < 0)
    {
@@ -706,7 +707,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find_restart_lit
    int len = info->len;
    const char_type* x = info->pstr;
    int j = 0; 
-   bool icase = re.flags() & regbase::icase;
+   bool icase = re.flags() & regex_constants::icase;
    while (position != last) 
    {
       while((j > -1) && (x[j] != traits_inst.translate(*position, icase))) 
