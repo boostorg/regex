@@ -25,7 +25,7 @@
 #define BOOST_REGEX_V4_PERL_MATCHER_RECURSIVE_HPP
 
 #ifdef __BORLANDC__
-#  pragma option push -a8 -b -Vx -Ve -pc -w-8027
+#  pragma option push -a8 -b -Vx -Ve -pc -w-8027 -w-8066 -w-8008
 #endif
 
 namespace boost{
@@ -294,7 +294,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
             break;
          ++count;
       }
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       pstate = rep;
       return backtrack_till_match(count - rep->min);
@@ -305,7 +305,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
       BidiIterator save_pos;
       do
       {
-         if(rep->leading)
+         if((rep->leading) && (rep->max == UINT_MAX))
             restart = position;
          pstate = rep->alt.p;
          save_pos = position;
@@ -342,6 +342,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
    if(rep->min > count)
       return false;  // not enough text left to match
    std::advance(position, count);
+   if((rep->leading) && (count < rep->max) && (rep->greedy))
+      restart = position;
    if(rep->greedy)
       return backtrack_till_match(count - rep->min);
 
@@ -354,7 +356,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
          ++position;
          ++count;
       }
-      if(rep->leading)
+      if((rep->leading) && (count == UINT_MAX))
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
@@ -406,7 +408,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          ++count;
       }
    }
-   if(rep->leading)
+   if((rep->leading) && (count < rep->max) && (rep->greedy))
       restart = position;
    if(count < rep->min)
       return false;
@@ -428,7 +430,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          else
             return false;  // counldn't repeat even though it was the only option
       }
-      if(rep->leading)
+      if((rep->leading) && (rep->max == UINT_MAX))
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
@@ -479,7 +481,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          ++count;
       }
    }
-   if(rep->leading)
+   if((rep->leading) && (count < rep->max) && (rep->greedy))
       restart = position;
    if(count < rep->min)
       return false;
@@ -501,7 +503,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          else
             return false;  // counldn't repeat even though it was the only option
       }
-      if(rep->leading)
+      if((rep->leading) && (rep->max == UINT_MAX))
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;
@@ -552,7 +554,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          ++count;
       }
    }
-   if(rep->leading)
+   if((rep->leading) && (count < rep->max) && (rep->greedy))
       restart = position;
    if(count < rep->min)
       return false;
@@ -574,7 +576,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          else
             return false;  // counldn't repeat even though it was the only option
       }
-      if(rep->leading)
+      if((rep->leading) && (rep->max == UINT_MAX))
          restart = position;
       pstate = rep->alt.p;
       save_pos = position;

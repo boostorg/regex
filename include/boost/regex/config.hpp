@@ -463,7 +463,7 @@ void raise_error(const traits& t, unsigned code)
 #     undef BOOST_REGEX_HAS_MS_STACK_GUARD
 #  endif
 #  ifndef BOOST_REGEX_MAX_CACHE_BLOCKS
-#     define BOOST_REGEX_MAX_CACHE_BLOCKS BOOST_REGEX_MAX_BLOCKS
+#     define BOOST_REGEX_MAX_CACHE_BLOCKS 16
 #  endif
 #endif
 

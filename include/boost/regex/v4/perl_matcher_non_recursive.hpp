@@ -27,7 +27,7 @@
 #include <new>
 
 #ifdef __BORLANDC__
-#  pragma option push -a8 -b -Vx -Ve -pc -w-8027
+#  pragma option push -a8 -b -Vx -Ve -pc -w-8027 -w-8066 -w-8008
 #endif
 
 namespace boost{
@@ -479,7 +479,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
          ++count;
       }
       // remember where we got to if this is a leading repeat:
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       // push backtrack info if available:
       if(count - rep->min)
@@ -512,7 +512,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_dot_repeat
 
    if(rep->greedy)
    {
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       // push backtrack info if available:
       if(count - rep->min)
@@ -565,14 +565,13 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_char_repea
          ++count;
       }
    }
-   if(rep->leading)
-      restart = position;
+
    if(count < rep->min)
       return false;
 
    if(rep->greedy)
    {
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       // push backtrack info if available:
       if(count - rep->min)
@@ -627,14 +626,13 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_set_repeat
          ++count;
       }
    }
-   if(rep->leading)
-      restart = position;
+
    if(count < rep->min)
       return false;
 
    if(rep->greedy)
    {
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       // push backtrack info if available:
       if(count - rep->min)
@@ -689,14 +687,13 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_long_set_r
          ++count;
       }
    }
-   if(rep->leading)
-      restart = position;
+
    if(count < rep->min)
       return false;
 
    if(rep->greedy)
    {
-      if(rep->leading)
+      if((rep->leading) && (count < rep->max))
          restart = position;
       // push backtrack info if available:
       if(count - rep->min)
@@ -903,20 +900,29 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_slow_dot_
    pstate = rep->next.p;
    position = pmp->last_position;
 
-   // wind forward until we can skip out of the repeat:
-   do
+   if(position != last)
    {
-      if(!match_wild())
+      // wind forward until we can skip out of the repeat:
+      do
       {
-         // failed repeat match, discard this state and look for another:
-         destroy_single_repeat();
+         if(!match_wild())
+         {
+            // failed repeat match, discard this state and look for another:
+            destroy_single_repeat();
+            return true;
+         }
+         ++count;
+         pstate = rep->next.p;
+      }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
+   }   
+   if(position == last)
+   {
+      // can't repeat any more, remove the pushed state: 
+      destroy_single_repeat();
+      if(rep->can_be_null & mask_skip)
          return true;
-      }
-      ++count;
-      pstate = rep->next.p;
-   }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
-   
-   if((count == rep->max) || (position == last))
+   }
+   else if(count == rep->max)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
@@ -948,17 +954,26 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_fast_dot_
    unsigned count = pmp->count;
 
    assert(count < rep->max);
-   assert(position != last);
    position = pmp->last_position;
-
-   // wind forward until we can skip out of the repeat:
-   do
+   if(position != last)
    {
-      ++position;
-      ++count;
-   }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
-   
-   if((count == rep->max) || (position == last))
+
+      // wind forward until we can skip out of the repeat:
+      do
+      {
+         ++position;
+         ++count;
+      }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
+   }
+
+   if(position == last)
+   {
+      // can't repeat any more, remove the pushed state: 
+      destroy_single_repeat();
+      if(rep->can_be_null & mask_skip)
+         return true;
+   }
+   else if(count == rep->max)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
@@ -996,24 +1011,32 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_char_repe
    assert(rep->next.p);
    assert(rep->alt.p);
    assert(rep->next.p->type == syntax_element_literal);
-   assert(position != last);
    assert(count < rep->max);
 
-   // wind forward until we can skip out of the repeat:
-   do
+   if(position != last)
    {
-      if(traits_inst.translate(*position, icase) != what)
+      // wind forward until we can skip out of the repeat:
+      do
       {
-         // failed repeat match, discard this state and look for another:
-         destroy_single_repeat();
+         if(traits_inst.translate(*position, icase) != what)
+         {
+            // failed repeat match, discard this state and look for another:
+            destroy_single_repeat();
+            return true;
+         }
+         ++count;
+         ++ position;
+         pstate = rep->next.p;
+      }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
+   }   
+   if(position == last)
+   {
+      // can't repeat any more, remove the pushed state: 
+      destroy_single_repeat();
+      if(rep->can_be_null & mask_skip)
          return true;
-      }
-      ++count;
-      ++ position;
-      pstate = rep->next.p;
-   }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
-   
-   if((count == rep->max) || (position == last))
+   }
+   else if(count == rep->max)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
@@ -1051,24 +1074,32 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_short_set
    assert(rep->next.p);
    assert(rep->alt.p);
    assert(rep->next.p->type == syntax_element_set);
-   assert(position != last);
    assert(count < rep->max);
-
-   // wind forward until we can skip out of the repeat:
-   do
-   {
-      if(!map[(traits_uchar_type)traits_inst.translate(*position, icase)])
-      {
-         // failed repeat match, discard this state and look for another:
-         destroy_single_repeat();
-         return true;
-      }
-      ++count;
-      ++ position;
-      pstate = rep->next.p;
-   }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
    
-   if((count == rep->max) || (position == last))
+   if(position != last)
+   {
+      // wind forward until we can skip out of the repeat:
+      do
+      {
+         if(!map[(traits_uchar_type)traits_inst.translate(*position, icase)])
+         {
+            // failed repeat match, discard this state and look for another:
+            destroy_single_repeat();
+            return true;
+         }
+         ++count;
+         ++ position;
+         pstate = rep->next.p;
+      }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
+   }   
+   if(position == last)
+   {
+      // can't repeat any more, remove the pushed state: 
+      destroy_single_repeat();
+      if(rep->can_be_null & mask_skip)
+         return true;
+   }
+   else if(count == rep->max)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
@@ -1109,21 +1140,30 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::unwind_long_set_
    assert(position != last);
    assert(count < rep->max);
 
-   // wind forward until we can skip out of the repeat:
-   do
+   if(position != last)
    {
-      if(position == re_is_set_member(position, last, set, re))
+      // wind forward until we can skip out of the repeat:
+      do
       {
-         // failed repeat match, discard this state and look for another:
-         destroy_single_repeat();
+         if(position == re_is_set_member(position, last, set, re))
+         {
+            // failed repeat match, discard this state and look for another:
+            destroy_single_repeat();
+            return true;
+         }
+         ++position;
+         ++count;
+         pstate = rep->next.p;
+      }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
+   }   
+   if(position == last)
+   {
+      // can't repeat any more, remove the pushed state: 
+      destroy_single_repeat();
+      if(rep->can_be_null & mask_skip)
          return true;
-      }
-      ++position;
-      ++count;
-      pstate = rep->next.p;
-   }while((count < rep->max) && (position != last) && !access::can_start(*position, rep->_map, mask_skip));
-   
-   if((count == rep->max) || (position == last))
+   }
+   else if(count == rep->max)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();

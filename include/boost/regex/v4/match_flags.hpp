@@ -51,11 +51,12 @@ typedef enum _match_flags
                                                      // uninterupted from the previous one
    match_partial = match_continuous << 1,            // find partial matches
    
-   match_stop = match_partial << 1,                  // stop after first match (grep)
+   match_stop = match_partial << 1,                  // stop after first match (grep) V3 only
+   match_not_initial_null = match_stop,              // don't match initial null, V4 only
    match_all = match_stop << 1,                      // must find the whole of input even if match_any is set
    match_perl = match_all << 1,                      // Use perl matching rules
    match_posix = match_perl << 1,                    // Use POSIX matching rules
-   match_nosubs = match_posix << 1,                 // don't trap marked subs
+   match_nosubs = match_posix << 1,                  // don't trap marked subs
    match_max = match_nosubs,
 
    format_perl = 0,                                  // perl style replacement
@@ -108,23 +109,23 @@ using regex_constants::match_not_eow;
 using regex_constants::match_not_dot_newline;
 using regex_constants::match_not_dot_null;
 using regex_constants::match_prev_avail;
-using regex_constants::match_init;
+//using regex_constants::match_init;
 using regex_constants::match_any;
 using regex_constants::match_not_null;
 using regex_constants::match_continuous;
 using regex_constants::match_partial;
-using regex_constants::match_stop;
+//using regex_constants::match_stop;
 using regex_constants::match_all;
 using regex_constants::match_perl;
 using regex_constants::match_posix;
 using regex_constants::match_nosubs;
-using regex_constants::match_max;
+//using regex_constants::match_max;
 using regex_constants::format_all;
 using regex_constants::format_sed;
 using regex_constants::format_perl;
 using regex_constants::format_no_copy;
 using regex_constants::format_first_only;
-using regex_constants::format_is_if;
+//using regex_constants::format_is_if;
 
 } // namespace boost
 #endif // __cplusplus

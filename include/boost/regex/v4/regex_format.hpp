@@ -364,7 +364,7 @@ expand_sub:
             return out;
          }
       case traits_type::syntax_colon:
-         if(flags & format_is_if)
+         if(flags & regex_constants::format_is_if)
          {
             ++fmt;
             return out;
@@ -396,7 +396,7 @@ expand_sub:
             unsigned int id = traits_inst.toi(fmt, fmt_end, 10);
             if(m[id].matched)
             {
-               oi_assign(&out, _reg_format_aux(out, m, fmt, flags | format_is_if, traits_inst));
+               oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
                if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
                   re_skip_format(fmt, traits_inst);
             }
@@ -404,7 +404,7 @@ expand_sub:
             {
                re_skip_format(fmt, traits_inst);
                if(traits_inst.syntax_type((traits_size_type)(traits_uchar_type)(*(fmt-1))) == traits_type::syntax_colon)
-                  oi_assign(&out, _reg_format_aux(out, m, fmt, flags | format_is_if, traits_inst));
+                  oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
             }
             return out;
          }

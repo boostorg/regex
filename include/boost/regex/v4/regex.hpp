@@ -154,6 +154,12 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #ifndef BOOST_REGEX_SPLIT_HPP
 #include <boost/regex/v4/regex_split.hpp>
 #endif
+#ifndef BOOST_REGEX_ITERATOR_HPP
+#include <boost/regex/v4/regex_iterator.hpp>
+#endif
+#ifndef BOOST_REGEX_TOKEN_ITERATOR_HPP
+#include <boost/regex/v4/regex_token_iterator.hpp>
+#endif
 
 #endif  // __cplusplus
 

@@ -25,7 +25,7 @@
 #define BOOST_REGEX_V4_PERL_MATCHER_COMMON_HPP
 
 #ifdef __BORLANDC__
-#  pragma option push -a8 -b -Vx -Ve -pc -w-8027
+#  pragma option push -a8 -b -Vx -Ve -pc -w-8027 -w-8066 -w-8008
 #endif
 
 namespace boost{
@@ -150,7 +150,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
 #endif
 
    state_count = 0;
-   if((m_match_flags & match_init) == 0)
+   if((m_match_flags & regex_constants::match_init) == 0)
    {
       // reset our state machine:
       position = base;
@@ -158,7 +158,7 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find()
       pstate = access::first(re);
       m_presult->set_size((m_match_flags & match_nosubs) ? 1 : re.mark_count(), base, last);
       m_presult->set_base(base);
-      m_match_flags |= match_init;
+      m_match_flags |= regex_constants::match_init;
    }
    else
    {
@@ -296,6 +296,11 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_start_line
          return true;
       }
    }
+   else if(traits_inst.is_separator(*t))
+   {
+      pstate = pstate->next.p;
+      return true;
+   }
    return false;
 }
 
@@ -349,6 +354,8 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::match_match()
    if((m_match_flags & match_not_null) && (position == (*m_presult)[0].first))
       return false;
    if((m_match_flags & match_all) && (position != last))
+      return false;
+   if((m_match_flags & regex_constants::match_not_initial_null) && (position == search_base))
       return false;
    m_presult->set_second(position);
    pstate = 0;
@@ -671,7 +678,11 @@ bool perl_matcher<BidiIterator, Allocator, traits, Allocator2>::find_restart_lin
          return false;
       ++position;
       if(position == last)
+      {
+         if((access::first(re)->can_be_null) && match_prefix())
+            return true;
          return false;
+      }
 
       if( access::can_start(*position, _map, (unsigned char)mask_any) )
       {
