@@ -593,8 +593,13 @@ bool BOOST_REGEX_CALL reg_expression<charT, traits, Allocator>::probe_start_null
 {
    switch(node->type)
    {
-   case re_detail::syntax_element_startmark:
    case re_detail::syntax_element_endmark:
+      if(static_cast<const re_detail::re_brace*>(node)->index == -3)
+      {
+         return true;
+      }
+      // fall through:
+   case re_detail::syntax_element_startmark:
    case re_detail::syntax_element_start_line:
    case re_detail::syntax_element_word_boundary:
    case re_detail::syntax_element_buffer_start:

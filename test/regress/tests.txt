@@ -1146,6 +1146,7 @@ a()b\1 ab 0 2 1 1
 ^((?>\w+)|(?>\s+))*$ "this is not a line with only words and spaces!" -1 -1
 ((?>\d+))(\w) 12345a 0 6 0 5 5 6
 ((?>\d+))(\w) 12345+ -1 -1
+((?>\d+))(\d) 12345 -1 -1
 (?>a+)b aaab 0 4
 ((?>a+)b) aaab 0 4 0 4
 (?>(a+))b aaab 0 4 0 3
@@ -1164,5 +1165,11 @@ a()b\1 ab 0 2 1 1
 ((?>a*))* aabbaa 0 2 2 2
 ((?>a*?))* aaaaa 0 0 0 0
 ((?>a*?))*    aabbaa 0 0 0 0
+"word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword" "word cat dog elephant mussel cow horse canary baboon snake shark otherword" 0 74
+"word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword" "word cat dog elephant mussel cow horse canary baboon snake shark" -1 -1
+"word (?>[a-zA-Z0-9]+ ){0,30}otherword" "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I hope" -1 -1
+"word (?>[a-zA-Z0-9]+ ){0,30}otherword" "word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I really really hope otherword" -1 -1
+((?>Z)+|A)* ZABCDEFG 0 2 1 2
+((?>)+|A)* !
 
 
