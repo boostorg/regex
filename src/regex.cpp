@@ -104,16 +104,6 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_regex_exception(const std::string& 
 
 #if defined(BOOST_REGEX_NON_RECURSIVE) && !defined(BOOST_REGEX_V3)
 
-BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block()
-{
-   return ::operator new(BOOST_REGEX_BLOCKSIZE);
-}
-
-BOOST_REGEX_DECL void BOOST_REGEX_CALL release_mem_block(void* p)
-{
-   ::operator delete(p);
-}
-
 mem_block_cache block_cache = { 0, };
 
 #endif
