@@ -112,14 +112,14 @@ struct BOOST_REGEX_DECL c_regex_traits<wchar_t>
       return (std::towlower)(c); 
    }
 
-   string_type BOOST_REGEX_CALL transform(const wchar_t* p1, const wchar_t* p2) const;
-   string_type BOOST_REGEX_CALL transform_primary(const wchar_t* p1, const wchar_t* p2) const;
+   static string_type BOOST_REGEX_CALL transform(const wchar_t* p1, const wchar_t* p2);
+   static string_type BOOST_REGEX_CALL transform_primary(const wchar_t* p1, const wchar_t* p2);
 
-   char_class_type BOOST_REGEX_CALL lookup_classname(const wchar_t* p1, const wchar_t* p2) const;
-   string_type BOOST_REGEX_CALL lookup_collatename(const wchar_t* p1, const wchar_t* p2) const;
+   static char_class_type BOOST_REGEX_CALL lookup_classname(const wchar_t* p1, const wchar_t* p2);
+   static string_type BOOST_REGEX_CALL lookup_collatename(const wchar_t* p1, const wchar_t* p2);
 
-   bool BOOST_REGEX_CALL isctype(wchar_t, char_class_type) const;
-   int BOOST_REGEX_CALL value(wchar_t, int) const;
+   static bool BOOST_REGEX_CALL isctype(wchar_t, char_class_type);
+   static int BOOST_REGEX_CALL value(wchar_t, int);
 
    locale_type imbue(locale_type l)
    { return l; }
@@ -131,6 +131,57 @@ private:
    c_regex_traits(const c_regex_traits&);
    c_regex_traits& operator=(const c_regex_traits&);
 };
+
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+//
+// Provide an unsigned short version as well, so the user can link to this
+// no matter whether they build with /Zc:wchar_t or not (MSVC specific).
+//
+template<>
+struct BOOST_REGEX_DECL c_regex_traits<unsigned short>
+{
+   c_regex_traits(){}
+   typedef unsigned short char_type;
+   typedef std::size_t size_type;
+   typedef std::basic_string<unsigned short> string_type;
+   struct locale_type{};
+   typedef boost::uint32_t char_class_type;
+
+   static size_type length(const char_type* p) 
+   { 
+      return (std::wcslen)((const wchar_t*)p); 
+   }
+
+   unsigned short translate(unsigned short c) const 
+   { 
+      return c; 
+   }
+   unsigned short translate_nocase(unsigned short c) const 
+   { 
+      return (std::towlower)((wchar_t)c); 
+   }
+
+   static string_type BOOST_REGEX_CALL transform(const unsigned short* p1, const unsigned short* p2);
+   static string_type BOOST_REGEX_CALL transform_primary(const unsigned short* p1, const unsigned short* p2);
+
+   static char_class_type BOOST_REGEX_CALL lookup_classname(const unsigned short* p1, const unsigned short* p2);
+   static string_type BOOST_REGEX_CALL lookup_collatename(const unsigned short* p1, const unsigned short* p2);
+
+   static bool BOOST_REGEX_CALL isctype(unsigned short, char_class_type);
+   static int BOOST_REGEX_CALL value(unsigned short, int);
+
+   locale_type imbue(locale_type l)
+   { return l; }
+   locale_type getloc()const
+   { return locale_type(); }
+
+private:
+   // this type is not copyable:
+   c_regex_traits(const c_regex_traits&);
+   c_regex_traits& operator=(const c_regex_traits&);
+};
+
+#endif
 
 #endif // BOOST_NO_WREGEX
 

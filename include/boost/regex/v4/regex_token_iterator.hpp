@@ -152,6 +152,8 @@ public:
       }
       return false;
    }
+private:
+   regex_token_iterator_implementation& operator=(const regex_token_iterator_implementation&);
 };
 
 template <class BidirectionalIterator, 

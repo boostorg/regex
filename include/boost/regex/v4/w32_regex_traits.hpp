@@ -61,23 +61,38 @@ BOOST_REGEX_DECL lcid_type BOOST_REGEX_CALL w32_get_default_locale();
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(char, lcid_type);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(wchar_t, lcid_type);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(unsigned short ca, lcid_type id);
+#endif
 #endif
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(char, lcid_type);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(wchar_t, lcid_type);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(unsigned short ca, lcid_type id);
+#endif
 #endif
 BOOST_REGEX_DECL cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name);
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type id, int i, const std::string& def);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type id, int i, const std::wstring& def);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::basic_string<unsigned short>& def);
+#endif
 #endif
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type id, const char* p1, const char* p2);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type id, const wchar_t* p1, const wchar_t* p2);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transform(lcid_type id, const unsigned short* p1, const unsigned short* p2);
+#endif
 #endif
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, lcid_type id);
+#endif
 #endif
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type);
 #ifndef BOOST_NO_WREGEX
@@ -86,6 +101,9 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type);
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type, boost::uint32_t mask, char c);
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type, boost::uint32_t mask, wchar_t c);
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type id, boost::uint32_t m, unsigned short c);
+#endif
 #endif
 //
 // class w32_regex_traits_base:

@@ -17,7 +17,8 @@ EX_SOURCES =
    w32_regex_traits.cpp
    wc_regex_traits.cpp
    wide_posix_api.cpp
-   winstances.cpp ;
+   winstances.cpp
+   usinstances.cpp ;
        
 lib boost_regex_extra : ../../src/$(EX_SOURCES) <template>../../build/regex-options
     : 

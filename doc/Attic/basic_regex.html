@@ -143,33 +143,33 @@ class basic_regex {
    void <A href="#m13">swap</A>(basic_regex&amp;) throw();
 };
 
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o4">operator</A> == (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o5">operator</A> != (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o7">operator</A> &lt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o8">operator</A> &lt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o9">operator</A> &gt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
-template &lt;class charT, class traits, class Allocator&gt;
-bool <A href="#o10">operator</A> &gt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o4">operator</A> == (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o5">operator</A> != (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o7">operator</A> &lt; (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o8">operator</A> &lt;= (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o9">operator</A> &gt;= (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool <A href="#o10">operator</A> &gt; (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits&gt;&amp; rhs);
 
-template &lt;class charT, class io_traits, class re_traits, class Allocator&gt;
+template &lt;class charT, class io_traits, class re_traits&gt;
 basic_ostream&lt;charT, io_traits&gt;&amp;
    <A href="#o11">operator</A> &lt;&lt; (basic_ostream&lt;charT, io_traits&gt;&amp; os,
-                const basic_regex&lt;charT, re_traits, Allocator&gt;&amp; e);
+                const basic_regex&lt;charT, re_traits&gt;&amp; e);
 
-template &lt;class charT, class traits, class Allocator&gt;
-void <A href="#o12">swap</A>(basic_regex&lt;charT, traits, Allocator&gt;&amp; e1,
-          basic_regex&lt;charT, traits, Allocator&gt;&amp; e2);
+template &lt;class charT, class traits&gt;
+void <A href="#o12">swap</A>(basic_regex&lt;charT, traits&gt;&amp; e1,
+          basic_regex&lt;charT, traits&gt;&amp; e2);
 
 typedef basic_regex&lt;char&gt; regex;
 typedef basic_regex&lt;wchar_t&gt; wregex;
@@ -831,62 +831,62 @@ void swap(basic_regex&amp; e) throw();
          please note that these are likely to be removed from the standard library 
          proposal, so use with care if you are writing portable code.</P>
       <pre><A name=o4></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator == (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator == (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) == 0</code>.</p>
       <pre><A name=o5></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator != (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator != (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) != 0</code>.</p>
       <pre><A name=o7></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator &lt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator &lt; (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) &lt; 0</code>.</p>
       <pre><A name=o8></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator &lt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator &lt;= (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) &lt;= 0</code>.</p>
       <pre><A name=o9></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator &gt;= (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                  const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator &gt;= (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                  const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) &gt;= 0</code>.</p>
       <pre><A name=o10></A>
-template &lt;class charT, class traits, class Allocator&gt;
-bool operator &gt; (const basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-                 const basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+bool operator &gt; (const basic_regex&lt;charT, traits&gt;&amp; lhs,
+                 const basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> Returns <code>lhs.compare(rhs) &gt; 0</code>.</p>
       <h5>basic_regex inserter.</h5>
       <P>The basic_regex stream inserter is provided on an experimental basis, and 
          outputs the textual representation of the expression to the stream:</P>
       <pre><A name=o11></A>
-template &lt;class charT, class io_traits, class re_traits, class Allocator&gt;
+template &lt;class charT, class io_traits, class re_traits&gt;
 basic_ostream&lt;charT, io_traits&gt;&amp;
    operator &lt;&lt; (basic_ostream&lt;charT, io_traits&gt;&amp; os
-                const basic_regex&lt;charT, re_traits, Allocator&gt;&amp; e);
+                const basic_regex&lt;charT, re_traits&gt;&amp; e);
 </pre>
       <p><b>Effects:</b> Returns (os &lt;&lt; e.str()).</p>
       <h5>basic_regex non-member swap</h5>
       <pre><A name=o12></A>
-template &lt;class charT, class traits, class Allocator&gt;
-void swap(basic_regex&lt;charT, traits, Allocator&gt;&amp; lhs,
-          basic_regex&lt;charT, traits, Allocator&gt;&amp; rhs);
+template &lt;class charT, class traits&gt;
+void swap(basic_regex&lt;charT, traits&gt;&amp; lhs,
+          basic_regex&lt;charT, traits&gt;&amp; rhs);
 </pre>
       <p><b>Effects:</b> calls <code>lhs.swap(rhs)</code>.</p>
       <hr>
-      <p>Revised 
+      <p>Revised 7 Aug 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         24&nbsp;June 2004&nbsp; 
+         2004&nbsp; 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
       <p><i>© Copyright John Maddock&nbsp;1998- 
             <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%Y" startspan -->  2004<!--webbot bot="Timestamp" endspan i-checksum="39359" --></i></p>

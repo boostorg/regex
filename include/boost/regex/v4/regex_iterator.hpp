@@ -68,6 +68,8 @@ public:
          what.set_base(base);
       return result;
    }
+private:
+   regex_iterator_implementation& operator=(const regex_iterator_implementation&);
 };
 
 template <class BidirectionalIterator, 

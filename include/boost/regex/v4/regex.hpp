@@ -107,6 +107,18 @@
 #endif
 #endif
 
+#if !defined(BOOST_NO_WREGEX) && defined(BOOST_REGEX_HAS_OTHER_WCHAR_T)
+#define BOOST_REGEX_CHAR_T unsigned short
+#ifdef BOOST_REGEX_US_INSTANTIATE
+#  define BOOST_REGEX_INSTANTIATE
+#endif
+#include <boost/regex/v4/instances.hpp>
+#undef BOOST_REGEX_CHAR_T
+#ifdef BOOST_REGEX_INSTANTIATE
+#  undef BOOST_REGEX_INSTANTIATE
+#endif
+#endif
+
 
 namespace boost{
 #ifdef BOOST_REGEX_NO_FWD

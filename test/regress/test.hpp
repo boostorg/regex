@@ -1,3 +1,20 @@
+/*
+ *
+ * Copyright (c) 2004
+ * Dr John Maddock
+ *
+ * Use, modification and distribution are subject to the 
+ * Boost Software License, Version 1.0. (See accompanying file 
+ * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ *
+ */
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         test.hpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Macros for test cases.
+  */
 
 
 #ifndef BOOST_REGEX_REGRESS_TEST_HPP
@@ -7,6 +24,7 @@
 #include "test_regex_search.hpp"
 #include "test_regex_replace.hpp"
 #include "test_deprecated.hpp"
+#include "test_mfc.hpp"
 #include "test_locale.hpp"
 
 
@@ -45,6 +63,12 @@ void test(const charT& c, const tagT& tag)
       && (test_locale::c_locale_state() == test_locale::test_no_locale)
       &&(test_locale::cpp_locale_state() == test_locale::test_no_locale))
       test_deprecated(c, tag);
+   // test MFC/ATL wrappers:
+   test_info<charT>::set_typename("MFC/ATL interfaces");
+   if((test_locale::win_locale_state() == test_locale::test_no_locale)
+      && (test_locale::c_locale_state() == test_locale::test_no_locale)
+      &&(test_locale::cpp_locale_state() == test_locale::test_no_locale))
+      test_mfc(c, tag);
 }
 
 //
@@ -110,6 +134,12 @@ const int* make_array(int first, ...);
 #define TEST_REGEX_SEARCH(s, f, t, m, a)\
    TEST_REGEX_SEARCH_N(s, f, t, m, a);\
    TEST_REGEX_SEARCH_W(BOOST_JOIN(L, s), f, BOOST_JOIN(L, t), m, a)
+
+#if (defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ >= 4))
+#define TEST_REGEX_SEARCH_L(s, f, t, m, a) TEST_REGEX_SEARCH_W(BOOST_JOIN(L, s), f, BOOST_JOIN(L, t), m, a)
+#else
+#define TEST_REGEX_SEARCH_L(s, f, t, m, a) TEST_REGEX_SEARCH(s, f, t, m, a)
+#endif
 
 //
 // define macros for testing regex replaces:

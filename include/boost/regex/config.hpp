@@ -70,6 +70,16 @@
 #endif
 
 //
+// Fix for gcc prior to 3.4: std::ctype<wchar_t> doesn't allow
+// masks to be combined, for example:
+// std::use_facet<std::ctype<wchar_t> >.is(std::ctype_base::lower|std::ctype_base::upper, L'a');
+// returns *false*.
+//
+#ifdef __GLIBCPP__
+#  define BOOST_REGEX_BUGGY_CTYPE_FACET
+#endif
+
+//
 // If there isn't good enough wide character support then there will
 // be no wide character regular expressions:
 //
@@ -127,13 +137,26 @@
  *
  ****************************************************************************/
 
-#ifdef __cplusplus
-#if defined(BOOST_MSVC) && (BOOST_MSVC >= 1300) && !defined(BOOST_REGEX_V3) && !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION))
-#  define BOOST_REGEX_HAS_SHORT_WCHAR_T
-namespace boost{ typedef __wchar_t regex_wchar_type; }
-#else
-namespace boost{ typedef wchar_t regex_wchar_type; }
-#endif
+//
+// define BOOST_REGEX_HAS_OTHER_WCHAR_T when wchar_t is a native type, but the users
+// code may be built with wchar_t as unsigned short: basically when we're building
+// with MSVC and the /Zc:wchar_t option we place some extra unsigned short versions
+// of the non-inline functions in the library, so that users can still link to the lib,
+// irrespective of whether their own code is built with /Zc:wchar_t.
+//
+#if defined(__cplusplus) && (defined(BOOST_MSVC) || defined(__ICL)) && !defined(BOOST_NO_INTRINSIC_WCHAR_T) && defined(BOOST_WINDOWS)
+#  define BOOST_REGEX_HAS_OTHER_WCHAR_T
+#  ifdef BOOST_MSVC
+#     pragma warning(push)
+#     pragma warning(disable : 4251 4231 4660)
+#  endif
+#  ifdef _DLL
+#     include <string>
+      extern template class __declspec(dllimport) std::basic_string<unsigned short>;
+#  endif
+#  ifdef BOOST_MSVC
+#     pragma warning(pop)
+#  endif
 #endif
 
 

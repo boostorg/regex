@@ -74,7 +74,7 @@ perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, 
    const char_type w = static_cast<char_type>('w');
    m_word_mask = traits_inst.lookup_classname(&w, &w+1);
    // find bitmask to use for matching '.':
-   match_any_mask = (f & match_not_dot_newline) ? re_detail::test_not_newline : re_detail::test_newline;
+   match_any_mask = static_cast<unsigned char>((f & match_not_dot_newline) ? re_detail::test_not_newline : re_detail::test_newline);
 }
 
 template <class BidiIterator, class Allocator, class traits>

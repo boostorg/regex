@@ -37,7 +37,7 @@ namespace std{
 
 namespace boost{
 
-c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform(const wchar_t* p1, const wchar_t* p2) const
+c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform(const wchar_t* p1, const wchar_t* p2) 
 { 
    std::size_t r;
    std::size_t s = 10;
@@ -52,10 +52,10 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::t
    return result; 
 }
 
-c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform_primary(const wchar_t* p1, const wchar_t* p2) const
+c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform_primary(const wchar_t* p1, const wchar_t* p2) 
 {
    static wchar_t s_delim;
-   static const int s_collate_type = ::boost::re_detail::find_sort_syntax(this, &s_delim);
+   static const int s_collate_type = ::boost::re_detail::find_sort_syntax(static_cast<const c_regex_traits<wchar_t>*>(0), &s_delim);
    std::wstring result;
    //
    // What we do here depends upon the format of the sort key returned by
@@ -70,19 +70,19 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::t
          result.assign(p1, p2);
          for(std::wstring::size_type i = 0; i < result.size(); ++i)
             result[i] = (std::towlower)(result[i]);
-         result = this->transform(&*result.begin(), &*result.begin() + result.size());
+         result = c_regex_traits<wchar_t>::transform(&*result.begin(), &*result.begin() + result.size());
          break;
       }
    case ::boost::re_detail::sort_fixed:
       {
          // get a regular sort key, and then truncate it:
-         result = this->transform(&*result.begin(), &*result.begin() + result.size());
+         result = c_regex_traits<wchar_t>::transform(&*result.begin(), &*result.begin() + result.size());
          result.erase(s_delim);
          break;
       }
    case ::boost::re_detail::sort_delim:
          // get a regular sort key, and then truncate everything after the delim:
-         result = this->transform(&*result.begin(), &*result.begin() + result.size());
+         result = c_regex_traits<wchar_t>::transform(&*result.begin(), &*result.begin() + result.size());
          std::size_t i;
          for(i = 0; i < result.size(); ++i)
          {
@@ -113,7 +113,7 @@ enum
    char_class_unicode=1<<11
 };
 
-c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_classname(const wchar_t* p1, const wchar_t* p2) const
+c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_classname(const wchar_t* p1, const wchar_t* p2) 
 {
    static const char_class_type masks[] = 
    {
@@ -151,7 +151,7 @@ c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<wchar_t
    return masks[id+1];
 }
 
-bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_type mask) const
+bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_type mask) 
 {
    return
       ((mask & char_class_space) && (std::iswspace)(c))
@@ -168,7 +168,7 @@ bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_typ
       || ((mask & char_class_unicode) && (c & ~static_cast<wchar_t>(0xff)));
 }
 
-c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2) const
+c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2) 
 {
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
                && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
@@ -203,7 +203,7 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::l
    return string_type();
 }
 
-int BOOST_REGEX_CALL c_regex_traits<wchar_t>::value(wchar_t c, int radix) const
+int BOOST_REGEX_CALL c_regex_traits<wchar_t>::value(wchar_t c, int radix) 
 {
 #ifdef __BORLANDC__
    // workaround for broken wcstol:
@@ -217,6 +217,42 @@ int BOOST_REGEX_CALL c_regex_traits<wchar_t>::value(wchar_t c, int radix) const
       return -1;
    return result;
 }
+
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+c_regex_traits<unsigned short>::string_type BOOST_REGEX_CALL c_regex_traits<unsigned short>::transform(const unsigned short* p1, const unsigned short* p2)
+{
+   std::wstring result = c_regex_traits<wchar_t>::transform((const wchar_t*)p1, (const wchar_t*)p2);
+   return string_type(result.begin(), result.end());
+}
+
+c_regex_traits<unsigned short>::string_type BOOST_REGEX_CALL c_regex_traits<unsigned short>::transform_primary(const unsigned short* p1, const unsigned short* p2)
+{
+   std::wstring result = c_regex_traits<wchar_t>::transform_primary((const wchar_t*)p1, (const wchar_t*)p2);
+   return string_type(result.begin(), result.end());
+}
+
+c_regex_traits<unsigned short>::char_class_type BOOST_REGEX_CALL c_regex_traits<unsigned short>::lookup_classname(const unsigned short* p1, const unsigned short* p2)
+{
+   return c_regex_traits<wchar_t>::lookup_classname((const wchar_t*)p1, (const wchar_t*)p2);
+}
+
+c_regex_traits<unsigned short>::string_type BOOST_REGEX_CALL c_regex_traits<unsigned short>::lookup_collatename(const unsigned short* p1, const unsigned short* p2)
+{
+   std::wstring result = c_regex_traits<wchar_t>::lookup_collatename((const wchar_t*)p1, (const wchar_t*)p2);
+   return string_type(result.begin(), result.end());
+}
+
+bool BOOST_REGEX_CALL c_regex_traits<unsigned short>::isctype(unsigned short c, char_class_type m)
+{
+   return c_regex_traits<wchar_t>::isctype(c, m);
+}
+
+int BOOST_REGEX_CALL c_regex_traits<unsigned short>::value(unsigned short c, int radix)
+{
+   return c_regex_traits<wchar_t>::value(c, radix);
+}
+
+#endif
 
 }
 

@@ -31,6 +31,9 @@
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v4/error_type.hpp>
 #endif
+#ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
+#include <boost/regex/v4/regex_traits_defaults.hpp>
+#endif
 #ifndef BOOST_NO_STD_LOCALE
 #  ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 #     include <boost/regex/v4/cpp_regex_traits.hpp>
@@ -156,6 +159,10 @@ struct regex_traits_wrapper
                ::boost::re_detail::has_boost_extensions_tag<BaseT>::value
             >::type
 {
+   regex_traits_wrapper(){}
+private:
+   regex_traits_wrapper(const regex_traits_wrapper&);
+   regex_traits_wrapper& operator=(const regex_traits_wrapper&);
 };
 
 } // namespace boost

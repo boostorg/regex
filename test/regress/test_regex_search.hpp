@@ -110,6 +110,7 @@ void test_regex_iterator(boost::basic_regex<charT, traits>& r)
    const int* answer_table = test_info<charT>::answer_table();
    test_iterator start(search_text.begin(), search_text.end(), r, opts), end;
    test_iterator copy(start);
+   const_iterator last_end = search_text.begin();
    while(start != end)
    {
       if(start != copy)
@@ -121,10 +122,129 @@ void test_regex_iterator(boost::basic_regex<charT, traits>& r)
          BOOST_REGEX_TEST_ERROR("Failed iterator == comparison.", charT);
       }
       test_result(*start, search_text.begin(), answer_table);
+      // test $` and $' :
+      if(start->prefix().first != last_end)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for start of $`", charT);
+      }
+      if(start->prefix().second != (*start)[0].first)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for end of $`", charT);
+      }
+      if(start->prefix().matched != (start->prefix().first != start->prefix().second))
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for matched member of $`", charT);
+      }
+      if(start->suffix().first != (*start)[0].second)
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for start of $'", charT);
+      }
+      if(start->suffix().second != search_text.end())
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for end of $'", charT);
+      }
+      if(start->suffix().matched != (start->suffix().first != start->suffix().second))
+      {
+         BOOST_REGEX_TEST_ERROR("Incorrect position for matched member of $'", charT);
+      }
+      last_end = (*start)[0].second;
       ++start;
       ++copy;
       // move on the answer table to next set of answers;
-      while(*answer_table++ != -2){}
+      if(*answer_table != -2)
+         while(*answer_table++ != -2){}
+   }
+   if(answer_table[0] >= 0)
+   {
+      // we should have had a match but didn't:
+      BOOST_REGEX_TEST_ERROR("Expected match was not found.", charT);
+   }
+}
+
+template<class charT, class traits>
+void test_regex_token_iterator(boost::basic_regex<charT, traits>& r)
+{
+   typedef typename std::basic_string<charT>::const_iterator const_iterator;
+   typedef boost::regex_token_iterator<const_iterator, charT, traits> test_iterator;
+   const std::basic_string<charT>& search_text = test_info<charT>::search_text();
+   boost::regex_constants::match_flag_type opts = test_info<charT>::match_options();
+   const int* answer_table = test_info<charT>::answer_table();
+   //
+   // we start by testing sub-expression 0:
+   //
+   test_iterator start(search_text.begin(), search_text.end(), r, 0, opts), end;
+   test_iterator copy(start);
+   while(start != end)
+   {
+      if(start != copy)
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator != comparison.", charT);
+      }
+      if(!(start == copy))
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator == comparison.", charT);
+      }
+      test_sub_match(*start, search_text.begin(), answer_table, 0);
+      ++start;
+      ++copy;
+      // move on the answer table to next set of answers;
+      if(*answer_table != -2)
+         while(*answer_table++ != -2){}
+   }
+   if(answer_table[0] >= 0)
+   {
+      // we should have had a match but didn't:
+      BOOST_REGEX_TEST_ERROR("Expected match was not found.", charT);
+   }
+   //
+   // and now field spitting:
+   //
+   test_iterator start2(search_text.begin(), search_text.end(), r, -1, opts), end2;
+   test_iterator copy2(start2);
+   int last_end2 = 0;
+   answer_table = test_info<charT>::answer_table();
+   while(start2 != end2)
+   {
+      if(start2 != copy2)
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator != comparison.", charT);
+      }
+      if(!(start2 == copy2))
+      {
+         BOOST_REGEX_TEST_ERROR("Failed iterator == comparison.", charT);
+      }
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4244)
+#endif
+      if(std::distance(search_text.begin(), start2->first) != last_end2)
+      {
+         BOOST_REGEX_TEST_ERROR(
+            "Error in location of start of field split, found: " 
+            << std::distance(search_text.begin(), start2->first)
+            << ", expected: "
+            << last_end2
+            << ".", charT);
+      }
+      int expected_end = static_cast<int>(answer_table[0] < 0 ? search_text.size() : answer_table[0]);
+      if(std::distance(search_text.begin(), start2->second) != expected_end)
+      {
+         BOOST_REGEX_TEST_ERROR(
+            "Error in location of end2 of field split, found: "
+            << std::distance(search_text.begin(), start2->second)
+            << ", expected: "
+            << expected_end
+            << ".", charT);
+      }
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+      last_end2 = answer_table[1];
+      ++start2;
+      ++copy2;
+      // move on the answer table to next set of answers;
+      if(*answer_table != -2)
+         while(*answer_table++ != -2){}
    }
    if(answer_table[0] >= 0)
    {
@@ -145,7 +265,8 @@ struct grep_test_predicate
    {
       test_result(what, m_base, m_table);
       // move on the answer table to next set of answers;
-      while(*m_table++ != -2){}
+      if(*m_table != -2)
+         while(*m_table++ != -2){}
       return true;
    }
 private:
@@ -218,6 +339,7 @@ void test(boost::basic_regex<charT, traits>& r, const test_regex_search_tag&)
       }
       test_simple_search(r);
       test_regex_iterator(r);
+      test_regex_token_iterator(r);
       test_regex_grep(r);
       test_regex_match(r);
    }

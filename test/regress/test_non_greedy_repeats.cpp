@@ -11,6 +11,10 @@
 
 #include "test.hpp"
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4127)
+#endif
+
 void test_non_greedy_repeats()
 {
    //

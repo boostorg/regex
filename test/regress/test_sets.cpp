@@ -11,6 +11,10 @@
 
 #include "test.hpp"
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4127)
+#endif
+
 void test_sets()
 {
    using namespace boost::regex_constants;
@@ -117,6 +121,19 @@ void test_sets()
    TEST_REGEX_SEARCH("\\W", perl, "`", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\W", perl, "[", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\W", perl, "@", match_default, make_array(0, 1, -2, -2));
+
+   TEST_REGEX_SEARCH("[[:lower:]]", perl|icase, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:upper:]]", perl|icase, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:alpha:]]", perl|icase, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:alnum:]]", perl|icase, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:lower:]]", perl|icase, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:upper:]]", perl|icase, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:alpha:]]", perl|icase, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:alnum:]]", perl|icase, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:lower:][:upper:]]", perl, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:lower:][:upper:]]", perl, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:lower:][:alpha:]]", perl, "A", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[[:lower:][:alpha:]]", perl, "a", match_default, make_array(0, 1, -2, -2));
 }
 
 void test_sets2()

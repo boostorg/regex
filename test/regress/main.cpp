@@ -22,7 +22,7 @@
 
 int error_count = 0;
 
-int cpp_main(int argc, char * argv[])
+int cpp_main(int /*argc*/, char * /*argv*/[])
 {
    basic_tests();
    test_simple_repeats();

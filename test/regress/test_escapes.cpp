@@ -11,6 +11,10 @@
 
 #include "test.hpp"
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4127)
+#endif
+
 void test_character_escapes()
 {
    using namespace boost::regex_constants;

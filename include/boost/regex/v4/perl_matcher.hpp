@@ -166,7 +166,10 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
          if((e.m_flags & regex_constants::collate) == 0)
             s1.assign(1, col);
          else
-            s1 = traits_inst.transform(&col, &col + 1);
+         {
+            charT a[2] = { col, charT(0), };
+            s1 = traits_inst.transform(a, a + 1);
+         }
          for(i = 0; i < set_->cranges; ++i)
          {
             if(STR_COMP(s1, p) >= 0)
@@ -191,7 +194,8 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
       // try and match an equivalence class, NB only a single character can match
       if(set_->cequivalents)
       {
-         s1 = traits_inst.transform_primary(&col, &col +1);
+         charT a[2] = { col, charT(0), };
+         s1 = traits_inst.transform_primary(a, a +1);
          for(i = 0; i < set_->cequivalents; ++i)
          {
             if(STR_COMP(s1, p) == 0)
@@ -350,7 +354,7 @@ private:
    bool match_backstep();
    bool match_assert_backref();
    bool match_toggle_case();
-   bool backtrack_till_match(unsigned count);
+   bool backtrack_till_match(std::size_t count);
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();

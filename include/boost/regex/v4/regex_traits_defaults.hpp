@@ -250,6 +250,7 @@ int global_value(charT c)
 template <class charT, class traits>
 int global_toi(const charT*& p1, const charT* p2, int radix, const traits& t)
 {
+   (void)t; // warning suppression
    int next_value = t.value(*p1, radix);
    if((p1 == p2) || (next_value < 0) || (next_value >= radix))
       return -1;

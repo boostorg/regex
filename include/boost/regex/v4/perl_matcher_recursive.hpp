@@ -436,10 +436,17 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
    // start by working out how much we can skip:
    //
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   unsigned count = (std::min)(static_cast<unsigned>(::boost::re_detail::distance(position, last)), (rep->greedy ? rep->max : rep->min));
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4267)
+#endif
+   std::size_t count = (std::min)(static_cast<std::size_t>(::boost::re_detail::distance(position, last)), static_cast<std::size_t>(rep->greedy ? rep->max : rep->min));
    if(rep->min > count)
       return false;  // not enough text left to match
    std::advance(position, count);
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
    if((rep->leading) && (count < rep->max) && (rep->greedy))
       restart = position;
    if(rep->greedy)
@@ -740,7 +747,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 }
 
 template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::backtrack_till_match(unsigned count)
+bool perl_matcher<BidiIterator, Allocator, traits>::backtrack_till_match(std::size_t count)
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)

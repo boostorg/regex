@@ -19,6 +19,10 @@
 #include "test.hpp"
 #include <boost/cregex.hpp>
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4267)
+#endif
+
 int get_posix_compile_options(boost::regex_constants::syntax_option_type opts)
 {
    using namespace boost;

@@ -17,6 +17,7 @@ test_deprecated.cpp
 test_escapes.cpp
 test_grep.cpp
 test_locale.cpp
+test_mfc.cpp
 test_non_greedy_repeats.cpp
 test_perl_ex.cpp
 test_replace.cpp

@@ -31,7 +31,7 @@
 #include <iosfwd>
 #include <vector>
 #include <map>
-#include <limits>
+#include <boost/limits.hpp>
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/throw_exception.hpp>

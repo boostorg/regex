@@ -23,6 +23,9 @@
 
 #ifndef BOOST_NO_STD_LOCALE
 
+#ifndef BOOST_RE_PAT_EXCEPT_HPP
+#include <boost/regex/pattern_except.hpp>
+#endif
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #include <boost/regex/v4/regex_traits_defaults.hpp>
 #endif
@@ -319,6 +322,27 @@ private:
    void init();
 };
 
+#ifdef BOOST_REGEX_BUGGY_CTYPE_FACET
+enum
+{
+   char_class_space=1<<0, 
+   char_class_print=1<<1, 
+   char_class_cntrl=1<<2, 
+   char_class_upper=1<<3, 
+   char_class_lower=1<<4,
+   char_class_alpha=1<<5, 
+   char_class_digit=1<<6, 
+   char_class_punct=1<<7, 
+   char_class_xdigit=1<<8,
+   char_class_alnum=char_class_alpha|char_class_digit, 
+   char_class_graph=char_class_alnum|char_class_punct,
+   char_class_blank=1<<9,
+   char_class_word=1<<10,
+   char_class_unicode=1<<11
+};
+
+#endif
+
 //
 // class cpp_regex_traits_implementation:
 // provides pimpl implementation for cpp_regex_traits.
@@ -329,6 +353,7 @@ class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT
 public:
    typedef typename cpp_regex_traits<charT>::char_class_type char_class_type;
    typedef typename std::ctype<charT>::mask                  native_mask_type;
+#ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
    BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 16);
    BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 17);
    BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 18);
@@ -361,7 +386,7 @@ public:
          | std::ctype<charT>::upper
          | std::ctype<charT>::xdigit);
 #endif
-
+#endif
    //BOOST_STATIC_ASSERT(0 == (mask_base & (mask_word | mask_unicode)));
 
 
@@ -391,10 +416,7 @@ public:
    }
    string_type lookup_collatename(const charT* p1, const charT* p2) const;
    string_type transform_primary(const charT* p1, const charT* p2) const;
-   string_type transform(const charT* p1, const charT* p2) const
-   {
-      return this->m_pcollate->transform(p1, p2);
-   }
+   string_type transform(const charT* p1, const charT* p2) const;
    re_detail::parser_buf<charT>   m_sbuf;            // buffer for parsing numbers.
    std::basic_istream<charT>      m_is;              // stream for parsing numbers.
 private:
@@ -407,8 +429,13 @@ private:
    // helpers:
    //
    char_class_type lookup_classname_imp(const charT* p1, const charT* p2) const;
+#ifdef BOOST_REGEX_BUGGY_CTYPE_FACET
+public:
+   bool isctype(charT c, char_class_type m)const;
+#endif
 };
 
+#ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
 #if !defined(BOOST_NO_INCLASS_MEMBER_INITIALIZATION)
 
 template <class charT>
@@ -426,11 +453,22 @@ typename cpp_regex_traits_implementation<charT>::char_class_type const cpp_regex
 #endif
 
 #endif
+#endif
 
 template <class charT>
 typename cpp_regex_traits_implementation<charT>::string_type 
    cpp_regex_traits_implementation<charT>::transform_primary(const charT* p1, const charT* p2) const
 {
+   //
+   // PRECONDITIONS:
+   //
+   // A bug in gcc 3.2 (and maybe other versions as well) treats
+   // p1 as a null terminated string, for efficiency reasons 
+   // we work around this elsewhere, but just assert here that
+   // we adhere to gcc's (buggy) preconditions...
+   //
+   BOOST_ASSERT(*p2 == 0);
+
    string_type result;
    //
    // swallowing all exceptions here is a bad idea
@@ -477,6 +515,50 @@ typename cpp_regex_traits_implementation<charT>::string_type
       result.erase(result.size() - 1);
    return result;
 }
+
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::string_type 
+   cpp_regex_traits_implementation<charT>::transform(const charT* p1, const charT* p2) const
+{
+   //
+   // PRECONDITIONS:
+   //
+   // A bug in gcc 3.2 (and maybe other versions as well) treats
+   // p1 as a null terminated string, for efficiency reasons 
+   // we work around this elsewhere, but just assert here that
+   // we adhere to gcc's (buggy) preconditions...
+   //
+   BOOST_ASSERT(*p2 == 0);
+   //
+   // swallowing all exceptions here is a bad idea
+   // however at least one std lib will always throw
+   // std::bad_alloc for certain arguments...
+   //
+   string_type result;
+   try{
+      result = this->m_pcollate->transform(p1, p2);
+      //
+      // Borland's STLPort version returns a NULL-terminated
+      // string that has garbage at the end - each call to
+      // std::collate<wchar_t>::transform returns a different string!
+      // So as a workaround, we'll truncate the string at the first NULL
+      // which _seems_ to work....
+#if BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+      result.erase(result.find(charT(0)));
+#else
+      //
+      // some implementations (Dinkumware) append unnecessary trailing \0's:
+      while(result.size() && (charT(0) == *result.rbegin()))
+         result.erase(result.size() - 1);
+#endif
+      BOOST_ASSERT(result.find(charT(0)) == string_type::npos);
+   }
+   catch(...)
+   {
+   }
+   return result;
+}
+
 
 template <class charT>
 typename cpp_regex_traits_implementation<charT>::string_type 
@@ -575,6 +657,7 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
       //
       // Custom class names:
       //
+#ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
       static const char_class_type masks[] = 
       {
          std::ctype<charT>::alnum,
@@ -592,6 +675,25 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
          cpp_regex_traits_implementation<charT>::mask_word,
          cpp_regex_traits_implementation<charT>::mask_unicode,
       };
+#else
+      static const char_class_type masks[] = 
+      {
+         ::boost::re_detail::char_class_alnum,
+         ::boost::re_detail::char_class_alpha,
+         ::boost::re_detail::char_class_cntrl,
+         ::boost::re_detail::char_class_digit,
+         ::boost::re_detail::char_class_graph,
+         ::boost::re_detail::char_class_lower,
+         ::boost::re_detail::char_class_print,
+         ::boost::re_detail::char_class_punct,
+         ::boost::re_detail::char_class_space,
+         ::boost::re_detail::char_class_upper,
+         ::boost::re_detail::char_class_xdigit,
+         ::boost::re_detail::char_class_blank,
+         ::boost::re_detail::char_class_word,
+         ::boost::re_detail::char_class_unicode,
+      };
+#endif
       static const string_type null_string;
       for(unsigned int j = 0; j <= 13; ++j)
       {
@@ -611,6 +713,7 @@ template <class charT>
 typename cpp_regex_traits_implementation<charT>::char_class_type 
    cpp_regex_traits_implementation<charT>::lookup_classname_imp(const charT* p1, const charT* p2) const
 {
+#ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
    static const char_class_type masks[] = 
    {
       0,
@@ -634,6 +737,31 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
       std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
       std::ctype<char>::xdigit,
    };
+#else
+   static const char_class_type masks[] = 
+   {
+      0,
+      ::boost::re_detail::char_class_alnum, 
+      ::boost::re_detail::char_class_alpha,
+      ::boost::re_detail::char_class_blank,
+      ::boost::re_detail::char_class_cntrl,
+      ::boost::re_detail::char_class_digit,
+      ::boost::re_detail::char_class_digit,
+      ::boost::re_detail::char_class_graph,
+      ::boost::re_detail::char_class_lower,
+      ::boost::re_detail::char_class_lower,
+      ::boost::re_detail::char_class_print,
+      ::boost::re_detail::char_class_punct,
+      ::boost::re_detail::char_class_space,
+      ::boost::re_detail::char_class_space,
+      ::boost::re_detail::char_class_upper,
+      ::boost::re_detail::char_class_unicode,
+      ::boost::re_detail::char_class_upper,
+      ::boost::re_detail::char_class_alnum | ::boost::re_detail::char_class_word, 
+      ::boost::re_detail::char_class_alnum | ::boost::re_detail::char_class_word, 
+      ::boost::re_detail::char_class_xdigit,
+   };
+#endif
    if(m_custom_class_names.size())
    {
       typedef typename std::map<std::basic_string<charT>, char_class_type>::const_iterator map_iter;
@@ -645,6 +773,26 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
    assert(id < sizeof(masks) / sizeof(masks[0]));
    return masks[id];
 }
+
+#ifdef BOOST_REGEX_BUGGY_CTYPE_FACET
+template <class charT>
+bool cpp_regex_traits_implementation<charT>::isctype(const charT c, char_class_type mask) const
+{
+   return
+      ((mask & ::boost::re_detail::char_class_space) && (m_pctype->is(std::ctype<charT>::space, c)))
+      || ((mask & ::boost::re_detail::char_class_print) && (m_pctype->is(std::ctype<charT>::print, c)))
+      || ((mask & ::boost::re_detail::char_class_cntrl) && (m_pctype->is(std::ctype<charT>::cntrl, c)))
+      || ((mask & ::boost::re_detail::char_class_upper) && (m_pctype->is(std::ctype<charT>::upper, c)))
+      || ((mask & ::boost::re_detail::char_class_lower) && (m_pctype->is(std::ctype<charT>::lower, c)))
+      || ((mask & ::boost::re_detail::char_class_alpha) && (m_pctype->is(std::ctype<charT>::alpha, c)))
+      || ((mask & ::boost::re_detail::char_class_digit) && (m_pctype->is(std::ctype<charT>::digit, c)))
+      || ((mask & ::boost::re_detail::char_class_punct) && (m_pctype->is(std::ctype<charT>::punct, c)))
+      || ((mask & ::boost::re_detail::char_class_xdigit) && (m_pctype->is(std::ctype<charT>::xdigit, c)))
+      || ((mask & ::boost::re_detail::char_class_blank) && (m_pctype->is(std::ctype<charT>::space, c)) && !::boost::re_detail::is_separator(c))
+      || ((mask & ::boost::re_detail::char_class_word) && (c == '_'))
+      || ((mask & ::boost::re_detail::char_class_unicode) && ::boost::re_detail::is_extended(c));
+}
+#endif
 
 
 template <class charT>
@@ -707,23 +855,7 @@ public:
    }
    string_type transform(const charT* p1, const charT* p2) const
    {
-      //
-      // swallowing all exceptions here is a bad idea
-      // however at least one std lib will always throw
-      // std::bad_alloc for certain arguments...
-      //
-      string_type result;
-      try{
-         result = m_pimpl->m_pcollate->transform(p1, p2);
-         //
-         // some implementations append unnecessary trailing \0's:
-         while(result.size() && (charT(0) == *result.rbegin()))
-            result.erase(result.size() - 1);
-      }
-      catch(...)
-      {
-      }
-      return result;
+      return m_pimpl->transform(p1, p2);
    }
    string_type transform_primary(const charT* p1, const charT* p2) const
    {
@@ -739,6 +871,7 @@ public:
    }
    bool isctype(charT c, char_class_type f) const
    {
+#ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
       typedef typename std::ctype<charT>::mask ctype_mask;
       if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_base) 
          && (m_pimpl->m_pctype->is(
@@ -753,6 +886,9 @@ public:
          && !re_detail::is_separator(c))
          return true;
       return false;
+#else
+      return m_pimpl->isctype(c, f);
+#endif
    }
    int toi(const charT*& p1, const charT* p2, int radix)const;
    int value(charT c, int radix)const

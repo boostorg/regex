@@ -17,6 +17,8 @@
   */
 
 #define BOOST_REGEX_SOURCE
+#include <boost/config.hpp>
+#ifndef BOOST_NO_STD_LOCALE
 #include <boost/regex/regex_traits.hpp>
 #include <boost/regex/pattern_except.hpp>
 
@@ -107,3 +109,5 @@ void cpp_regex_traits_char_layer<char>::init()
 
 } // re_detail
 } // boost
+#endif
+

@@ -130,6 +130,16 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(wchar_t c, lcid_type id)
       return true;
    return false;
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(unsigned short ca, lcid_type id)
+{
+   WORD mask;
+   wchar_t c = ca;
+   if(::GetStringTypeExW(id, CT_CTYPE1, &c, 1, &mask) && (mask & C1_LOWER))
+      return true;
+   return false;
+}
+#endif
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(char c, lcid_type id)
 {
@@ -146,6 +156,16 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(wchar_t c, lcid_type id)
       return true;
    return false;
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(unsigned short ca, lcid_type id)
+{
+   WORD mask;
+   wchar_t c = ca;
+   if(::GetStringTypeExW(id, CT_CTYPE1, &c, 1, &mask) && (mask & C1_UPPER))
+      return true;
+   return false;
+}
+#endif
 
 void free_module(void* mod)
 {
@@ -188,6 +208,22 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, 
    }
    return std::wstring(buf);
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::basic_string<unsigned short>& def)
+{
+   unsigned short buf[256];
+   if(0 == ::LoadStringW(
+      static_cast<HMODULE>(cat.get()),
+      i,
+      (LPWSTR)buf,
+      256
+   ))
+   {
+      return def;
+   }
+   return std::basic_string<unsigned short>(buf);
+}
+#endif
 #endif
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type id, const char* p1, const char* p2)
 {
@@ -252,6 +288,40 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type id, const
       r2.append(1, static_cast<wchar_t>(static_cast<unsigned char>(result[i])));
    return r2;
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transform(lcid_type id, const unsigned short* p1, const unsigned short* p2)
+{
+   int bytes = ::LCMapStringW(
+      id,       // locale identifier
+      LCMAP_SORTKEY,  // mapping transformation type
+      (LPCWSTR)p1,  // source string
+      p2 - p1,        // number of characters in source string
+      0,  // destination buffer
+      0        // size of destination buffer
+      );
+   if(!bytes)
+      return std::basic_string<unsigned short>(p1, p2);
+   std::string result(++bytes, '\0');
+   bytes = ::LCMapStringW(
+      id,       // locale identifier
+      LCMAP_SORTKEY,  // mapping transformation type
+      (LPCWSTR)p1,  // source string
+      p2 - p1,        // number of characters in source string
+      reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
+      bytes        // size of destination buffer
+      );
+   if(bytes > static_cast<int>(result.size()))
+      return std::basic_string<unsigned short>(p1, p2);
+   while(result.size() && result[result.size()-1] == L'\0')
+   {
+      result.erase(result.size()-1);
+   }
+   std::basic_string<unsigned short> r2;
+   for(std::string::size_type i = 0; i < result.size(); ++i)
+      r2.append(1, static_cast<unsigned short>(static_cast<unsigned char>(result[i])));
+   return r2;
+}
+#endif
 #endif
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type id)
 {
@@ -283,6 +353,22 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type id)
       return c;
    return result[0];
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, lcid_type id)
+{
+   wchar_t result[2];
+   int b = ::LCMapStringW(
+      id,       // locale identifier
+      LCMAP_LOWERCASE,  // mapping transformation type
+      (wchar_t const*)&c,  // source string
+      1,        // number of characters in source string
+      result,  // destination buffer
+      1);        // size of destination buffer
+   if(b == 0)
+      return c;
+   return result[0];
+}
+#endif
 #endif
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type id)
 {
@@ -314,6 +400,22 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type id)
       return c;
    return result[0];
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_toupper(unsigned short c, lcid_type id)
+{
+   wchar_t result[2];
+   int b = ::LCMapStringW(
+      id,       // locale identifier
+      LCMAP_UPPERCASE,  // mapping transformation type
+      (wchar_t const*)&c,  // source string
+      1,        // number of characters in source string
+      result,  // destination buffer
+      1);        // size of destination buffer
+   if(b == 0)
+      return c;
+   return result[0];
+}
+#endif
 #endif
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type id, boost::uint32_t m, char c)
 {
@@ -337,6 +439,19 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type id, boost::uint32_t m, w
       return true;
    return false;
 }
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type id, boost::uint32_t m, unsigned short c)
+{
+   WORD mask;
+   if(::GetStringTypeExW(id, CT_CTYPE1, (wchar_t const*)&c, 1, &mask) && (mask & m & w32_regex_traits_implementation<wchar_t>::mask_base))
+      return true;
+   if((m & w32_regex_traits_implementation<wchar_t>::mask_word) && (c == '_'))
+      return true;
+   if((m & w32_regex_traits_implementation<wchar_t>::mask_unicode) && (c > 0xff))
+      return true;
+   return false;
+}
+#endif
 #endif
 
 } // re_detail

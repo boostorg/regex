@@ -108,6 +108,9 @@ private:
    const char_type* m_end;       // format string end
    match_flag_type m_flags;      // format flags to use
    output_state    m_state;      // what to do with the next character
+private:
+   basic_regex_formatter(const basic_regex_formatter&);
+   basic_regex_formatter& operator=(const basic_regex_formatter&);
 };
 
 template <class OutputIterator, class Results, class traits>

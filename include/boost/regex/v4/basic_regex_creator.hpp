@@ -171,7 +171,7 @@ public:
    {
       return getoffset(addr, m_pdata->m_data.data());
    }
-   std::ptrdiff_t getoffset(void* addr, void* base)
+   std::ptrdiff_t getoffset(const void* addr, const void* base)
    {
       return static_cast<const char*>(addr) - static_cast<const char*>(base);
    }
@@ -328,7 +328,7 @@ template <class charT, class traits>
 inline re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    const basic_char_set<charT, traits>& char_set)
 {
-   typedef mpl::bool_<sizeof(charT) == 1> truth_type;
+   typedef mpl::bool_< (sizeof(charT) == 1) > truth_type;
    return char_set.has_digraphs() 
       ? append_set(char_set, static_cast<mpl::false_*>(0))
       : append_set(char_set, static_cast<truth_type*>(0));
@@ -403,8 +403,10 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       if(flags() & regex_constants::collate)
       {
          // we need to transform our range into sort keys:
-         s1 = this->m_traits.transform(&c1.first, (c1.second ? &c1.second +1 : &c1.second));
-         s2 = this->m_traits.transform(&c2.first, (c2.second ? &c2.second +1 : &c2.second));
+         charT a1[3] = { c1.first, c1.second, charT(0), };
+         charT a2[3] = { c2.first, c2.second, charT(0), };
+         s1 = this->m_traits.transform(a1, (a1[1] ? a1+2 : a1+1));
+         s2 = this->m_traits.transform(a2, (a2[1] ? a2+2 : a2+1));
       }
       else
       {
@@ -445,7 +447,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       string_type s;
       if(first->second)
       {
-         charT cs[2] = { first->first, first->second, };
+         charT cs[3] = { first->first, first->second, charT(0), };
          s = m_traits.transform_primary(cs, cs+2);
       }
       else
@@ -506,8 +508,10 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       if(flags() & regex_constants::collate)
       {
          // we need to transform our range into sort keys:
-         string_type s1 = this->m_traits.transform(&c1, &c1 +1);
-         string_type s2 = this->m_traits.transform(&c2, &c2 +1);
+         charT c3[2] = { c1, charT(0), };
+         string_type s1 = this->m_traits.transform(c3, c3+1);
+         c3[0] = c2;
+         string_type s2 = this->m_traits.transform(c3, c3+1);
          if(s1 > s2)
          {
             // Oops error:
@@ -515,8 +519,8 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          }
          for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
          {
-            charT c3 = static_cast<charT>(i);
-            string_type s3 = this->m_traits.transform(&c3, &c3 +1);
+            charT c3[] = { static_cast<charT>(i), charT(0), };
+            string_type s3 = this->m_traits.transform(c3, c3 +1);
             if((s1 <= s3) && (s3 <= s2))
                result->_map[i] = true;
          }
@@ -565,8 +569,8 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          return 0;  // invalid or unsupported equivalence class
       for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
       {
-         charT c(static_cast<charT>(i));
-         string_type s2 = this->m_traits.transform_primary(&c, &c+1);
+         charT c[2] = { (static_cast<charT>(i)), charT(0), };
+         string_type s2 = this->m_traits.transform_primary(c, c+1);
          if(s == s2)
             result->_map[i] = true;
       }

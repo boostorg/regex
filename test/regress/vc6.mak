@@ -18,7 +18,7 @@ XLFLAGS=
 #
 # sources to compile for each test:
 #
-SOURCES=basic_tests.cpp main.cpp test_deprecated.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
+SOURCES=*.cpp ../../../test/src/cpp_main.cpp ../../../test/src/execution_monitor.cpp
 
 CFLAGS= $(INCLUDES) /O2 /GB /GF /Gy -GX -GR -I..\..\..\..\ $(CXXFLAGS)
 
@@ -206,6 +206,7 @@ r5lmd.exe : $(SOURCES)
 
 r6lmd.exe : $(SOURCES)
 	cl /MDd /D_MT /D_DLL $(CFLAGS) -o r6lmd.exe -DBOOST_RE_TEST_LOCALE_CPP -DTEST_UNICODE $(SOURCES) $(LFLAGS)
+
 
 
 

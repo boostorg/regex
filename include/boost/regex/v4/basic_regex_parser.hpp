@@ -517,10 +517,10 @@ bool basic_regex_parser<charT, traits>::parse_match_any()
    ++m_position;
    static_cast<re_dot*>(
       this->append_state(syntax_element_wild, sizeof(re_dot))
-      )->mask = this->flags() & regbase::no_mod_s 
+      )->mask = static_cast<unsigned char>(this->flags() & regbase::no_mod_s 
       ? re_detail::force_not_newline 
          : this->flags() & regbase::mod_s ?
-            re_detail::force_newline : re_detail::dont_care;
+            re_detail::force_newline : re_detail::dont_care);
    return true;
 }
 
@@ -1134,6 +1134,25 @@ digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal(basic_cha
    return result;
 }
 
+//
+// does a value fit in the specified charT type?
+//
+template <class charT>
+bool valid_value(charT, int v, const mpl::true_&)
+{
+   return (v >> (sizeof(charT) * CHAR_BIT)) == 0;
+}
+template <class charT>
+bool valid_value(charT, int v, const mpl::false_&)
+{
+   return true; // v will alsways fit in a charT
+}
+template <class charT>
+bool valid_value(charT c, int v)
+{
+   return valid_value(c, v, mpl::bool_<(sizeof(charT) < sizeof(int))>());
+}
+
 template <class charT, class traits>
 charT basic_regex_parser<charT, traits>::unescape_character()
 {
@@ -1219,7 +1238,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(2), m_end - m_position);
          int i = this->m_traits.toi(m_position, m_position + len, 16);
          if((i < 0)
-            || (i >> (sizeof(charT) * CHAR_BIT)))
+            || !valid_value(charT(0), i))
          {
             fail(regex_constants::error_escape, m_position - m_base);
             return result;
