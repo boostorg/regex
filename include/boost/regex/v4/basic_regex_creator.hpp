@@ -348,14 +348,13 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          state = static_cast<re_alt*>(state)->alt.p;
          break;;
       case syntax_element_alt:
-         assert(0);
       case syntax_element_rep:
       case syntax_element_dot_rep:
       case syntax_element_char_rep:
       case syntax_element_short_set_rep:
       case syntax_element_long_set_rep:
          {
-            re_alt* rep = static_cast<re_repeat*>(state);
+            re_alt* rep = static_cast<re_alt*>(state);
             if(rep->_map[0] & mask_init)
             {
                if(map)

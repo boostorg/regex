@@ -44,6 +44,7 @@ public:
    bool parse_match_any();
    bool parse_repeat(std::size_t low = 0, std::size_t high = (std::numeric_limits<std::size_t>::max)());
    bool parse_repeat_range(bool isbasic);
+   bool parse_alt();
 
 private:
    typedef bool (basic_regex_parser::*parser_proc_type)();
@@ -54,6 +55,7 @@ private:
    unsigned                   m_mark_count;     // how many sub-expressions we have
    std::ptrdiff_t             m_paren_start;    // where the last seen ')' began (where repeats are inserted).
    unsigned                   m_repeater_id;    // the id of the next repeater
+   std::ptrdiff_t             m_alt_insert_point; // where to insert the next alternative
 
    basic_regex_parser& operator=(const basic_regex_parser&);
    basic_regex_parser(const basic_regex_parser&);
@@ -61,7 +63,7 @@ private:
 
 template <class charT, class traits>
 basic_regex_parser<charT, traits>::basic_regex_parser(regex_data<charT, traits>* data)
-   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_paren_start(0), m_repeater_id(0)
+   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_paren_start(0), m_repeater_id(0), m_alt_insert_point(0)
 {
 }
 
@@ -201,6 +203,8 @@ bool basic_regex_parser<charT, traits>::parse_extended()
       BOOST_ASSERT(0);
       result = false;
       break;
+   case regex_constants::syntax_or:
+      return parse_alt();
    default:
       result = parse_literal();
       break;
@@ -230,6 +234,10 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    pb->index = markid;
    ++m_position;
    std::ptrdiff_t last_paren_start = this->getoffset(pb);
+   // back up insertion point for alternations, and set new point:
+   std::ptrdiff_t last_alt_point = m_alt_insert_point;
+   this->m_pdata->m_data.align();
+   m_alt_insert_point = this->m_pdata->m_data.size();
    //
    // now recursively add more states, this will terminate when we get to a
    // matching ')' :
@@ -248,6 +256,10 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    pb = static_cast<re_brace*>(this->append_state(syntax_element_endmark, sizeof(re_brace)));
    pb->index = markid;
    this->m_paren_start = last_paren_start;
+   //
+   // restore the alternate insertion point:
+   //
+   this->m_alt_insert_point = last_alt_point;
 
    return true;
 }
@@ -280,11 +292,21 @@ bool basic_regex_parser<charT, traits>::parse_basic_escape()
       else
          return parse_literal();
    case regex_constants::syntax_open_brace:
+      if(this->m_pdata->m_flags & regbase::no_intervals)
+         return parse_literal();
       ++m_position;
       return parse_repeat_range(true);
    case regex_constants::syntax_close_brace:
+      if(this->m_pdata->m_flags & regbase::no_intervals)
+         return parse_literal();
       fail(REG_EBRACE, this->m_position - this->m_base);
       result = false;
+      break;
+   case regex_constants::syntax_or:
+      if(this->m_pdata->m_flags & regbase::bk_vbar)
+         return parse_alt();
+      else
+         result = parse_literal();
       break;
    default:
       result = parse_literal();
@@ -480,6 +502,50 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
    if(min > max)
       fail(REG_ERANGE, this->m_position - this->m_base);
    return parse_repeat(min, max);
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::parse_alt()
+{
+   //
+   // error check: if there have been no previous states,
+   // or if the last state was a '(' then error:
+   //
+   if((this->m_last_state == 0) || (this->m_last_state->type == syntax_element_startmark))
+      fail(REG_EMPTY, this->m_position - this->m_base);
+   ++m_position;
+   //
+   // we need to append a trailing jump, then insert the alternative:
+   //
+   re_syntax_base* pj = this->append_state(re_detail::syntax_element_jump, sizeof(re_jump));
+   std::ptrdiff_t jump_offset = this->getoffset(pj);
+   re_alt* palt = static_cast<re_alt*>(this->insert_state(this->m_alt_insert_point, syntax_element_alt, re_alt_size));
+   jump_offset += re_alt_size;
+   this->m_pdata->m_data.align();
+   palt->alt.i = this->m_pdata->m_data.size() - this->getoffset(palt);
+   //
+   // update m_alt_insert_point so that the next alternate gets
+   // inserted at the start of the second of the two we've just created:
+   //
+   this->m_alt_insert_point = this->m_pdata->m_data.size();
+   //
+   // recursively add states:
+   //
+   bool result = this->parse_all();
+   //
+   // if we didn't actually add any trailing states then that's an error:
+   //
+   if(this->m_alt_insert_point == this->m_pdata->m_data.size())
+      fail(REG_EMPTY, this->m_position - this->m_base);
+   //
+   // fix up the jump we added to point to the end of the states
+   // that we're just added:
+   //
+   this->m_pdata->m_data.align();
+   re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
+   jmp->alt.i = this->m_pdata->m_data.size() - jump_offset;
+
+   return result;
 }
 
 } // namespace re_detail

@@ -215,7 +215,8 @@ We provide this so we know how manybytes to insert when constructing the machine
 enum re_jump_size_type
 {
    re_jump_size = (sizeof(re_jump) + padding_mask) & ~(padding_mask),
-   re_repeater_size = (sizeof(re_repeat) + padding_mask) & ~(padding_mask)
+   re_repeater_size = (sizeof(re_repeat) + padding_mask) & ~(padding_mask),
+   re_alt_size = (sizeof(re_alt) + padding_mask) & ~(padding_mask)
 };
 
 /*** proc re_is_set_member *********************************************

@@ -180,29 +180,32 @@ void basic_tests()
    TEST_INVALID_REGEX("a\\{1b\\}", basic);
    TEST_INVALID_REGEX("a\\{1,b\\}", basic);
    TEST_INVALID_REGEX("a\\{1,2v\\}", basic);
-#if 0
 
-; now test the alternation operator |
-- match_default normal REG_EXTENDED
-a|b a 0 1
-a|b b 0 1
-a(b|c) ab 0 2 1 2
-a(b|c) ac 0 2 1 2
-a(b|c) ad -1 -1 -1 -1
-|c !
-c| !
-(|) !
-(a|) !
-(|a) !
-a\| a| 0 2
-- match_default normal limited_ops
-a| a| 0 2
-a\| a| 0 2
-| | 0 1
-- match_default normal bk_vbar REG_NO_POSIX_TEST
-a| a| 0 2
-a\|b a 0 1
-a\|b b 0 1
+   // now test the alternation operator |
+   TEST_REGEX_SEARCH("a|b", perl, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a|b", perl, "b", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a|b|c", perl, "c", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a|(b)|.", perl, "b", match_default, make_array(0, 1, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(a)|b|.", perl, "a", match_default, make_array(0, 1, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a(b|c)", perl, "ab", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b|c)", perl, "ac", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("a(b|c)", perl, "ad", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(a|b|c)", perl, "c", match_default, make_array(0, 1, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(a|(b)|.)", perl, "b", match_default, make_array(0, 1, 0, 1, 0, 1, -2, -2));
+   TEST_INVALID_REGEX("|c", perl);
+   TEST_INVALID_REGEX("c|", perl);
+   TEST_INVALID_REGEX("(|)", perl);
+   TEST_INVALID_REGEX("(a|)", perl);
+   TEST_INVALID_REGEX("(|a)", perl);
+   TEST_REGEX_SEARCH("a\\|", perl, "a|", match_default, make_array(0, 2, -2, -2));
+
+   TEST_REGEX_SEARCH("a|", basic, "a|", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\|", basic, "a|", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("|", basic, "|", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a|", basic|bk_vbar, "a|", match_default, make_array(0, 2, -2, -2));
+   TEST_REGEX_SEARCH("a\\|b", basic|bk_vbar, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("a\\|b", basic|bk_vbar, "b", match_default, make_array(0, 1, -2, -2));
+#if 0
 
 ; now test the set operator []
 - match_default normal REG_EXTENDED

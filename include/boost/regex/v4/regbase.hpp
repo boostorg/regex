@@ -59,6 +59,7 @@ public:
       no_char_classes = 1 << 8,                   // [[:CLASS:]] not allowed
       no_intervals = 1 << 9,                      // {x,y} not allowed
       bk_plus_qm = 1 << 10,                       // uses \+ and \?
+      bk_vbar = 1 << 11,                          // use \| for alternatives
 
       //
       // options common to all groups:
@@ -120,6 +121,8 @@ namespace regex_constants{
       nosubs = ::boost::regbase::nosubs,
       optimize = ::boost::regbase::optimize,
       bk_plus_qm = ::boost::regbase::bk_plus_qm,
+      bk_vbar = ::boost::regbase::bk_vbar,
+      no_intervals = ::boost::regbase::no_intervals,
 
       basic = ::boost::regbase::basic,
       extended = ::boost::regbase::extended,
