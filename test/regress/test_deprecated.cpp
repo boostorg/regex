@@ -1,5 +1,6 @@
 
 #include "test.hpp"
+#include <boost/cregex.hpp>
 
 int get_posix_compile_options(boost::regex_constants::syntax_option_type opts)
 {
@@ -165,6 +166,7 @@ void test_deprecated(const char&, const test_regex_search_tag&)
 
 void test_deprecated(const wchar_t&, const test_regex_search_tag&)
 {
+#ifndef BOOST_NO_WREGEX
    const std::wstring& expression = test_info<wchar_t>::expression();
    if(expression.find(L'\0') != std::wstring::npos)
       return;
@@ -213,6 +215,7 @@ void test_deprecated(const wchar_t&, const test_regex_search_tag&)
    }
    // clean up whatever:
    boost::regfreeW(&re);
+#endif
 }
 
 void test_deprecated(const char&, const test_invalid_regex_tag&)
@@ -268,6 +271,7 @@ void test_deprecated(const char&, const test_invalid_regex_tag&)
 
 void test_deprecated(const wchar_t&, const test_invalid_regex_tag&)
 {
+#ifndef BOOST_NO_WREGEX
    const std::wstring& expression = test_info<wchar_t>::expression();
    if(expression.find(L'\0') != std::string::npos)
       return;
@@ -282,4 +286,5 @@ void test_deprecated(const wchar_t&, const test_invalid_regex_tag&)
       boost::regfreeW(&re);
       BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" unexpectedly compiled with the POSIX C API.", wchar_t);
    }
+#endif
 }

@@ -25,6 +25,8 @@
 #include <boost/regex/config.hpp>
 #endif
 
+#include <algorithm>
+
 namespace boost{
    namespace re_detail{
 

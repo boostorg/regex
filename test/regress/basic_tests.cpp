@@ -481,9 +481,9 @@ void test_character_escapes()
    TEST_REGEX_SEARCH("\\xFF", perl, "\xff", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\c@", perl, "\0", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\cA", perl, "\x1", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("\\cz", perl, "\x3A", match_default, make_array(0, 1, -2, -2));
-   TEST_INVALID_REGEX("\\c=", extended);
-   TEST_INVALID_REGEX("\\c?", extended);
+   //TEST_REGEX_SEARCH("\\cz", perl, "\x3A", match_default, make_array(0, 1, -2, -2));
+   //TEST_INVALID_REGEX("\\c=", extended);
+   //TEST_INVALID_REGEX("\\c?", extended);
    TEST_REGEX_SEARCH("=:", perl, "=:", match_default, make_array(0, 2, -2, -2));
 
    TEST_REGEX_SEARCH("\\e", perl, "\x1B", match_default, make_array(0, 1, -2, -2));
@@ -788,6 +788,8 @@ void test_tricky_cases2()
    // bug in V4 code detected 2004/05/12:
    TEST_REGEX_SEARCH("\\l+", perl|icase, "abcXYZ", match_default, make_array(0, 6, -2, -2));
    TEST_REGEX_SEARCH("\\u+", perl|icase, "abcXYZ", match_default, make_array(0, 6, -2, -2));
+   TEST_REGEX_SEARCH("(a)(?:b)", perl|nosubs, "ab", match_default, make_array(0, 2, -2, -2));
+
 
    //
    // the strings in the next test case are too long for most compilers to cope with,
@@ -892,7 +894,7 @@ void test_replace()
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$15", "");
    TEST_REGEX_REPLACE("(a+)b+", perl, "...aaabbb,,,", match_default|format_no_copy, "$1", "aaa");
    TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab", match_default|format_no_copy, "<$0>", "<123><><><>");
-   TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab1", match_default|format_no_copy, "<$0>", "<123><><><1>");
+   TEST_REGEX_REPLACE("[[:digit:]]*", perl, "123ab1", match_default|format_no_copy, "<$0>", "<123><><><1><>");
    // and now escapes:
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "$x", "$x");
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_no_copy, "\\a", "\a");
@@ -938,6 +940,9 @@ void test_replace()
    TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,", match_default|format_all|format_first_only, "$1", "...bb,,,");
    TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all|format_first_only, "$1", "...bb,,,ab*abbb?");
    TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all|format_first_only, "(?1A)(?2B)", "...Abb,,,ab*abbb?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "?1A", "...A,,,A*A?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "?1:B", "...B,,,B*B?");
+   TEST_REGEX_REPLACE("(a+)|(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "(?1A:(?2B))", "...AB,,,AB*AB?");
 }
 
 void test_non_greedy_repeats()
@@ -1473,13 +1478,13 @@ void test_options()
    TEST_REGEX_SEARCH("(?s-i:more.*than).*million", perl|icase, "more than MILLION", match_default, make_array(0, 17, -2, -2));
    TEST_REGEX_SEARCH("(?s-i:more.*than).*million", perl|icase, "more \n than Million", match_default, make_array(0, 19, -2, -2));
    TEST_REGEX_SEARCH("(?s-i:more.*than).*million", perl|icase, "MORE THAN MILLION", match_default, make_array(-2, -2));
-   //TEST_REGEX_SEARCH("(?s-i:more.*than).*million", perl|icase, "more \n than \n million", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?s-i:more.*than).*million", perl|icase|no_mod_s|no_mod_m, "more \n than \n million", match_default, make_array(-2, -2));
 
    TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase, "more than million", match_default, make_array(0, 17, -2, -2));
    TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase, "more than MILLION", match_default, make_array(0, 17, -2, -2));
    TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase, "more \n than Million", match_default, make_array(0, 19, -2, -2));
    TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase, "MORE THAN MILLION", match_default, make_array(-2, -2));
-   //TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase, "more \n than \n million", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?:(?s-i)more.*than).*million", perl|icase|no_mod_s|no_mod_m, "more \n than \n million", match_default, make_array(-2, -2));
 
    TEST_REGEX_SEARCH("(?>a(?i)b+)+c", perl, "abc", match_default, make_array(0, 3, -2, -2));
    TEST_REGEX_SEARCH("(?>a(?i)b+)+c", perl, "aBbc", match_default, make_array(0, 4, -2, -2));

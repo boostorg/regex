@@ -22,11 +22,21 @@
 
 #ifndef BOOST_NO_WREGEX
 
+#include <boost/cregex.hpp>
 #include <boost/regex.hpp>
 
 #include <cwchar>
 #include <cstring>
 #include <cstdio>
+
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+#  ifndef BOOST_NO_SWPRINTF
+      using ::swprintf;
+#  endif
+}
+#endif
+
 
 namespace boost{
 
@@ -144,13 +154,13 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
       {
          if(std::wcscmp(e->re_endp, wnames[i]) == 0)
          {
-            std::swprintf(localbuf, 5, L"%d", i);
+            (std::swprintf)(localbuf, 5, L"%d", i);
             if(std::wcslen(localbuf) < buf_size)
                std::wcscpy(buf, localbuf);
             return std::wcslen(localbuf) + 1;
          }
       }
-      std::swprintf(localbuf, 5, L"%d", 0);
+      (std::swprintf)(localbuf, 5, L"%d", 0);
       if(std::wcslen(localbuf) < buf_size)
          std::wcscpy(buf, localbuf);
       return std::wcslen(localbuf) + 1;

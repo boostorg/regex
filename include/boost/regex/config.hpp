@@ -40,30 +40,8 @@
 
 #  include BOOST_REGEX_USER_CONFIG
 
-#  include <cstdlib>
-#  include <cstddef>
-#  include <cstdio>
-#  include <clocale>
-#  include <cassert>
-#  include <string>
-#  include <stdexcept>
-#  include <iterator>
-#  include <iosfwd>
-#  include <vector>
-#  include <map>
-#  include <limits>
 #  include <boost/config.hpp>
-#  include <boost/assert.hpp>
-#  include <boost/cstdint.hpp>
-#  include <boost/detail/allocator.hpp>
-#  include <boost/regex/config/cstring.hpp>
-#  include <boost/throw_exception.hpp>
-#  include <boost/scoped_ptr.hpp>
-#  include <boost/shared_ptr.hpp>
-#  include <boost/mpl/bool_fwd.hpp>
-#  ifndef BOOST_NO_STD_LOCALE
-#     include <locale>
-#  endif
+
 #else
    //
    // C build,
@@ -122,27 +100,6 @@
 #if defined(BOOST_DISABLE_WIN32) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_NO_W32
 #endif
-#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
-#  include <windows.h>
-#endif
-
-// some versions of gcc can't merge template instances:
-#if defined(__CYGWIN__)
-#  define BOOST_REGEX_NO_TEMPLATE_SWITCH_MERGE
-#endif
-
-// fix problems with bool as a macro,
-// this probably doesn't affect any current compilers:
-#if defined(bool) || defined(true) || defined(false)
-#  define BOOST_REGEX_NO_BOOL
-#endif
-
-// We don't make our templates external if the compiler
-// can't handle it:
-#if (defined(BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS) || defined(__HP_aCC) || defined(__MWERKS__) || defined(__COMO__) || defined(BOOST_INTEL))\
-   && !defined(BOOST_MSVC) && !defined(__BORLANDC__)
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
 
 // disable our own file-iterators and mapfiles if we can't
 // support them:
@@ -150,44 +107,12 @@
 #  define BOOST_REGEX_NO_FILEITER
 #endif
 
-#ifdef __cplusplus
-#ifndef MB_CUR_MAX
-// yuk!
-// better make a conservative guess!
-#define MB_CUR_MAX 10
-#endif
-
-namespace boost{ namespace re_detail{
-#ifdef BOOST_NO_STD_DISTANCE
-template <class T>
-std::ptrdiff_t distance(const T& x, const T& y)
-{ return y - x; }
-#else
-using std::distance;
-#endif
-}}
-
-
-#ifdef BOOST_REGEX_NO_BOOL
-#  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>((x) ? true : false)
-#else
-#  ifdef BOOST_MSVC
-      // warning suppression with VC6:
-#     pragma warning(disable: 4800)
-#     pragma warning(disable: 4786)
-#  endif
-#  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>(x)
-#endif
-#endif // __cplusplus
-
 // backwards compatibitity:
 #if defined(BOOST_RE_NO_LIB)
 #  define BOOST_REGEX_NO_LIB
 #endif
 
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__CYGWIN__))
-// gcc on win32 has problems merging switch statements in templates:
-#  define BOOST_REGEX_NO_TEMPLATE_SWITCH_MERGE
 // gcc on win32 has problems if you include <windows.h>
 // (sporadically generates bad code).
 #  define BOOST_REGEX_USE_C_LOCALE
@@ -359,32 +284,6 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 
 /*****************************************************************************
  *
- *  Error handling:
- *
- ****************************************************************************/
-
-#if defined(__cplusplus)
-
-namespace boost{
-namespace re_detail{
-
-BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex);
-
-template <class traits>
-void raise_error(const traits& t, unsigned code)
-{
-   (void)t;  // warning suppression
-   std::runtime_error e(t.error_string(code));
-   ::boost::re_detail::raise_runtime_error(e);
-}
-
-}
-}
-
-#endif
-
-/*****************************************************************************
- *
  *  Algorithm selection and configuration:
  *
  ****************************************************************************/
@@ -418,93 +317,6 @@ void raise_error(const traits& t, unsigned code)
 #  endif
 #endif
 
-
-/*****************************************************************************
- *
- *  Fix broken compilers that wrongly #define some symbols:
- *
- ****************************************************************************/
-
-#ifdef __cplusplus
-
-// the following may be defined as macros; this is
-// incompatable with std::something syntax, we have
-// no choice but to undef them?
-
-#ifdef sprintf
-#undef sprintf
-#endif
-#ifdef swprintf
-#undef swprintf
-#endif
-#endif
-
-/*****************************************************************************
- *
- *  Fix broken broken namespace support:
- *
- ****************************************************************************/
-
-#if defined(BOOST_NO_STDC_NAMESPACE) && defined(__cplusplus)
-
-namespace std{
-   using ::ptrdiff_t;
-   using ::size_t;
-   using ::sprintf;
-   using ::abs;
-   using ::setlocale;
-#  ifndef BOOST_NO_WREGEX
-#     ifndef BOOST_NO_SWPRINTF
-   using ::swprintf;
-#     endif
-   using ::wcstombs;
-   using ::mbstowcs;
-#     if !defined(BOOST_NO_STD_LOCALE) && !defined (__STL_NO_NATIVE_MBSTATE_T) && !defined(_STLP_NO_NATIVE_MBSTATE_T)
-   using ::mbstate_t;
-#     endif
-#  endif // BOOST_NO_WREGEX
-   using ::fseek;
-   using ::fread;
-   using ::ftell;
-   using ::fopen;
-   using ::fclose;
-   using ::FILE;
-#ifdef BOOST_NO_EXCEPTIONS
-   using ::fprintf;
-   using ::abort;
-#endif
-}
-
-#endif
-
-/*****************************************************************************
- *
- *  helper functions pointer_construct/pointer_destroy:
- *
- ****************************************************************************/
-
-#ifdef __cplusplus
-namespace boost{ namespace re_detail{
-
-#ifdef BOOST_MSVC
-#pragma warning (push)
-#pragma warning (disable : 4100)
-#endif
-
-template <class T>
-inline void pointer_destroy(T* p)
-{ p->~T(); (void)p; }
-
-#ifdef BOOST_MSVC
-#pragma warning (pop)
-#endif
-
-template <class T>
-inline void pointer_construct(T* p, const T& t)
-{ new (p) T(t); }
-
-}} // namespaces
-#endif
 
 /*****************************************************************************
  *

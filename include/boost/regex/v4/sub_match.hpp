@@ -35,6 +35,8 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
    typedef typename re_detail::regex_iterator_traits<BidiIterator>::difference_type  difference_type;
 #endif
    typedef          BidiIterator                                                     iterator_type;
+   typedef          BidiIterator                                                     iterator;
+   typedef          BidiIterator                                                     const_iterator;
 
    bool matched;
 
@@ -47,13 +49,13 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
    }
    difference_type BOOST_REGEX_CALL length()const
    {
-      difference_type n = boost::re_detail::distance((BidiIterator)this->first, (BidiIterator)this->second);
+      difference_type n = ::boost::re_detail::distance((BidiIterator)this->first, (BidiIterator)this->second);
       return n;
    }
    std::basic_string<value_type> str()const
    {
       std::basic_string<value_type> result;
-      std::size_t len = boost::re_detail::distance((BidiIterator)this->first, (BidiIterator)this->second);
+      std::size_t len = ::boost::re_detail::distance((BidiIterator)this->first, (BidiIterator)this->second);
       result.reserve(len);
       BidiIterator i = this->first;
       while(i != this->second)

@@ -19,7 +19,15 @@
 #define BOOST_REGEX_SOURCE
 
 #include <cstdio>
+#include <boost/cregex.hpp>
 #include <boost/regex.hpp>
+
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+   using ::sprintf;
+}
+#endif
+
 
 namespace boost{
 
@@ -135,13 +143,13 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
       {
          if(std::strcmp(e->re_endp, names[i]) == 0)
          {
-            std::sprintf(localbuf, "%d", i);
+            (std::sprintf)(localbuf, "%d", i);
             if(std::strlen(localbuf) < buf_size)
                std::strcpy(buf, localbuf);
             return std::strlen(localbuf) + 1;
          }
       }
-      std::sprintf(localbuf, "%d", 0);
+      (std::sprintf)(localbuf, "%d", 0);
       if(std::strlen(localbuf) < buf_size)
          std::strcpy(buf, localbuf);
       return std::strlen(localbuf) + 1;

@@ -28,18 +28,38 @@ namespace boost{
 #  include BOOST_ABI_PREFIX
 #endif
 
-template <class OutputIterator, class Iterator, class traits, class charT>
+template <class OutputIterator, class BidirectionalIterator, class traits, class charT>
 OutputIterator regex_replace(OutputIterator out,
-                         Iterator first,
-                         Iterator last,
+                         BidirectionalIterator first,
+                         BidirectionalIterator last,
                          const basic_regex<charT, traits>& e, 
                          const charT* fmt, 
                          match_flag_type flags = match_default)
 {
-   Iterator l = first;
-   re_detail::merge_out_predicate<OutputIterator, Iterator, charT, traits> oi(out, l, fmt, flags, e.get_traits());
-   regex_grep(oi, first, last, e, flags);
-   return (flags & format_no_copy) ? out : re_detail::re_copy_out(out, l, last);
+   regex_iterator<BidirectionalIterator, charT, traits> i(first, last, e, flags);
+   regex_iterator<BidirectionalIterator, charT, traits> j;
+   if(i == j)
+   {
+      if(!(flags & regex_constants::format_no_copy))
+         out = std::copy(first, last, out);
+   }
+   else
+   {
+      BidirectionalIterator last_m = first;
+      while(i != j)
+      {
+         if(!(flags & regex_constants::format_no_copy))
+            out = std::copy(i->prefix().first, i->prefix().second, out); 
+         out = i->format(out, fmt, flags, e);
+         last_m = (*i)[0].second;
+         if(flags & regex_constants::format_first_only)
+            break;
+         ++i;
+      }
+      if(!(flags & regex_constants::format_no_copy))
+         out = std::copy(last_m, last, out);
+   }
+   return out;
 }
 
 template <class OutputIterator, class Iterator, class traits, class charT>

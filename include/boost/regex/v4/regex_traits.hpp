@@ -19,11 +19,11 @@
 #ifndef BOOST_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_REGEX_TRAITS_HPP_INCLUDED
 
-#ifndef BOOST_RE_CREGEX_HPP
-#include <boost/cregex.hpp>
+#ifndef BOOST_REGEX_CONFIG_HPP
+#include <boost/regex/config.hpp>
 #endif
-#ifndef BOOST_REGEX_CSTRING_HPP
-#include <boost/regex/v4/regex_cstring.hpp>
+#ifndef BOOST_REGEX_WORKAROUND_HPP
+#include <boost/regex/v4/regex_workaround.hpp>
 #endif
 #ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
 #include <boost/regex/v4/syntax_type.hpp>
@@ -33,6 +33,9 @@
 #endif
 #ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 #include <boost/regex/v4/cpp_regex_traits.hpp>
+#endif
+#ifndef BOOST_REGEX_FWD_HPP_INCLUDED
+#include <boost/regex_fwd.hpp>
 #endif
 
 #ifdef BOOST_HAS_ABI_HEADERS

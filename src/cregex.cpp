@@ -33,6 +33,12 @@ typedef boost::match_flag_type match_flag_type;
 #endif
 #include <cstdio>
 
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+   using ::sprintf;
+}
+#endif
+
 namespace boost{
 
 #ifdef __BORLANDC__
@@ -359,7 +365,7 @@ void BuildFileList(std::list<std::string>* pl, const char* files, bool recurse)
 
       while(dstart != dend)
       {
-         std::sprintf(buf, "%s%s%s", dstart.path(), directory_iterator::separator(), ptr);
+         (std::sprintf)(buf, "%s%s%s", dstart.path(), directory_iterator::separator(), ptr);
          BuildFileList(pl, buf, recurse);
          ++dstart;
       }

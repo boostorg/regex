@@ -26,6 +26,12 @@
 #include <boost/regex/v4/match_flags.hpp>
 #include <boost/regex/v4/error_type.hpp>
 
+#ifdef __cplusplus
+#include <cstddef>
+#else
+#include <stddef.h>
+#endif
+
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif

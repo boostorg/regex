@@ -36,400 +36,509 @@ class match_results;
 
 namespace re_detail{
 
-template <class O, class I>
-O BOOST_REGEX_CALL re_copy_out(O out, I first, I last)
+//
+// helper functions:
+//
+template <class charT>
+std::ptrdiff_t global_length(const charT* p)
 {
-   while(first != last)
+   std::ptrdiff_t n = 0;
+   while(*p)
    {
-      *out = *first;
-      ++out;
-      ++first;
+      ++p;
+      ++n;
    }
-   return out;
+   return n;
+}
+inline std::ptrdiff_t global_length(const char* p)
+{
+   return (std::strlen)(p);
+}
+#ifndef BOOST_NO_WREGEX
+inline std::ptrdiff_t global_length(const wchar_t* p)
+{
+   return (std::wcslen)(p);
+}
+#endif
+template <class charT>
+inline charT global_lower(charT c)
+{
+   return c;
+}
+template <class charT>
+inline charT global_upper(charT c)
+{
+   return c;
+}
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_lower(char c);
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_upper(char c);
+#ifndef BOOST_NO_WREGEX
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_lower(wchar_t c);
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_upper(wchar_t c);
+#endif
+template <class charT>
+int global_value(charT c)
+{
+   static const charT zero = '0';
+   static const charT nine = '9';
+   static const charT a = 'a';
+   static const charT f = 'f';
+   static const charT A = 'A';
+   static const charT F = 'F';
+
+   if((c >= zero) && (c <= nine))
+      return c - zero;
+   if((c >= a) && (c <= f))
+      return 10 + (c - a);
+   if((c >= A) && (c <= F))
+      return 10 + (c - A);
+   return -1;
+}
+template <class charT>
+int global_toi(const charT*& p1, const charT* p2, int radix)
+{
+   int next_value = global_value(*p1);
+   if((p1 == p2) || (next_value < 0) || (next_value >= radix))
+      return -1;
+   int result = 0;
+   while(p1 != p2)
+   {
+      next_value = global_value(*p1);
+      if((next_value < 0) || (next_value >= radix))
+         break;
+      result *= radix;
+      result += next_value;
+      ++p1;
+   }
+   return result;
 }
 
-template <class charT, class traits_type>
-void BOOST_REGEX_CALL re_skip_format(const charT*& fmt, const traits_type& traits_inst)
-{
-   // dwa 9/13/00 - suppress incorrect unused parameter warning for MSVC
-   (void)traits_inst;
-
-   typedef typename traits_type::size_type traits_size_type;
-   typedef typename traits_type::string_type traits_string_type;
-
-   unsigned int parens = 0;
-   unsigned int c;
-   while(*fmt)
-   {
-      c = traits_inst.syntax_type(*fmt);
-      if((c == regex_constants::syntax_colon) && (parens == 0))
-      {
-         ++fmt;
-         return;
-      }
-      else if(c == regex_constants::syntax_close_mark)
-      {
-         if(parens == 0)
-         {
-            ++fmt;
-            return;
-         }
-         --parens;
-      }
-      else if(c == regex_constants::syntax_open_mark)
-         ++parens;
-      else if(c == regex_constants::syntax_escape)
-      {
-         ++fmt;
-         if(*fmt == 0)
-            return;
-      }
-      ++fmt;
-   }
-}
-
-#ifdef BOOST_NO_STD_OUTPUT_ITERATOR_ASSIGN
 
 //
-// ugly hack for buggy output iterators
-
-template <class T>
-inline void oi_assign(T* p, T v)
+// struct trivial_format_traits:
+// defines minimum localisation support for formatting
+// in the case that the actual regex traits is unavailable.
+//
+template <class charT>
+struct trivial_format_traits
 {
-   ::boost::re_detail::pointer_destroy(p);
-   pointer_construct(p, v);
+   typedef charT char_type;
+
+   static std::ptrdiff_t length(const charT* p)
+   {
+      return global_length(p);
+   }
+   static charT tolower(charT c)
+   {
+      return ::boost::re_detail::global_lower(c);
+   }
+   static charT toupper(charT c)
+   {
+      return ::boost::re_detail::global_upper(c);
+   }
+   static int toi(const charT*& p1, const charT* p2, int radix)
+   {
+      return global_toi(p1, p2, radix);
+   }
+};
+
+template <class OutputIterator, class Results, class traits>
+class basic_regex_formatter
+{
+public:
+   typedef typename traits::char_type char_type;
+   basic_regex_formatter(OutputIterator o, const Results& r, const traits& t)
+      : m_traits(t), m_results(r), m_out(o), m_state(output_copy) {}
+   OutputIterator format(const char_type* p1, const char_type* p2, match_flag_type f);
+   OutputIterator format(const char_type* p1, match_flag_type f)
+   {
+      return format(p1, p1 + m_traits.length(p1), f);
+   }
+private:
+   typedef typename Results::value_type sub_match_type;
+   enum output_state
+   {
+      output_copy,
+      output_next_lower,
+      output_next_upper,
+      output_lower,
+      output_upper,
+      output_none
+   };
+
+   void put(char_type c);
+   void put(const sub_match_type& sub);
+   void format_all();
+   void format_perl();
+   void format_escape();
+   void format_conditional();
+   void format_until_scope_end();
+
+   const traits& m_traits;       // the traits class for localised formatting operations
+   const Results& m_results;     // the match_results being used.
+   OutputIterator m_out;         // where to send output.
+   const char_type* m_position;  // format string, current position
+   const char_type* m_end;       // format string end
+   match_flag_type m_flags;      // format flags to use
+   output_state    m_state;      // what to do with the next character
+};
+
+template <class OutputIterator, class Results, class traits>
+OutputIterator basic_regex_formatter<OutputIterator, Results, traits>::format(const char_type* p1, const char_type* p2, match_flag_type f)
+{
+   m_position = p1;
+   m_end = p2;
+   m_flags = f;
+   format_all();
+   return m_out;
 }
 
-#else
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::format_all()
+{
+   // over and over:
+   while(m_position != m_end)
+   {
+      switch(*m_position)
+      {
+      case '&':
+         if(m_flags & ::boost::regex_constants::format_sed)
+         {
+            ++m_position;
+            put(m_results[0]);
+            break;
+         }
+         put(*m_position++);
+         break;
+      case '\\':
+         format_escape();
+         break;
+      case '(':
+         if(m_flags & boost::regex_constants::format_all)
+         {
+            ++m_position;
+            format_until_scope_end();
+            BOOST_ASSERT(*m_position == static_cast<char_type>(')'));
+            ++m_position;  // skip the closing ')'
+            break;
+         }
+         put(*m_position);
+         ++m_position;
+         break;
+      case ')':
+      case ':':
+         if(m_flags & boost::regex_constants::format_all)
+         {
+            return;
+         }
+         put(*m_position);
+         ++m_position;
+         break;
+      case '?':
+         if(m_flags & boost::regex_constants::format_all)
+         {
+            ++m_position;
+            format_conditional();
+            break;
+         }
+         put(*m_position);
+         ++m_position;
+         break;
+      case '$':
+         if((m_flags & format_sed) == 0)
+         {
+            format_perl();
+            break;
+         }
+         // fall through, not a special character:
+      default:
+         put(*m_position);
+         ++m_position;
+         break;
+      }
+   }
+}
 
-template <class T>
-inline void oi_assign(T* p, T v)
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::format_perl()
 {
    //
-   // if you get a compile time error in here then you either
-   // need to rewrite your output iterator to make it assignable
-   // (as is required by the standard), or define
-   // BOOST_NO_STD_OUTPUT_ITERATOR_ASSIGN to use the ugly hack above
-   *p = v;
-}
-
-#endif
-
-
-#if defined(BOOST_REGEX_NO_TEMPLATE_SWITCH_MERGE)
-//
-// Ugly ugly hack,
-// template don't merge if they contain switch statements so declare these
-// templates in unnamed namespace (ie with internal linkage), each translation
-// unit then gets its own local copy, it works seemlessly but bloats the app.
-namespace{
-#endif
-
-//
-// algorithm reg_format:
-// takes the result of a match and a format string
-// and merges them to produce a new string which
-// is sent to an OutputIterator,
-// _reg_format_aux does the actual work:
-//
-template <class OutputIterator, class Iterator, class charT, class traits_type>
-OutputIterator BOOST_REGEX_CALL _reg_format_aux(OutputIterator out, 
-                          const match_results<Iterator>& m, 
-                          const charT*& fmt,
-                          match_flag_type flags, const traits_type& traits_inst)
-{
-#ifdef __BORLANDC__
-#pragma option push -w-8037
-#endif
-   const charT* fmt_end = fmt;
-   while(*fmt_end) ++ fmt_end;
-
-   typedef typename traits_type::size_type traits_size_type;
-   typedef typename traits_type::string_type traits_string_type;
-
-   while(*fmt)
+   // On entry *m_position points to a '$' character
+   // output the information that goes with it:
+   //
+   BOOST_ASSERT(*m_position == '$');
+   //
+   // see if this is a trailing '$':
+   //
+   if(++m_position == m_end)
    {
-      switch(traits_inst.syntax_type(*fmt))
+      --m_position;
+      put(*m_position);
+      ++m_position;
+      return;
+   }
+   //
+   // OK find out what kind it is:
+   //
+   switch(*m_position)
+   {
+   case '&':
+      ++m_position;
+      put(this->m_results[0]);
+      break;
+   case '`':
+      ++m_position;
+      put(this->m_results.prefix());
+      break;
+   case '\'':
+      ++m_position;
+      put(this->m_results.suffix());
+      break;
+   case '$':
+      put(*m_position++);
+      break;
+   default:
+      // see if we have a number:
       {
-      case regex_constants::syntax_dollar:
-         if(flags & format_sed)
+         std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(2), std::distance(m_position, m_end));
+         int v = m_traits.toi(m_position, m_position + len, 10);
+         if(v < 0)
          {
-            // no perl style replacement,
-            // $ is an ordinary character:
-            goto default_opt;
-         }
-         ++fmt;
-         if(*fmt == 0) // oops trailing $
-         {
-            --fmt;
-            *out = *fmt;
-            ++out;
-            return out;
-         }
-         switch(traits_inst.syntax_type(*fmt))
-         {
-         case regex_constants::escape_type_start_buffer:
-            oi_assign(&out, re_copy_out(out, Iterator(m[-1].first), Iterator(m[-1].second)));
-            ++fmt;
-            continue;
-         case regex_constants::escape_type_end_buffer:
-            oi_assign(&out, re_copy_out(out, Iterator(m[-2].first), Iterator(m[-2].second)));
-            ++fmt;
-            continue;
-         case regex_constants::syntax_digit:
-         {
-expand_sub:
-            unsigned int index = traits_inst.toi(fmt, fmt_end, 10);
-            if(index < m.size())
-               oi_assign(&out, re_copy_out(out, Iterator(m[index].first), Iterator(m[index].second)));
-            continue;
-         }
-         }
-         // anything else:
-         if(*fmt == '&')
-         {
-            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second)));
-            ++fmt;
-         }
-         else
-         {
-            // probably an error, treat as a literal '$'
-            --fmt;
-            *out = *fmt;
-            ++out;
-            ++fmt;
-         }
-         continue;
-      case regex_constants::syntax_escape:
-      {
-         // escape sequence:
-         ++fmt;
-         charT c(*fmt);
-         if(*fmt == 0)
-         {
-            --fmt;
-            *out = *fmt;
-            ++out;
-            ++fmt;
-            return out;
-         }
-         switch(traits_inst.syntax_type(*fmt))
-         {
-         case regex_constants::escape_type_control_a:
-            c = '\a';
-            ++fmt;
+            // leave the $ as is, and carry on:
+            --m_position;
+            put(*m_position);
+            ++m_position;
             break;
-         case regex_constants::escape_type_control_f:
-            c = '\f';
-            ++fmt;
-            break;
-         case regex_constants::escape_type_control_n:
-            c = '\n';
-            ++fmt;
-            break;
-         case regex_constants::escape_type_control_r:
-            c = '\r';
-            ++fmt;
-            break;
-         case regex_constants::escape_type_control_t:
-            c = '\t';
-            ++fmt;
-            break;
-         case regex_constants::escape_type_control_v:
-            c = '\v';
-            ++fmt;
-            break;
-         case regex_constants::escape_type_hex:
-            ++fmt;
-            if(fmt == fmt_end)
-            {
-               *out = *--fmt;
-               ++out;
-               return out;
-            }
-            // maybe have \x{ddd}
-            if(traits_inst.syntax_type(*fmt) == regex_constants::syntax_open_brace)
-            {
-               ++fmt;
-               if(fmt == fmt_end)
-               {
-                  fmt -= 2;
-                  *out = *fmt;
-                  ++out;
-                  ++fmt;
-                  continue;
-               }
-               int val = traits_inst.toi(fmt, fmt_end, 16);
-               if(val < 0)
-               {
-                  fmt -= 2;
-                  *out = *fmt;
-                  ++out;
-                  ++fmt;
-                  continue;
-               }
-               c = static_cast<charT>(val);
-               if(traits_inst.syntax_type(*fmt) != regex_constants::syntax_close_brace)
-               {
-                  while(traits_inst.syntax_type(*fmt) != regex_constants::syntax_escape)
-                     --fmt;
-                  ++fmt;
-                  *out = *fmt;
-                  ++out;
-                  ++fmt;
-                  continue;
-               }
-               ++fmt;
-               break;
-            }
-            else
-            {
-               int val = traits_inst.toi(fmt, fmt_end, 16);
-               if(val < 0)
-               {
-                  --fmt;
-                  *out = *fmt;
-                  ++out;
-                  ++fmt;
-                  continue;
-               }
-               c = static_cast<charT>(val);
-            }
-            break;
-         case regex_constants::escape_type_ascii_control:
-            ++fmt;
-            if(fmt == fmt_end)
-            {
-               --fmt;
-               *out = *fmt;
-               ++out;
-               return out;
-            }
-            if( (*fmt < static_cast<charT>('@')) || (*fmt > static_cast<charT>('z')) )
-            {
-               --fmt;
-               *out = *fmt;
-               ++out;
-               ++fmt;
-               break;
-            }
-            c = static_cast<charT>(*fmt - static_cast<charT>('@'));
-            ++fmt;
-            break;
-         case regex_constants::escape_type_e:
-            c = (charT)27;
-            ++fmt;
-            break;
-         case regex_constants::syntax_digit:
-            if(flags & format_sed)
-               goto expand_sub;
-            else
-               c = static_cast<charT>(traits_inst.toi(fmt, fmt_end, 8));
-            break;
-         default:
-            //c = *fmt;
-            ++fmt;
          }
-         *out = c;
-         ++out;
-         continue;
-      }
-      case regex_constants::syntax_open_mark:
-         if(0 == (flags & format_all))
-         {
-            *out = *fmt;
-            ++out;
-            ++fmt;
-            continue;
-         }
-         else
-         {
-            ++fmt;  // recurse
-            oi_assign(&out, _reg_format_aux(out, m, fmt, flags, traits_inst));
-            continue;
-         }
-      case regex_constants::syntax_close_mark:
-         if(0 == (flags & format_all))
-         {
-            *out = *fmt;
-            ++out;
-            ++fmt;
-            continue;
-         }
-         else
-         {
-            ++fmt;  // return from recursion
-            return out;
-         }
-      case regex_constants::syntax_colon:
-         if(flags & regex_constants::format_is_if)
-         {
-            ++fmt;
-            return out;
-         }
-         *out = *fmt;
-         ++out;
-         ++fmt;
-         continue;
-      case regex_constants::syntax_question:
-      {
-         if(0 == (flags & format_all))
-         {
-            *out = *fmt;
-            ++out;
-            ++fmt;
-            continue;
-         }
-         else
-         {
-            ++fmt;
-            if(*fmt == 0)
-            {
-               --fmt;
-               *out = *fmt;
-               ++out;
-               ++fmt;
-               return out;
-            }
-            unsigned int id = traits_inst.toi(fmt, fmt_end, 10);
-            if(m[id].matched)
-            {
-               oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
-               if(traits_inst.syntax_type(*(fmt-1)) == regex_constants::syntax_colon)
-                  re_skip_format(fmt, traits_inst);
-            }
-            else
-            {
-               re_skip_format(fmt, traits_inst);
-               if(traits_inst.syntax_type(*(fmt-1)) == regex_constants::syntax_colon)
-                  oi_assign(&out, _reg_format_aux(out, m, fmt, flags | regex_constants::format_is_if, traits_inst));
-            }
-            return out;
-         }
-      }
-      default:
-default_opt:
-         if((flags & format_sed) && (*fmt == '&'))
-         {
-            oi_assign(&out, re_copy_out(out, Iterator(m[0].first), Iterator(m[0].second)));
-            ++fmt;
-            continue;
-         }
-         *out = *fmt;
-         ++out;
-         ++fmt;
+         // otherwise output sub v:
+         put(this->m_results[v]);
       }
    }
-
-   return out;
-#ifdef __BORLANDC__
-#pragma option pop
-#endif
 }
 
-#if defined(BOOST_REGEX_NO_TEMPLATE_SWITCH_MERGE)
-} // namespace
-#endif
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::format_escape()
+{
+   // skip the escape and check for trailing escape:
+   if(++m_position == m_end)
+   {
+      put(static_cast<char_type>('\\'));
+      return;
+   }
+   // now switch on the escape type:
+   switch(*m_position)
+   {
+   case 'a':
+      put(static_cast<char_type>('\a'));
+      ++m_position;
+      break;
+   case 'f':
+      put(static_cast<char_type>('\f'));
+      ++m_position;
+      break;
+   case 'n':
+      put(static_cast<char_type>('\n'));
+      ++m_position;
+      break;
+   case 'r':
+      put(static_cast<char_type>('\r'));
+      ++m_position;
+      break;
+   case 't':
+      put(static_cast<char_type>('\t'));
+      ++m_position;
+      break;
+   case 'v':
+      put(static_cast<char_type>('\v'));
+      ++m_position;
+      break;
+   case 'x':
+      if(++m_position == m_end)
+      {
+         put(static_cast<char_type>('x'));
+         return;
+      }
+      // maybe have \x{ddd}
+      if(*m_position == static_cast<char_type>('{'))
+      {
+         ++m_position;
+         int val = m_traits.toi(m_position, m_end, 16);
+         if(val < 0)
+         {
+            // invalid value treat everything as literals:
+            put(static_cast<char_type>('x'));
+            put(static_cast<char_type>('{'));
+            return;
+         }
+         if(*m_position != static_cast<char_type>('}'))
+         {
+            while(*m_position != static_cast<char_type>('\\'))
+               --m_position;
+            ++m_position;
+            put(*m_position++);
+            return;
+         }
+         ++m_position;
+         put(static_cast<char_type>(val));
+         return;
+      }
+      else
+      {
+         std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(2), std::distance(m_position, m_end));
+         int val = m_traits.toi(m_position, m_position + len, 16);
+         if(val < 0)
+         {
+            --m_position;
+            put(*m_position++);
+            return;
+         }
+         put(static_cast<char_type>(val));
+      }
+      break;
+   case 'c':
+      if(++m_position == m_end)
+      {
+         --m_position;
+         put(*m_position++);
+         return;
+      }
+      put(static_cast<char_type>(*m_position++ % 32));
+      break;
+   case 'e':
+      put(static_cast<char_type>(27));
+      ++m_position;
+      break;
+   default:
+      // see if we have a \n sed style backreference:
+      int v = m_traits.toi(m_position, m_position+1, 10);
+      if((v > 0) || ((v == 0) && (m_flags & ::boost::regex_constants::format_sed)))
+      {
+         put(m_results[v]);
+         break;
+      }
+      else if(v == 0)
+      {
+         // octal ecape sequence:
+         --m_position;
+         std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(4), std::distance(m_position, m_end));
+         v = m_traits.toi(m_position, m_position + len, 8);
+         BOOST_ASSERT(v >= 0);
+         put(static_cast<char_type>(v));
+         break;
+      }
+      // Otherwise output the character "as is":
+      put(*m_position++);
+      break;
+   }
+}
+
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::format_conditional()
+{
+   if(m_position == m_end)
+   {
+      // oops trailing '?':
+      put(static_cast<char_type>('?'));
+      return;
+   }
+   std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(2), std::distance(m_position, m_end));
+   int v = m_traits.toi(m_position, m_position + len, 10);
+   if(v < 0)
+   {
+      // oops not a number:
+      put(static_cast<char_type>('?'));
+      return;
+   }
+
+   // output varies depending upon whether sub-expression v matched or not:
+   if(m_results[v].matched)
+   {
+      format_all();
+      if((m_position != m_end) && (*m_position == static_cast<char_type>(':')))
+      {
+         // skip the ':':
+         ++m_position;
+         // save output state, then turn it off:
+         output_state saved_state = m_state;
+         m_state = output_none;
+         // format the rest of this scope:
+         format_until_scope_end();
+         // restore output state:
+         m_state = saved_state;
+      }
+   }
+   else
+   {
+      // save output state, then turn it off:
+      output_state saved_state = m_state;
+      m_state = output_none;
+      // format until ':' or ')':
+      format_all();
+      // restore state:
+      m_state = saved_state;
+      if((m_position != m_end) && (*m_position == static_cast<char_type>(':')))
+      {
+         // skip the ':':
+         ++m_position;
+         // format the rest of this scope:
+         format_until_scope_end();
+      }
+   }
+}
+
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::format_until_scope_end()
+{
+   do
+   {
+      format_all();
+      if((m_position == m_end) || (*m_position == static_cast<char_type>(')')))
+         return;
+      put(*m_position++);
+   }while(m_position != m_end);
+}
+
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::put(char_type c)
+{
+   // write a single character to output
+   // according to which case translation mode we are in:
+   switch(this->m_state)
+   {
+   case output_none:
+      return;
+   case output_next_lower:
+      c = m_traits.tolower(c);
+      this->m_state = output_copy;
+      break;
+   case output_next_upper:
+      c = m_traits.toupper(c);
+      this->m_state = output_copy;
+      break;
+   case output_lower:
+      c = m_traits.tolower(c);
+      break;
+   case output_upper:
+      c = m_traits.toupper(c);
+      break;
+   default:
+      break;
+   }
+   *m_out = c;
+   ++m_out;
+}
+
+template <class OutputIterator, class Results, class traits>
+void basic_regex_formatter<OutputIterator, Results, traits>::put(const sub_match_type& sub)
+{
+   typedef typename sub_match_type::iterator iterator_type;
+   iterator_type i = sub.first;
+   while(i != sub.second)
+   {
+      put(*i);
+      ++i;
+   }
+}
 
 template <class S>
 class string_out_iterator
@@ -447,30 +556,21 @@ public:
    }
 };
 
-template <class OutputIterator, class Iterator, class charT, class traits_type>
-class merge_out_predicate
+template <class OutputIterator, class Iterator, class charT, class traits>
+OutputIterator regex_format_imp(OutputIterator out,
+                          const match_results<Iterator>& m,
+                          const charT* p1, const charT* p2,
+                          match_flag_type flags,
+                          const traits& t
+                         )
 {
-   OutputIterator* out;
-   Iterator* last;
-   const charT* fmt;
-   match_flag_type flags;
-   const traits_type* pt;
+   re_detail::basic_regex_formatter<
+      OutputIterator, 
+      match_results<Iterator>, 
+      traits > f(out, m, t);
+   return f.format(p1, p2, flags);
+}
 
-public:
-   merge_out_predicate(OutputIterator& o, Iterator& pi, const charT* f, match_flag_type format_flags, const traits_type& p)
-      : out(&o), last(&pi), fmt(f), flags(format_flags), pt(&p){}
-
-   ~merge_out_predicate() {}
-   bool BOOST_REGEX_CALL operator()(const boost::match_results<Iterator>& m)
-   {
-      const charT* f = fmt;
-      if(0 == (flags & format_no_copy))
-         oi_assign(out, re_copy_out(*out, Iterator(m[-1].first), Iterator(m[-1].second)));
-      oi_assign(out, _reg_format_aux(*out, m, f, flags, *pt));
-      *last = m[-2].first;
-      return flags & format_first_only ? false : true;
-   }
-};
 
 } // namespace re_detail
 
@@ -481,8 +581,8 @@ OutputIterator regex_format(OutputIterator out,
                           match_flag_type flags = format_all
                          )
 {
-   regex_traits<charT> t;
-   return re_detail::_reg_format_aux(out, m, fmt, flags, t);
+   re_detail::trivial_format_traits<charT> traits;
+   return regex_format_imp(out, m, fmt, fmt + traits.length(fmt), flags, traits);
 }
 
 template <class OutputIterator, class Iterator, class charT>
@@ -492,9 +592,8 @@ OutputIterator regex_format(OutputIterator out,
                           match_flag_type flags = format_all
                          )
 {
-   regex_traits<charT> t;
-   const charT* start = fmt.c_str();
-   return re_detail::_reg_format_aux(out, m, start, flags, t);
+   re_detail::trivial_format_traits<charT> traits;
+   return regex_format_imp(out, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
 }  
 
 template <class Iterator, class charT>
@@ -504,7 +603,8 @@ std::basic_string<charT> regex_format(const match_results<Iterator>& m,
 {
    std::basic_string<charT> result;
    re_detail::string_out_iterator<std::basic_string<charT> > i(result);
-   regex_format(i, m, fmt, flags);
+   re_detail::trivial_format_traits<charT> traits;
+   regex_format_imp(i, m, fmt, fmt + traits.length(fmt), flags, traits);
    return result;
 }
 
@@ -515,7 +615,8 @@ std::basic_string<charT> regex_format(const match_results<Iterator>& m,
 {
    std::basic_string<charT> result;
    re_detail::string_out_iterator<std::basic_string<charT> > i(result);
-   regex_format(i, m, fmt.c_str(), flags);
+   re_detail::trivial_format_traits<charT> traits;
+   regex_format_imp(i, m, fmt.data(), fmt.data() + fmt.size(), flags, traits);
    return result;
 }
 

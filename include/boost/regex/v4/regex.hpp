@@ -21,39 +21,35 @@
 #ifndef BOOST_RE_REGEX_HPP_INCLUDED
 #define BOOST_RE_REGEX_HPP_INCLUDED
 
-#ifndef BOOST_RE_CREGEX_HPP
-#include <boost/cregex.hpp>
-#endif
-
 #ifdef __cplusplus
 
 // what follows is all C++ don't include in C builds!!
 
-#ifdef BOOST_REGEX_DEBUG
-# include <iosfwd>
-#endif
-
-#include <new>
-#include <cstring>
 #ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/regex/config.hpp>
 #endif
+#ifndef BOOST_REGEX_WORKAROUND_HPP
+#include <boost/regex/v4/regex_workaround.hpp>
+#endif
+
 #ifndef BOOST_REGEX_FWD_HPP
 #include <boost/regex_fwd.hpp>
-#endif
-#ifndef BOOST_REGEX_RAW_BUFFER_HPP
-#include <boost/regex/v4/regex_raw_buffer.hpp>
-#endif
-#ifndef BOOST_REGEX_KMP_HPP
-#include <boost/regex/v4/regex_kmp.hpp>
-#endif
-#ifndef BOOST_RE_PAT_EXCEPT_HPP
-#include <boost/regex/pattern_except.hpp>
 #endif
 #ifndef BOOST_REGEX_TRAITS_HPP
 #include <boost/regex/regex_traits.hpp>
 #endif
-#include <boost/scoped_array.hpp>
+#ifndef BOOST_REGEX_RAW_BUFFER_HPP
+#include <boost/regex/v4/error_type.hpp>
+#endif
+#ifndef BOOST_REGEX_V4_MATCH_FLAGS
+#include <boost/regex/v4/match_flags.hpp>
+#endif
+#ifndef BOOST_REGEX_RAW_BUFFER_HPP
+#include <boost/regex/v4/regex_raw_buffer.hpp>
+#endif
+#ifndef BOOST_RE_PAT_EXCEPT_HPP
+#include <boost/regex/pattern_except.hpp>
+#endif
 
 #ifndef BOOST_REGEX_V4_CHAR_REGEX_TRAITS_HPP
 #include <boost/regex/v4/char_regex_traits.hpp>
@@ -63,9 +59,6 @@
 #endif
 #ifndef BOOST_REGEX_V4_REGBASE_HPP
 #include <boost/regex/v4/regbase.hpp>
-#endif
-#ifndef BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
-#include <boost/regex/v4/iterator_traits.hpp>
 #endif
 #ifndef BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
 #include <boost/regex/v4/iterator_traits.hpp>
@@ -131,6 +124,9 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #endif
 
 } // namespace boost
+#ifndef BOOST_REGEX_V4_PROTECTED_CALL_HPP
+#include <boost/regex/v4/protected_call.hpp>
+#endif
 #ifndef BOOST_REGEX_MATCHER_HPP
 #include <boost/regex/v4/perl_matcher.hpp>
 #endif
@@ -139,6 +135,12 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #endif
 #ifndef BOOST_REGEX_V4_REGEX_SEARCH_HPP
 #include <boost/regex/v4/regex_search.hpp>
+#endif
+#ifndef BOOST_REGEX_ITERATOR_HPP
+#include <boost/regex/v4/regex_iterator.hpp>
+#endif
+#ifndef BOOST_REGEX_TOKEN_ITERATOR_HPP
+#include <boost/regex/v4/regex_token_iterator.hpp>
 #endif
 #ifndef BOOST_REGEX_V4_REGEX_GREP_HPP
 #include <boost/regex/v4/regex_grep.hpp>
@@ -151,12 +153,6 @@ typedef match_results<std::wstring::const_iterator> wsmatch;
 #endif
 #ifndef BOOST_REGEX_SPLIT_HPP
 #include <boost/regex/v4/regex_split.hpp>
-#endif
-#ifndef BOOST_REGEX_ITERATOR_HPP
-#include <boost/regex/v4/regex_iterator.hpp>
-#endif
-#ifndef BOOST_REGEX_TOKEN_ITERATOR_HPP
-#include <boost/regex/v4/regex_token_iterator.hpp>
 #endif
 
 #endif  // __cplusplus

@@ -23,6 +23,10 @@
 #include <boost/regex/config.hpp>
 #endif
 
+#include <stdexcept>
+#include <cstddef>
+#include <boost/regex/v4/error_type.hpp>
+
 namespace boost{
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -57,6 +61,21 @@ private:
    regex_constants::error_type m_error_code;
    std::ptrdiff_t m_position;
 };
+
+namespace re_detail{
+
+BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex);
+
+template <class traits>
+void raise_error(const traits& t, unsigned code)
+{
+   (void)t;  // warning suppression
+   std::runtime_error e(t.error_string(code));
+   ::boost::re_detail::raise_runtime_error(e);
+}
+
+}
+
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX

@@ -651,6 +651,14 @@ public:
    {
       return icase ? m_pimpl->m_pctype->tolower(c) : c;
    }
+   charT tolower(charT c) const
+   {
+      return m_pimpl->m_pctype->tolower(c);
+   }
+   charT toupper(charT c) const
+   {
+      return m_pimpl->m_pctype->toupper(c);
+   }
    string_type transform(const charT* p1, const charT* p2) const
    {
       return m_pimpl->m_pcollate->transform(p1, p2);

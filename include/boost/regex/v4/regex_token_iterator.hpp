@@ -54,7 +54,7 @@ class regex_token_iterator_implementation
 
    match_results<BidirectionalIterator> what;   // current match
    BidirectionalIterator                end;    // end of search area
-   const regex_type*                    pre;    // the expression
+   const regex_type                     re;    // the expression
    match_flag_type                      flags;  // match flags
    value_type                           result; // the current string result
    int                                  N;      // the current sub-expression being enumerated
@@ -62,15 +62,15 @@ class regex_token_iterator_implementation
 
 public:
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, int sub, match_flag_type f)
-      : end(last), pre(p), flags(f){ subs.push_back(sub); }
+      : end(last), re(*p), flags(f){ subs.push_back(sub); }
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const std::vector<int>& v, match_flag_type f)
-      : end(last), pre(p), subs(v), flags(f){}
+      : end(last), re(*p), flags(f), subs(v){}
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
    template <class T>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const T& submatches, match_flag_type f)
-      : end(last), pre(p), flags(f)
+      : end(last), re(*p), flags(f)
    {
       // assert that T really is an array:
       BOOST_STATIC_ASSERT(::boost::is_array<T>::value);
@@ -83,7 +83,7 @@ public:
 #else
    template <std::size_t CN>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const int (&submatches)[CN], match_flag_type f)
-      : end(last), pre(p), flags(f)
+      : end(last), re(*p), flags(f)
    {
       for(std::size_t i = 0; i < CN; ++i)
       {
@@ -95,7 +95,7 @@ public:
    bool init(BidirectionalIterator first)
    {
       N = 0;
-      if(regex_search(first, end, what, *pre, flags) == true)
+      if(regex_search(first, end, what, re, flags) == true)
       {
          N = 0;
          result = ((subs[N] == -1) ? what.prefix() : what[(int)subs[N]]);
@@ -113,7 +113,7 @@ public:
    bool compare(const regex_token_iterator_implementation& that)
    {
       if(this == &that) return true;
-      return (pre == that.pre) 
+      return (re == that.re) 
          && (end == that.end) 
          && (flags == that.flags) 
          && (N == that.N) 
@@ -135,7 +135,7 @@ public:
       if(what.prefix().first != what[0].second)
          flags |= match_prev_avail;
       BidirectionalIterator last_end(what[0].second);
-      if(regex_search(last_end, end, what, *pre, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags)))
+      if(regex_search(last_end, end, what, re, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags)))
       {
          N =0;
          result =((subs[N] == -1) ? what.prefix() : what[subs[N]]);

@@ -24,6 +24,7 @@ template regression
     : <template>test                    # sources
       regress/main.cpp
       regress/basic_tests.cpp 
+      regress/test_deprecated.cpp
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 
@@ -57,6 +58,7 @@ template regression-dll
     : <template>test-dll                    # sources
       regress/main.cpp
       regress/basic_tests.cpp 
+      regress/test_deprecated.cpp
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 

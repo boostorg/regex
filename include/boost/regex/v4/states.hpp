@@ -161,7 +161,7 @@ enum
    force_newline = 2,
 
    test_not_newline = 2,
-   test_newline = 3,
+   test_newline = 3
 };
 struct re_dot : public re_syntax_base
 {

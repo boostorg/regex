@@ -26,6 +26,13 @@
 #if defined(BOOST_REGEX_HAS_MS_STACK_GUARD) && defined(_MSC_VER) && (_MSC_VER >= 1300)
 #  include <malloc.h>
 #endif
+#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define NOGDI
+#define NOUSER
+#include <windows.h>
+#endif
 
 #if defined(BOOST_REGEX_NON_RECURSIVE) && !defined(BOOST_REGEX_V3)
 #if BOOST_REGEX_MAX_CACHE_BLOCKS == 0
@@ -71,6 +78,29 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex::flag_type /*
 }
 
 #ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
+
+static void execute_eror()
+{
+   // we only get here after a stack overflow,
+   // this has to be a separate proceedure because we 
+   // can't mix __try{}__except block with local objects  
+   // that have destructors:
+   reset_stack_guard_page();
+   std::runtime_error err("Out of stack space, while attempting to match a regular expression.");
+   raise_runtime_error(err);
+}
+
+bool BOOST_REGEX_CALL abstract_protected_call::execute()const
+{
+   __try{
+      return this->call();
+   }__except(EXCEPTION_STACK_OVERFLOW == GetExceptionCode())
+   {
+      execute_eror();
+   }
+   // We never really get here at all:
+   return false;
+}
 
 BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page()
 {

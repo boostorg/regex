@@ -110,7 +110,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
    // if we haven't gobbled up all the characters then we must
    // have had an unexpected ')' :
    if(!result)
-      fail(regex_constants::error_paren, std::distance(m_base, m_position));
+      fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_position));
    // fill in our sub-expression count:
    this->m_pdata->m_mark_count = 1 + m_mark_count;
    this->finalize(p1, p2);
@@ -320,7 +320,7 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    // we either have a ')' or we have run out of characters prematurely:
    //
    if(m_position == m_end)
-      this->fail(regex_constants::error_paren, std::distance(m_base, m_end));
+      this->fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_end));
    BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
    ++m_position;
    //
@@ -511,7 +511,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
    }
    if(0 == this->m_last_state)
    {
-      fail(regex_constants::error_badrepeat, std::distance(m_base, m_position));
+      fail(regex_constants::error_badrepeat, ::boost::re_detail::distance(m_base, m_position));
    }
    if(this->m_last_state->type == syntax_element_endmark)
    {
@@ -1039,13 +1039,15 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          fail(regex_constants::error_escape, m_position - m_base);
          return result;
       }
+      /*
       if((*m_position < charT('@'))
             || (*m_position > charT(125)) )
       {
          fail(regex_constants::error_escape, m_position - m_base);
          return result;
       }
-      result = static_cast<charT>(*m_position - charT('@'));
+      */
+      result = static_cast<charT>(*m_position % 32);
       break;
    case regex_constants::escape_type_hex:
       ++m_position;
@@ -1090,7 +1092,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
       {
       // an octal escape sequence, the first character must be a zero
       // followed by up to 3 octal digits:
-      std::ptrdiff_t len = (std::min)(std::distance(m_position, m_end), static_cast<std::ptrdiff_t>(4));
+      std::ptrdiff_t len = (std::min)(::boost::re_detail::distance(m_position, m_end), static_cast<std::ptrdiff_t>(4));
       int val = this->m_traits.toi(m_position, m_position + len, 8);
       if(val < 0) 
          fail(regex_constants::error_escape, m_position - m_base);
@@ -1353,7 +1355,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    // we either have a ')' or we have run out of characters prematurely:
    //
    if(m_position == m_end)
-      this->fail(regex_constants::error_paren, std::distance(m_base, m_end));
+      this->fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_end));
    BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
    ++m_position;
    //

@@ -101,6 +101,7 @@ template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::protected_call(
    protected_proc_type proc)
 {
+   /*
    __try{
       return (this->*proc)();
    }__except(EXCEPTION_STACK_OVERFLOW == GetExceptionCode())
@@ -111,6 +112,12 @@ bool perl_matcher<BidiIterator, Allocator, traits>::protected_call(
    raise_error<traits>(traits_inst, regex_constants::error_size);
    // and we never really get here at all:
    return false;
+   */
+   ::boost::re_detail::concrete_protected_call
+      <perl_matcher<BidiIterator, Allocator, traits> >
+      obj(this, proc);
+   return obj.execute();
+
 }
 #endif
 
@@ -664,7 +671,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_restart_continue()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
 {
-   std::ptrdiff_t maxlen = std::distance(search_base, position);
+   std::ptrdiff_t maxlen = ::boost::re_detail::distance(search_base, position);
    if(maxlen < static_cast<const re_brace*>(pstate)->index)
       return false;
    std::advance(position, -static_cast<const re_brace*>(pstate)->index);

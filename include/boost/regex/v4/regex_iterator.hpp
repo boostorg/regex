@@ -37,21 +37,21 @@ class regex_iterator_implementation
    match_results<BidirectionalIterator> what;  // current match
    BidirectionalIterator                base;  // start of sequence
    BidirectionalIterator                end;   // end of sequence
-   const regex_type*                    pre;   // the expression
+   const regex_type                     re;   // the expression
    match_flag_type                      flags; // flags for matching
 
 public:
    regex_iterator_implementation(const regex_type* p, BidirectionalIterator last, match_flag_type f)
-      : base(), end(last), pre(p), flags(f){}
+      : base(), end(last), re(*p), flags(f){}
    bool init(BidirectionalIterator first)
    {
       base = first;
-      return regex_search(first, end, what, *pre, flags);
+      return regex_search(first, end, what, re, flags);
    }
    bool compare(const regex_iterator_implementation& that)
    {
       if(this == &that) return true;
-      return (pre == that.pre) && (end == that.end) && (flags == that.flags) && (what[0].first == that.what[0].first) && (what[0].second == that.what[0].second);
+      return (re == that.re) && (end == that.end) && (flags == that.flags) && (what[0].first == that.what[0].first) && (what[0].second == that.what[0].second);
    }
    const match_results<BidirectionalIterator>& get()
    { return what; }
@@ -63,7 +63,7 @@ public:
       match_flag_type f(flags);
       if(!what.length())
          f |= regex_constants::match_not_initial_null;
-      bool result = regex_search(next_start, end, what, *pre, f);
+      bool result = regex_search(next_start, end, what, re, f);
       if(result)
          what.set_base(base);
       return result;

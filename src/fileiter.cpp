@@ -21,11 +21,27 @@
 
 #include <climits>
 #include <stdexcept>
+#include <string>
+#include <boost/throw_exception.hpp>
 #ifdef BOOST_REGEX_V3
 #include <boost/regex/v3/fileiter.hpp>
 #else
 #include <boost/regex/v4/fileiter.hpp>
 #endif
+
+#include <cstdio>
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+   using ::sprintf;
+   using ::fseek;
+   using ::fread;
+   using ::ftell;
+   using ::fopen;
+   using ::fclose;
+   using ::FILE;
+}
+#endif
+
 
 #ifndef BOOST_REGEX_NO_FILEITER
 
@@ -787,9 +803,9 @@ unsigned _fi_attributes(const char* root, const char* name)
 {
    char buf[MAX_PATH];
    if( ( (root[0] == *_fi_sep) || (root[0] == *_fi_sep_alt) ) && (root[1] == '\0') )
-      std::sprintf(buf, "%s%s", root, name);
+      (std::sprintf)(buf, "%s%s", root, name);
    else
-      std::sprintf(buf, "%s%s%s", root, _fi_sep, name);
+      (std::sprintf)(buf, "%s%s%s", root, _fi_sep, name);
    DIR* d = opendir(buf);
    if(d)
    {

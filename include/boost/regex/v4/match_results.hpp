@@ -92,7 +92,7 @@ public:
          const sub_match<BidiIterator>& s = m_subs[sub];
          if(s.matched)
          {
-            return boost::re_detail::distance((BidiIterator)(m_base), (BidiIterator)(s.first));
+            return ::boost::re_detail::distance((BidiIterator)(m_base), (BidiIterator)(s.first));
          }
       }
       return ~static_cast<difference_type>(0);
@@ -150,6 +150,25 @@ public:
                       match_flag_type flags = format_default) const
    {
       return regex_format(*this, fmt, flags);
+   }
+   // format with locale:
+   template <class OutputIterator, class RegexT>
+   OutputIterator format(OutputIterator out,
+                         const string_type& fmt,
+                         match_flag_type flags,
+                         const RegexT& re) const
+   {
+      return ::boost::re_detail::regex_format_imp(out, *this, fmt.data(), fmt.data() + fmt.size(), flags, re.get_traits());
+   }
+   template <class RegexT>
+   string_type format(const string_type& fmt,
+                      match_flag_type flags,
+                      const RegexT& re) const
+   {
+      string_type result;
+      re_detail::string_out_iterator<string_type> i(result);
+      ::boost::re_detail::regex_format_imp(i, *this, fmt.data(), fmt.data() + fmt.size(), flags, re.get_traits());
+      return result;
    }
 
    allocator_type get_allocator() const
@@ -278,13 +297,13 @@ void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const
    {
       //
       // leftmost takes priority over longest:
-      base1 = boost::re_detail::distance(base, p1->first);
-      base2 = boost::re_detail::distance(base, p2->first);
+      base1 = ::boost::re_detail::distance(base, p1->first);
+      base2 = ::boost::re_detail::distance(base, p2->first);
       if(base1 < base2) return;
       if(base2 < base1) break;
 
-      len1 = boost::re_detail::distance((BidiIterator)p1->first, (BidiIterator)p1->second);
-      len2 = boost::re_detail::distance((BidiIterator)p2->first, (BidiIterator)p2->second);
+      len1 = ::boost::re_detail::distance((BidiIterator)p1->first, (BidiIterator)p1->second);
+      len2 = ::boost::re_detail::distance((BidiIterator)p2->first, (BidiIterator)p2->second);
       if((len1 != len2) || ((p1->matched == false) && (p2->matched == true)))
          break;
       if((p1->matched == true) && (p2->matched == false))

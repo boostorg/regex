@@ -19,6 +19,23 @@
 #define BOOST_REGEX_SOURCE
 #include <boost/regex/regex_traits.hpp>
 
+#include <cctype>
+#ifndef BOOST_NO_WREGEX
+#include <cwctype>
+#endif
+
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+   using ::tolower;
+   using ::toupper;
+#ifndef BOOST_NO_WREGEX
+   using ::towlower;
+   using ::towupper;
+#endif
+}
+#endif
+
+
 namespace boost{ namespace re_detail{
 
 BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n)
@@ -113,7 +130,7 @@ BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_error_string(regex_con
       "",
    };
 
-   return (n > REG_E_UNKNOWN) ? s_default_error_messages[REG_E_UNKNOWN] : s_default_error_messages[n];
+   return (n > ::boost::regex_constants::error_unknown) ? s_default_error_messages[ ::boost::regex_constants::error_unknown] : s_default_error_messages[n];
 }
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL is_combining_implementation(boost::uint_least16_t c)
@@ -239,6 +256,26 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL lookup_default_collate_name(const 
    return std::string();
 }
 
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_lower(char c)
+{
+   return (std::tolower)(c);
+}
+
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_upper(char c)
+{
+   return (std::toupper)(c);
+}
+#ifndef BOOST_NO_WREGEX
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_lower(wchar_t c)
+{
+   return (std::towlower)(c);
+}
+
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_upper(wchar_t c)
+{
+   return (std::towupper)(c);
+}
+#endif
 
 } // re_detail
 } // boost

@@ -1,7 +1,17 @@
 
 
 #define BOOST_REGEX_SOURCE
+#include <memory>
+#include <boost/assert.hpp>
 #include <boost/regex/v4/regex_raw_buffer.hpp>
+
+#if defined(BOOST_NO_STDC_NAMESPACE)
+namespace std{
+   using ::memcpy;
+   using ::memmove;
+}
+#endif
+
 
 namespace boost{ namespace re_detail{
 
