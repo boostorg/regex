@@ -48,7 +48,7 @@ public:
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[28] = 
+   static matcher_proc_type const s_match_vtable[29] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -78,6 +78,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::match_backstep,
       &perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case,
    };
 
    if(state_count > max_state_count)
@@ -427,7 +428,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-   if(m_match_flags & (match_not_dot_newline | match_not_dot_null))
+   if(m_match_flags & match_not_dot_null)
+      return match_dot_repeat_slow();
+   if((static_cast<const re_dot*>(pstate->next.p)->mask & match_any_mask) == 0)
       return match_dot_repeat_slow();
    //
    // start by working out how much we can skip:
@@ -670,7 +673,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       BidiIterator end = position;
       std::advance(end, (std::min)((unsigned)re_detail::distance(position, last), desired));
       BidiIterator origin(position);
-      while((position != end) && (position != re_is_set_member(position, last, set, re.get_data())))
+      while((position != end) && (position != re_is_set_member(position, last, set, re.get_data(), icase)))
       {
          ++position;
       }
@@ -678,7 +681,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
    }
    else
    {
-      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re.get_data())))
+      while((count < desired) && (position != last) && (position != re_is_set_member(position, last, set, re.get_data(), icase)))
       {
          ++position;
          ++count;
@@ -698,7 +701,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
    {
       while((position != last) && (count < rep->max) && !can_start(*position, rep->_map, mask_skip))
       {
-         if(position != re_is_set_member(position, last, set, re.get_data()))
+         if(position != re_is_set_member(position, last, set, re.get_data(), icase))
          {
             ++position;
             ++count;
@@ -718,7 +721,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       if(position == last)
          return false;
       position = save_pos;
-      if(position != re_is_set_member(position, last, set, re.get_data()))
+      if(position != re_is_set_member(position, last, set, re.get_data(), icase))
       {
          ++position;
          ++count;

@@ -91,12 +91,12 @@ template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
                           const re_set_long<char_classT>* set_, 
-                          const regex_data<charT, traits_type>& e)
+                          const regex_data<charT, traits_type>& e, bool icase)
 {   
    const charT* p = reinterpret_cast<const charT*>(set_+1);
    iterator ptr;
    unsigned int i;
-   bool icase = e.m_flags & regex_constants::icase;
+   //bool icase = e.m_flags & regex_constants::icase;
 
    if(next == last) return next;
 
@@ -335,6 +335,7 @@ private:
    bool match_dot_repeat_slow();
    bool match_backstep();
    bool match_assert_backref();
+   bool match_toggle_case();
    bool backtrack_till_match(unsigned count);
 
    // find procs stored in s_find_vtable:
@@ -385,6 +386,8 @@ private:
    repeater_count<BidiIterator> rep_obj;
    // the mask to pass when matching word boundaries:
    typename traits::char_class_type m_word_mask;
+   // the bitmask to use when determining whether a match_any matches a newline or not:
+   unsigned char match_any_mask;
 
 #ifdef BOOST_REGEX_NON_RECURSIVE
    //

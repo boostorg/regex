@@ -73,6 +73,8 @@ perl_matcher<BidiIterator, Allocator, traits>::perl_matcher(BidiIterator first, 
    // find the value to use for matching word boundaries:
    const char_type w = static_cast<char_type>('w');
    m_word_mask = traits_inst.lookup_classname(&w, &w+1);
+   // find bitmask to use for matching '.':
+   match_any_mask = (f & match_not_dot_newline) ? re_detail::test_not_newline : re_detail::test_newline;
 }
 
 template <class BidiIterator, class Allocator, class traits>
@@ -395,7 +397,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_wild()
 {
    if(position == last) 
       return false;
-   if(is_separator(*position) && (m_match_flags & match_not_dot_newline))
+   if(is_separator(*position) && ((match_any_mask & static_cast<const re_dot*>(pstate)->mask) == 0))
       return false;
    if((*position == char_type(0)) && (m_match_flags & match_not_dot_null))
       return false;
@@ -590,7 +592,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set()
    // let the traits class do the work:
    if(position == last)
       return false;
-   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<char_class_type>*>(pstate), re.get_data());
+   BidiIterator t = re_is_set_member(position, last, static_cast<const re_set_long<char_class_type>*>(pstate), re.get_data(), icase);
    if(t != position)
    {
       pstate = pstate->next.p;
@@ -677,6 +679,16 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref()
    pstate = pstate->next.p;
    return (*m_presult)[static_cast<const re_brace*>(pstate)->index].matched;
 }
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case()
+{
+   // change our case sensitivity:
+   this->icase = static_cast<const re_case*>(pstate)->icase;
+   pstate = pstate->next.p;
+   return true;
+}
+
 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()

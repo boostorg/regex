@@ -52,6 +52,10 @@ public:
       //
       no_bk_refs = 1 << 8,                        // \d not allowed
       no_perl_ex = 1 << 9,                        // disable perl extensions
+      no_mod_m = 1 << 10,                         // disable Perl m modifier
+      mod_x = 1 << 11,                            // Perl x modifier
+      mod_s = 1 << 12,                            // force s modifier on (overrides match_not_dot_newline)
+      no_mod_s = 1 << 13,                         // force s modifier off (overrides match_not_dot_newline)
 
       //
       // options specific to basic group:
@@ -125,6 +129,10 @@ namespace regex_constants{
       no_intervals = ::boost::regbase::no_intervals,
       no_char_classes = ::boost::regbase::no_char_classes,
       no_escape_in_lists = ::boost::regbase::no_escape_in_lists,
+      no_mod_m = ::boost::regbase::no_mod_m,
+      mod_x = ::boost::regbase::mod_x,
+      mod_s = ::boost::regbase::mod_s,
+      no_mod_s = ::boost::regbase::no_mod_s,
 
       basic = ::boost::regbase::basic,
       extended = ::boost::regbase::extended,

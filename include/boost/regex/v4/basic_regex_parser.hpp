@@ -53,6 +53,7 @@ public:
    bool parse_perl_extension();
    digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
    charT unescape_character();
+   regex_constants::syntax_option_type parse_options();
 
 private:
    typedef bool (basic_regex_parser::*parser_proc_type)();
@@ -65,6 +66,7 @@ private:
    unsigned                   m_mark_count;     // how many sub-expressions we have
    std::ptrdiff_t             m_paren_start;    // where the last seen ')' began (where repeats are inserted).
    std::ptrdiff_t             m_alt_insert_point; // where to insert the next alternative
+   bool                       m_has_case_change; // true if somewhere in the current block the case has changed
 
    basic_regex_parser& operator=(const basic_regex_parser&);
    basic_regex_parser(const basic_regex_parser&);
@@ -72,7 +74,7 @@ private:
 
 template <class charT, class traits>
 basic_regex_parser<charT, traits>::basic_regex_parser(regex_data<charT, traits>* data)
-   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_paren_start(0), m_alt_insert_point(0)
+   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_paren_start(0), m_alt_insert_point(0), m_has_case_change(false)
 {
 }
 
@@ -103,6 +105,8 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
 
    // parse all our characters:
    bool result = parse_all();
+   // reset flags as a global scope (?imsx) may have altered them:
+   this->flags(flags);
    // if we haven't gobbled up all the characters then we must
    // have had an unexpected ')' :
    if(!result)
@@ -184,11 +188,13 @@ bool basic_regex_parser<charT, traits>::parse_extended()
       return parse_match_any();
    case regex_constants::syntax_caret:
       ++m_position;
-      this->append_state(syntax_element_start_line);
+      this->append_state(
+         (this->flags() & regex_constants::no_mod_m ? syntax_element_buffer_start : syntax_element_start_line));
       break;
    case regex_constants::syntax_dollar:
       ++m_position;
-      this->append_state(syntax_element_end_line);
+      this->append_state(
+         (this->flags() & regex_constants::no_mod_m ? syntax_element_buffer_end : syntax_element_end_line));
       break;
    case regex_constants::syntax_star:
       if(m_position == this->m_base)
@@ -218,6 +224,19 @@ bool basic_regex_parser<charT, traits>::parse_extended()
       return parse_alt();
    case regex_constants::syntax_open_set:
       return parse_set();
+   case regex_constants::syntax_hash:
+      //
+      // If we have a mod_x flag set, then skip until
+      // we get to a newline character:
+      //
+      if((this->flags() 
+         & (regbase::no_perl_ex|regbase::mod_x))
+         == regbase::mod_x)
+      {
+         while((m_position != m_end) && !is_separator(*m_position++)){}
+         return true;
+      }
+      // Otherwise fall through:
    default:
       result = parse_literal();
       break;
@@ -231,7 +250,14 @@ bool basic_regex_parser<charT, traits>::parse_extended()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_literal()
 {
-   this->append_literal(*m_position);
+   // append this as a literal provided it's not a space character
+   // or the perl option regbase::mod_x is not set:
+   if(
+      ((this->flags() 
+         & (regbase::main_option_type|regbase::mod_x|regbase::no_perl_ex)) 
+            != regbase::mod_x)
+      || !this->m_traits.is_class(*m_position, this->m_mask_space))
+         this->append_literal(*m_position);
    ++m_position;
    return true;
 }
@@ -266,10 +292,30 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    this->m_pdata->m_data.align();
    m_alt_insert_point = this->m_pdata->m_data.size();
    //
+   // back up the current flags in case we have a nested (?imsx) group:
+   //
+   regex_constants::syntax_option_type opts = this->flags();
+   bool old_case_change = m_has_case_change;
+   m_has_case_change = false; // no changes to this scope as yet...
+   //
    // now recursively add more states, this will terminate when we get to a
    // matching ')' :
    //
    parse_all();
+   //
+   // restore flags:
+   //
+   if(m_has_case_change)
+   {
+      // the case has changed in one or more of the alternatives
+      // within the scoped (...) block: we have to add a state
+      // to reset the case sensitivity:
+      static_cast<re_case*>(
+         this->append_state(syntax_element_toggle_case, sizeof(re_case))
+         )->icase = opts & regbase::icase;
+   }
+   this->flags(opts);
+   m_has_case_change = old_case_change;
    //
    // we either have a ')' or we have run out of characters prematurely:
    //
@@ -436,7 +482,12 @@ bool basic_regex_parser<charT, traits>::parse_match_any()
    // we have a '.' that can match any character:
    //
    ++m_position;
-   this->append_state(syntax_element_wild);
+   static_cast<re_dot*>(
+      this->append_state(syntax_element_wild, sizeof(re_dot))
+      )->mask = this->flags() & regbase::no_mod_s 
+      ? re_detail::force_not_newline 
+         : this->flags() & regbase::mod_s ?
+            re_detail::force_newline : re_detail::dont_care;
    return true;
 }
 
@@ -609,10 +660,13 @@ bool basic_regex_parser<charT, traits>::parse_alt()
       fail(REG_EMPTY, this->m_position - this->m_base);
    ++m_position;
    //
-   // we need to append a trailing jump, then insert the alternative:
+   // we need to append a trailing jump: 
    //
    re_syntax_base* pj = this->append_state(re_detail::syntax_element_jump, sizeof(re_jump));
    std::ptrdiff_t jump_offset = this->getoffset(pj);
+   //
+   // now insert the alternative:
+   //
    re_alt* palt = static_cast<re_alt*>(this->insert_state(this->m_alt_insert_point, syntax_element_alt, re_alt_size));
    jump_offset += re_alt_size;
    this->m_pdata->m_data.align();
@@ -622,6 +676,16 @@ bool basic_regex_parser<charT, traits>::parse_alt()
    // inserted at the start of the second of the two we've just created:
    //
    this->m_alt_insert_point = this->m_pdata->m_data.size();
+   //
+   // the start of this alternative must have a case changes state
+   // if the current block has messed around with case changes:
+   //
+   if(m_has_case_change)
+   {
+      static_cast<re_case*>(
+         this->append_state(syntax_element_toggle_case, sizeof(re_case))
+         )->icase = this->m_icase;
+   }
    //
    // recursively add states:
    //
@@ -633,7 +697,7 @@ bool basic_regex_parser<charT, traits>::parse_alt()
       fail(REG_EMPTY, this->m_position - this->m_base);
    //
    // fix up the jump we added to point to the end of the states
-   // that we're just added:
+   // that we've just added:
    //
    this->m_pdata->m_data.align();
    re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
@@ -1083,7 +1147,13 @@ bool basic_regex_parser<charT, traits>::parse_QE()
       while((m_position != m_end) 
          && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_escape))
          ++m_position;
-      if((m_position == m_end) || (++m_position == m_end)) // skip the escape
+      if(m_position == m_end)
+      {
+         //  a \Q...\E sequence may terminate with the end of the expression:
+         end = m_position;
+         break;  
+      }
+      if(++m_position == m_end) // skip the escape
       {
          fail(REG_EESCAPE, m_position - m_base);
          return false;
@@ -1117,6 +1187,18 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    if(++m_position == m_end)
       fail(REG_BADRPT, m_position - m_base);
    //
+   // treat comments as a special case, as these
+   // are the only ones that don't start with a leading
+   // startmark state:
+   //
+   if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_hash)
+   {
+      while((m_position != m_end) 
+         && (this->m_traits.syntax_type(*m_position++) != regex_constants::syntax_close_mark))
+      {}      
+      return true;
+   }
+   //
    // backup some state, and prepare the way:
    //
    int markid = 0;
@@ -1128,6 +1210,10 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    this->m_pdata->m_data.align();
    m_alt_insert_point = this->m_pdata->m_data.size();
    std::ptrdiff_t expected_alt_point = m_alt_insert_point;
+   bool restore_flags = true;
+   regex_constants::syntax_option_type old_flags = this->flags();
+   bool old_case_change = m_has_case_change;
+   m_has_case_change = false;
    //
    // select the actual extension used:
    //
@@ -1139,15 +1225,6 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       //
       pb->index = markid = 0;
       ++m_position;
-      break;
-   case regex_constants::syntax_hash:
-      //
-      // a comment; this actually becomes an empty non-capturing mark:
-      //
-      pb->index = markid = 0;
-      while((m_position != m_end) 
-         && (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark))
-         ++m_position;
       break;
    case regex_constants::syntax_equal:
       pb->index = markid = -1;
@@ -1235,7 +1312,37 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       break;
       }
    default:
-      fail(REG_BADRPT, m_position - m_base);
+      //
+      // lets assume that we have a (?imsx) group and try and parse it:
+      //
+      regex_constants::syntax_option_type opts = parse_options();
+      // make a note of whether we have a case change:
+      m_has_case_change = ((opts & regbase::icase) != (this->flags() & regbase::icase));
+      pb->index = markid = 0;
+      if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark)
+      {
+         // update flags and carry on as normal:
+         this->flags(opts);
+         restore_flags = false;
+         old_case_change |= m_has_case_change; // defer end of scope by one ')'
+      }
+      else if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_colon)
+      {
+         // update flags and carry on until the matching ')' is found:
+         this->flags(opts);
+         ++m_position;
+      }
+      else
+         fail(REG_BADRPT, m_position - m_base);
+
+      // finally append a case change state if we need it:
+      if(m_has_case_change)
+      {
+         static_cast<re_case*>(
+            this->append_state(syntax_element_toggle_case, sizeof(re_case))
+            )->icase = opts & regbase::icase;
+      }
+
    }
    //
    // now recursively add more states, this will terminate when we get to a
@@ -1249,6 +1356,20 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       this->fail(REG_EPAREN, std::distance(m_base, m_end));
    BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
    ++m_position;
+   //
+   // restore the flags:
+   //
+   if(restore_flags)
+   {
+      // append a case change state if we need it:
+      if(m_has_case_change)
+      {
+         static_cast<re_case*>(
+            this->append_state(syntax_element_toggle_case, sizeof(re_case))
+            )->icase = old_flags & regbase::icase;
+      }
+      this->flags(old_flags);
+   }
    //
    // set up the jump pointer if we have one:
    //
@@ -1275,6 +1396,8 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
          re_alt* alt = static_cast<re_alt*>(this->insert_state(expected_alt_point, syntax_element_alt, sizeof(re_alt)));
          alt->alt.i = this->m_pdata->m_data.size() - this->getoffset(alt);
       }
+      else if(this->getaddress(static_cast<re_alt*>(b)->alt.i, b)->type == syntax_element_alt)
+         fail(REG_BADPAT, m_position - m_base);
    }
    //
    // append closing parenthesis state:
@@ -1286,8 +1409,78 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    // restore the alternate insertion point:
    //
    this->m_alt_insert_point = last_alt_point;
+   //
+   // and the case change data:
+   //
+   m_has_case_change = old_case_change;
    return true;
 }
+
+template <class charT, class traits>
+regex_constants::syntax_option_type basic_regex_parser<charT, traits>::parse_options()
+{
+   // we have a (?imsx-imsx) group, convert it into a set of flags:
+   regex_constants::syntax_option_type f = this->flags();
+   bool breakout = false;
+   do
+   {
+      switch(*m_position)
+      {
+      case 's':
+         f |= regex_constants::mod_s;
+         f &= ~regex_constants::no_mod_s;
+         break;
+      case 'm':
+         f &= ~regex_constants::no_mod_m;
+         break;
+      case 'i':
+         f |= regex_constants::icase;
+         break;
+      case 'x':
+         f |= regex_constants::mod_x;
+         break;
+      default:
+         breakout = true;
+         continue;
+      }
+      if(++m_position == m_end)
+         fail(REG_EPAREN, m_position - m_base);
+   }
+   while(!breakout);
+
+   if(*m_position == '-')
+   {
+      if(++m_position == m_end)
+         fail(REG_EPAREN, m_position - m_base);
+      do
+      {
+         switch(*m_position)
+         {
+         case 's':
+            f &= ~regex_constants::mod_s;
+            f |= regex_constants::no_mod_s;
+            break;
+         case 'm':
+            f |= regex_constants::no_mod_m;
+            break;
+         case 'i':
+            f &= ~regex_constants::icase;
+            break;
+         case 'x':
+            f &= ~regex_constants::mod_x;
+            break;
+         default:
+            breakout = true;
+            continue;
+         }
+         if(++m_position == m_end)
+            fail(REG_EPAREN, m_position - m_base);
+      }
+      while(!breakout);
+   }
+   return f;
+}
+
 
 } // namespace re_detail
 } // namespace boost

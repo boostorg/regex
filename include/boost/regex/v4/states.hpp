@@ -110,7 +110,8 @@ enum syntax_element_type
    // a backstep for lookbehind repeats:
    syntax_element_backstep = syntax_element_long_set_rep + 1,
    // an assertion that a mark was matched:
-   syntax_element_assert_backref = syntax_element_backstep +1
+   syntax_element_assert_backref = syntax_element_backstep + 1,
+   syntax_element_toggle_case = syntax_element_assert_backref + 1
 };
 
 #ifdef BOOST_REGEX_DEBUG
@@ -141,13 +142,30 @@ struct re_syntax_base
 };
 
 /*** struct re_brace **************************************************
-Base class for all states in the machine.
+A marked parenthesis.
 ***********************************************************************/
 struct re_brace : public re_syntax_base
 {
    // The index to match, can be zero (don't mark the sub-expression)
    // or negative (for perl style (?...) extentions):
    int index;
+};
+
+/*** struct re_dot **************************************************
+Match anything.
+***********************************************************************/
+enum
+{
+   dont_care = 1,
+   force_not_newline = 0,
+   force_newline = 2,
+
+   test_not_newline = 2,
+   test_newline = 3,
+};
+struct re_dot : public re_syntax_base
+{
+   unsigned char mask;
 };
 
 /*** struct re_literal ************************************************
@@ -157,6 +175,14 @@ array of characters: charT[length]
 struct re_literal : public re_syntax_base
 {
    unsigned int length;
+};
+
+/*** struct re_case ************************************************
+Indicates whether we are moving to a case insensive block or not
+***********************************************************************/
+struct re_case : public re_syntax_base
+{
+   bool icase;
 };
 
 /*** struct re_set_long ***********************************************
@@ -234,7 +260,7 @@ template <class iterator, class charT, class traits_type, class char_classT>
 iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
                           iterator last, 
                           const re_set_long<char_classT>* set_, 
-                          const regex_data<charT, traits_type>& e);
+                          const regex_data<charT, traits_type>& e, bool icase);
 
 } // namespace re_detail
 

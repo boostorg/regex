@@ -185,6 +185,14 @@ public:
    {
       return m_pdata->m_flags;
    }
+   void flags(regbase::flag_type f)
+   {
+      m_pdata->m_flags = f;
+      if(m_icase != static_cast<bool>(f & regbase::icase))
+      {
+         m_icase = static_cast<bool>(f & regbase::icase);
+      }
+   }
    re_syntax_base* append_state(syntax_element_type t, std::size_t s = sizeof(re_syntax_base));
    re_syntax_base* insert_state(std::ptrdiff_t pos, syntax_element_type t, std::size_t s = sizeof(re_syntax_base));
    re_literal* append_literal(charT c);
@@ -633,10 +641,19 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
    // recursive implementation:
    // create the last map in the machine first, so that earlier maps
    // can make use of the result...
+
+   // start by saving the case setting:
+   bool l_icase = m_icase;
+
    while(state)
    {
       switch(state->type)
       {
+      case syntax_element_toggle_case:
+         // we need to track case changes here:
+         m_icase = static_cast<re_case*>(state)->icase;
+         state = state->next.p;
+         continue;
       case syntax_element_alt:
       case syntax_element_rep:
       case syntax_element_dot_rep:
@@ -652,6 +669,8 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          create_startmap(static_cast<re_alt*>(state)->alt.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_skip);
          // adjust the type of the state to allow for faster matching:
          state->type = this->get_repeat_type(state);
+         // restore case sensitivity:
+         m_icase = l_icase;
          return;
       case syntax_element_backstep:
          // we need to calculate how big the backstep is:
@@ -662,6 +681,8 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          state = state->next.p;
       }
    }
+   // restore case sensitivity:
+   m_icase = l_icase;
 }
 
 template <class charT, class traits>
@@ -726,10 +747,18 @@ template <class charT, class traits>
 void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, unsigned char* l_map, unsigned int* pnull, unsigned char mask)
 {
    int not_last_jump = 1;
+
+   // track case sensitivity:
+   bool l_icase = m_icase;
+
    while(state)
    {
       switch(state->type)
       {
+      case syntax_element_toggle_case:
+         l_icase = static_cast<re_case*>(state)->icase;
+         state = state->next.p;
+         break;
       case syntax_element_literal:
       {
          // don't set anything in *pnull, set each element in l_map
@@ -740,7 +769,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             charT first_char = *static_cast<charT*>(static_cast<void*>(static_cast<re_literal*>(state) + 1));
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
-               if(m_traits.translate(static_cast<charT>(i), m_icase) == first_char)
+               if(m_traits.translate(static_cast<charT>(i), l_icase) == first_char)
                   l_map[i] |= mask;
             }
          }
@@ -826,7 +855,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
                for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
                {
                   charT c = static_cast<charT>(i);
-                  if(&c != re_is_set_member(&c, &c + 1, static_cast<re_set_long<mask_type>*>(state), *m_pdata))
+                  if(&c != re_is_set_member(&c, &c + 1, static_cast<re_set_long<mask_type>*>(state), *m_pdata, m_icase))
                      l_map[i] |= mask;
                }
             }
@@ -841,7 +870,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             for(unsigned int i = 0; i < (1u << CHAR_BIT); ++i)
             {
                if(static_cast<re_set*>(state)->_map[
-                  static_cast<unsigned char>(m_traits.translate(static_cast<charT>(i), this->m_icase))])
+                  static_cast<unsigned char>(m_traits.translate(static_cast<charT>(i), l_icase))])
                   l_map[i] |= mask;
             }
          }

@@ -143,5 +143,6 @@ void test_tricky_cases2();
 void test_independent_subs();
 void test_nosubs();
 void test_conditionals();
+void test_options();
 
 #endif
