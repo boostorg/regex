@@ -1,0 +1,671 @@
+<html>
+	<head>
+		<title>Regular Expression Performance Comparison</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+		<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+	</head>
+	<body bgcolor="#ffffff" link="#0000ff" vlink="#800080">
+		<h2>Regular Expression Performance Comparison</h2>
+		<p>The Boost and GRETA regular expression libraries have slightly different 
+			interfaces, and it has been suggested that GRETA's interface allows for a more 
+			efficient implementation. The following tables provide comparisons between:</p>
+		<p><a href="http://research.microsoft.com/projects/greta">GRETA</a>.</p>
+		<p><a href="http://www.boost.org/">The Boost regex library</a>.</p>
+		<p><a href="http://arglist.com/regex/">Henry Spencer's regular expression library</a>
+			- this is provided for comparison as a typical non-backtracking implementation.</p>
+		<p>
+			Times were obtained on a 2.8GHz Pentium&nbsp;4 PC running Windows XP, and the 
+			code was compiled with Visual C++ 7.1 with all optimisations turned on. As ever 
+			care should be taken in interpreting the results, only sensible regular 
+			expressions (rather than pathological cases) are given, most are taken from the 
+			Boost regex examples, or from the <a href="http://www.regxlib.com/">Library of 
+				Regular Expressions</a>. In addition, some variation in the relative 
+			performance of these libraries can be expected on other machines - as memory 
+			access and processor caching effects can be quite large for most finite state 
+			machine algorithms.</p>
+		<h3>Comparison 1: Long Search</h3>
+		<p>For each of the following regular expressions the time taken to find all 
+			occurrences of the expression within a long English language text was measured 
+			(<a href="ftp://ibiblio.org/pub/docs/books/gutenberg/etext02/mtent12.zip">mtent12.txt</a>
+			from <a href="http://promo.net/pg/">Project Gutenberg</a>, 19Mb).&nbsp;</p>
+		<P><table border="1" cellspacing="1">
+				<tr>
+					<td><strong>Expression</strong></td>
+					<td><strong>GRETA</strong></td>
+					<td><strong>GRETA<BR>
+							(non-recursive mode)</strong></td>
+					<td><strong>Boost</strong></td>
+					<td><strong>Boost + C++ locale</strong></td>
+					<td><strong>POSIX</strong></td>
+					<td><strong>PCRE</strong></td>
+				</tr>
+				<tr>
+					<td><code>Twain</code></td>
+					<td>9.29<BR>
+						(0.00309s)</td>
+					<td>32.9<BR>
+						(0.011s)</td>
+					<td>1.34<BR>
+						(0.000445s)</td>
+					<td>1.37<BR>
+						(0.000455s)</td>
+					<td>6.23<BR>
+						(0.00207s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000333s)</font></td>
+				</tr>
+				<tr>
+					<td><code>Huck[[:alpha:]]+</code></td>
+					<td>12.9<BR>
+						(0.00309s)</td>
+					<td>44.4<BR>
+						(0.0106s)</td>
+					<td>1.79<BR>
+						(0.00043s)</td>
+					<td>1.82<BR>
+						(0.000436s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00024s)</font></td>
+					<td><font color="#008000">1.06<BR>
+							(0.000254s)</font></td>
+				</tr>
+				<tr>
+					<td><code>[[:alpha:]]+ing</code></td>
+					<td>7.6<BR>
+						(0.0178s)</td>
+					<td>15.2<BR>
+						(0.0357s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00235s)</font></td>
+					<td><font color="#008000">0.867<BR>
+							(0.00204s)</font></td>
+					<td>4.26<BR>
+						(0.01s)</td>
+					<td>6<BR>
+						(0.0141s)</td>
+				</tr>
+				<tr>
+					<td><code>^[^ ]*?Twain</code></td>
+					<td>5.92<BR>
+						(0.00626s)</td>
+					<td>16.3<BR>
+						(0.0172s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00106s)</font></td>
+					<td><font color="#008000">0.666<BR>
+							(0.000704s)</font></td>
+					<td>NA</td>
+					<td>2.04<BR>
+						(0.00215s)</td>
+				</tr>
+				<tr>
+					<td><code>Tom|Sawyer|Huckleberry|Finn</code></td>
+					<td>8<BR>
+						(0.00828s)</td>
+					<td>20<BR>
+						(0.0207s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00104s)</font></td>
+					<td><font color="#008000">0.585<BR>
+							(0.000605s)</font></td>
+					<td>42.3<BR>
+						(0.0438s)</td>
+					<td>1.12<BR>
+						(0.00115s)</td>
+				</tr>
+				<tr>
+					<td><code>(Tom|Sawyer|Huckleberry|Finn).{0,30}river|river.{0,30}(Tom|Sawyer|Huckleberry|Finn)</code></td>
+					<td>6.42<BR>
+						(0.012s)</td>
+					<td>16.3<BR>
+						(0.0307s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00188s)</font></td>
+					<td><font color="#008000">0.719<BR>
+							(0.00135s)</font></td>
+					<td>NA</td>
+					<td>1.21<BR>
+						(0.00227s)</td>
+				</tr>
+			</table>
+		</P>
+		<h3>Comparison 2: Medium Sized Search</h3>
+		<p>For each of the following regular expressions the time taken to find all 
+			occurrences of the expression within a medium sized English language text was 
+			measured (the first 50K from mtent12.txt).&nbsp;</p>
+		<P><table border="1" cellspacing="1">
+				<tr>
+					<td><strong>Expression</strong></td>
+					<td><strong>GRETA</strong></td>
+					<td><strong>GRETA<BR>
+							(non-recursive mode)</strong></td>
+					<td><strong>Boost</strong></td>
+					<td><strong>Boost + C++ locale</strong></td>
+					<td><strong>POSIX</strong></td>
+					<td><strong>PCRE</strong></td>
+				</tr>
+				<tr>
+					<td><code>Twain</code></td>
+					<td>9.29<BR>
+						(0.00309s)</td>
+					<td>32.5<BR>
+						(0.0108s)</td>
+					<td>1.34<BR>
+						(0.000445s)</td>
+					<td>1.37<BR>
+						(0.000455s)</td>
+					<td>6.24<BR>
+						(0.00207s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000333s)</font></td>
+				</tr>
+				<tr>
+					<td><code>Huck[[:alpha:]]+</code></td>
+					<td>12.9<BR>
+						(0.00309s)</td>
+					<td>47<BR>
+						(0.0113s)</td>
+					<td>1.77<BR>
+						(0.000425s)</td>
+					<td>1.84<BR>
+						(0.00044s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00024s)</font></td>
+					<td><font color="#008000">1.04<BR>
+							(0.00025s)</font></td>
+				</tr>
+				<tr>
+					<td><code>[[:alpha:]]+ing</code></td>
+					<td>7.61<BR>
+						(0.0178s)</td>
+					<td>15.2<BR>
+						(0.0356s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00234s)</font></td>
+					<td><font color="#008000">0.867<BR>
+							(0.00203s)</font></td>
+					<td>4.27<BR>
+						(0.01s)</td>
+					<td>5.94<BR>
+						(0.0139s)</td>
+				</tr>
+				<tr>
+					<td><code>^[^ ]*?Twain</code></td>
+					<td>5.72<BR>
+						(0.00626s)</td>
+					<td>15.5<BR>
+						(0.0169s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00109s)</font></td>
+					<td><font color="#008000">0.644<BR>
+							(0.000704s)</font></td>
+					<td>NA</td>
+					<td>1.93<BR>
+						(0.00211s)</td>
+				</tr>
+				<tr>
+					<td><code>Tom|Sawyer|Huckleberry|Finn</code></td>
+					<td>7.85<BR>
+						(0.00828s)</td>
+					<td>19.9<BR>
+						(0.021s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00105s)</font></td>
+					<td><font color="#008000">0.575<BR>
+							(0.000606s)</font></td>
+					<td>41.5<BR>
+						(0.0438s)</td>
+					<td><font color="#008000">1.09<BR>
+							(0.00115s)</font></td>
+				</tr>
+				<tr>
+					<td><code>(Tom|Sawyer|Huckleberry|Finn).{0,30}river|river.{0,30}(Tom|Sawyer|Huckleberry|Finn)</code></td>
+					<td>6.49<BR>
+						(0.012s)</td>
+					<td>16.5<BR>
+						(0.0307s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00186s)</font></td>
+					<td><font color="#008000">0.737<BR>
+							(0.00137s)</font></td>
+					<td>216<BR>
+						(0.401s)</td>
+					<td>1.24<BR>
+						(0.00231s)</td>
+				</tr>
+			</table>
+		</P>
+		<H3>Comparison 3:&nbsp;C++ Code&nbsp;Search</H3>
+		<P>For each of the following regular expressions the time taken to find all 
+			occurrences of the expression within the C++ source file <A href="../../../boost/crc.hpp">
+				boost/crc.hpp</A>&nbsp;was measured.&nbsp;</P>
+		<P><table border="1" cellspacing="1">
+				<tr>
+					<td><strong>Expression</strong></td>
+					<td><strong>GRETA</strong></td>
+					<td><strong>GRETA<BR>
+							(non-recursive mode)</strong></td>
+					<td><strong>Boost</strong></td>
+					<td><strong>Boost + C++ locale</strong></td>
+					<td><strong>POSIX</strong></td>
+					<td><strong>PCRE</strong></td>
+				</tr>
+				<tr>
+					<td><code>^(template[[:space:]]*&lt;[^;:{]+&gt;[[:space:]]*)?(class|struct)[[:space:]]*(\&lt;\w+\&gt;([ 
+							]*\([^)]*\))?[[:space:]]*)*(\&lt;\w*\&gt;)[[:space:]]*(&lt;[^;:{]+&gt;[[:space:]]*)?(\{|:[^;\{()]*\{)</code></td>
+					<td>9.58<BR>
+						(0.0019s)</td>
+					<td>40.3<BR>
+						(0.00798s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000198s)</font></td>
+					<td><font color="#008000">0.901<BR>
+							(0.000178s)</font></td>
+					<td>607<BR>
+						(0.12s)</td>
+					<td>3.16<BR>
+						(0.000626s)</td>
+				</tr>
+				<tr>
+					<td><code>(^[ 
+							]*#(?:[^\\\n]|\\[^\n_[:punct:][:alnum:]]*[\n[:punct:][:word:]])*)|(//[^\n]*|/\*.*?\*/)|\&lt;([+-]?(?:(?:0x[[:xdigit:]]+)|(?:(?:[[:digit:]]*\.)?[[:digit:]]+(?:[eE][+-]?[[:digit:]]+)?))u?(?:(?:int(?:8|16|32|64))|L)?)\&gt;|('(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")|\&lt;(__asm|__cdecl|__declspec|__export|__far16|__fastcall|__fortran|__import|__pascal|__rtti|__stdcall|_asm|_cdecl|__except|_export|_far16|_fastcall|__finally|_fortran|_import|_pascal|_stdcall|__thread|__try|asm|auto|bool|break|case|catch|cdecl|char|class|const|const_cast|continue|default|delete|do|double|dynamic_cast|else|enum|explicit|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|operator|pascal|private|protected|public|register|reinterpret_cast|return|short|signed|sizeof|static|static_cast|struct|switch|template|this|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while)\&gt;</code></td>
+					<td><font color="#008000">1<BR>
+							(0.0116s)</font></td>
+					<td>2.7<BR>
+						(0.0313s)</td>
+					<td>1.22<BR>
+						(0.0141s)</td>
+					<td><font color="#008000">0.946<BR>
+							(0.011s)</font></td>
+					<td>NA</td>
+					<td>1.41<BR>
+						(0.0163s)</td>
+				</tr>
+				<tr>
+					<td><code>^[ ]*#[ ]*include[ ]+("[^"]+"|&lt;[^&gt;]+&gt;)</code></td>
+					<td>6.05<BR>
+						(0.00195s)</td>
+					<td>25.7<BR>
+						(0.0083s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000323s)</font></td>
+					<td><font color="#008000">0.939<BR>
+							(0.000303s)</font></td>
+					<td>107<BR>
+						(0.0344s)</td>
+					<td>1.69<BR>
+						(0.000547s)</td>
+				</tr>
+				<tr>
+					<td><code>^[ ]*#[ ]*include[ ]+("boost/[^"]+"|<boost^[>]+&gt;)</code></td>
+					<td>5.8<BR>
+						(0.00196s)</td>
+					<td>24.6<BR>
+						(0.0083s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000337s)</font></td>
+					<td><font color="#008000">1.07<BR>
+							(0.000362s)</font></td>
+					<td>122<BR>
+						(0.0413s)</td>
+					<td>1.59<BR>
+						(0.000538s)</td>
+				</tr>
+			</table>
+		</P>
+		<H3>
+			<H3>Comparison 4: HTML Document Search</H3>
+		</H3>
+		<P>For each of the following regular expressions the time taken to find all 
+			occurrences of the expression within the html file <A href="../../libraries.htm">libs/libraries.htm</A>
+			was measured.&nbsp;</P>
+		<P><table border="1" cellspacing="1">
+				<tr>
+					<td><strong>Expression</strong></td>
+					<td><strong>GRETA</strong></td>
+					<td><strong>GRETA<BR>
+							(non-recursive mode)</strong></td>
+					<td><strong>Boost</strong></td>
+					<td><strong>Boost + C++ locale</strong></td>
+					<td><strong>POSIX</strong></td>
+					<td><strong>PCRE</strong></td>
+				</tr>
+				<tr>
+					<td><code>beman|john|dave</code></td>
+					<td>6.69<BR>
+						(0.00321s)</td>
+					<td>18.9<BR>
+						(0.00908s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000479s)</font></td>
+					<td><font color="#008000">0.561<BR>
+							(0.000269s)</font></td>
+					<td>23.8<BR>
+						(0.0114s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000479s)</font></td>
+				</tr>
+				<tr>
+					<td><code><p>.*?</p>
+						</code>
+					</td>
+					<td>5.89<BR>
+						(0.00164s)</td>
+					<td>19.6<BR>
+						(0.00548s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000279s)</font></td>
+					<td><font color="#008000">1.05<BR>
+							(0.000293s)</font></td>
+					<td>NA</td>
+					<td>1.11<BR>
+						(0.000308s)</td>
+				</tr>
+				<tr>
+					<td><code><a^[>]+href=("[^"]*"|[^[:space:]]+)[^&gt;]*&gt;</code></td>
+					<td>3.94<BR>
+						(0.00219s)</td>
+					<td>10.4<BR>
+						(0.00579s)</td>
+					<td><font color="#008000">1.09<BR>
+							(0.000606s)</font></td>
+					<td><font color="#008000">0.825<BR>
+							(0.000459s)</font></td>
+					<td>221<BR>
+						(0.123s)</td>
+					<td><font color="#008000">1<BR>
+							(0.000557s)</font></td>
+				</tr>
+				<tr>
+					<td><code><h12345678][^[>]*&gt;.*?</h[12345678]></code></td>
+					<td>6.07<BR>
+						(0.0016s)</td>
+					<td>19.8<BR>
+						(0.00524s)</td>
+					<td>1.37<BR>
+						(0.000362s)</td>
+					<td><font color="#008000">0.722<BR>
+							(0.000191s)</font></td>
+					<td>NA</td>
+					<td><font color="#008000">1<BR>
+							(0.000264s)</font></td>
+				</tr>
+				<tr>
+					<td><code><img^[>]+src=("[^"]*"|[^[:space:]]+)[^&gt;]*&gt;</code></td>
+					<td>6.77<BR>
+						(0.00162s)</td>
+					<td>22.5<BR>
+						(0.0054s)</td>
+					<td>1.1<BR>
+						(0.000264s)</td>
+					<td>1.2<BR>
+						(0.000289s)</td>
+					<td>120<BR>
+						(0.0288s)</td>
+					<td><font color="#008000">1<BR>
+							(0.00024s)</font></td>
+				</tr>
+				<tr>
+					<td><code><font^[>]+face=("[^"]*"|[^[:space:]]+)[^&gt;]*&gt;.*?</font></code></td>
+					<td>6.77<BR>
+						(0.00162s)</td>
+					<td>22.5<BR>
+						(0.0054s)</td>
+					<td>1.12<BR>
+						(0.000269s)</td>
+					<td>1.2<BR>
+						(0.000289s)</td>
+					<td>NA</td>
+					<td><font color="#008000">1<BR>
+							(0.00024s)</font></td>
+				</tr>
+			</table>
+		</P>
+		<H3>Comparison 3: Simple Matches</H3>
+		<p>
+			For each of the following regular expressions the time taken to match against 
+			the text indicated was measured.&nbsp;</p>
+		<P><table border="1" cellspacing="1">
+				<tr>
+					<td><strong>Expression</strong></td>
+					<td><strong>Text</strong></td>
+					<td><strong>GRETA</strong></td>
+					<td><strong>GRETA<BR>
+							(non-recursive mode)</strong></td>
+					<td><strong>Boost</strong></td>
+					<td><strong>Boost + C++ locale</strong></td>
+					<td><strong>POSIX</strong></td>
+					<td><strong>PCRE</strong></td>
+				</tr>
+				<tr>
+					<td><code>abc</code></td>
+					<td>abc</td>
+					<td>1.43<BR>
+						(2.25e-007s)</td>
+					<td>1.85<BR>
+						(2.91e-007s)</td>
+					<td>1.27<BR>
+						(2.01e-007s)</td>
+					<td>1.29<BR>
+						(2.03e-007s)</td>
+					<td>1.94<BR>
+						(3.06e-007s)</td>
+					<td><font color="#008000">1<BR>
+							(1.58e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^([0-9]+)(\-| |$)(.*)$</code></td>
+					<td>100- this is a line of ftp response which contains a message string</td>
+					<td><font color="#008000">1<BR>
+							(6.97e-007s)</font></td>
+					<td>2.69<BR>
+						(1.87e-006s)</td>
+					<td>1.89<BR>
+						(1.32e-006s)</td>
+					<td>1.86<BR>
+						(1.3e-006s)</td>
+					<td>298<BR>
+						(0.000208s)</td>
+					<td>1.29<BR>
+						(8.98e-007s)</td>
+				</tr>
+				<tr>
+					<td><code>([[:digit:]]{4}[- ]){3}[[:digit:]]{3,4}</code></td>
+					<td>1234-5678-1234-456</td>
+					<td>2.41<BR>
+						(2.14e-006s)</td>
+					<td>2.97<BR>
+						(2.64e-006s)</td>
+					<td>2.37<BR>
+						(2.1e-006s)</td>
+					<td>2.24<BR>
+						(1.99e-006s)</td>
+					<td>29.6<BR>
+						(2.63e-005s)</td>
+					<td><font color="#008000">1<BR>
+							(8.88e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$</code></td>
+					<td>john_maddock@compuserve.com</td>
+					<td>1.83<BR>
+						(3.7e-006s)</td>
+					<td>2.34<BR>
+						(4.74e-006s)</td>
+					<td>1.59<BR>
+						(3.21e-006s)</td>
+					<td>1.55<BR>
+						(3.13e-006s)</td>
+					<td>172<BR>
+						(0.000347s)</td>
+					<td><font color="#008000">1<BR>
+							(2.02e-006s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$</code></td>
+					<td>foo12@foo.edu</td>
+					<td>1.71<BR>
+						(3.09e-006s)</td>
+					<td>2.19<BR>
+						(3.97e-006s)</td>
+					<td>1.71<BR>
+						(3.09e-006s)</td>
+					<td>1.64<BR>
+						(2.98e-006s)</td>
+					<td>123<BR>
+						(0.000222s)</td>
+					<td><font color="#008000">1<BR>
+							(1.81e-006s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$</code></td>
+					<td>bob.smith@foo.tv</td>
+					<td>1.72<BR>
+						(3.09e-006s)</td>
+					<td>2.21<BR>
+						(3.97e-006s)</td>
+					<td>1.72<BR>
+						(3.09e-006s)</td>
+					<td>1.7<BR>
+						(3.06e-006s)</td>
+					<td>133<BR>
+						(0.00024s)</td>
+					<td><font color="#008000">1<BR>
+							(1.79e-006s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[a-zA-Z]{1,2}[0-9][0-9A-Za-z]{0,1} {0,1}[0-9][A-Za-z]{2}$</code></td>
+					<td>EH10 2QQ</td>
+					<td>1.29<BR>
+						(9.37e-007s)</td>
+					<td>1.71<BR>
+						(1.24e-006s)</td>
+					<td>1.29<BR>
+						(9.35e-007s)</td>
+					<td>1.18<BR>
+						(8.59e-007s)</td>
+					<td>7.79<BR>
+						(5.65e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(7.26e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[a-zA-Z]{1,2}[0-9][0-9A-Za-z]{0,1} {0,1}[0-9][A-Za-z]{2}$</code></td>
+					<td>G1 1AA</td>
+					<td>1.41<BR>
+						(9.26e-007s)</td>
+					<td>2<BR>
+						(1.32e-006s)</td>
+					<td>1.38<BR>
+						(9.07e-007s)</td>
+					<td>1.31<BR>
+						(8.6e-007s)</td>
+					<td>7.41<BR>
+						(4.88e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(6.59e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[a-zA-Z]{1,2}[0-9][0-9A-Za-z]{0,1} {0,1}[0-9][A-Za-z]{2}$</code></td>
+					<td>SW1 1ZZ</td>
+					<td>1.45<BR>
+						(9.54e-007s)</td>
+					<td>1.88<BR>
+						(1.24e-006s)</td>
+					<td>1.42<BR>
+						(9.36e-007s)</td>
+					<td>1.32<BR>
+						(8.69e-007s)</td>
+					<td>7.77<BR>
+						(5.12e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(6.59e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[[:digit:]]{1,2}/[[:digit:]]{1,2}/[[:digit:]]{4}$</code></td>
+					<td>4/1/2001</td>
+					<td>1.74<BR>
+						(1.01e-006s)</td>
+					<td>2.3<BR>
+						(1.34e-006s)</td>
+					<td>1.33<BR>
+						(7.73e-007s)</td>
+					<td>1.3<BR>
+						(7.54e-007s)</td>
+					<td>9.85<BR>
+						(5.73e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(5.82e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[[:digit:]]{1,2}/[[:digit:]]{1,2}/[[:digit:]]{4}$</code></td>
+					<td>12/12/2001</td>
+					<td>1.77<BR>
+						(1.01e-006s)</td>
+					<td>2.23<BR>
+						(1.28e-006s)</td>
+					<td>1.45<BR>
+						(8.31e-007s)</td>
+					<td>1.38<BR>
+						(7.93e-007s)</td>
+					<td>11.1<BR>
+						(6.34e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(5.73e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[-+]?[[:digit:]]*\.?[[:digit:]]*$</code></td>
+					<td>123</td>
+					<td>1.23<BR>
+						(7.65e-007s)</td>
+					<td>1.66<BR>
+						(1.03e-006s)</td>
+					<td>1.4<BR>
+						(8.69e-007s)</td>
+					<td>1.31<BR>
+						(8.12e-007s)</td>
+					<td>4.86<BR>
+						(3.02e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(6.21e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[-+]?[[:digit:]]*\.?[[:digit:]]*$</code></td>
+					<td>+3.14159</td>
+					<td>1.59<BR>
+						(1.05e-006s)</td>
+					<td>1.97<BR>
+						(1.3e-006s)</td>
+					<td>1.45<BR>
+						(9.54e-007s)</td>
+					<td>1.32<BR>
+						(8.69e-007s)</td>
+					<td>9.51<BR>
+						(6.26e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(6.59e-007s)</font></td>
+				</tr>
+				<tr>
+					<td><code>^[-+]?[[:digit:]]*\.?[[:digit:]]*$</code></td>
+					<td>-3.14159</td>
+					<td>1.64<BR>
+						(1.07e-006s)</td>
+					<td>2<BR>
+						(1.3e-006s)</td>
+					<td>1.44<BR>
+						(9.35e-007s)</td>
+					<td>1.35<BR>
+						(8.78e-007s)</td>
+					<td>9.53<BR>
+						(6.19e-006s)</td>
+					<td><font color="#008000">1<BR>
+							(6.49e-007s)</font></td>
+				</tr>
+			</table>
+		</P>
+		<hr>
+		<p>Copyright John Maddock September 2002, all rights reserved.</p>
+	</body>
+</html>
