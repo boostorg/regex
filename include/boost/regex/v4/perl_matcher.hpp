@@ -31,7 +31,7 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex::flag_type ef
 template <class charT>
 bool can_start(charT c, const unsigned char* map, unsigned char mask)
 {
-   return ((c < 0) ? true : ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask));
+   return ((c < static_cast<charT>(0)) ? true : ((c >= static_cast<charT>(1 << CHAR_BIT)) ? true : map[c] & mask));
 }
 inline bool can_start(char c, const unsigned char* map, unsigned char mask)
 {
@@ -66,7 +66,9 @@ inline bool can_start(wchar_t c, const unsigned char* map, unsigned char mask)
 // which succeeds when it should not.
 //
 #ifndef _RWSTD_VER
-# define STR_COMP(s,p) s.compare(p)
+template <class C, class T, class A>
+inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
+{ return s.compare(p); }
 #else
 template <class C, class T, class A>
 inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
@@ -77,13 +79,25 @@ inline int string_compare(const std::string& s, const char* p)
 inline int string_compare(const std::wstring& s, const wchar_t* p)
 { return std::wcscmp(s.c_str(), p); }
 #endif
-# define STR_COMP(s,p) string_compare(s,p)
 #endif
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+template <class Seq, class C>
+inline int string_compare(const Seq& s, const C* p)
+{
+   std::size_t i = 0;
+   while(p[i] && (p[i] == s[i]))
+   {
+      ++i;
+   }
+   return s[i] - p[i];
+}
+#endif
+# define STR_COMP(s,p) string_compare(s,p)
 
 template<class charT>
 inline const charT* re_skip_past_null(const charT* p)
 {
-  while (*p != 0) ++p;
+  while (*p != static_cast<charT>(0)) ++p;
   return ++p;
 }
 
@@ -101,7 +115,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
    if(next == last) return next;
 
    typedef typename traits_type::string_type traits_string_type;
-   const traits_type& traits_inst = e.m_traits;
+   const ::boost::regex_traits_wrapper<traits_type>& traits_inst = *(e.m_ptraits);
    
    // dwa 9/13/00 suppress incorrect MSVC warning - it claims this is never
    // referenced
@@ -112,12 +126,12 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
    for(i = 0; i < set_->csingles; ++i)
    {
       ptr = next;
-      if(*p == 0)
+      if(*p == static_cast<charT>(0))
       {
          // treat null string as special case:
          if(traits_inst.translate(*ptr, icase) != *p)
          {
-            while(*p == 0)++p;
+            while(*p == static_cast<charT>(0))++p;
             continue;
          }
          return set_->isnot ? next : (ptr == next) ? ++next : ptr;
@@ -132,7 +146,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
             ++ptr;
          }
 
-         if(*p == 0) // if null we've matched
+         if(*p == static_cast<charT>(0)) // if null we've matched
             return set_->isnot ? next : (ptr == next) ? ++next : ptr;
 
          p = re_skip_past_null(p);     // skip null
@@ -188,7 +202,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
          }
       }
    }
-   if(traits_inst.is_class(col, set_->cclasses) == true)
+   if(traits_inst.isctype(col, set_->cclasses) == true)
       return set_->isnot ? next : ++next;
    return set_->isnot ? ++next : next;
 }
@@ -365,7 +379,7 @@ private:
    // the expression being examined:
    const basic_regex<char_type, traits>& re;
    // the expression's traits class:
-   const traits& traits_inst;
+   const ::boost::regex_traits_wrapper<traits>& traits_inst;
    // the next state in the machine being matched:
    const re_syntax_base* pstate;
    // matching flags in use:

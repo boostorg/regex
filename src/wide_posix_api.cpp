@@ -114,9 +114,9 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
       result = static_cast<wregex*>(expression->guts)->error_code();
 #ifndef BOOST_NO_EXCEPTIONS
    } 
-   catch(const boost::bad_expression& be)
+   catch(const boost::regex_error& be)
    {
-      result = be.errorno();
+      result = be.code();
    }
    catch(...)
    {
@@ -168,18 +168,19 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 #endif
    if(code <= REG_E_UNKNOWN)
    {
-      regex_traits<wchar_t> rt;
-      const regex_traits<wchar_t>* pt = &rt;
-      if(e && (e->re_magic == wmagic_value))
-         pt = &static_cast<wregex*>(e->guts)->get_traits();
-      (void)pt; // warning suppression
-      std::string p = pt->error_string(code);
-      if(p.size() < buf_size)
+      std::string p;
+      if((e) && (e->re_magic == wmagic_value))
+         p = static_cast<wregex*>(e->guts)->get_traits().error_string(static_cast< ::boost::regex_constants::error_type>(code));
+      else
       {
-         std::copy(p.begin(), p.end(), buf);
-         buf[p.size()] = 0;
+         p = re_detail::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
       }
-      return p.size() + 1;
+      std::size_t len = p.size();
+      if(len < buf_size)
+      {
+         std::copy(p.c_str(), p.c_str() + p.size() + 1, buf);
+      }
+      return len + 1;
    }
    if(buf_size)
       *buf = 0;

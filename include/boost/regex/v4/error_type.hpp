@@ -30,29 +30,30 @@ namespace boost{
 #ifdef __cplusplus
 namespace regex_constants{
 
-typedef unsigned error_type;
+enum error_type{
 
-static const error_type error_ok = 0;         // not used
-static const error_type error_no_match = 1;   // not used
-static const error_type error_bad_pattern = 2;
-static const error_type error_collate = 3;
-static const error_type error_ctype = 4;
-static const error_type error_escape = 5;
-static const error_type error_subreg = 6;
-static const error_type error_brack = 7;
-static const error_type error_paren = 8;
-static const error_type error_brace = 9;
-static const error_type error_badbrace = 10;
-static const error_type error_range = 11;
-static const error_type error_space = 12;
-static const error_type error_badrepeat = 13;
-static const error_type error_end = 14;    // not used
-static const error_type error_size = 15;
-static const error_type error_right_paren = 16;  // not used
-static const error_type error_empty = 17;
-static const error_type error_complexity = 18;
-static const error_type error_stack = 19;
-static const error_type error_unknown = 20;
+   error_ok = 0,         // not used
+   error_no_match = 1,   // not used
+   error_bad_pattern = 2,
+   error_collate = 3,
+   error_ctype = 4,
+   error_escape = 5,
+   error_backref = 6,
+   error_brack = 7,
+   error_paren = 8,
+   error_brace = 9,
+   error_badbrace = 10,
+   error_range = 11,
+   error_space = 12,
+   error_badrepeat = 13,
+   error_end = 14,    // not used
+   error_size = 15,
+   error_right_paren = 16,  // not used
+   error_empty = 17,
+   error_complexity = 18,
+   error_stack = 19,
+   error_unknown = 20
+};
 
 }
 }

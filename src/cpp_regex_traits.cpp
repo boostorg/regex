@@ -19,6 +19,12 @@
 #define BOOST_REGEX_SOURCE
 #include <boost/regex/regex_traits.hpp>
 
+#ifdef BOOST_NO_STDC_NAMESPACE
+namespace std{
+   using ::memset;
+}
+#endif
+
 namespace boost{ namespace re_detail{
 
 void cpp_regex_traits_char_layer<char>::init() 

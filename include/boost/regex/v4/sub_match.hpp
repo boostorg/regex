@@ -42,11 +42,18 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
 
    sub_match() : std::pair<BidiIterator, BidiIterator>(), matched(false) {}
    sub_match(BidiIterator i) : std::pair<BidiIterator, BidiIterator>(i, i), matched(false) {}
-
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1310) 
+   template <class T, class A>
+   operator std::basic_string<value_type, T, A> ()const
+   {
+      return std::basic_string<value_type, T, A>(first, second);
+   }
+#else
    operator std::basic_string<value_type> ()const
    {
       return str();
    }
+#endif
    difference_type BOOST_REGEX_CALL length()const
    {
       difference_type n = ::boost::re_detail::distance((BidiIterator)this->first, (BidiIterator)this->second);
@@ -70,6 +77,14 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
       if(matched != s.matched)
          return static_cast<int>(matched) - static_cast<int>(s.matched);
       return str().compare(s.str());
+   }
+   int compare(const std::basic_string<value_type>& s)const
+   {
+      return str().compare(s);
+   }
+   int compare(const value_type* p)const
+   {
+      return str().compare(p);
    }
 
    bool operator==(const sub_match& that)const

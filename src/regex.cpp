@@ -50,8 +50,11 @@ namespace boost{
 // that dll builds contain the Virtual table for these
 // types - this ensures that exceptions can be thrown
 // from the dll and caught in an exe.
-bad_pattern::~bad_pattern() throw() {}
-bad_expression::~bad_expression() throw() {}
+regex_error::regex_error(const std::string& s, regex_constants::error_type err, std::ptrdiff_t pos) 
+   : std::runtime_error(s), m_error_code(err), m_position(pos) {}
+regex_error::regex_error(regex_constants::error_type err) 
+   : std::runtime_error(::boost::re_detail::get_default_error_string(err)), m_error_code(err), m_position(0) {}
+regex_error::~regex_error() throw() {}
 
 
 namespace re_detail{

@@ -23,10 +23,36 @@
 #  include BOOST_ABI_PREFIX
 #endif
 
+#ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
+#include <boost/regex/v4/syntax_type.hpp>
+#endif
+#ifndef BOOST_REGEX_ERROR_TYPE_HPP
+#include <boost/regex/v4/error_type.hpp>
+#endif
+
+#ifdef BOOST_NO_STDC_NAMESPACE
+namespace std{
+   using ::strlen;
+}
+#endif
+
 namespace boost{ namespace re_detail{
+
+
+//
+// helpers to suppress warnings:
+//
+template <class charT>
+inline bool is_extended(charT c)
+{ return c > 256; }
+inline bool is_extended(char)
+{ return false; }
+
 
 BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n);
 BOOST_REGEX_DECL const char* BOOST_REGEX_CALL get_default_error_string(regex_constants::error_type n);
+BOOST_REGEX_DECL regex_constants::syntax_type BOOST_REGEX_CALL get_default_syntax_type(char c);
+BOOST_REGEX_DECL regex_constants::escape_syntax_type BOOST_REGEX_CALL get_default_escape_syntax_type(char c);
 
 // is charT c a combining character?
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL is_combining_implementation(uint_least16_t s);
@@ -34,7 +60,7 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL is_combining_implementation(uint_least16_
 template <class charT>
 inline bool is_combining(charT c)
 {
-   return (c < 0) ? false : ((c > (std::numeric_limits<uint_least16_t>::max)()) ? false : is_combining_implementation(static_cast<unsigned short>(c)));
+   return (c < static_cast<charT>(0)) ? false : ((c > static_cast<charT>((std::numeric_limits<uint_least16_t>::max)())) ? false : is_combining_implementation(static_cast<unsigned short>(c)));
 }
 template <>
 inline bool is_combining<char>(char)
@@ -79,7 +105,7 @@ inline bool is_combining<wchar_t>(wchar_t c)
 template <class charT>
 inline bool is_separator(charT c)
 {
-   return BOOST_REGEX_MAKE_BOOL((c == '\n') || (c == '\r') || (static_cast<int>(c) == 0x2028) || (static_cast<int>(c) == 0x2029));
+   return BOOST_REGEX_MAKE_BOOL((c == static_cast<charT>('\n')) || (c == static_cast<charT>('\r')) || (static_cast<int>(c) == 0x2028) || (static_cast<int>(c) == 0x2029));
 }
 template <>
 inline bool is_separator<char>(char c)
@@ -163,31 +189,82 @@ int get_default_class_id(const charT* p1, const charT* p2)
    return -1;
 }
 
-#if 0
 //
-// parse_value:
-// covert a character sequence into a value, return -1 if no digits found:
+// helper functions:
 //
-template <class charT, class traits>
-int parse_value(const charT*& p1, const charT* p2, const traits& traits_inst, int radix = 10)
+template <class charT>
+std::ptrdiff_t global_length(const charT* p)
 {
-   return traits_inst.toi(p1, p2, radix);
-#if 0
-   int value = 0;
-   if(traits_inst.value(*p1) < 0)
-      return -1;
-   while(p1 != p2)
+   std::ptrdiff_t n = 0;
+   while(*p)
    {
-      int v2 = traits_inst.value(*p1);
-      if(v2 < 0) break;
-      value *= radix;
-      value += v2;
-      ++p1;
+      ++p;
+      ++n;
    }
-   return value;
-#endif
+   return n;
+}
+inline std::ptrdiff_t global_length(const char* p)
+{
+   return (std::strlen)(p);
+}
+#ifndef BOOST_NO_WREGEX
+inline std::ptrdiff_t global_length(const wchar_t* p)
+{
+   return (std::wcslen)(p);
 }
 #endif
+template <class charT>
+inline charT BOOST_REGEX_CALL global_lower(charT c)
+{
+   return c;
+}
+template <class charT>
+inline charT BOOST_REGEX_CALL global_upper(charT c)
+{
+   return c;
+}
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_lower(char c);
+BOOST_REGEX_DECL char BOOST_REGEX_CALL global_upper(char c);
+#ifndef BOOST_NO_WREGEX
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_lower(wchar_t c);
+BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_upper(wchar_t c);
+#endif
+template <class charT>
+int global_value(charT c)
+{
+   static const charT zero = '0';
+   static const charT nine = '9';
+   static const charT a = 'a';
+   static const charT f = 'f';
+   static const charT A = 'A';
+   static const charT F = 'F';
+
+   if(c > f) return -1;
+   if(c >= a) return 10 + (c - a);
+   if(c > F) return -1;
+   if(c >= A) return 10 + (c - A);
+   if(c > nine) return -1;
+   if(c >= zero) return c - zero;
+   return -1;
+}
+template <class charT, class traits>
+int global_toi(const charT*& p1, const charT* p2, int radix, const traits& t)
+{
+   int next_value = t.value(*p1, radix);
+   if((p1 == p2) || (next_value < 0) || (next_value >= radix))
+      return -1;
+   int result = 0;
+   while(p1 != p2)
+   {
+      next_value = t.value(*p1, radix);
+      if((next_value < 0) || (next_value >= radix))
+         break;
+      result *= radix;
+      result += next_value;
+      ++p1;
+   }
+   return result;
+}
 
 } // re_detail
 } // boost

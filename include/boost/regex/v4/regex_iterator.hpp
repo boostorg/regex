@@ -51,7 +51,7 @@ public:
    bool compare(const regex_iterator_implementation& that)
    {
       if(this == &that) return true;
-      return (re == that.re) && (end == that.end) && (flags == that.flags) && (what[0].first == that.what[0].first) && (what[0].second == that.what[0].second);
+      return (&re.get_data() == &that.re.get_data()) && (end == that.end) && (flags == that.flags) && (what[0].first == that.what[0].first) && (what[0].second == that.what[0].second);
    }
    const match_results<BidirectionalIterator>& get()
    { return what; }

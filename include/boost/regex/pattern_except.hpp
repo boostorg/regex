@@ -37,23 +37,13 @@ namespace boost{
 #pragma warning(push)
 #pragma warning(disable : 4275)
 #endif
-class BOOST_REGEX_DECL bad_pattern : public std::runtime_error
+   class BOOST_REGEX_DECL regex_error : public std::runtime_error
 {
 public:
-   explicit bad_pattern(const std::string& s) : std::runtime_error(s){};
-   ~bad_pattern() throw();
-};
-#ifdef BOOST_MSVC
-#pragma warning(pop)
-#endif
-
-class BOOST_REGEX_DECL bad_expression : public bad_pattern
-{
-public:
-   explicit bad_expression(const std::string& s, regex_constants::error_type err, std::ptrdiff_t pos) 
-      : bad_pattern(s), m_error_code(err), m_position(pos) {}
-   ~bad_expression() throw();
-   regex_constants::error_type errorno()const
+   explicit regex_error(const std::string& s, regex_constants::error_type err, std::ptrdiff_t pos);
+   explicit regex_error(regex_constants::error_type err);
+   ~regex_error() throw();
+   regex_constants::error_type code()const
    { return m_error_code; }
    std::ptrdiff_t position()const
    { return m_position; }
@@ -62,12 +52,15 @@ private:
    std::ptrdiff_t m_position;
 };
 
+typedef regex_error bad_pattern;
+typedef regex_error bad_expression;
+
 namespace re_detail{
 
 BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex);
 
 template <class traits>
-void raise_error(const traits& t, unsigned code)
+void raise_error(const traits& t, regex_constants::error_type code)
 {
    (void)t;  // warning suppression
    std::runtime_error e(t.error_string(code));

@@ -63,7 +63,7 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1>::operator()
       // output sub-expressions only:
       for(unsigned i = 1; i < what.size(); ++i)
       {
-         *(*p_out) = static_cast<string_type>(what[i]);
+         *(*p_out) = what.str(i);
          ++(*p_out);
          if(0 == --*p_max) return false;
       }
@@ -75,7 +75,7 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1>::operator()
       const sub_match<iterator_type>& sub = what[-1];
       if((sub.first != sub.second) || (*p_max != initial_max))
       {
-         *(*p_out) = static_cast<string_type>(sub);
+         *(*p_out) = sub.str();
          ++(*p_out);
          return --*p_max;
       }

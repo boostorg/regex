@@ -113,7 +113,7 @@ public:
    bool compare(const regex_token_iterator_implementation& that)
    {
       if(this == &that) return true;
-      return (re == that.re) 
+      return (&re.get_data() == &that.re.get_data()) 
          && (end == that.end) 
          && (flags == that.flags) 
          && (N == that.N) 

@@ -78,6 +78,8 @@ namespace std{
    using ::ptrdiff_t;
    using ::size_t;
    using ::abs;
+   using ::memset;
+   using ::memcpy;
 }
 
 #endif

@@ -37,84 +37,6 @@ class match_results;
 namespace re_detail{
 
 //
-// helper functions:
-//
-template <class charT>
-std::ptrdiff_t global_length(const charT* p)
-{
-   std::ptrdiff_t n = 0;
-   while(*p)
-   {
-      ++p;
-      ++n;
-   }
-   return n;
-}
-inline std::ptrdiff_t global_length(const char* p)
-{
-   return (std::strlen)(p);
-}
-#ifndef BOOST_NO_WREGEX
-inline std::ptrdiff_t global_length(const wchar_t* p)
-{
-   return (std::wcslen)(p);
-}
-#endif
-template <class charT>
-inline charT global_lower(charT c)
-{
-   return c;
-}
-template <class charT>
-inline charT global_upper(charT c)
-{
-   return c;
-}
-BOOST_REGEX_DECL char BOOST_REGEX_CALL global_lower(char c);
-BOOST_REGEX_DECL char BOOST_REGEX_CALL global_upper(char c);
-#ifndef BOOST_NO_WREGEX
-BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_lower(wchar_t c);
-BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL global_upper(wchar_t c);
-#endif
-template <class charT>
-int global_value(charT c)
-{
-   static const charT zero = '0';
-   static const charT nine = '9';
-   static const charT a = 'a';
-   static const charT f = 'f';
-   static const charT A = 'A';
-   static const charT F = 'F';
-
-   if((c >= zero) && (c <= nine))
-      return c - zero;
-   if((c >= a) && (c <= f))
-      return 10 + (c - a);
-   if((c >= A) && (c <= F))
-      return 10 + (c - A);
-   return -1;
-}
-template <class charT>
-int global_toi(const charT*& p1, const charT* p2, int radix)
-{
-   int next_value = global_value(*p1);
-   if((p1 == p2) || (next_value < 0) || (next_value >= radix))
-      return -1;
-   int result = 0;
-   while(p1 != p2)
-   {
-      next_value = global_value(*p1);
-      if((next_value < 0) || (next_value >= radix))
-         break;
-      result *= radix;
-      result += next_value;
-      ++p1;
-   }
-   return result;
-}
-
-
-//
 // struct trivial_format_traits:
 // defines minimum localisation support for formatting
 // in the case that the actual regex traits is unavailable.
@@ -136,9 +58,14 @@ struct trivial_format_traits
    {
       return ::boost::re_detail::global_upper(c);
    }
-   static int toi(const charT*& p1, const charT* p2, int radix)
+   static int value(const charT c, int radix)
    {
-      return global_toi(p1, p2, radix);
+      int result = global_value(c);
+      return result >= radix ? -1 : result;
+   }
+   int toi(const charT*& p1, const charT* p2, int radix)const
+   {
+      return global_toi(p1, p2, radix, *this);
    }
 };
 

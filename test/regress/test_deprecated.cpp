@@ -229,7 +229,7 @@ void test_deprecated(const char&, const test_invalid_regex_tag&)
 
    // OK try and compile the expression:
    boost::regex_tA re;
-   if(regcompA(&re, expression.c_str(), posix_options) == 0)
+   if(boost::regcompA(&re, expression.c_str(), posix_options) == 0)
    {
       boost::regfreeA(&re);
       BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" unexpectedly compiled with the POSIX C API.", char);
@@ -281,7 +281,7 @@ void test_deprecated(const wchar_t&, const test_invalid_regex_tag&)
 
    // OK try and compile the expression:
    boost::regex_tW re;
-   if(regcompW(&re, expression.c_str(), posix_options) == 0)
+   if(boost::regcompW(&re, expression.c_str(), posix_options) == 0)
    {
       boost::regfreeW(&re);
       BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" unexpectedly compiled with the POSIX C API.", wchar_t);

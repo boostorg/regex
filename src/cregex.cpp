@@ -35,7 +35,7 @@ typedef boost::match_flag_type match_flag_type;
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{
-   using ::sprintf;
+   using ::sprintf; using ::strcpy; using ::strcat;
 }
 #endif
 

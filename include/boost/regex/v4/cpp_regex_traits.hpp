@@ -67,8 +67,8 @@ public:
    const charT* getnext() { return this->gptr(); }
 protected:
    std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n);
-   //typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
-   //typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
+   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
+   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
 private:
    parser_buf& operator=(const parser_buf&);
    parser_buf(const parser_buf&);
@@ -82,7 +82,6 @@ parser_buf<charT, traits>::setbuf(char_type* s, streamsize n)
    return this;
 }
 
-#if 0
 template<class charT, class traits>
 typename parser_buf<charT, traits>::pos_type
 parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which)
@@ -141,7 +140,6 @@ parser_buf<charT, traits>::seekpos(pos_type sp, ::std::ios_base::openmode which)
    }
    return pos_type(off_type(-1));
 }
-#endif
 
 //
 // class cpp_regex_traits_base:
@@ -422,13 +420,13 @@ typename cpp_regex_traits_implementation<charT>::string_type
    case sort_fixed:
       {
          // get a regular sort key, and then truncate it:
-         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size()));
+         result.assign(this->m_pcollate->transform(p1, p2));
          result.erase(this->m_collate_delim);
          break;
       }
    case sort_delim:
          // get a regular sort key, and then truncate everything after the delim:
-         result.assign(this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size()));
+         result.assign(this->m_pcollate->transform(p1, p2));
          std::size_t i;
          for(i = 0; i < result.size(); ++i)
          {
@@ -511,7 +509,9 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
       //
       // Error messages:
       //
-      for(boost::regex_constants::error_type i = 0; i <= boost::regex_constants::error_unknown; ++i)
+      for(boost::regex_constants::error_type i = static_cast<boost::regex_constants::error_type>(0); 
+         i <= boost::regex_constants::error_unknown; 
+         i = static_cast<boost::regex_constants::error_type>(i + 1))
       {
          const char* p = get_default_error_string(i);
          string_type default_message;
@@ -609,15 +609,6 @@ boost::shared_ptr<cpp_regex_traits_implementation<charT> > create_cpp_regex_trai
    return boost::shared_ptr<cpp_regex_traits_implementation<charT> >(new cpp_regex_traits_implementation<charT>(l));
 }
 
-//
-// helpers to suppress warnings:
-//
-template <class charT>
-inline bool is_extended(charT c)
-{ return c > 256; }
-inline bool is_extended(char)
-{ return false; }
-
 } // re_detail
 
 template <class charT>
@@ -631,6 +622,8 @@ public:
    typedef std::basic_string<char_type> string_type;
    typedef std::locale                  locale_type;
    typedef boost::uint_least32_t        char_class_type;
+
+   struct boost_extensions_tag{};
 
    cpp_regex_traits()
       : m_pimpl(re_detail::create_cpp_regex_traits<charT>(std::locale()))
@@ -646,6 +639,14 @@ public:
    regex_constants::escape_syntax_type escape_syntax_type(charT c) const
    {
       return m_pimpl->escape_syntax_type(c);
+   }
+   charT translate(charT c) const
+   {
+      return c;
+   }
+   charT translate_nocase(charT c) const
+   {
+      return m_pimpl->m_pctype->tolower(c);
    }
    charT translate(charT c, bool icase) const
    {
@@ -675,7 +676,7 @@ public:
    {
       return m_pimpl->lookup_collatename(p1, p2);
    }
-   bool is_class(charT c, char_class_type f) const
+   bool isctype(charT c, char_class_type f) const
    {
       typedef typename std::ctype<charT>::mask ctype_mask;
       if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_base) 
@@ -693,6 +694,11 @@ public:
       return false;
    }
    int toi(const charT*& p1, const charT* p2, int radix)const;
+   int value(charT c, int radix)const
+   {
+      const charT* pc = &c;
+      return toi(pc, pc + 1, radix);
+   }
    locale_type imbue(locale_type l)
    {
       std::locale result(getloc());

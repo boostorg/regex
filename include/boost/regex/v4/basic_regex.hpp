@@ -47,10 +47,15 @@ struct regex_data
    typedef regex_constants::syntax_option_type   flag_type;
    typedef std::size_t                           size_type;  
 
-   regex_data(const traits& t) : m_traits(t) {}
-   regex_data(){}
+   regex_data(const ::boost::shared_ptr<
+      ::boost::regex_traits_wrapper<traits> >& t) 
+      : m_ptraits(t) {}
+   regex_data() 
+      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()) {}
 
-   traits                      m_traits;                  // traits class instance
+   ::boost::shared_ptr<
+      ::boost::regex_traits_wrapper<traits>
+      >                        m_ptraits;                 // traits class instance
    flag_type                   m_flags;                   // flags with which we were compiled
    int                         m_status;                  // error code (0 implies OK).
    const charT*                m_expression;              // the original expression
@@ -78,7 +83,8 @@ public:
    typedef const charT*                          const_iterator;
 
    basic_regex_implementation(){}
-   basic_regex_implementation(const traits& t)
+   basic_regex_implementation(const ::boost::shared_ptr<
+      ::boost::regex_traits_wrapper<traits> >& t)
       : regex_data<charT, traits>(t) {}
    void assign(const charT* arg_first,
                           const charT* arg_last,
@@ -91,11 +97,11 @@ public:
 
    locale_type BOOST_REGEX_CALL imbue(locale_type l)
    { 
-      return this->m_traits.imbue(l); 
+      return this->m_ptraits->imbue(l); 
    }
    locale_type BOOST_REGEX_CALL getloc()const
    { 
-      return this->m_traits.getloc(); 
+      return this->m_ptraits->getloc(); 
    }
    std::basic_string<charT> BOOST_REGEX_CALL str()const
    {
@@ -146,9 +152,9 @@ public:
    {
       return this->m_startmap;
    }
-   const traits& get_traits()const
+   const ::boost::regex_traits_wrapper<traits>& get_traits()const
    {
-      return this->m_traits;
+      return *(this->m_ptraits);
    }
    bool can_be_null()const
    {
@@ -218,7 +224,7 @@ public:
    }
    basic_regex& BOOST_REGEX_CALL operator=(const charT* ptr)
    {
-      return assign(ptr, regex_constants::normal);
+      return assign(ptr);
    }
 
    //
@@ -239,12 +245,7 @@ public:
 
    basic_regex& assign(const charT* p1,
                           const charT* p2,
-                          flag_type f = regex_constants::normal)
-   {
-      cow();
-      m_pimpl->assign(p1, p2, f);
-      return *this;
-   }
+                          flag_type f = regex_constants::normal);
 #if !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__)
 
    template <class ST, class SA>
@@ -262,8 +263,9 @@ public:
    template <class InputIterator>
    basic_regex(InputIterator arg_first, InputIterator arg_last, flag_type f = regex_constants::normal)
    {
-      std::basic_string<charT> a(arg_first, arg_last);
-      assign(a.data(), a.data() + a.size(), f);
+      typedef typename traits::string_type seq_type;
+      seq_type a(arg_first, arg_last);
+      assign(&*a.begin(), &*a.end(), f);
    }
 
    template <class ST, class SA>
@@ -285,8 +287,11 @@ public:
                           InputIterator arg_last,
                           flag_type f = regex_constants::normal)
    {
-      std::basic_string<charT> a(arg_first, arg_last);
-      return assign(a.data(), a.data() + a.size(), f);
+      typedef typename traits::string_type seq_type;
+      seq_type a(arg_first, arg_last);
+      const charT* p1 = &*a.begin();
+      const charT* p2 = &*a.end();
+      return assign(p1, p2, f);
    }
 #else
    unsigned int BOOST_REGEX_CALL set_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
@@ -315,11 +320,7 @@ public:
 
    //
    // locale:
-   locale_type BOOST_REGEX_CALL imbue(locale_type l)
-   { 
-      cow();
-      return m_pimpl->imbue(l); 
-   }
+   locale_type BOOST_REGEX_CALL imbue(locale_type l);
    locale_type BOOST_REGEX_CALL getloc()const
    { 
       return m_pimpl.get() ? m_pimpl->getloc() : locale_type(); 
@@ -405,7 +406,7 @@ public:
    { 
       return compare(e) == 0; 
    }
-   bool operator != (const basic_regex& e)
+   bool BOOST_REGEX_CALL operator != (const basic_regex& e)const
    { 
       return compare(e) != 0; 
    }
@@ -465,7 +466,7 @@ public:
       assert(m_pimpl.get());
       return m_pimpl->get_map();
    }
-   const traits& get_traits()const
+   const ::boost::regex_traits_wrapper<traits>& get_traits()const
    {
       assert(m_pimpl.get());
       return m_pimpl->get_traits();
@@ -483,19 +484,50 @@ public:
 
 private:
    shared_ptr<re_detail::basic_regex_implementation<charT, traits> > m_pimpl;
-   void cow()
-   {
-      // copy-on-write
-      if(!m_pimpl.get())
-      {
-         m_pimpl = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>());
-      }
-      else if(!m_pimpl.unique())
-      {
-         m_pimpl = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>(m_pimpl->get_traits()));
-      }
-   }
 };
+
+//
+// out of line members;
+// these are the only members that mutate the basic_regex object,
+// and are designed to provide the strong exception guarentee
+// (in the event of a throw, the state of the object remains unchanged).
+//
+template <class charT, class traits>
+basic_regex<charT, traits>& basic_regex<charT, traits>::assign(const charT* p1,
+                        const charT* p2,
+                        flag_type f)
+{
+   shared_ptr<re_detail::basic_regex_implementation<charT, traits> > temp;
+   if(!m_pimpl.get())
+   {
+      temp = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>());
+   }
+   else if(!m_pimpl.unique())
+   {
+      temp = shared_ptr<re_detail::basic_regex_implementation<charT, traits> >(new re_detail::basic_regex_implementation<charT, traits>(m_pimpl->m_ptraits));
+   }
+   temp->assign(p1, p2, f);
+   temp.swap(m_pimpl);
+   return *this;
+}
+
+template <class charT, class traits>
+typename basic_regex<charT, traits>::locale_type BOOST_REGEX_CALL basic_regex<charT, traits>::imbue(locale_type l)
+{ 
+   shared_ptr<re_detail::basic_regex_implementation<charT, traits> > temp(new re_detail::basic_regex_implementation<charT, traits>());
+   locale_type result = temp->imbue(l);
+   temp.swap(m_pimpl);
+   return result;
+}
+
+//
+// non-members:
+//
+template <class charT, class traits>
+void swap(basic_regex<charT, traits>& e1, basic_regex<charT, traits>& e2)
+{
+   e1.swap(e2);
+}
 
 #ifndef BOOST_NO_STD_LOCALE
 template <class charT, class traits, class traits2>

@@ -353,7 +353,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_start_line()
    --t;
    if(position != last)
    {
-      if(is_separator(*t) && !((*t == '\r') && (*position == '\n')) )
+      if(is_separator(*t) && !((*t == static_cast<char_type>('\r')) && (*position == static_cast<char_type>('\n'))) )
       {
          pstate = pstate->next.p;
          return true;
@@ -382,7 +382,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_end_line()
             // check that we're not in the middle of \r\n sequence
             BidiIterator t(position);
             --t;
-            if((*t == '\r') && (*position == '\n'))
+            if((*t == static_cast<char_type>('\r')) && (*position == static_cast<char_type>('\n')))
             {
                return false;
             }
@@ -449,9 +449,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary()
    {
       // prev and this character must be opposites:
    #if defined(BOOST_REGEX_USE_C_LOCALE) && defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ < 95)
-      b = traits::is_class(*position, m_word_mask);
+      b = traits::isctype(*position, m_word_mask);
    #else
-      b = traits_inst.is_class(*position, m_word_mask);
+      b = traits_inst.isctype(*position, m_word_mask);
    #endif
    }
    else
@@ -468,7 +468,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary()
    else
    {
       --position;
-      b ^= traits_inst.is_class(*position, m_word_mask);
+      b ^= traits_inst.isctype(*position, m_word_mask);
       ++position;
    }
    if(b)
@@ -485,7 +485,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_within_word()
    if(position == last)
       return false;
    // both prev and this character must be m_word_mask:
-   if(traits_inst.is_class(*position, m_word_mask))
+   if(traits_inst.isctype(*position, m_word_mask))
    {
       bool b;
       if((position == base) && ((m_match_flags & match_prev_avail) == 0))
@@ -493,7 +493,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_within_word()
       else
       {
          --position;
-         b = traits_inst.is_class(*position, m_word_mask);
+         b = traits_inst.isctype(*position, m_word_mask);
          ++position;
       }
       if(b)
@@ -510,7 +510,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_start()
 {
    if(position == last)
       return false; // can't be starting a word if we're already at the end of input
-   if(!traits_inst.is_class(*position, m_word_mask))
+   if(!traits_inst.isctype(*position, m_word_mask))
       return false; // next character isn't a word character
    if((position == base) && ((m_match_flags & match_prev_avail) == 0))
    {
@@ -522,7 +522,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_start()
       // otherwise inside buffer:
       BidiIterator t(position);
       --t;
-      if(traits_inst.is_class(*t, m_word_mask))
+      if(traits_inst.isctype(*t, m_word_mask))
          return false; // previous character not non-word
    }
    // OK we have a match:
@@ -537,7 +537,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_end()
       return false;  // start of buffer can't be end of word
    BidiIterator t(position);
    --t;
-   if(traits_inst.is_class(*t, m_word_mask) == false)
+   if(traits_inst.isctype(*t, m_word_mask) == false)
       return false;  // previous character wasn't a word character
 
    if(position == last)
@@ -548,7 +548,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_end()
    else
    {
       // otherwise inside buffer:
-      if(traits_inst.is_class(*position, m_word_mask))
+      if(traits_inst.isctype(*position, m_word_mask))
          return false; // next character is a word character
    }
    pstate = pstate->next.p;
@@ -745,9 +745,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_word()
       return true;
    do
    {
-      while((position != last) && traits_inst.is_class(*position, m_word_mask))
+      while((position != last) && traits_inst.isctype(*position, m_word_mask))
          ++position;
-      while((position != last) && !traits_inst.is_class(*position, m_word_mask))
+      while((position != last) && !traits_inst.isctype(*position, m_word_mask))
          ++position;
       if(position == last)
          break;

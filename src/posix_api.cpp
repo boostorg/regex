@@ -25,6 +25,8 @@
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{
    using ::sprintf;
+   using ::strcpy;
+   using ::strcmp;
 }
 #endif
 
@@ -104,9 +106,9 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA* expression, const char
       result = static_cast<regex*>(expression->guts)->error_code();
 #ifndef BOOST_NO_EXCEPTIONS
    } 
-   catch(const boost::bad_expression& be)
+   catch(const boost::regex_error& be)
    {
-      result = be.errorno();
+      result = be.code();
    }
    catch(...)
    {
@@ -158,11 +160,10 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
    {
       std::string p;
       if((e) && (e->re_magic == magic_value))
-         p = static_cast<regex*>(e->guts)->get_traits().error_string(code);
+         p = static_cast<regex*>(e->guts)->get_traits().error_string(static_cast< ::boost::regex_constants::error_type>(code));
       else
       {
-         boost::regex_traits<char> t;
-         p = t.error_string(code);
+         p = re_detail::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
       }
       std::size_t len = p.size();
       if(len < buf_size)

@@ -15,8 +15,12 @@
 template <class charT, class tagT>
 void test(const charT& c, const tagT& tag)
 {
-   boost::basic_regex<charT> e;
-   test(e, tag);
+   boost::basic_regex<charT, boost::cpp_regex_traits<charT> > e1;
+   test(e1, tag);
+   boost::basic_regex<charT, boost::c_regex_traits<charT> > e2;
+   test(e2, tag);
+   boost::basic_regex<charT, boost::w32_regex_traits<charT> > e3;
+   test(e3, tag);
    // test old depecated code:
    test_deprecated(c, tag);
 }

@@ -39,6 +39,11 @@ namespace std{
    using ::fopen;
    using ::fclose;
    using ::FILE;
+   using ::strcpy;
+   using ::strcpy;
+   using ::strcat;
+   using ::strcmp;
+   using ::strlen;
 }
 #endif
 

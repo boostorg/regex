@@ -119,8 +119,8 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_code, std::ptrdiff_t position)
 {
-   std::string message = this->m_pdata->m_traits.error_string(error_code);
-   boost::bad_expression e(message, error_code, position);
+   std::string message = this->m_pdata->m_ptraits->error_string(error_code);
+   boost::regex_error e(message, error_code, position);
    boost::throw_exception(e);
 }
 
@@ -256,7 +256,7 @@ bool basic_regex_parser<charT, traits>::parse_literal()
       ((this->flags() 
          & (regbase::main_option_type|regbase::mod_x|regbase::no_perl_ex)) 
             != regbase::mod_x)
-      || !this->m_traits.is_class(*m_position, this->m_mask_space))
+      || !this->m_traits.isctype(*m_position, this->m_mask_space))
          this->append_literal(*m_position);
    ++m_position;
    return true;
@@ -584,7 +584,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
    std::size_t min, max;
    int v;
    // skip whitespace:
-   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+   while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
       ++m_position;
    // fail if at end:
    if(this->m_position == this->m_end)
@@ -592,7 +592,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
    // get min:
    v = this->m_traits.toi(m_position, m_end, 10);
    // skip whitespace:
-   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+   while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
       ++m_position;
    if(v < 0)
       fail(regex_constants::error_badbrace, this->m_position - this->m_base);
@@ -605,7 +605,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
       // move on and error check:
       ++m_position;
       // skip whitespace:
-      while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+      while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
          ++m_position;
       if(this->m_position == this->m_end)
          fail(regex_constants::error_brace, this->m_position - this->m_base);
@@ -619,7 +619,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
       max = min;
    }
    // skip whitespace:
-   while((m_position != m_end) && this->m_traits.is_class(*m_position, this->m_mask_space))
+   while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
       ++m_position;
    // OK now check trailing }:
    if(this->m_position == this->m_end)
@@ -759,7 +759,7 @@ bool basic_regex_parser<charT, traits>::parse_set()
                == regex_constants::escape_type_class)
             {
                char_class_type m = this->m_traits.lookup_classname(m_position, m_position+1);
-               if(m)
+               if(m != 0)
                {
                   char_set.add_class(m);
                   break;
@@ -770,7 +770,7 @@ bool basic_regex_parser<charT, traits>::parse_set()
             {
                // negated character classes aren't supported:
                char_class_type m = this->m_traits.lookup_classname(m_position, m_position+1);
-               if(m)
+               if(m != 0)
                {
                   fail(regex_constants::error_escape, m_position - m_base);
                }
@@ -835,7 +835,7 @@ bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, tr
          fail(regex_constants::error_brack, m_position - m_base);
       typedef typename traits::char_class_type mask_type;
       mask_type m = this->m_traits.lookup_classname(name_first, name_last);
-      if(0 == m)
+      if(m == 0)
       {
          if(char_set.empty() && (name_last - name_first == 1))
          {
@@ -909,7 +909,7 @@ bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, tr
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::parse_set_literal(basic_char_set<charT, traits>& char_set)
 {
-   digraph<charT> start_range = get_next_set_literal(char_set);
+   digraph<charT> start_range(get_next_set_literal(char_set));
    if(m_end == m_position)
       fail(regex_constants::error_brack, m_position - m_base);
    if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_dash)
@@ -1006,7 +1006,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
    charT result(0);
    if(m_position == m_end)
       fail(regex_constants::error_escape, m_position - m_base);
-   switch(this->m_traits.syntax_type(*m_position))
+   switch(this->m_traits.escape_syntax_type(*m_position))
    {
    case regex_constants::escape_type_control_a:
       result = charT('\a');
@@ -1127,7 +1127,7 @@ bool basic_regex_parser<charT, traits>::parse_backref()
       this->append_literal(c);
    }
    else
-      fail(regex_constants::error_subreg, m_position - m_end);
+      fail(regex_constants::error_backref, m_position - m_end);
    return true;
 }
 
@@ -1161,7 +1161,7 @@ bool basic_regex_parser<charT, traits>::parse_QE()
          return false;
       }
       // check to see if it's a \E:
-      if(this->m_traits.syntax_type(*m_position) == regex_constants::escape_type_E)
+      if(this->m_traits.escape_syntax_type(*m_position) == regex_constants::escape_type_E)
       {
          ++m_position;
          end = m_position - 2;
@@ -1450,7 +1450,7 @@ regex_constants::syntax_option_type basic_regex_parser<charT, traits>::parse_opt
    }
    while(!breakout);
 
-   if(*m_position == '-')
+   if(*m_position == static_cast<charT>('-'))
    {
       if(++m_position == m_end)
          fail(regex_constants::error_paren, m_position - m_base);
