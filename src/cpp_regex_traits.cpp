@@ -33,6 +33,7 @@ void cpp_regex_traits_char_layer<char>::init()
    // we need to start by initialising our syntax map so we know which
    // character is used for which purpose:
    std::memset(m_char_map, 0, sizeof(m_char_map));
+#ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
    std::messages<char>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
 #else
@@ -75,6 +76,7 @@ void cpp_regex_traits_char_layer<char>::init()
    }
    else
    {
+#endif
       for(regex_constants::syntax_type i = 1; i < regex_constants::syntax_max; ++i)
       {
          const char* ptr = get_default_syntax(i);
@@ -84,7 +86,9 @@ void cpp_regex_traits_char_layer<char>::init()
             ++ptr;
          }
       }
+#ifndef BOOST_NO_STD_MESSAGES
    }
+#endif
    //
    // finish off by calculating our escape types:
    //

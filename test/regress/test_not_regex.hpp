@@ -30,6 +30,23 @@ void test(boost::basic_regex<charT, traits>& r, const test_invalid_regex_tag&)
 {
    const std::basic_string<charT>& expression = test_info<charT>::expression();
    boost::regex_constants::syntax_option_type syntax_options = test_info<charT>::syntax_options();
+   //
+   // try it with exceptions disabled first:
+   //
+   try
+   {
+      if(0 == r.assign(expression, syntax_options | boost::regex_constants::no_except).status())
+      {
+         BOOST_REGEX_TEST_ERROR("Expression compiled when it should not have done so.", charT);
+      }
+   }
+   catch(...)
+   {
+      BOOST_REGEX_TEST_ERROR("Unexpected exception thrown.", charT);
+   }
+   //
+   // now try again with exceptions:
+   //
    bool have_catch = false;
    try{
       r.assign(expression, syntax_options);

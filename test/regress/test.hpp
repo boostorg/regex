@@ -2,10 +2,12 @@
 
 #ifndef BOOST_REGEX_REGRESS_TEST_HPP
 #define BOOST_REGEX_REGRESS_TEST_HPP
+#include <typeinfo>
 #include "test_not_regex.hpp"
 #include "test_regex_search.hpp"
 #include "test_regex_replace.hpp"
 #include "test_deprecated.hpp"
+#include "test_locale.hpp"
 
 
 //
@@ -16,19 +18,33 @@ template <class charT, class tagT>
 void test(const charT& c, const tagT& tag)
 {
 #ifndef BOOST_NO_STD_LOCALE
+   test_info<charT>::set_typename(typeid(boost::basic_regex<charT, boost::cpp_regex_traits<charT> >).name());
    boost::basic_regex<charT, boost::cpp_regex_traits<charT> > e1;
-   test(e1, tag);
+   if(test_locale::cpp_locale_state() == test_locale::test_with_locale)
+      e1.imbue(test_locale::cpp_locale());
+   if(test_locale::cpp_locale_state() != test_locale::no_test)
+      test(e1, tag);
 #endif
 #if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+   test_info<charT>::set_typename(typeid(boost::basic_regex<charT, boost::c_regex_traits<charT> >).name());
    boost::basic_regex<charT, boost::c_regex_traits<charT> > e2;
-   test(e2, tag);
+   if(test_locale::c_locale_state() != test_locale::no_test)
+      test(e2, tag);
 #endif
 #if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+   test_info<charT>::set_typename(typeid(boost::basic_regex<charT, boost::w32_regex_traits<charT> >).name());
    boost::basic_regex<charT, boost::w32_regex_traits<charT> > e3;
-   test(e3, tag);
+   if(test_locale::win_locale_state() == test_locale::test_with_locale)
+      e3.imbue(test_locale::win_locale());
+   if(test_locale::win_locale_state() != test_locale::no_test)
+      test(e3, tag);
 #endif
    // test old depecated code:
-   test_deprecated(c, tag);
+   test_info<charT>::set_typename("Deprecated interfaces");
+   if((test_locale::win_locale_state() == test_locale::test_no_locale)
+      && (test_locale::c_locale_state() == test_locale::test_no_locale)
+      &&(test_locale::cpp_locale_state() == test_locale::test_no_locale))
+      test_deprecated(c, tag);
 }
 
 //
@@ -161,5 +177,6 @@ void test_nosubs();
 void test_conditionals();
 void test_options();
 void test_options2();
+void test_en_locale();
 
 #endif

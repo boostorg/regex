@@ -43,9 +43,10 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::t
    std::size_t s = 10;
    std::wstring src(p1, p2);
    std::wstring result(s, L' ');
-   while(s < (r = std::wcsxfrm(&*result.begin(), src.c_str(), result.size())))
+   while(s < (r = std::wcsxfrm(&*result.begin(), src.c_str(), s)))
    {
       result.append(r - s + 3, L' ');
+      s = result.size();
    }
    result.erase(r);
    return result; 

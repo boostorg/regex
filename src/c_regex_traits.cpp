@@ -47,13 +47,14 @@ namespace boost{
 
 c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::transform(const char* p1, const char* p2)
 { 
-   std::size_t s = 10;
-   std::string result(s, ' ');
+   std::string result(10, ' ');
+   std::size_t s = result.size();
    std::size_t r;
    std::string src(p1, p2);
-   while(s < (r = std::strxfrm(&*result.begin(), src.c_str(), result.size())))
+   while(s < (r = std::strxfrm(&*result.begin(), src.c_str(), s)))
    {
       result.append(r - s + 3, ' ');
+      s = result.size();
    }
    result.erase(r);
    return result; 

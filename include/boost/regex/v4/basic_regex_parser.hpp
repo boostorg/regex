@@ -81,17 +81,17 @@ basic_regex_parser<charT, traits>::basic_regex_parser(regex_data<charT, traits>*
 template <class charT, class traits>
 void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, unsigned flags)
 {
+   // pass flags on to base class:
+   this->init(flags);
+   // set up pointers:
+   m_position = m_base = p1;
+   m_end = p2;
    // empty strings are errors:
    if(p1 == p2)
    {
       fail(regex_constants::error_empty, 0);
       return;
    }
-   // pass flags on to base class:
-   this->init(flags);
-   // set up pointers:
-   m_position = m_base = p1;
-   m_end = p2;
    // select which parser to use:
    switch(flags & regbase::main_option_type)
    {
@@ -134,8 +134,13 @@ void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_c
    // get the error message:
    std::string message = this->m_pdata->m_ptraits->error_string(error_code);
    // and raise the exception, this will do nothing if exceptions are disabled:
-   boost::regex_error e(message, error_code, position);
-   e.raise();
+#ifndef BOOST_NO_EXCEPTIONS
+   if(0 == (this->flags() & regex_constants::no_except))
+   {
+      boost::regex_error e(message, error_code, position);
+      e.raise();
+   }
+#endif
 }
 
 template <class charT, class traits>

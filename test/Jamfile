@@ -6,6 +6,25 @@ subproject libs/regex/test ;
 import testing ;
 subinclude libs/regex/test/captures ;
 
+R_SOURCE = 
+basic_tests.cpp
+main.cpp
+test_alt.cpp
+test_anchors.cpp
+test_asserts.cpp
+test_backrefs.cpp
+test_deprecated.cpp
+test_escapes.cpp
+test_grep.cpp
+test_locale.cpp
+test_non_greedy_repeats.cpp
+test_perl_ex.cpp
+test_replace.cpp
+test_sets.cpp
+test_simple_repeats.cpp
+test_tricky_cases.cpp
+;
+
 #
 # this template defines the options common to
 # all regex tests:
@@ -22,9 +41,7 @@ template test
 #
 template regression
     : <template>test                    # sources
-      regress/main.cpp
-      regress/basic_tests.cpp 
-      regress/test_deprecated.cpp
+      regress/$(R_SOURCE)
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 
@@ -56,9 +73,7 @@ template test-dll
 #
 template regression-dll
     : <template>test-dll                    # sources
-      regress/main.cpp
-      regress/basic_tests.cpp 
-      regress/test_deprecated.cpp
+      regress/$(R_SOURCE)
       <lib>../../test/build/boost_prg_exec_monitor
     ;
 
@@ -134,6 +149,7 @@ test-suite regex
  ]
 
 ;
+
 
 
 

@@ -158,7 +158,9 @@ struct cpp_regex_traits_base
 
    std::locale m_locale;
    std::ctype<charT> const* m_pctype;
+#ifndef BOOST_NO_STD_MESSAGES
    std::messages<charT> const* m_pmessages;
+#endif
    std::collate<charT> const* m_pcollate;
 };
 
@@ -168,7 +170,9 @@ std::locale cpp_regex_traits_base<charT>::imbue(const std::locale& l)
    std::locale result(m_locale);
    m_locale = l;
    m_pctype = &BOOST_USE_FACET(std::ctype<charT>, l);
+#ifndef BOOST_NO_STD_MESSAGES
    m_pmessages = &BOOST_USE_FACET(std::messages<charT>, l);
+#endif
    m_pcollate = &BOOST_USE_FACET(std::collate<charT>, l);
    return result;
 }
@@ -215,6 +219,7 @@ cpp_regex_traits_char_layer<charT>::cpp_regex_traits_char_layer(const std::local
 {
    // we need to start by initialising our syntax map so we know which
    // character is used for which purpose:
+#ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
    typename std::messages<charT>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
 #else
@@ -257,6 +262,7 @@ cpp_regex_traits_char_layer<charT>::cpp_regex_traits_char_layer(const std::local
    }
    else
    {
+#endif
       for(regex_constants::syntax_type i = 1; i < regex_constants::syntax_max; ++i)
       {
          const char* ptr = get_default_syntax(i);
@@ -266,7 +272,9 @@ cpp_regex_traits_char_layer<charT>::cpp_regex_traits_char_layer(const std::local
             ++ptr;
          }
       }
+#ifndef BOOST_NO_STD_MESSAGES
    }
+#endif
 }
 
 template <class charT>
@@ -425,39 +433,48 @@ typename cpp_regex_traits_implementation<charT>::string_type
 {
    string_type result;
    //
-   // What we do here depends upon the format of the sort key returned by
-   // sort key returned by this->transform:
+   // swallowing all exceptions here is a bad idea
+   // however at least one std lib will always throw
+   // std::bad_alloc for certain arguments...
    //
-   switch(m_collate_type)
-   {
-   case sort_C:
-   case sort_unknown:
-      // the best we can do is translate to lower case, then get a regular sort key:
+   try{
+      //
+      // What we do here depends upon the format of the sort key returned by
+      // sort key returned by this->transform:
+      //
+      switch(m_collate_type)
       {
-         result.assign(p1, p2);
-         this->m_pctype->tolower(&*result.begin(), &*result.begin() + result.size());
-         result = this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size());
-         break;
-      }
-   case sort_fixed:
-      {
-         // get a regular sort key, and then truncate it:
-         result.assign(this->m_pcollate->transform(p1, p2));
-         result.erase(this->m_collate_delim);
-         break;
-      }
-   case sort_delim:
-         // get a regular sort key, and then truncate everything after the delim:
-         result.assign(this->m_pcollate->transform(p1, p2));
-         std::size_t i;
-         for(i = 0; i < result.size(); ++i)
+      case sort_C:
+      case sort_unknown:
+         // the best we can do is translate to lower case, then get a regular sort key:
          {
-            if(result[i] == m_collate_delim)
-               break;
+            result.assign(p1, p2);
+            this->m_pctype->tolower(&*result.begin(), &*result.begin() + result.size());
+            result = this->m_pcollate->transform(&*result.begin(), &*result.begin() + result.size());
+            break;
          }
-         result.erase(i);
-         break;
-   }
+      case sort_fixed:
+         {
+            // get a regular sort key, and then truncate it:
+            result.assign(this->m_pcollate->transform(p1, p2));
+            result.erase(this->m_collate_delim);
+            break;
+         }
+      case sort_delim:
+            // get a regular sort key, and then truncate everything after the delim:
+            result.assign(this->m_pcollate->transform(p1, p2));
+            std::size_t i;
+            for(i = 0; i < result.size(); ++i)
+            {
+               if(result[i] == m_collate_delim)
+                  break;
+            }
+            result.erase(i);
+            break;
+      }
+   }catch(...){}
+   while(result.size() && (charT(0) == *result.rbegin()))
+      result.erase(result.size() - 1);
    return result;
 }
 
@@ -509,6 +526,7 @@ template <class charT>
 cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const std::locale& l)
 : cpp_regex_traits_char_layer<charT>(l), m_is(&m_sbuf)
 {
+#ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
    typename std::messages<charT>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
 #else
@@ -582,6 +600,7 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
             this->m_custom_class_names[s] = masks[j];
       }
    }
+#endif
    //
    // get the collation format used by m_pcollate:
    //
@@ -688,7 +707,23 @@ public:
    }
    string_type transform(const charT* p1, const charT* p2) const
    {
-      return m_pimpl->m_pcollate->transform(p1, p2);
+      //
+      // swallowing all exceptions here is a bad idea
+      // however at least one std lib will always throw
+      // std::bad_alloc for certain arguments...
+      //
+      string_type result;
+      try{
+         result = m_pimpl->m_pcollate->transform(p1, p2);
+         //
+         // some implementations append unnecessary trailing \0's:
+         while(result.size() && (charT(0) == *result.rbegin()))
+            result.erase(result.size() - 1);
+      }
+      catch(...)
+      {
+      }
+      return result;
    }
    string_type transform_primary(const charT* p1, const charT* p2) const
    {

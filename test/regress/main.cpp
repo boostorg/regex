@@ -17,6 +17,7 @@
   */
 
 #include "test.hpp"
+#include "test_locale.hpp"
 #include <stdarg.h>
 
 int error_count = 0;
@@ -47,6 +48,7 @@ int cpp_main(int argc, char * argv[])
    test_conditionals();
    test_options();
    test_options2();
+   test_en_locale();
    return error_count;
 }
 

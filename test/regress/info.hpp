@@ -43,6 +43,7 @@ private:
       string_type format_string;
       string_type result_string;
       bool need_to_print;
+      std::string expression_type_name;
    };
    static data_type& data()
    {
@@ -73,6 +74,10 @@ public:
       dat.format_string = format_string;
       dat.result_string = result_string;
       dat.need_to_print = true;
+   }
+   static void set_typename(const std::string& n)
+   {
+      data().expression_type_name = n;
    }
 
    static const string_type& expression()
@@ -119,6 +124,10 @@ public:
    {
       data().need_to_print = false;
    }
+   static std::string& expression_typename()
+   {
+      return data().expression_type_name;
+   }
 };
 
 template <class charT>
@@ -139,7 +148,27 @@ extern int error_count;
 #define BOOST_REGEX_TEST_ERROR(msg, charT)\
    ++error_count;\
    std::cerr << test_info<charT>();\
-   std::cerr << "  " << __FILE__ << ":" << __LINE__ << ":" << msg << std::endl
+   std::cerr << "  " << __FILE__ << ":" << __LINE__ << ":" << msg \
+             << " (While testing " << test_info<charT>::expression_typename() << ")" << std::endl
+
+class errors_as_warnings
+{
+public:
+   errors_as_warnings()
+   {
+      m_saved_error_count = error_count;
+   }
+   ~errors_as_warnings()
+   {
+      if(m_saved_error_count != error_count)
+      {
+         std::cerr << "the above " << (error_count - m_saved_error_count) << " errors are treated as warnings only." << std::endl;
+         error_count = m_saved_error_count;
+      }
+   }
+private:
+   int m_saved_error_count;
+};
 
 #endif
 

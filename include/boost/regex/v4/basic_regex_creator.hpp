@@ -429,9 +429,11 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          return 0;
       }
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s1.size() + s2.size() + 2) ) );
-      std::memcpy(p, &*s1.begin(), sizeof(charT) * (s1.size() + 1));
+      std::copy(s1.begin(), s1.end(), p);
+      p[s1.size()] = charT(0);
       p += s1.size() + 1;
-      std::memcpy(p, &*s2.begin(), sizeof(charT) * (s2.size() + 1));
+      std::copy(s2.begin(), s2.end(), p);
+      p[s2.size()] = charT(0);
    }
    //
    // now process the equivalence classes:
@@ -451,7 +453,8 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s.size()+1) ) );
-      std::memcpy(p, &*s.begin(), sizeof(charT) * (s.size() + 1));
+      std::copy(s.begin(), s.end(), p);
+      p[s.size()] = charT(0);
       ++first;
    }
    //
@@ -691,9 +694,12 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
             // Oops error:
             if(0 == this->m_pdata->m_status) // update the error code if not already set
                this->m_pdata->m_status = boost::regex_constants::error_brack;
-            std::string message = this->m_pdata->m_ptraits->error_string(boost::regex_constants::error_brack);
-            boost::regex_error e(message, boost::regex_constants::error_brack, 0);
-            e.raise();
+            if(0 == (this->flags() & regex_constants::no_except))
+            {
+               std::string message = this->m_pdata->m_ptraits->error_string(boost::regex_constants::error_brack);
+               boost::regex_error e(message, boost::regex_constants::error_brack, 0);
+               e.raise();
+            }
          }
          // fall through:
       default:
