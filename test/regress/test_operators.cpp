@@ -1,6 +1,8 @@
 
 #include "test.hpp"
 
+#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1300) && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
+
 template <class T1, class T2>
 void test_less(const T1& t1, const T2& t2)
 {
@@ -121,26 +123,42 @@ void test_operators()
    test_less(sub1, *s2.c_str());
    test_less(*s1.c_str(), sub2);
    test_less(sub1, s2);
-   //test_less(s1, sub2);
+   test_less(s1, sub2);
    test_greater(sub2, sub1);
    test_greater(sub2, s1.c_str());
    test_greater(s2.c_str(), sub1);
    test_greater(sub2, *s1.c_str());
    test_greater(*s2.c_str(), sub1);
    test_greater(sub2, s1);
-   //test_greater(s2, sub1);
+   test_greater(s2, sub1);
    test_equal(sub1, sub1);
    test_equal(sub1, s1.c_str());
    test_equal(s1.c_str(), sub1);
    test_equal(sub1, *s1.c_str());
    test_equal(*s1.c_str(), sub1);
    test_equal(sub1, s1);
-   //test_equal(s1, sub1);
+   test_equal(s1, sub1);
    test_plus(sub2, sub1, "ba");
    test_plus(sub2, s1.c_str(), "ba");
    test_plus(s2.c_str(), sub1, "ba");
    test_plus(sub2, *s1.c_str(), "ba");
    test_plus(*s2.c_str(), sub1, "ba");
    test_plus(sub2, s1, "ba");
-   //test_plus(s2, sub1, "ba");
+   test_plus(s2, sub1, "ba");
 }
+
+#else
+
+#include <iostream>
+
+void test_operators()
+{
+   std::cout <<
+   "\n<note>\n"
+   "This compiler version does not support the sub_match comparison operators\n"
+   "tests for these operators are not carried out\n"
+   "</note>\n";
+}
+
+#endif
+

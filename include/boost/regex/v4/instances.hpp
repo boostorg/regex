@@ -70,8 +70,11 @@ template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 
 template class BOOST_REGEX_DECL basic_regex< BOOST_REGEX_CHAR_T >;
 template class BOOST_REGEX_DECL match_results< const BOOST_REGEX_CHAR_T* >;
-template class BOOST_REGEX_DECL match_results< std::basic_string<BOOST_REGEX_CHAR_T>::const_iterator >;
 template class BOOST_REGEX_DECL ::boost::re_detail::perl_matcher<BOOST_REGEX_CHAR_T const *, match_results< const BOOST_REGEX_CHAR_T* >::allocator_type, boost::regex_traits<BOOST_REGEX_CHAR_T > >;
+#if !(defined(BOOST_DINKUMWARE_STDLIB) && (BOOST_DINKUMWARE_STDLIB <= 1))
+template class BOOST_REGEX_DECL match_results< std::basic_string<BOOST_REGEX_CHAR_T>::const_iterator >;
+template class BOOST_REGEX_DECL ::boost::re_detail::perl_matcher< std::basic_string<BOOST_REGEX_CHAR_T>::const_iterator, match_results< std::basic_string<BOOST_REGEX_CHAR_T>::const_iterator >::allocator_type, boost::regex_traits<BOOST_REGEX_CHAR_T > >;
+#endif
 
 
 #  ifdef BOOST_MSVC
