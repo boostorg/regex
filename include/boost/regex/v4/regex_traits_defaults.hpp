@@ -83,7 +83,7 @@ inline bool is_combining<wchar_t>(wchar_t c)
 {
    return is_combining_implementation(static_cast<unsigned short>(c));
 }
-#elif defined(WCHAR_MIN) && (WCHAR_MIN == 0) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
+#elif !defined(__DECCXX) && defined(WCHAR_MIN) && (WCHAR_MIN == 0) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
 #if defined(WCHAR_MAX) && (WCHAR_MAX <= USHRT_MAX)
 template<>
 inline bool is_combining<wchar_t>(wchar_t c)

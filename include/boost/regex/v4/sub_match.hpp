@@ -46,7 +46,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
    template <class T, class A>
    operator std::basic_string<value_type, T, A> ()const
    {
-      return std::basic_string<value_type, T, A>(first, second);
+      return std::basic_string<value_type, T, A>(this->first, this->second);
    }
 #else
    operator std::basic_string<value_type> ()const

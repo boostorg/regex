@@ -33,7 +33,8 @@ struct digraph : public std::pair<charT, charT>
 {
    digraph() : std::pair<charT, charT>(0, 0){}
    digraph(charT c1) : std::pair<charT, charT>(c1, 0){}
-   digraph(charT c1, charT c2) : std::pair<charT, charT>(c1, c2){}
+   digraph(charT c1, charT c2) : std::pair<charT, charT>(c1, c2)
+   {}
 #if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    digraph(const digraph<charT>& d) : std::pair<charT, charT>(d.first, d.second){}
 #endif
@@ -407,11 +408,13 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       else
       {
          if(c1.second)
-            s1 = string_type(&c1.first, &c1.second+1);
+         {
+            s1.append(1, c1.first).append(1, c1.second);
+         }
          else
             s1 = string_type(1, c1.first);
          if(c2.second)
-            s2 = string_type(&c2.first, &c2.second+1);
+            s2.append(1, c2.first).append(1, c2.second);
          else
             s2 = string_type(1, c2.first);
       }
@@ -548,13 +551,8 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    while(first != last)
    {
       string_type s;
-      if(first->second)
-      {
-         charT cs[2] = { first->first, first->second, };
-         s = m_traits.transform_primary(cs, cs+2);
-      }
-      else
-         s = m_traits.transform_primary(&first->first, &first->first+1);
+      BOOST_ASSERT(static_cast<charT>(0) == first->second);
+      s = m_traits.transform_primary(&first->first, &first->first+1);
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
@@ -683,6 +681,13 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
          // we need to calculate how big the backstep is:
          static_cast<re_brace*>(state)->index
             = this->calculate_backstep(state->next.p);
+         if(static_cast<re_brace*>(state)->index < 0)
+         {
+            // Oops error:
+            std::string message = this->m_pdata->m_ptraits->error_string(boost::regex_constants::error_brack);
+            boost::regex_error e(message, boost::regex_constants::error_brack, 0);
+            e.raise();
+         }
          // fall through:
       default:
          state = state->next.p;
@@ -718,6 +723,7 @@ int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state
          if((static_cast<re_brace*>(state)->index == -1)
             || (static_cast<re_brace*>(state)->index == -2))
             return result;
+         break;
       case syntax_element_literal:
          result += static_cast<re_literal*>(state)->length;
          break;
@@ -1037,7 +1043,7 @@ bool basic_regex_creator<charT, traits>::is_bad_repeat(re_syntax_base* pt)
          unsigned id = static_cast<re_repeat*>(pt)->id;
          if(id > sizeof(m_bad_repeats) * CHAR_BIT)
             return true;  // run out of bits, assume we can't traverse this one.
-         return m_bad_repeats & (1u << id);
+         return m_bad_repeats & static_cast<boost::uintmax_t>(1uL << id);
       }
    default:
       return false;
@@ -1057,7 +1063,7 @@ void basic_regex_creator<charT, traits>::set_bad_repeat(re_syntax_base* pt)
       {
          unsigned id = static_cast<re_repeat*>(pt)->id;
          if(id <= sizeof(m_bad_repeats) * CHAR_BIT)
-            m_bad_repeats |= (1u << id);
+            m_bad_repeats |= static_cast<boost::uintmax_t>(1uL << id);
       }
    default:
       break;

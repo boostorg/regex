@@ -121,7 +121,7 @@ void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_c
 {
    std::string message = this->m_pdata->m_ptraits->error_string(error_code);
    boost::regex_error e(message, error_code, position);
-   boost::throw_exception(e);
+   e.raise();
 }
 
 template <class charT, class traits>
@@ -1109,10 +1109,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_backref()
 {
-   if(m_position == m_end)
-   {
-      fail(regex_constants::error_escape, m_position - m_end);
-   }
+   BOOST_ASSERT(m_position != m_end);
    int i = this->m_traits.toi(m_position, m_position + 1, 10);
    if((i > 0) && (this->m_backrefs & (1u << (i-1))))
    {

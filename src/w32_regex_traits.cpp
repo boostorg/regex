@@ -21,6 +21,7 @@
 
 #if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
 #include <boost/regex/regex_traits.hpp>
+#include <boost/regex/pattern_except.hpp>
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -53,7 +54,7 @@ void w32_regex_traits_char_layer<char>::init()
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         ::boost::re_detail::raise_runtime_error(err);
       }
    }
    //
@@ -96,6 +97,17 @@ void w32_regex_traits_char_layer<char>::init()
             m_char_map[i] = regex_constants::escape_type_not_class;
       }
    }while(0xFF != i++);
+
+   //
+   // fill in lower case map:
+   //
+   char char_map[1 << CHAR_BIT];
+   for(int ii = 0; ii < (1 << CHAR_BIT); ++ii)
+      char_map[ii] = static_cast<char>(ii);
+   int r = ::LCMapStringA(this->m_locale, LCMAP_LOWERCASE, char_map, 1 << CHAR_BIT, this->m_lower_map, 1 << CHAR_BIT);
+   BOOST_ASSERT(r == 1 << CHAR_BIT);
+   r = ::GetStringTypeExA(this->m_locale, CT_CTYPE1, char_map, 1 << CHAR_BIT, this->m_type_map);
+   BOOST_ASSERT(0 != r);
 }
 
 BOOST_REGEX_DECL lcid_type BOOST_REGEX_CALL w32_get_default_locale()
@@ -146,7 +158,7 @@ BOOST_REGEX_DECL cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name)
    return result;
 }
 
-BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type id, int i, const std::string& def)
+BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::string& def)
 {
    char buf[256];
    if(0 == ::LoadStringA(
@@ -158,11 +170,11 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, l
    {
       return def;
    }
-   return buf;
+   return std::string(buf);
 }
 
 #ifndef BOOST_NO_WREGEX
-BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type id, int i, const std::wstring& def)
+BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::wstring& def)
 {
    wchar_t buf[256];
    if(0 == ::LoadStringW(
@@ -174,7 +186,7 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, 
    {
       return def;
    }
-   return buf;
+   return std::wstring(buf);
 }
 #endif
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type id, const char* p1, const char* p2)
@@ -198,7 +210,7 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type id, const 
       &*result.begin(),  // destination buffer
       bytes        // size of destination buffer
       );
-   if(bytes > result.size())
+   if(bytes > static_cast<int>(result.size()))
       return std::string(p1, p2);
    while(result.size() && result[result.size()-1] == '\0')
    {
@@ -229,7 +241,7 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type id, const
       reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
       bytes        // size of destination buffer
       );
-   if(bytes > result.size())
+   if(bytes > static_cast<int>(result.size()))
       return std::wstring(p1, p2);
    while(result.size() && result[result.size()-1] == L'\0')
    {

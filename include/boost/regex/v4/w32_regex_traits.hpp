@@ -138,6 +138,14 @@ public:
       }
       return i->second;
    }
+   charT tolower(charT c)const
+   {
+      return ::boost::re_detail::w32_tolower(c, this->m_locale);
+   }
+   bool isctype(boost::uint32_t mask, charT c)
+   {
+      return ::boost::re_detail::w32_is(this->m_locale, mask, c);
+   }
 
 private:
    string_type get_default_message(regex_constants::syntax_type);
@@ -160,7 +168,7 @@ w32_regex_traits_char_layer<charT>::w32_regex_traits_char_layer(::boost::re_deta
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
    }
    //
@@ -227,9 +235,19 @@ public:
    {
       return m_char_map[static_cast<unsigned char>(c)];
    }
+   char tolower(char c)const
+   {
+      return m_lower_map[static_cast<unsigned char>(c)];
+   }
+   bool isctype(boost::uint32_t mask, char c)
+   {
+      return m_type_map[static_cast<unsigned char>(c)] & mask;
+   }
 
 private:
    regex_constants::syntax_type m_char_map[1u << CHAR_BIT];
+   char m_lower_map[1u << CHAR_BIT];
+   boost::uint16_t m_type_map[1u << CHAR_BIT];
    void init();
 };
 
@@ -266,7 +284,7 @@ public:
          typedef typename string_type::size_type size_type;
          string_type temp(p1, p2);
          for(size_type i = 0; i < temp.size(); ++i)
-            temp[i] = ::boost::re_detail::w32_tolower(temp[i], this->m_locale);
+            temp[i] = this->tolower(temp[i]);
          result = lookup_classname_imp(&*temp.begin(), &*temp.begin() + temp.size());
       }
       return result;
@@ -307,7 +325,7 @@ typename w32_regex_traits_implementation<charT>::string_type
          result.assign(p1, p2);
          typedef typename string_type::size_type size_type;
          for(size_type i = 0; i < result.size(); ++i)
-            result[i] = ::boost::re_detail::w32_tolower(result[i], this->m_locale);
+            result[i] = this->tolower(result[i]);
          result = this->transform(&*result.begin(), &*result.begin() + result.size());
          break;
       }
@@ -344,7 +362,7 @@ typename w32_regex_traits_implementation<charT>::string_type
       if(pos != m_custom_collate_names.end())
          return pos->second;
    }
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -353,7 +371,7 @@ typename w32_regex_traits_implementation<charT>::string_type
 	   name.append(1, char(*p0++));
 #endif
    name = lookup_default_collate_name(name);
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else
@@ -386,7 +404,7 @@ w32_regex_traits_implementation<charT>::w32_regex_traits_implementation(::boost:
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
    }
    //
@@ -534,15 +552,15 @@ public:
    }
    charT translate_nocase(charT c) const
    {
-      return ::boost::re_detail::w32_tolower(c, this->m_pimpl->m_locale);
+      return this->m_pimpl->tolower(c);
    }
    charT translate(charT c, bool icase) const
    {
-      return icase ? ::boost::re_detail::w32_tolower(c, this->m_pimpl->m_locale) : c;
+      return icase ? this->m_pimpl->tolower(c) : c;
    }
    charT tolower(charT c) const
    {
-      return ::boost::re_detail::w32_tolower(c, this->m_pimpl->m_locale);
+      return this->m_pimpl->tolower(c);
    }
    charT toupper(charT c) const
    {
@@ -567,7 +585,7 @@ public:
    bool isctype(charT c, char_class_type f) const
    {
       if((f & re_detail::w32_regex_traits_implementation<charT>::mask_base) 
-         && (::boost::re_detail::w32_is(this->m_pimpl->m_locale, f & re_detail::w32_regex_traits_implementation<charT>::mask_base, c)))
+         && (this->m_pimpl->isctype(f & re_detail::w32_regex_traits_implementation<charT>::mask_base, c)))
          return true;
       else if((f & re_detail::w32_regex_traits_implementation<charT>::mask_unicode) && re_detail::is_extended(c))
          return true;
@@ -581,7 +599,8 @@ public:
    }
    int value(charT c, int radix)const
    {
-      return ::boost::re_detail::global_value(c);
+      int result = ::boost::re_detail::global_value(c);
+      return result < radix ? result : -1;
    }
    locale_type imbue(locale_type l)
    {

@@ -104,7 +104,6 @@ void test_deprecated(const char&, const test_regex_search_tag&)
    //
    if(test_info<char>::syntax_options() & ~boost::regex::icase)
       return;
-   bool have_catch = false;
    try{
       boost::RegEx e(expression, test_info<char>::syntax_options() & boost::regex::icase);
       if(e.Search(search_text, test_info<char>::match_options()))
@@ -114,11 +113,11 @@ void test_deprecated(const char&, const test_regex_search_tag&)
          {
             if(e.Matched(i))
             {
-               if(results[2*i] != e.Position(i))
+               if(results[2*i] != static_cast<int>(e.Position(i)))
                {
                   BOOST_REGEX_TEST_ERROR("Mismatch in start of subexpression " << i << " found with the RegEx class (found " << e.Position(i) << " expected " << results[2*i] << ").", char);
                }
-               if(results[2*i+1] != e.Position(i) + e.Length(i))
+               if(results[2*i+1] != static_cast<int>(e.Position(i) + e.Length(i)))
                {
                   BOOST_REGEX_TEST_ERROR("Mismatch in end of subexpression " << i << " found with the RegEx class (found " << e.Position(i) + e.Length(i) << " expected " << results[2*i+1] << ").", char);
                }

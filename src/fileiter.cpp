@@ -28,6 +28,7 @@
 #else
 #include <boost/regex/v4/fileiter.hpp>
 #endif
+#include <boost/regex/pattern_except.hpp>
 
 #include <cstdio>
 #if defined(BOOST_NO_STDC_NAMESPACE)
@@ -104,7 +105,7 @@ void mapfile::open(const char* file)
          hmap = 0;
          hfile = 0;
          std::runtime_error err("Unable to create file mapping.");
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
       _first = static_cast<const char*>(MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0));
       if(_first == 0)

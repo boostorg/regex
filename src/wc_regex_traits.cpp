@@ -69,19 +69,19 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::t
          result.assign(p1, p2);
          for(std::wstring::size_type i = 0; i < result.size(); ++i)
             result[i] = (std::towlower)(result[i]);
-         result = this->transform(&*result.begin(), &*result.end());
+         result = this->transform(&*result.begin(), &*result.begin() + result.size());
          break;
       }
    case ::boost::re_detail::sort_fixed:
       {
          // get a regular sort key, and then truncate it:
-         result = this->transform(&*result.begin(), &*result.end());
+         result = this->transform(&*result.begin(), &*result.begin() + result.size());
          result.erase(s_delim);
          break;
       }
    case ::boost::re_detail::sort_delim:
          // get a regular sort key, and then truncate everything after the delim:
-         result = this->transform(&*result.begin(), &*result.end());
+         result = this->transform(&*result.begin(), &*result.begin() + result.size());
          std::size_t i;
          for(i = 0; i < result.size(); ++i)
          {
@@ -144,7 +144,7 @@ c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<wchar_t
       std::wstring s(p1, p2);
       for(std::wstring::size_type i = 0; i < s.size(); ++i)
          s[i] = (std::towlower)(s[i]);
-      id = ::boost::re_detail::get_default_class_id(&*s.begin(), &*s.end());
+      id = ::boost::re_detail::get_default_class_id(&*s.begin(), &*s.begin() + s.size());
    }
    BOOST_ASSERT(id+1 < sizeof(masks) / sizeof(masks[0]));
    return masks[id+1];
@@ -169,7 +169,7 @@ bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_typ
 
 c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2) const
 {
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -178,7 +178,7 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::l
 	   name.append(1, char(*p0++));
 #endif
    name = ::boost::re_detail::lookup_default_collate_name(name);
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else
@@ -200,6 +200,11 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::l
 
 int BOOST_REGEX_CALL c_regex_traits<wchar_t>::value(wchar_t c, int radix) const
 {
+#ifdef __BORLANDC__
+   // workaround for broken wcstol:
+   if((std::iswxdigit)(c) == 0)
+      return -1;
+#endif
    wchar_t b[2] = { c, '\0', };
    wchar_t* ep;
    int result = std::wcstol(b, &ep, radix);

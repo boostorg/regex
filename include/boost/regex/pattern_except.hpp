@@ -47,6 +47,7 @@ public:
    { return m_error_code; }
    std::ptrdiff_t position()const
    { return m_position; }
+   void raise()const;
 private:
    regex_constants::error_type m_error_code;
    std::ptrdiff_t m_position;

@@ -2,6 +2,7 @@
 
 #define BOOST_REGEX_SOURCE
 #include <memory>
+#include <cstring>
 #include <boost/assert.hpp>
 #include <boost/regex/v4/regex_raw_buffer.hpp>
 

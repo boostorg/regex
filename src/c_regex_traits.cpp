@@ -76,8 +76,8 @@ c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::transfo
       {
          result.assign(p1, p2);
          for(std::string::size_type i = 0; i < result.size(); ++i)
-            result[i] = (std::tolower)(static_cast<unsigned char>(result[i]));
-         result = transform(&*result.begin(), &*result.end());
+            result[i] = static_cast<char>((std::tolower)(static_cast<unsigned char>(result[i])));
+         result = transform(&*result.begin(), &*result.begin() + result.size());
          break;
       }
    case ::boost::re_detail::sort_fixed:
@@ -151,8 +151,8 @@ c_regex_traits<char>::char_class_type BOOST_REGEX_CALL c_regex_traits<char>::loo
    {
       std::string s(p1, p2);
       for(std::string::size_type i = 0; i < s.size(); ++i)
-         s[i] = (std::tolower)(static_cast<unsigned char>(s[i]));
-      id = ::boost::re_detail::get_default_class_id(&*s.begin(), &*s.end());
+         s[i] = static_cast<char>((std::tolower)(static_cast<unsigned char>(s[i])));
+      id = ::boost::re_detail::get_default_class_id(&*s.begin(), &*s.begin() + s.size());
    }
    BOOST_ASSERT(id+1 < sizeof(masks) / sizeof(masks[0]));
    return masks[id+1];

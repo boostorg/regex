@@ -7,8 +7,10 @@ int error_count = 0;
 int cpp_main(int argc, char * argv[])
 {
    basic_tests();
+   test_simple_repeats();
    test_alt();
    test_sets();
+   test_sets2();
    test_anchors();
    test_backrefs();
    test_character_escapes();
@@ -26,6 +28,7 @@ int cpp_main(int argc, char * argv[])
    test_nosubs();
    test_conditionals();
    test_options();
+   test_options2();
    return error_count;
 }
 

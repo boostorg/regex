@@ -22,7 +22,6 @@
 #include <boost/regex/concepts.hpp>
 #endif
 
-boost::re_detail::digraph<boost::char_architype> get_next_set_literal();
 
 int main()
 {

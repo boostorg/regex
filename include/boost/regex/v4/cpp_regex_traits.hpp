@@ -230,7 +230,7 @@ cpp_regex_traits_char_layer<charT>::cpp_regex_traits_char_layer(const std::local
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
    }
    //
@@ -401,6 +401,24 @@ private:
    char_class_type lookup_classname_imp(const charT* p1, const charT* p2) const;
 };
 
+#if !defined(BOOST_NO_INCLASS_MEMBER_INITIALIZATION)
+
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::char_class_type const cpp_regex_traits_implementation<charT>::mask_blank;
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::char_class_type const cpp_regex_traits_implementation<charT>::mask_word;
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::char_class_type const cpp_regex_traits_implementation<charT>::mask_unicode;
+#ifdef __GNUC__
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::native_mask_type const cpp_regex_traits_implementation<charT>::mask_base;
+#else
+template <class charT>
+typename cpp_regex_traits_implementation<charT>::char_class_type const cpp_regex_traits_implementation<charT>::mask_base;
+#endif
+
+#endif
+
 template <class charT>
 typename cpp_regex_traits_implementation<charT>::string_type 
    cpp_regex_traits_implementation<charT>::transform_primary(const charT* p1, const charT* p2) const
@@ -454,7 +472,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
       if(pos != m_custom_collate_names.end())
          return pos->second;
    }
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -463,7 +481,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
 	   name.append(1, char(*p0++));
 #endif
    name = lookup_default_collate_name(name);
-#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS) && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else
@@ -502,7 +520,7 @@ cpp_regex_traits_implementation<charT>::cpp_regex_traits_implementation(const st
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
    }
    //

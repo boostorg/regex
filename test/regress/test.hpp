@@ -138,8 +138,10 @@ const int* make_array(int first, ...);
 // define the test group proceedures:
 //
 void basic_tests();
+void test_simple_repeats();
 void test_alt();
 void test_sets();
+void test_sets2();
 void test_anchors();
 void test_backrefs();
 void test_character_escapes();
@@ -157,5 +159,6 @@ void test_independent_subs();
 void test_nosubs();
 void test_conditionals();
 void test_options();
+void test_options2();
 
 #endif

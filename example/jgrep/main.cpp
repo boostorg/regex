@@ -33,13 +33,6 @@ using namespace std;
 #ifndef BOOST_REGEX_NO_FILEITER
 #include <algorithm>
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std{
-   using ::strcpy; using ::strcat;
-   using ::sprintf;
-}
-#endif
-
 re_type e;
 
 // flags for output:
@@ -170,18 +163,18 @@ void HandleFile(const char* wild)
    {
       // go through sub directories:
       char buf[MAX_PATH];
-      std::strcpy(buf, start.root());
+      strcpy(buf, start.root());
       int rootlen = strlen(buf);
       if(*buf == 0)
       {
-         std::strcpy(buf, ".");
-         std::strcat(buf, directory_iterator::separator());
-         std::strcat(buf, "*");
+         strcpy(buf, ".");
+         strcat(buf, directory_iterator::separator());
+         strcat(buf, "*");
       }
       else
       {
-         std::strcat(buf, directory_iterator::separator());
-         std::strcat(buf, "*");
+         strcat(buf, directory_iterator::separator());
+         strcat(buf, "*");
       }
       directory_iterator dstart(buf);
       directory_iterator dend;
@@ -192,12 +185,12 @@ void HandleFile(const char* wild)
 
       while(dstart != dend)
       {
-         std::sprintf(buf, "%s%s%s", dstart.path(), directory_iterator::separator(), ptr);
+         sprintf(buf, "%s%s%s", dstart.path(), directory_iterator::separator(), ptr);
          HandleFile(buf);
          ++dstart;
       }
    }
-   std::for_each(start, end, process_grep);
+   for_each(start, end, process_grep);
 }
 
 int done = 0;
@@ -222,8 +215,8 @@ void HandleArg(const char* arg)
          }
          else
          {
-            char* buf = new char[std::strlen(arg) + 8];
-            std::sprintf(buf, "\\<%s\\>", arg);
+            char* buf = new char[strlen(arg) + 8];
+            sprintf(buf, "\\<%s\\>", arg);
             e.set_expression(buf, use_case ? regex::normal : regbase::normal | regbase::icase);
             //ei.set_expression(buf);
             delete[] buf;
@@ -232,20 +225,20 @@ void HandleArg(const char* arg)
       else
       {
          // we need to convert text to literal:
-         int len2 = std::strlen(arg);
+         int len2 = strlen(arg);
          int len = len2 * 5 + 6;
          char buf[8];
          char* buf2 = new char[len];
          *buf2 = 0;
          if(words_only)
-            std::strcpy(buf2, "\\<");
+            strcpy(buf2, "\\<");
          for(int j = 0; j < len2; ++j)
          {
-            std::sprintf(buf, "\\0%o", int(arg[j]));
-            std::strcat(buf2, buf);
+            sprintf(buf, "\\0%o", int(arg[j]));
+            strcat(buf2, buf);
          }
          if(words_only)
-            std::strcat(buf2, "\\>");
+            strcat(buf2, "\\>");
          e.set_expression(buf2, use_case ? regex::normal : regbase::normal | regbase::icase);
          //ei.set_expression(buf2);
          delete[] buf2;
@@ -273,7 +266,7 @@ int main(int argc, char * argv[])
 
 int main(int argc, char * argv[])
 {
-   std::cout <<
+   cout <<
    "\n<note>\n"
    "This functionality is not available on with this compiler on this platform.\n"
    "</note>\n";

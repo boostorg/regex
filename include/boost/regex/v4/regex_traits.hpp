@@ -73,7 +73,7 @@ struct regex_traits : public implementationT
 // required "standard" ones:
 //
 namespace re_detail{
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
 BOOST_MPL_HAS_XXX_TRAIT_DEF(boost_extensions_tag)
 #else
 template<class T>
@@ -126,7 +126,7 @@ struct compute_wrapper_base
 {
    typedef BaseT type;
 };
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
 template <class BaseT>
 struct compute_wrapper_base<BaseT, false>
 {

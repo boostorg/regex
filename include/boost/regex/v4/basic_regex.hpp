@@ -265,7 +265,7 @@ public:
    {
       typedef typename traits::string_type seq_type;
       seq_type a(arg_first, arg_last);
-      assign(&*a.begin(), &*a.end(), f);
+      assign(&*a.begin(), &*a.begin() + a.size(), f);
    }
 
    template <class ST, class SA>
@@ -290,7 +290,7 @@ public:
       typedef typename traits::string_type seq_type;
       seq_type a(arg_first, arg_last);
       const charT* p1 = &*a.begin();
-      const charT* p2 = &*a.end();
+      const charT* p2 = &*a.begin() + a.size();
       return assign(p1, p2, f);
    }
 #else
@@ -453,32 +453,32 @@ public:
    //
    const re_detail::re_syntax_base* get_first_state()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->get_first_state();
    }
    unsigned get_restart_type()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->get_restart_type();
    }
    const unsigned char* get_map()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->get_map();
    }
    const ::boost::regex_traits_wrapper<traits>& get_traits()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->get_traits();
    }
    bool can_be_null()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->can_be_null();
    }
    const re_detail::regex_data<charT, traits>& get_data()const
    {
-      assert(m_pimpl.get());
+      assert(0 != m_pimpl.get());
       return m_pimpl->get_data();
    }
 

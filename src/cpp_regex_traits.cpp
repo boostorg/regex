@@ -18,6 +18,7 @@
 
 #define BOOST_REGEX_SOURCE
 #include <boost/regex/regex_traits.hpp>
+#include <boost/regex/pattern_except.hpp>
 
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std{
@@ -47,7 +48,7 @@ void cpp_regex_traits_char_layer<char>::init()
       {
          std::string m("Unable to open message catalog: ");
          std::runtime_error err(m + cat_name);
-         boost::throw_exception(err);
+         boost::re_detail::raise_runtime_error(err);
       }
    }
    //

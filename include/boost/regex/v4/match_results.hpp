@@ -106,7 +106,7 @@ public:
          const sub_match<BidiIterator>& s = m_subs[sub];
          if(s.matched)
          {
-            result = s;
+            result = s.str();
          }
       }
       return result;
