@@ -24,7 +24,13 @@
       </P>
       <HR>
       <p></p>
-      <P>The following character class names are support by Boost.Regex:</P>
+      <H3>Contents</H3>
+      <dl class="index">
+         <dt><a href="#always">Character Classes that are Always Supported</a> <dt><a href="#unicode">
+                  Character classes that are supported by Unicode Regular Expressions</a></dt>
+      </dl>
+      <H3><A name="always"></A>Character Classes that are Always Supported</H3>
+      <P>The following character class names are always supported by Boost.Regex:</P>
       <P>
          <TABLE id="Table2" cellSpacing="1" cellPadding="1" width="100%" border="1">
             <TR>
@@ -130,13 +136,189 @@
          </TABLE>
       </P>
       <P>
-         <HR>
+         <H3><A name="unicode"></A>Character classes that are supported by Unicode Regular 
+            Expressions</H3>
+      <P>The following character classes are only supported by <A href="icu_strings.html">Unicode 
+            Regular Expressions</A>: that is those that use the u32regex type.&nbsp; The 
+         names used are the same as those from <A href="http://www.unicode.org/versions/Unicode4.0.0/ch04.pdf#G124142">
+            Chapter 4 of the Unicode standard</A>.</P>
+      <table width="100%" ID="Table3">
+         <tr>
+            <td><b>Short Name</b></td>
+            <td><b>Long Name</b></td>
+         </tr>
+         <tr>
+            <td>
+            </td>
+            <td>ASCII</td>
+         </tr>
+         <tr>
+            <td>
+            </td>
+            <td>Any</td>
+         </tr>
+         <tr>
+            <td>
+            </td>
+            <td>Assigned</td>
+         </tr>
+         <tr>
+            <td>C*</td>
+            <td>Other</td>
+         </tr>
+         <tr>
+            <td>Cc</td>
+            <td>Control</td>
+         </tr>
+         <tr>
+            <td>Cf</td>
+            <td>Format</td>
+         </tr>
+         <tr>
+            <td>Cn</td>
+            <td>Not Assigned</td>
+         </tr>
+         <tr>
+            <td>Co</td>
+            <td>Private Use</td>
+         </tr>
+         <tr>
+            <td>Cs</td>
+            <td>Surrogate</td>
+         </tr>
+         <tr>
+            <td>L*</td>
+            <td>Letter</td>
+         </tr>
+         <tr>
+            <td>Ll</td>
+            <td>Lowercase Letter</td>
+         </tr>
+         <tr>
+            <td>Lm</td>
+            <td>Modifier Letter</td>
+         </tr>
+         <tr>
+            <td>Lo</td>
+            <td>Other Letter</td>
+         </tr>
+         <tr>
+            <td>Lt</td>
+            <td>Titlecase</td>
+         </tr>
+         <tr>
+            <td>Lu</td>
+            <td>Uppercase Letter</td>
+         </tr>
+         <tr>
+            <td>M*</td>
+            <td>Mark</td>
+         </tr>
+         <tr>
+            <td>Mc</td>
+            <td>Spacing Combining Mark</td>
+         </tr>
+         <tr>
+            <td>Me</td>
+            <td>Enclosing Mark</td>
+         </tr>
+         <tr>
+            <td>Mn</td>
+            <td>Non-Spacing Mark</td>
+         </tr>
+         <tr>
+            <td>N*</td>
+            <td>Number</td>
+         </tr>
+         <tr>
+            <td>Nd</td>
+            <td>Decimal Digit Number</td>
+         </tr>
+         <tr>
+            <td>Nl</td>
+            <td>Letter Number</td>
+         </tr>
+         <tr>
+            <td>No</td>
+            <td>Other Number</td>
+         </tr>
+         <tr>
+            <td>P*</td>
+            <td>Punctuation</td>
+         </tr>
+         <tr>
+            <td>Pc</td>
+            <td>Connector Punctuation</td>
+         </tr>
+         <tr>
+            <td>Pd</td>
+            <td>Dash Punctuation</td>
+         </tr>
+         <tr>
+            <td>Pe</td>
+            <td>Close Punctuation</td>
+         </tr>
+         <tr>
+            <td>Pf</td>
+            <td>Final Punctuation</td>
+         </tr>
+         <tr>
+            <td>Pi</td>
+            <td>Initial Punctuation</td>
+         </tr>
+         <tr>
+            <td>Po</td>
+            <td>Other Punctuation</td>
+         </tr>
+         <tr>
+            <td>Ps</td>
+            <td>Open Punctuation</td>
+         </tr>
+         <tr>
+            <td>S*</td>
+            <td>Symbol</td>
+         </tr>
+         <tr>
+            <td>Sc</td>
+            <td>Currency Symbol</td>
+         </tr>
+         <tr>
+            <td>Sk</td>
+            <td>Modifier Symbol</td>
+         </tr>
+         <tr>
+            <td>Sm</td>
+            <td>Math Symbol</td>
+         </tr>
+         <tr>
+            <td>So</td>
+            <td>Other Symbol</td>
+         </tr>
+         <tr>
+            <td>Z*</td>
+            <td>Separator</td>
+         </tr>
+         <tr>
+            <td>Zl</td>
+            <td>Line Separator</td>
+         </tr>
+         <tr>
+            <td>Zp</td>
+            <td>Paragraph Separator</td>
+         </tr>
+         <tr>
+            <td>Zs</td>
+            <td>Space Separator</td>
+         </tr>
+      </table>
+      <HR>
       <P></P>
-      <p>Revised&nbsp; 
+      <P></P>
+      <p>Revised&nbsp;&nbsp; 
          <!--webbot bot="Timestamp" S-Type="EDITED" S-Format="%d %B, %Y" startspan --> 
-         09 Aug 2004&nbsp; 
+         10&nbsp;Jan 2005&nbsp; 
          <!--webbot bot="Timestamp" endspan i-checksum="39359" --></p>
-      <p><i>© Copyright John Maddock&nbsp;2004</i></p>
+      <p><i>© Copyright John Maddock&nbsp;2004-5</i></p>
       <P><I>Use, modification and distribution are subject to the Boost Software License, 
             Version 1.0. (See accompanying file <A href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</A>
             or copy at <A href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</A>)</I></P>
