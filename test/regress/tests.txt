@@ -1133,4 +1133,36 @@ a()b\1 ab 0 2 1 1
 
 "(.*\r\n){3}.* abcdefghijklmnopqrstuvwxyz.*\r\n" "00001 01 \r\n00002 02 1         2         3         4         5         6         7         8         9         0\r\n00003 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00004 04 \r\n00005 05 \r\n00006 06                                                             Seite: 0001\r\n00007 07                                                             StartSeitEEnde: 0001\r\n00008 08                                                             StartSeiTe Ende: 0001\r\n00009 09                                                             Start seiteEnde: 0001\r\n00010 10                                                             28.2.03\r\n00011 11                                                             Page: 0001\r\n00012 12                                                             Juhu die Erste: 0001\r\n00013 13                                                             Es war einmal! 0001\r\n00014 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0001\r\n00015 15                               abcdefghijklmnopqrstuvwxyz0001\r\n00016 16                               lars.schmeiser@gft.com\r\n00017 17 \r\n00018 18 \r\n00019 19 \r\n00020 20 \r\n00021 21 1         2         3         4         5         6         7         8         9         0\r\n00022 22 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00023 01 \r\n00024 02 1         2         3         4         5         6         7         8         9         0\r\n00025 03 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\r\n00026 04 \r\n00027 05 \r\n00028 06                                                             Seite: 0002\r\n00029 07                                                             StartSeitEEnde: 0002\r\n00030 08                                                             StartSeiTe Ende: 0002\r\n00031 09                                                             Start seiteEnde: 0002\r\n00032 10                                                             28.02.2003\r\n00033 11                                                             Page: 0002\r\n00034 12                                                             Juhu die Erste: 0002\r\n00035 13                                                             Es war einmal! 0002\r\n00036 14                               ABCDEFGHIJKLMNOPQRSTUVWXYZ0002\r\n00037 15                               abcdefghijklmnopqrstuvwxyz0002\r\n00038 16                               lars.schmeiser@194.1.12.111\r\n00039 17 \r\n00040 18 \r\n00041 19 \r\n00042 20 \r\n00043 21 1         2         3         4         5         6         7         8         9         0\r\n" 753 1076 934 1005
 
+; new (?: construct )
+(?>^abc) abc 0 3
+(?>^abc) def\nabc 4 7
+(?>^abc) defabc -1 -1
+(?>.*/)foo /this/is/a/very/long/line/in/deed/with/very/many/slashes/in/it/you/see/ -1 -1
+(?>.*/)foo /this/is/a/very/long/line/in/deed/with/very/many/slashes/in/and/foo 0 67
+(?>(\.\d\d[1-9]?))\d+ 1.230003938 1 11 1 4
+(?>(\.\d\d[1-9]?))\d+ 1.875000282 1 11 1 5
+(?>(\.\d\d[1-9]?))\d+ 1.235 -1 -1
+^((?>\w+)|(?>\s+))*$ "now is the time for all good men to come to the aid of the party" 0 64 59 64
+^((?>\w+)|(?>\s+))*$ "this is not a line with only words and spaces!" -1 -1
+((?>\d+))(\w) 12345a 0 6 0 5 5 6
+((?>\d+))(\w) 12345+ -1 -1
+(?>a+)b aaab 0 4
+((?>a+)b) aaab 0 4 0 4
+(?>(a+))b aaab 0 4 0 3
+(?>b)+ aaabbbccc 3 6
+(?>a+|b+|c+)*c aaabbbbccccd 0 8
+((?>[^()]+)|\([^()]*\))+ ((abc(ade)ufh()()x 2 18 17 18
+\(((?>[^()]+)|\([^()]+\))+\) (abc) 0 5 1 4
+\(((?>[^()]+)|\([^()]+\))+\) (abc(def)xyz) 0 13 9 12
+\(((?>[^()]+)|\([^()]+\))+\) ((()aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa -1 -1
+(?>a*)* a 0 1
+(?>a*)* aa 0 2
+(?>a*)* aaaa 0 4
+(?>a*)* a 0 1
+(?>a*)* aaabcde 0 3
+((?>a*))* aaaaa 0 5 5 5
+((?>a*))* aabbaa 0 2 2 2
+((?>a*?))* aaaaa 0 0 0 0
+((?>a*?))*    aabbaa 0 0 0 0
+
 
