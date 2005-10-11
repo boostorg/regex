@@ -338,10 +338,7 @@ public:
    { m_match_flags &= ~f; }
 
 private:
-   void construct_init(BidiIterator first, BidiIterator end, 
-      match_results<BidiIterator, Allocator>& what, 
-      const basic_regex<char_type, traits>& e,
-      match_flag_type f);
+   void construct_init(const basic_regex<char_type, traits>& e, match_flag_type f);
    bool find_imp();
    bool match_imp();
 #ifdef BOOST_REGEX_HAS_MS_STACK_GUARD

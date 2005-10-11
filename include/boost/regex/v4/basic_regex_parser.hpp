@@ -1342,6 +1342,10 @@ bool valid_value(charT c, int v)
 template <class charT, class traits>
 charT basic_regex_parser<charT, traits>::unescape_character()
 {
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4127)
+#endif
    charT result(0);
    if(m_position == m_end)
    {
@@ -1494,6 +1498,9 @@ charT basic_regex_parser<charT, traits>::unescape_character()
    }
    ++m_position;
    return result;
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 }
 
 template <class charT, class traits>
