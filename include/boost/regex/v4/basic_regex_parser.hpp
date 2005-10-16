@@ -766,6 +766,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
       case syntax_element_soft_buffer_end:
       case syntax_element_restart_continue:
       case syntax_element_jump:
+      case syntax_element_startmark:
          // can't legally repeat any of the above:
          fail(regex_constants::error_badrepeat, m_position - m_base);
          return false;
@@ -1744,6 +1745,9 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
       }
       break;
       }
+   case regex_constants::syntax_close_mark:
+      fail(regex_constants::error_badrepeat, m_position - m_base);
+      return false;
    default:
       //
       // lets assume that we have a (?imsx) group and try and parse it:
