@@ -87,12 +87,12 @@ struct regex_traits_architype
 public:
    regex_traits_architype();
    typedef charT char_type;
-   typedef std::size_t size_type;
+   // typedef std::size_t size_type;
    typedef std::vector<char_type> string_type;
    typedef copy_constructible_archetype<assignable_archetype<> > locale_type;
    typedef bitmask_archetype char_class_type;
 
-   static size_type length(const char_type* ) { return 0; }
+   static std::size_t length(const char_type* ) { return 0; }
 
    charT translate(charT ) const { return charT(); }
    charT translate_nocase(charT ) const { return static_object<charT>::get(); }
@@ -163,21 +163,21 @@ struct RegexTraitsConcept
    RegexTraitsConcept();
    // required typedefs:
    typedef typename traits::char_type char_type;
-   typedef typename traits::size_type size_type;
+   // typedef typename traits::size_type size_type;
    typedef typename traits::string_type string_type;
    typedef typename traits::locale_type locale_type;
    typedef typename traits::char_class_type char_class_type;
 
    void constraints() 
    {
-      function_requires<UnsignedIntegerConcept<size_type> >();
+      //function_requires<UnsignedIntegerConcept<size_type> >();
       function_requires<RandomAccessContainerConcept<string_type> >();
       function_requires<DefaultConstructibleConcept<locale_type> >();
       function_requires<CopyConstructibleConcept<locale_type> >();
       function_requires<AssignableConcept<locale_type> >();
       function_requires<BitmaskConcept<char_class_type> >();
 
-      size_type n = traits::length(m_pointer);
+      std::size_t n = traits::length(m_pointer);
       ignore_unused_variable_warning(n);
 
       char_type c = m_ctraits.translate(m_char);
@@ -235,7 +235,7 @@ template <class Regex>
 struct BaseRegexConcept
 {
    typedef typename Regex::value_type value_type;
-   typedef typename Regex::size_type size_type;
+   //typedef typename Regex::size_type size_type;
    typedef typename Regex::flag_type flag_type;
    typedef typename Regex::locale_type locale_type;
    typedef input_iterator_archetype<value_type> input_iterator_type;
@@ -368,9 +368,7 @@ struct BaseRegexConcept
 
       // access:
       const Regex ce;
-      bool b = ce.empty();
-      ignore_unused_variable_warning(b);
-      size_type i = ce.mark_count();
+      unsigned i = ce.mark_count();
       ignore_unused_variable_warning(i);
       m_flags = ce.flags();
       e.imbue(ce.getloc());
@@ -385,7 +383,7 @@ struct BaseRegexConcept
       typedef typename sub_match_type::iterator sub_iter_type;
       BOOST_STATIC_ASSERT((::boost::is_same<sub_value_type, value_type>::value));
       BOOST_STATIC_ASSERT((::boost::is_same<sub_iter_type, BidiIterator>::value));
-      b = m_sub.matched;
+      bool b = m_sub.matched;
       ignore_unused_variable_warning(b);
       BidiIterator bi = m_sub.first;
       ignore_unused_variable_warning(bi);
@@ -533,7 +531,7 @@ struct BaseRegexConcept
 
    pointer_type m_pointer;
    flag_type m_flags;
-   size_type m_size;
+   std::size_t m_size;
    input_iterator_type in1, in2;
    const sub_match_type m_sub;
    const value_type m_char;
@@ -557,7 +555,7 @@ template <class Regex>
 struct RegexConcept
 {
    typedef typename Regex::value_type value_type;
-   typedef typename Regex::size_type size_type;
+   //typedef typename Regex::size_type size_type;
    typedef typename Regex::flag_type flag_type;
    typedef typename Regex::locale_type locale_type;
 
@@ -805,6 +803,8 @@ struct BoostRegexConcept
       int i2 = ce.compare(ce2);
       ignore_unused_variable_warning(i2);
       bool b = ce == ce2;
+      ignore_unused_variable_warning(b);
+      b = ce.empty();
       ignore_unused_variable_warning(b);
       b = ce != ce2;
       ignore_unused_variable_warning(b);

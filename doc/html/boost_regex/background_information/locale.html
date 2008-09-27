@@ -12,10 +12,10 @@
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
 <td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
-<td align="center"><a href="../../../../../../index.htm">Home</a></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
 <td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
-<td align="center"><a href="../../../../../../people/people.htm">People</a></td>
-<td align="center"><a href="../../../../../../more/faq.htm">FAQ</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
 <td align="center"><a href="../../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
@@ -58,7 +58,7 @@
         There are three separate localization mechanisms supported by Boost.Regex:
       </p>
 <a name="boost_regex.background_information.locale.win32_localization_model_"></a><h5>
-<a name="id644136"></a>
+<a name="id653642"></a>
         <a href="locale.html#boost_regex.background_information.locale.win32_localization_model_">Win32
         localization model.</a>
       </h5>
@@ -74,8 +74,7 @@
         a string table with the user-defined strings. The traits class exports the
         function:
       </p>
-<pre class="programlisting">
-<span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">);</span>
+<pre class="programlisting"><span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">);</span>
 </pre>
 <p>
         which needs to be called with a string identifying the name of the resource
@@ -83,8 +82,7 @@
         before you construct any <code class="computeroutput"><span class="identifier">basic_regex</span></code>
         instances):
       </p>
-<pre class="programlisting">
-<span class="identifier">boost</span><span class="special">::</span><span class="identifier">w32_regex_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;::</span><span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="string">"mydll.dll"</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">w32_regex_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;::</span><span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="string">"mydll.dll"</span><span class="special">);</span>
 </pre>
 <p>
         The library provides full Unicode support under NT, under Windows 9x the
@@ -92,7 +90,7 @@
         are treated as "unknown" graphic characters.
       </p>
 <a name="boost_regex.background_information.locale.c_localization_model_"></a><h5>
-<a name="id644382"></a>
+<a name="id653880"></a>
         <a href="locale.html#boost_regex.background_information.locale.c_localization_model_">C
         localization model.</a>
       </h5>
@@ -116,7 +114,7 @@
         libraries including version 1 of this library.
       </p>
 <a name="boost_regex.background_information.locale.c___localization_model_"></a><h5>
-<a name="id644495"></a>
+<a name="id653992"></a>
         <a href="locale.html#boost_regex.background_information.locale.c___localization_model_">C++
         localization model.</a>
       </h5>
@@ -131,16 +129,14 @@
         requires a POSIX message catalogue, which will be loaded via the <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">messages</span></code>
         facet of the expression's locale, the traits class exports the symbol:
       </p>
-<pre class="programlisting">
-<span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">);</span>
+<pre class="programlisting"><span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">);</span>
 </pre>
 <p>
         which needs to be called with a string identifying the name of the message
         catalogue, before your code compiles any regular expressions (but not necessarily
         before you construct any basic_regex instances):
       </p>
-<pre class="programlisting">
-<span class="identifier">boost</span><span class="special">::</span><span class="identifier">cpp_regex_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;::</span><span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="string">"mycatalogue"</span><span class="special">);</span>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">cpp_regex_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;::</span><span class="identifier">set_message_catalogue</span><span class="special">(</span><span class="string">"mycatalogue"</span><span class="special">);</span>
 </pre>
 <p>
         Note that calling <code class="computeroutput"><span class="identifier">basic_regex</span><span class="special">&lt;&gt;::</span><span class="identifier">imbue</span></code>
@@ -155,7 +151,7 @@
         in your code. The best way to ensure this is to add the #define to <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">regex</span><span class="special">/</span><span class="identifier">user</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code>.
       </p>
 <a name="boost_regex.background_information.locale.providing_a_message_catalogue"></a><h5>
-<a name="id644957"></a>
+<a name="id654452"></a>
         <a href="locale.html#boost_regex.background_information.locale.providing_a_message_catalogue">Providing
         a message catalogue</a>
       </h5>
@@ -1779,7 +1775,11 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><small>Copyright © 2007 John Maddock</small></td>
+<td align="right"><div class="copyright-footer">Copyright © 1998 -2007 John Maddock<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
 </tr></table>
 <hr>
 <div class="spirit-nav">

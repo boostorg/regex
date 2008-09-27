@@ -7,15 +7,15 @@
 <link rel="start" href="../../../index.html" title="Boost.Regex">
 <link rel="up" href="../concepts.html" title="Concepts">
 <link rel="prev" href="charT_concept.html" title="charT Requirements">
-<link rel="next" href="iterator_concepts.html" title="Iterator Rrequirements">
+<link rel="next" href="iterator_concepts.html" title="Iterator Requirements">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
 <td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
-<td align="center"><a href="../../../../../../../index.htm">Home</a></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
 <td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
-<td align="center"><a href="../../../../../../../people/people.htm">People</a></td>
-<td align="center"><a href="../../../../../../../more/faq.htm">FAQ</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
 <td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
@@ -34,7 +34,7 @@
           Boost-specific enhanced interface.
         </p>
 <a name="boost_regex.ref.concepts.traits_concept.minimal_requirements_"></a><h5>
-<a name="id623213"></a>
+<a name="id632754"></a>
           <a href="traits_concept.html#boost_regex.ref.concepts.traits_concept.minimal_requirements_">Minimal
           requirements.</a>
         </h5>
@@ -327,7 +327,7 @@
 <tr>
 <td>
                 <p>
-                  v.value(c, i)
+                  v.value(c, I)
                 </p>
                 </td>
 <td>
@@ -378,30 +378,10 @@
                 </p>
                 </td>
 </tr>
-<tr>
-<td>
-                <p>
-                  v.error_string(i)
-                </p>
-                </td>
-<td>
-                <p>
-                  std::string
-                </p>
-                </td>
-<td>
-                <p>
-                  Returns a human readable error string for the error condition i,
-                  where i is one of the values enumerated by type regex_constants::error_type.
-                  If the value i is not recognized then returns the string "Unknown
-                  error" or a localized equivalent.
-                </p>
-                </td>
-</tr>
 </tbody>
 </table></div>
 <a name="boost_regex.ref.concepts.traits_concept.additional_optional_requirements"></a><h5>
-<a name="id624046"></a>
+<a name="id633573"></a>
           <a href="traits_concept.html#boost_regex.ref.concepts.traits_concept.additional_optional_requirements">Additional
           Optional Requirements</a>
         </h5>
@@ -541,7 +521,7 @@
 <tr>
 <td>
                 <p>
-                  v.error_string(i)
+                  v.error_string(I)
                 </p>
                 </td>
 <td>
@@ -553,8 +533,8 @@
                 <p>
                   Returns a human readable error string for the error condition i,
                   where i is one of the values enumerated by type regex_constants::error_type.
-                  If the value i is not recognized then returns the string "Unknown
-                  error" or a localized equivalent.
+                  If the value <span class="emphasis"><em>I</em></span> is not recognized then returns
+                  the string "Unknown error" or a localized equivalent.
                 </p>
                 </td>
 </tr>
@@ -599,7 +579,11 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><small>Copyright © 2007 John Maddock</small></td>
+<td align="right"><div class="copyright-footer">Copyright © 1998 -2007 John Maddock<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
 </tr></table>
 <hr>
 <div class="spirit-nav">

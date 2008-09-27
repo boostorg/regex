@@ -128,7 +128,7 @@ parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, :
       break;
    case ::std::ios_base::cur:
    {
-      std::ptrdiff_t newpos = pos + off;
+      std::ptrdiff_t newpos = static_cast<std::ptrdiff_t>(pos + off);
       if((newpos < 0) || (newpos > size))
          return pos_type(off_type(-1));
       else
@@ -293,7 +293,9 @@ void cpp_regex_traits_char_layer<charT>::init()
    //
    if((int)cat >= 0)
    {
+#ifndef BOOST_NO_EXCEPTIONS
       try{
+#endif
          for(regex_constants::syntax_type i = 1; i < regex_constants::syntax_max; ++i)
          {
             string_type mss = this->m_pmessages->get(cat, 0, i, get_default_message(i));
@@ -303,12 +305,14 @@ void cpp_regex_traits_char_layer<charT>::init()
             }
          }
          this->m_pmessages->close(cat);
+#ifndef BOOST_NO_EXCEPTIONS
       }
       catch(...)
       {
          this->m_pmessages->close(cat);
          throw;
       }
+#endif
    }
    else
    {
@@ -795,9 +799,9 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
       if(pos != m_custom_class_names.end())
          return pos->second;
    }
-   std::size_t id = 1 + re_detail::get_default_class_id(p1, p2);
-   BOOST_ASSERT(id < sizeof(masks) / sizeof(masks[0]));
-   return masks[id];
+   std::size_t state_id = 1 + re_detail::get_default_class_id(p1, p2);
+   BOOST_ASSERT(state_id < sizeof(masks) / sizeof(masks[0]));
+   return masks[state_id];
 }
 
 #ifdef BOOST_REGEX_BUGGY_CTYPE_FACET
@@ -1054,4 +1058,5 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
 #endif
 
 #endif
+
 

@@ -12,10 +12,10 @@
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
 <td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
-<td align="center"><a href="../../../../../index.htm">Home</a></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
 <td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
-<td align="center"><a href="../../../../../people/people.htm">People</a></td>
-<td align="center"><a href="../../../../../more/faq.htm">FAQ</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
 <td align="center"><a href="../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
@@ -47,8 +47,7 @@
       there are two typedefs that are almost always the means by which this class
       is referenced:
     </p>
-<pre class="programlisting">
-<span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">{</span>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">{</span>
 
 <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">charT</span><span class="special">,</span> 
          <span class="keyword">class</span> <span class="identifier">traits</span> <span class="special">=</span> <span class="identifier">regex_traits</span><span class="special">&lt;</span><span class="identifier">charT</span><span class="special">&gt;</span> <span class="special">&gt;</span>
@@ -86,8 +85,7 @@
       Now let's take that expression and place it in some C++ code to validate the
       format of a credit card number:
     </p>
-<pre class="programlisting">
-<span class="keyword">bool</span> <span class="identifier">validate_card_format</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">)</span>
+<pre class="programlisting"><span class="keyword">bool</span> <span class="identifier">validate_card_format</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span><span class="special">)</span>
 <span class="special">{</span>
    <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex</span> <span class="identifier">e</span><span class="special">(</span><span class="string">"(\\d{4}[- ]){3}\\d{4}"</span><span class="special">);</span>
    <span class="keyword">return</span> <span class="identifier">regex_match</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">e</span><span class="special">);</span>
@@ -115,8 +113,7 @@
       and replace operation is performed with the algorithm <a href="ref/regex_replace.html" title="regex_replace"><code class="computeroutput"><span class="identifier">regex_replace</span></code></a>, for our credit card
       example we can write two algorithms like this to provide the format conversions:
     </p>
-<pre class="programlisting">
-<span class="comment">// match any format with the regular expression:
+<pre class="programlisting"><span class="comment">// match any format with the regular expression:
 </span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">regex</span> <span class="identifier">e</span><span class="special">(</span><span class="string">"\\A(\\d{3,4})[- ]?(\\d{4})[- ]?(\\d{4})[- ]?(\\d{4})\\z"</span><span class="special">);</span>
 <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">machine_format</span><span class="special">(</span><span class="string">"\\1\\2\\3\\4"</span><span class="special">);</span>
 <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">human_format</span><span class="special">(</span><span class="string">"\\1-\\2-\\3-\\4"</span><span class="special">);</span>
@@ -144,8 +141,7 @@
       the class <a href="ref/match_results.html" title="match_results"><code class="computeroutput"><span class="identifier">match_results</span></code></a>,
       as before there are typedefs of this class for the most common cases:
     </p>
-<pre class="programlisting">
-<span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">{</span>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">{</span>
 
 <span class="keyword">typedef</span> <span class="identifier">match_results</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*&gt;</span>                  <span class="identifier">cmatch</span><span class="special">;</span>
 <span class="keyword">typedef</span> <span class="identifier">match_results</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="keyword">wchar_t</span><span class="special">*&gt;</span>               <span class="identifier">wcmatch</span><span class="special">;</span>
@@ -205,7 +201,11 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><small>Copyright © 2007 John Maddock</small></td>
+<td align="right"><div class="copyright-footer">Copyright © 1998 -2007 John Maddock<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
 </tr></table>
 <hr>
 <div class="spirit-nav">

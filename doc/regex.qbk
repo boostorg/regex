@@ -1,7 +1,7 @@
 
 [article Boost.Regex
     [quickbook 1.3]
-    [copyright 2007 John Maddock]
+    [copyright 1998-2007 John Maddock]
     [purpose Regular Expressions]
     [license
         Distributed under the Boost Software License, Version 1.0.
@@ -44,6 +44,10 @@
 [template regexec[] [link boost_regex.ref.posix.regexec `regexec`]]
 [template regerror[] [link boost_regex.ref.posix.regerror `regerror`]]
 [template regfree[] [link boost_regex.ref.posix.regfree `regfree`]]
+
+A printer-friendly 
+[@http://svn.boost.org/svn/boost/sandbox/pdf/regex/release/regex.pdf 
+PDF version of this manual is also available].
 
 [include configuration.qbk]
 [include install.qbk]

@@ -12,10 +12,10 @@
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
 <td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
-<td align="center"><a href="../../../../../../../../index.htm">Home</a></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
 <td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
-<td align="center"><a href="../../../../../../../../people/people.htm">People</a></td>
-<td align="center"><a href="../../../../../../../../more/faq.htm">FAQ</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
 <td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
 </tr></table>
 <hr>
@@ -43,7 +43,7 @@
             on to the "real" algorithm.
           </p>
 <a name="boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_match"></a><h5>
-<a name="id605568"></a>
+<a name="id615144"></a>
             <a href="unicode_algo.html#boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_match">u32regex_match</a>
           </h5>
 <p>
@@ -57,8 +57,7 @@
 <p>
             Example: match a password, encoded in a UTF-16 UnicodeString:
           </p>
-<pre class="programlisting">
-<span class="comment">//
+<pre class="programlisting"><span class="comment">//
 </span><span class="comment">// Find out if *password* meets our password requirements,
 </span><span class="comment">// as defined by the regular expression *requirements*.
 </span><span class="comment">//
@@ -70,8 +69,7 @@
 <p>
             Example: match a UTF-8 encoded filename:
           </p>
-<pre class="programlisting">
-<span class="comment">//
+<pre class="programlisting"><span class="comment">//
 </span><span class="comment">// Extract filename part of a path from a UTF-8 encoded std::string and return the result
 </span><span class="comment">// as another std::string:
 </span><span class="comment">//
@@ -91,7 +89,7 @@
 <span class="special">}</span>
 </pre>
 <a name="boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_search"></a><h5>
-<a name="id606290"></a>
+<a name="id615863"></a>
             <a href="unicode_algo.html#boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_search">u32regex_search</a>
           </h5>
 <p>
@@ -105,8 +103,7 @@
 <p>
             Example: search for a character sequence in a specific language block:
           </p>
-<pre class="programlisting">
-<span class="identifier">UnicodeString</span> <span class="identifier">extract_greek</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">UnicodeString</span><span class="special">&amp;</span> <span class="identifier">text</span><span class="special">)</span>
+<pre class="programlisting"><span class="identifier">UnicodeString</span> <span class="identifier">extract_greek</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">UnicodeString</span><span class="special">&amp;</span> <span class="identifier">text</span><span class="special">)</span>
 <span class="special">{</span>
    <span class="comment">// searches through some UTF-16 encoded text for a block encoded in Greek,
 </span>   <span class="comment">// this expression is imperfect, but the best we can do for now - searching
@@ -131,7 +128,7 @@
 <span class="special">}</span>
 </pre>
 <a name="boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_replace"></a><h5>
-<a name="id606884"></a>
+<a name="id616456"></a>
             <a href="unicode_algo.html#boost_regex.ref.non_std_strings.icu.unicode_algo.u32regex_replace">u32regex_replace</a>
           </h5>
 <p>
@@ -149,8 +146,7 @@
 <p>
             Example: Credit card number reformatting:
           </p>
-<pre class="programlisting">
-<span class="comment">//
+<pre class="programlisting"><span class="comment">//
 </span><span class="comment">// Take a credit card number as a string of digits, 
 </span><span class="comment">// and reformat it as a human readable string with "-"
 </span><span class="comment">// separating each group of four digit;, 
@@ -170,7 +166,11 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><small>Copyright © 2007 John Maddock</small></td>
+<td align="right"><div class="copyright-footer">Copyright © 1998 -2007 John Maddock<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
 </tr></table>
 <hr>
 <div class="spirit-nav">

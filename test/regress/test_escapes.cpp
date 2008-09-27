@@ -38,8 +38,8 @@ void test_character_escapes()
    TEST_REGEX_SEARCH("\\c@", perl, "\0", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\cA", perl, "\x1", match_default, make_array(0, 1, -2, -2));
    //TEST_REGEX_SEARCH("\\cz", perl, "\x3A", match_default, make_array(0, 1, -2, -2));
-   //TEST_INVALID_REGEX("\\c=", extended);
-   //TEST_INVALID_REGEX("\\c?", extended);
+   //TEST_INVALID_REGEX("\\c=", boost::regex::extended);
+   //TEST_INVALID_REGEX("\\c?", boost::regex::extended);
    TEST_REGEX_SEARCH("=:", perl, "=:", match_default, make_array(0, 2, -2, -2));
 
    TEST_REGEX_SEARCH("\\e", perl, "\x1B", match_default, make_array(0, 1, -2, -2));
@@ -67,8 +67,8 @@ void test_character_escapes()
    // unknown escape sequences match themselves:
    TEST_REGEX_SEARCH("\\~", perl, "~", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("\\~", basic, "~", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("\\~", extended, "~", match_default, make_array(0, 1, -2, -2));
-   TEST_REGEX_SEARCH("\\j", extended, "j", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\~", boost::regex::extended, "~", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\j", boost::regex::extended, "j", match_default, make_array(0, 1, -2, -2));
 }
 
 void test_assertion_escapes()
@@ -109,6 +109,9 @@ void test_assertion_escapes()
    TEST_REGEX_SEARCH("a\\B", perl, "ab", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("a\\B", perl, "a", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a\\B", perl, "a ", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\By\\b", perl, "xy", match_default, make_array(1, 2, -2, -2));
+   TEST_REGEX_SEARCH("\\by\\B", perl, "yz", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("\\B\\*\\B", perl, " * ", match_default, make_array(1, 2, -2, -2));
    // buffer operators:
    TEST_REGEX_SEARCH("\\`abc", perl, "abc", match_default, make_array(0, 3, -2, -2));
    TEST_REGEX_SEARCH("\\`abc", perl, "\nabc", match_default, make_array(-2, -2));
