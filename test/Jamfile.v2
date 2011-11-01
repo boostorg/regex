@@ -124,7 +124,8 @@ test-suite regex
             ../build//boost_regex
       ]
       
-      [ run unicode/unicode_iterator_test.cpp ../build//boost_regex ]
+      [ run unicode/unicode_iterator_test.cpp ../build//boost_regex : : : <define>TEST_UTF8 : unicode_iterator_test_utf8 ]
+      [ run unicode/unicode_iterator_test.cpp ../build//boost_regex : : : <define>TEST_UTF16 : unicode_iterator_test_utf16 ]
       [ run static_mutex/static_mutex_test.cpp
             ../../thread/build//boost_thread ../build//boost_regex
       ]
@@ -174,7 +175,21 @@ test-suite regex
   : # requirements
     <define>BOOST_REGEX_RECURSIVE=1
   : regex_regress_recursive ]
+
+[ run regress/$(R_SOURCE) ./noeh_test//boost_regex_noeh
+                          ../build//icu_options
+  : # command line
+  : # input files
+  : # requirements
+    <define>BOOST_NO_EXCEPTIONS=1
+    <exception-handling>off
+    <link>static
+    <runtime-link>shared
+  : regex_regress_noeh ]
+
 ;
+
+compile test_consolidated.cpp ;
 
 build-project ../example ;
 

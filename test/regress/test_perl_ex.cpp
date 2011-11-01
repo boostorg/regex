@@ -216,6 +216,10 @@ void test_options2()
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "ABc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "ABC", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(a(?i)b)c", perl, "AbC", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "hog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "dog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "Hog", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?i)[dh]og", perl, "Dog", match_default, make_array(0, 3, -2, -2));
    
    TEST_REGEX_SEARCH("(a(?i)B)c", perl, "abc", match_default, make_array(0, 3, 0, 2, -2, -2));
    TEST_REGEX_SEARCH("(a(?i)B)c", perl, "aBc", match_default, make_array(0, 3, 0, 2, -2, -2));
@@ -908,6 +912,7 @@ void test_recursion()
    // Bugs:
    TEST_REGEX_SEARCH("namespace\\s+(\\w+)\\s+(\\{(?:[^{}]*(?:(?2)[^{}]*)*)?\\})", perl, "namespace one { namespace two { int foo(); } }", match_default, make_array(0, 46, 10, 13, 14, 46, -2, -2));
    TEST_REGEX_SEARCH("namespace\\s+(\\w+)\\s+(\\{(?:[^{}]*(?:(?2)[^{}]*)*)?\\})", perl, "namespace one { namespace two { int foo(){} } { {{{ }  } } } {}}", match_default, make_array(0, 64, 10, 13, 14, 64, -2, -2));
+   TEST_INVALID_REGEX("((?1)|a)", perl);
 
    // Recursion to a named sub with a name that is used multiple times:
    TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+))\\.(?&A)", perl, "aaaa.aa", match_default, make_array(0, 7, 0, 4, -1, -1, -2, -2));
