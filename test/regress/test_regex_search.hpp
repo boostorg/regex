@@ -511,7 +511,7 @@ void test(boost::basic_regex<charT, traits>& r, const test_regex_search_tag&)
          }
       }
       r.assign(expression, syntax_options | boost::regbase::save_subexpression_location);
-      for(std::size_t i = 1; i < r.mark_count(); ++i)
+      for(std::size_t i = 0; i < r.mark_count(); ++i)
       {
          std::pair<const charT*, const charT*> p = r.subexpression(i);
          if(*p.first != '(')
