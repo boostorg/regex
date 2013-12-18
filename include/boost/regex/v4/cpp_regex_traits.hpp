@@ -21,6 +21,7 @@
 
 #include <boost/config.hpp>
 #include <boost/integer.hpp>
+#include <boost/type_traits/make_unsigned.hpp>
 
 #ifndef BOOST_NO_STD_LOCALE
 
@@ -582,7 +583,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // however at least one std lib will always throw
    // std::bad_alloc for certain arguments...
    //
-   string_type result;
+   string_type result, result2;
 #ifndef BOOST_NO_EXCEPTIONS
    try{
 #endif
@@ -601,14 +602,36 @@ typename cpp_regex_traits_implementation<charT>::string_type
       while(result.size() && (charT(0) == *result.rbegin()))
          result.erase(result.size() - 1);
 #endif
-      BOOST_ASSERT(std::find(result.begin(), result.end(), charT(0)) == result.end());
+      //
+      // We may have NULL's used as separators between sections of the collate string,
+      // an example would be Boost.Locale.  We have no way to detect this case via
+      // #defines since this can be used with any compiler/platform combination.
+      // Unfortunately our state machine (which was devised when all implementations
+      // used underlying C language API's) can't cope with that case.  One workaround
+      // is to replace each character with 2, fortunately this code isn't used that
+      // much as this is now slower than before :-(
+      //
+      typedef typename make_unsigned<charT>::type uchar_type;
+      result2.reserve(result.size() * 2 + 2);
+      for(unsigned i = 0; i < result.size(); ++i)
+      {
+         if(static_cast<uchar_type>(result[i]) == (std::numeric_limits<uchar_type>::max)())
+         {
+            result2.append(1, charT((std::numeric_limits<uchar_type>::max)())).append(1, charT('b'));
+         }
+         else
+         {
+            result2.append(1, static_cast<charT>(1 + static_cast<uchar_type>(result[i]))).append(1, charT('b') - 1);
+         }
+      }
+      BOOST_ASSERT(std::find(result2.begin(), result2.end(), charT(0)) == result2.end());
 #ifndef BOOST_NO_EXCEPTIONS
    }
    catch(...)
    {
    }
 #endif
-   return result;
+   return result2;
 }
 
 
