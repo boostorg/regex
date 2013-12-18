@@ -4,7 +4,7 @@
 <title>History</title>
 <link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
-<link rel="home" href="../../index.html" title="Boost.Regex">
+<link rel="home" href="../../index.html" title="Boost.Regex 5.0.0">
 <link rel="up" href="../background_information.html" title="Background Information">
 <link rel="prev" href="acknowledgements.html" title="Acknowledgements">
 </head>
@@ -37,9 +37,13 @@
       </p>
 <h5>
 <a name="boost_regex.background_information.history.h0"></a>
-        <span class="phrase"><a name="boost_regex.background_information.history.post_1_55"></a></span><a class="link" href="history.html#boost_regex.background_information.history.post_1_55">Post 1.55</a>
+        <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_0_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_0_0">Boost.Regex-5.0.0</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Moved to library-specific version number post the move to Git. And since
+            we have one (minor) breaking change this gets bumped up from v4 to v5.
+          </li>
 <li class="listitem">
             <span class="bold"><strong>Breaking change:</strong></span> corrected behavior
             of <code class="computeroutput"><span class="identifier">basic_regex</span><span class="special">&lt;&gt;::</span><span class="identifier">mark_count</span><span class="special">()</span></code>
@@ -50,6 +54,10 @@
           </li>
 <li class="listitem">
             Fixed documentation typos from <a href="https://svn.boost.org/trac/boost/ticket/9283" target="_top">#9283</a>.
+          </li>
+<li class="listitem">
+            Fixed bug in collation code that failed if the locale generated collation
+            strings with embedded nul's, see <a href="https://svn.boost.org/trac/boost/ticket/9451" target="_top">#9451</a>.
           </li>
 </ul></div>
 <h5>
@@ -379,7 +387,7 @@
 </div>
 <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
 <td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright &#169; 1998-2010 John Maddock<p>
+<td align="right"><div class="copyright-footer">Copyright &#169; 1998-2013 John Maddock<p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
       </p>

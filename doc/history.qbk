@@ -15,12 +15,16 @@ Currently open issues can be viewed [@https://svn.boost.org/trac/boost/query?sta
 
 All issues including closed ones can be viewed [@https://svn.boost.org/trac/boost/query?status=assigned&status=closed&status=new&status=reopened&component=regex&order=priority&col=id&col=summary&col=status&col=type&col=milestone&col=component here].
 
-[h4 Post 1.55]
+[h4 Boost.Regex-5.0.0]
 
+* Moved to library-specific version number post the move to Git.  And since we have one (minor) breaking change
+this gets bumped up from v4 to v5.
 * [*Breaking change:] corrected behavior of `basic_regex<>::mark_count()` to match existing documentation,
 `basic_regex<>::subexpression(n)` changed to match, see [@https://svn.boost.org/trac/boost/ticket/9227 #9227]
 * Fixed issue [@https://svn.boost.org/trac/boost/ticket/8903 #8903].
 * Fixed documentation typos from [@https://svn.boost.org/trac/boost/ticket/9283 #9283].
+* Fixed bug in collation code that failed if the locale generated collation strings with embedded nul's,
+see [@https://svn.boost.org/trac/boost/ticket/9451 #9451].
 
 [h4 Boost-1.54]
 
