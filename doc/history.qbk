@@ -25,6 +25,7 @@ this gets bumped up from v4 to v5.
 * Fixed documentation typos from [@https://svn.boost.org/trac/boost/ticket/9283 #9283].
 * Fixed bug in collation code that failed if the locale generated collation strings with embedded nul's,
 see [@https://svn.boost.org/trac/boost/ticket/9451 #9451].
+* Apply patch for unusual thread usage (no statically initiallized mutexes), see [@https://svn.boost.org/trac/boost/ticket/9461 #9461].
 
 [h4 Boost-1.54]
 
