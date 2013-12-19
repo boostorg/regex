@@ -629,8 +629,14 @@ private:
          0x1FFFFFu,
       };
       m_value &= masks[extra];
-      // check the result:
+      // check the result is in range:
       if(m_value > static_cast<U32Type>(0x10FFFFu))
+         invalid_sequence();
+      // The result must not be a surrogate:
+      if((m_value >= static_cast<U32Type>(0xD800)) && (m_value <= static_cast<U32Type>(0xDFFF)))
+         invalid_sequence();
+      // We should not have had an invalidly encoded UTF8 sequence:
+      if((extra > 0) && (m_value <= static_cast<U32Type>(masks[extra - 1])))
          invalid_sequence();
    }
    BaseIterator m_position;
