@@ -508,12 +508,18 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we adhere to gcc's (buggy) preconditions...
    //
    BOOST_ASSERT(*p2 == 0);
-   if(p1 == p2)
-   {
-      return string_type(p1, p2);
-   }
-
    string_type result;
+#if defined(_CPPLIB_VER)
+   //
+   // A bug in VC11 and 12 causes the program to hang if we pass a null-string
+   // to std::collate::transform, but only for certain locales :-(
+   // Probably effects Intel and Clang or any compiler using the VC std library (Dinkumware).
+   //
+   if(*p1 == 0)
+   {
+      return string_type(1, charT(0));
+   }
+#endif
    //
    // swallowing all exceptions here is a bad idea
    // however at least one std lib will always throw
@@ -588,11 +594,17 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // std::bad_alloc for certain arguments...
    //
    string_type result, result2;
-   if(p1 == p2)
+#if defined(_CPPLIB_VER)
+   //
+   // A bug in VC11 and 12 causes the program to hang if we pass a null-string
+   // to std::collate::transform, but only for certain locales :-(
+   // Probably effects Intel and Clang or any compiler using the VC std library (Dinkumware).
+   //
+   if(*p1 == 0)
    {
-      result.assign(p1, p2);
       return result;
    }
+#endif
 #ifndef BOOST_NO_EXCEPTIONS
    try{
 #endif
