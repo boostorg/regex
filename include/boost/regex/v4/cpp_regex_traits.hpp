@@ -508,6 +508,10 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we adhere to gcc's (buggy) preconditions...
    //
    BOOST_ASSERT(*p2 == 0);
+   if(p1 == p2)
+   {
+      return string_type(p1, p2);
+   }
 
    string_type result;
    //
@@ -584,6 +588,11 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // std::bad_alloc for certain arguments...
    //
    string_type result, result2;
+   if(p1 == p2)
+   {
+      result.assign(p1, p2);
+      return result;
+   }
 #ifndef BOOST_NO_EXCEPTIONS
    try{
 #endif
