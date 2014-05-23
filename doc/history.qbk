@@ -15,7 +15,7 @@ Currently open issues can be viewed [@https://svn.boost.org/trac/boost/query?sta
 
 All issues including closed ones can be viewed [@https://svn.boost.org/trac/boost/query?status=assigned&status=closed&status=new&status=reopened&component=regex&order=priority&col=id&col=summary&col=status&col=type&col=milestone&col=component here].
 
-[h4 Boost.Regex-5.0.0]
+[h4 Boost.Regex-5.0.0 (Boost-1.56.0)]
 
 * Moved to library-specific version number post the move to Git.  And since we have one (minor) breaking change
 this gets bumped up from v4 to v5.
