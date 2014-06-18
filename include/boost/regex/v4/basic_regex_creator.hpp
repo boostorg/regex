@@ -344,7 +344,7 @@ re_literal* basic_regex_creator<charT, traits>::append_literal(charT c)
       m_last_state = result = static_cast<re_literal*>(getaddress(off));
       charT* characters = static_cast<charT*>(static_cast<void*>(result+1));
       characters[result->length] = m_traits.translate(c, m_icase);
-      ++(result->length);
+      result->length += 1;
    }
    return result;
 }
