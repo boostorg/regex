@@ -8,6 +8,7 @@ import modules ;
 project : requirements
    # default to all warnings on:
    <warnings>all
+   <toolset>clang:<warnings>on
    ;
 
 local disable-icu = [ MATCH (--disable-icu) : [ modules.peek : ARGV ] ] ;
