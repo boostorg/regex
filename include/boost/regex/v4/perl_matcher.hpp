@@ -255,6 +255,7 @@ class repeater_count
    BidiIterator start_pos;   // where the last repeat started
 public:
    repeater_count(repeater_count** s)
+      : start_pos()
    {
       stack = s;
       next = 0;
