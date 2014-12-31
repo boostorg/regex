@@ -270,9 +270,11 @@ void mapfile::lock(pointer* node)const
 #ifndef BOOST_NO_EXCEPTIONS 
         if((read_size == 0) || (std::ferror(hfile)))
         { 
+           condemed.remove(node);
            throw std::runtime_error("Unable to read file."); 
         } 
 #else 
+        condemed.remove(node);
         BOOST_REGEX_NOEH_ASSERT((0 == std::ferror(hfile)) && (read_size != 0)); 
 #endif 
       }
