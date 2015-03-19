@@ -415,8 +415,9 @@ template <class charT>
 class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT>
 {
 public:
-   typedef typename cpp_regex_traits<charT>::char_class_type char_class_type;
-   typedef typename std::ctype<charT>::mask                  native_mask_type;
+   typedef typename cpp_regex_traits<charT>::char_class_type      char_class_type;
+   typedef typename std::ctype<charT>::mask                       native_mask_type;
+   typedef typename boost::make_unsigned<native_mask_type>::type  unsigned_native_mask_type;
 #ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
    BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 24);
    BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 25);
@@ -753,19 +754,19 @@ void cpp_regex_traits_implementation<charT>::init()
 #ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
       static const char_class_type masks[16] = 
       {
-         std::ctype<charT>::alnum,
-         std::ctype<charT>::alpha,
-         std::ctype<charT>::cntrl,
-         std::ctype<charT>::digit,
-         std::ctype<charT>::graph,
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::alnum),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::alpha),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::cntrl),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::digit),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::graph),
          cpp_regex_traits_implementation<charT>::mask_horizontal,
-         std::ctype<charT>::lower,
-         std::ctype<charT>::print,
-         std::ctype<charT>::punct,
-         std::ctype<charT>::space,
-         std::ctype<charT>::upper,
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::lower),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::print),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::punct),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::space),
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::upper),
          cpp_regex_traits_implementation<charT>::mask_vertical,
-         std::ctype<charT>::xdigit,
+         static_cast<unsigned_native_mask_type>(std::ctype<charT>::xdigit),
          cpp_regex_traits_implementation<charT>::mask_blank,
          cpp_regex_traits_implementation<charT>::mask_word,
          cpp_regex_traits_implementation<charT>::mask_unicode,
@@ -814,27 +815,27 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
    static const char_class_type masks[22] = 
    {
       0,
-      std::ctype<char>::alnum, 
-      std::ctype<char>::alpha,
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::alnum),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::alpha),
       cpp_regex_traits_implementation<charT>::mask_blank,
-      std::ctype<char>::cntrl,
-      std::ctype<char>::digit,
-      std::ctype<char>::digit,
-      std::ctype<char>::graph,
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::cntrl),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::digit),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::digit),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::graph),
       cpp_regex_traits_implementation<charT>::mask_horizontal,
-      std::ctype<char>::lower,
-      std::ctype<char>::lower,
-      std::ctype<char>::print,
-      std::ctype<char>::punct,
-      std::ctype<char>::space,
-      std::ctype<char>::space,
-      std::ctype<char>::upper,
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::lower),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::lower),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::print),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::punct),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::space),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::space),
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::upper),
       cpp_regex_traits_implementation<charT>::mask_unicode,
-      std::ctype<char>::upper,
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::upper),
       cpp_regex_traits_implementation<charT>::mask_vertical,
-      std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
-      std::ctype<char>::alnum | cpp_regex_traits_implementation<charT>::mask_word, 
-      std::ctype<char>::xdigit,
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::alnum) | cpp_regex_traits_implementation<charT>::mask_word, 
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::alnum) | cpp_regex_traits_implementation<charT>::mask_word, 
+      static_cast<unsigned_native_mask_type>(std::ctype<char>::xdigit),
    };
 #else
    static const char_class_type masks[22] = 
@@ -1009,6 +1010,18 @@ public:
       else if((f & re_detail::cpp_regex_traits_implementation<charT>::mask_horizontal) 
          && this->isctype(c, std::ctype<charT>::space) && !this->isctype(c, re_detail::cpp_regex_traits_implementation<charT>::mask_vertical))
          return true;
+#ifdef __CYGWIN__
+      //
+      // Cygwin has a buggy ctype facet, see https://www.cygwin.com/ml/cygwin/2012-08/msg00178.html:
+      //
+      else if((f & std::ctype<charT>::xdigit) == std::ctype<charT>::xdigit)
+      {
+         if((c >= 'a') && (c <= 'f'))
+            return true;
+         if((c >= 'A') && (c <= 'F'))
+            return true;
+      }
+#endif
       return false;
 #else
       return m_pimpl->isctype(c, f);
