@@ -165,8 +165,8 @@ public:
    //
    // Make this type a range, for both Boost.Range, and C++11:
    //
-   BidiIterator begin()const;
-   BidiIterator end()const;
+   BidiIterator begin()const { return this->first; }
+   BidiIterator end()const { return this->second; }
 
 
 #ifdef BOOST_OLD_REGEX_H
