@@ -162,6 +162,11 @@ public:
 #endif
       return *this;
    }
+   //
+   // Make this type a range, for both Boost.Range, and C++11:
+   //
+   BidiIterator begin()const;
+   BidiIterator end()const;
 
 
 #ifdef BOOST_OLD_REGEX_H
