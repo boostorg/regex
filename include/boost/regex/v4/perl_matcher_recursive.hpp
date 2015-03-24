@@ -308,7 +308,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
    // Always copy the repeat count, so that the state is restored
    // when we exit this scope:
    //
-   repeater_count<BidiIterator> r(rep->state_id, &next_count, position);
+   repeater_count<BidiIterator> r(rep->state_id, &next_count, position, this->recursion_stack.size() ? this->recursion_stack.back().idx : INT_MIN + 3);
    //
    // If we've had at least one repeat already, and the last one 
    // matched the NULL string then set the repeat count to

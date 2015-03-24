@@ -87,8 +87,8 @@ template <class BidiIterator>
 struct saved_repeater : public saved_state
 {
    repeater_count<BidiIterator> count;
-   saved_repeater(int i, repeater_count<BidiIterator>** s, BidiIterator start) 
-      : saved_state(saved_state_repeater_count), count(i,s,start){}
+   saved_repeater(int i, repeater_count<BidiIterator>** s, BidiIterator start, int current_recursion_id)
+      : saved_state(saved_state_repeater_count), count(i, s, start, current_recursion_id){}
 };
 
 struct saved_extra_block : public saved_state
@@ -309,7 +309,7 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::push_repeater_count(i
       pmp = static_cast<saved_repeater<BidiIterator>*>(m_backup_state);
       --pmp;
    }
-   (void) new (pmp)saved_repeater<BidiIterator>(i, s, position);
+   (void) new (pmp)saved_repeater<BidiIterator>(i, s, position, this->recursion_stack.size() ? this->recursion_stack.back().idx : (INT_MIN + 3));
    m_backup_state = pmp;
 }
 
@@ -923,12 +923,12 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
    recursion_stack.push_back(recursion_info<results_type>());
    recursion_stack.back().preturn_address = pstate->next.p;
    recursion_stack.back().results = *m_presult;
-   if(static_cast<const re_recurse*>(pstate)->state_id > 0)
-   {
-      push_repeater_count(static_cast<const re_recurse*>(pstate)->state_id, &next_count);
-   }
    pstate = static_cast<const re_jump*>(pstate)->alt.p;
    recursion_stack.back().idx = static_cast<const re_brace*>(pstate)->index;
+   //if(static_cast<const re_recurse*>(pstate)->state_id > 0)
+   {
+      push_repeater_count(-(2 + static_cast<const re_brace*>(pstate)->index), &next_count);
+   }
 
    return true;
 }
@@ -952,6 +952,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_endmark()
             *m_presult = recursion_stack.back().results;
             push_recursion(recursion_stack.back().idx, recursion_stack.back().preturn_address, &recursion_stack.back().results);
             recursion_stack.pop_back();
+            push_repeater_count(-(2 + index), &next_count);
          }
       }
    }

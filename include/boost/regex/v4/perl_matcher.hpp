@@ -253,23 +253,40 @@ class repeater_count
    int state_id;
    std::size_t count;        // the number of iterations so far
    BidiIterator start_pos;   // where the last repeat started
+
+   repeater_count* unwind_until(int n, repeater_count* p, int current_recursion_id)
+   { 
+      while(p && (p->state_id != n))
+      {
+         if(-2 - current_recursion_id == p->state_id)
+            return 0;
+         p = p->next;
+         if(p && (p->state_id < 0))
+         {
+            p = unwind_until(p->state_id, p, current_recursion_id);
+            if(!p)
+               return p;
+            p = p->next;
+         }
+      }
+      return p;
+   }
 public:
    repeater_count(repeater_count** s) : stack(s), next(0), state_id(-1), count(0), start_pos() {}
-
-   repeater_count(int i, repeater_count** s, BidiIterator start)
+   
+   repeater_count(int i, repeater_count** s, BidiIterator start, int current_recursion_id)
       : start_pos(start)
    {
       state_id = i;
       stack = s;
       next = *stack;
       *stack = this;
-      if(state_id > next->state_id)
+      if((state_id > next->state_id) && (next->state_id >= 0))
          count = 0;
       else
       {
          repeater_count* p = next;
-         while(p && (p->state_id != state_id))
-            p = p->next;
+         p = unwind_until(state_id, p, current_recursion_id);
          if(p)
          {
             count = p->count;
