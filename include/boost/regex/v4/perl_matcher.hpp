@@ -31,7 +31,7 @@
 #endif
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 //
 // error checking API:
@@ -561,7 +561,7 @@ private:
 #pragma warning(pop)
 #endif
 
-} // namespace re_detail
+} // namespace BOOST_REGEX_DETAIL_NS
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

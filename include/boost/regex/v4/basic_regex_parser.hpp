@@ -31,7 +31,7 @@
 #endif
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -165,7 +165,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
    // have had an unexpected ')' :
    if(!result)
    {
-      fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_position), "Found a closing ) with no corresponding openening parenthesis.");
+      fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_position), "Found a closing ) with no corresponding openening parenthesis.");
       return;
    }
    // if an error has been set then give up now:
@@ -489,7 +489,7 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    //
    if(m_position == m_end)
    {
-      this->fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_end));
+      this->fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_end));
       return false;
    }
    BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
@@ -924,9 +924,9 @@ bool basic_regex_parser<charT, traits>::parse_match_any()
    static_cast<re_dot*>(
       this->append_state(syntax_element_wild, sizeof(re_dot))
       )->mask = static_cast<unsigned char>(this->flags() & regbase::no_mod_s 
-      ? re_detail::force_not_newline 
+      ? BOOST_REGEX_DETAIL_NS::force_not_newline 
          : this->flags() & regbase::mod_s ?
-            re_detail::force_newline : re_detail::dont_care);
+            BOOST_REGEX_DETAIL_NS::force_newline : BOOST_REGEX_DETAIL_NS::dont_care);
    return true;
 }
 
@@ -963,7 +963,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
    }
    if(0 == this->m_last_state)
    {
-      fail(regex_constants::error_badrepeat, ::boost::re_detail::distance(m_base, m_position), "Nothing to repeat.");
+      fail(regex_constants::error_badrepeat, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_position), "Nothing to repeat.");
       return false;
    }
    if(this->m_last_state->type == syntax_element_endmark)
@@ -1235,7 +1235,7 @@ bool basic_regex_parser<charT, traits>::parse_alt()
    //
    // we need to append a trailing jump: 
    //
-   re_syntax_base* pj = this->append_state(re_detail::syntax_element_jump, sizeof(re_jump));
+   re_syntax_base* pj = this->append_state(BOOST_REGEX_DETAIL_NS::syntax_element_jump, sizeof(re_jump));
    std::ptrdiff_t jump_offset = this->getoffset(pj);
    //
    // now insert the alternative:
@@ -1784,7 +1784,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
       {
       // an octal escape sequence, the first character must be a zero
       // followed by up to 3 octal digits:
-      std::ptrdiff_t len = (std::min)(::boost::re_detail::distance(m_position, m_end), static_cast<std::ptrdiff_t>(4));
+      std::ptrdiff_t len = (std::min)(::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end), static_cast<std::ptrdiff_t>(4));
       const charT* bp = m_position;
       int val = this->m_traits.toi(bp, bp + 1, 8);
       if(val != 0)
@@ -2521,7 +2521,7 @@ option_group_jump:
       // Rewind to start of (? sequence:
       --m_position;
       while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
-      this->fail(regex_constants::error_paren, ::boost::re_detail::distance(m_base, m_end));
+      this->fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_end));
       return false;
    }
    BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
@@ -2862,7 +2862,7 @@ bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_st
 #pragma warning(pop)
 #endif
 
-} // namespace re_detail
+} // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
 
 #ifdef BOOST_MSVC

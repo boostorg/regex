@@ -25,6 +25,7 @@
 #if defined(__BORLANDC__)
 #  include <boost/regex/config/borland.hpp>
 #endif
+#include <boost/version.hpp>
 
 /*****************************************************************************
  *
@@ -68,6 +69,13 @@
 #if defined(_UNICODE) && !defined(UNICODE)
 #define UNICODE
 #endif
+
+
+/*
+* Define a macro for the namespace that details are placed in, this includes the Boost
+* version number to avoid mismatched header and library versions:
+*/
+#define BOOST_REGEX_DETAIL_NS BOOST_JOIN(re_detail_, BOOST_VERSION)
 
 /*
  * Fix for gcc prior to 3.4: std::ctype<wchar_t> doesn't allow
@@ -334,7 +342,7 @@ if(0 == (x))\
 #if defined(__cplusplus) && defined(BOOST_REGEX_HAS_MS_STACK_GUARD)
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 
@@ -387,7 +395,7 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
  ****************************************************************************/
 
 #if defined(__cplusplus) && defined(BOOST_REGEX_NON_RECURSIVE)
-namespace boost{ namespace re_detail{
+namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
 BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block();
 BOOST_REGEX_DECL void BOOST_REGEX_CALL put_mem_block(void*);

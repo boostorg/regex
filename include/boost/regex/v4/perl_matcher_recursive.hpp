@@ -37,7 +37,7 @@
 #endif
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 template <class BidiIterator>
 class backup_subex
@@ -472,7 +472,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
 #pragma warning(disable:4267)
 #endif
    bool greedy = (rep->greedy) && (!(m_match_flags & regex_constants::match_any) || m_independent);   
-   std::size_t count = (std::min)(static_cast<std::size_t>(::boost::re_detail::distance(position, last)), static_cast<std::size_t>(greedy ? rep->max : rep->min));
+   std::size_t count = (std::min)(static_cast<std::size_t>(::boost::BOOST_REGEX_DETAIL_NS::distance(position, last)), static_cast<std::size_t>(greedy ? rep->max : rep->min));
    if(rep->min > count)
    {
       position = last;
@@ -539,7 +539,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
       desired = 
          (std::min)(
             (std::size_t)(greedy ? rep->max : rep->min),
-            (std::size_t)::boost::re_detail::distance(position, last));
+            (std::size_t)::boost::BOOST_REGEX_DETAIL_NS::distance(position, last));
       count = desired;
       ++desired;
       if(icase)
@@ -643,7 +643,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
       BidiIterator end = position;
       // Move end forward by "desired", preferably without using distance or advance if we can
       // as these can be slow for some iterator types.
-      std::size_t len = (desired == (std::numeric_limits<std::size_t>::max)()) ? 0u : ::boost::re_detail::distance(position, last);
+      std::size_t len = (desired == (std::numeric_limits<std::size_t>::max)()) ? 0u : ::boost::BOOST_REGEX_DETAIL_NS::distance(position, last);
       if(desired >= len)
          end = last;
       else
@@ -653,7 +653,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
       {
          ++position;
       }
-      count = (unsigned)::boost::re_detail::distance(origin, position);
+      count = (unsigned)::boost::BOOST_REGEX_DETAIL_NS::distance(origin, position);
    }
    else
    {
@@ -739,7 +739,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       BidiIterator end = position;
       // Move end forward by "desired", preferably without using distance or advance if we can
       // as these can be slow for some iterator types.
-      std::size_t len = (desired == (std::numeric_limits<std::size_t>::max)()) ? 0u : ::boost::re_detail::distance(position, last);
+      std::size_t len = (desired == (std::numeric_limits<std::size_t>::max)()) ? 0u : ::boost::BOOST_REGEX_DETAIL_NS::distance(position, last);
       if(desired >= len)
          end = last;
       else
@@ -749,7 +749,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       {
          ++position;
       }
-      count = (unsigned)::boost::re_detail::distance(origin, position);
+      count = (unsigned)::boost::BOOST_REGEX_DETAIL_NS::distance(origin, position);
    }
    else
    {
@@ -982,7 +982,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
 
 
 
-} // namespace re_detail
+} // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
 #ifdef BOOST_MSVC
 #pragma warning(pop)

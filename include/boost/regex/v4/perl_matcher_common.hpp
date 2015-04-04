@@ -40,7 +40,7 @@
 #endif
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_regex<char_type, traits>& e, match_flag_type f)
@@ -84,7 +84,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    // find the value to use for matching word boundaries:
    m_word_mask = re.get_data().m_word_mask; 
    // find bitmask to use for matching '.':
-   match_any_mask = static_cast<unsigned char>((f & match_not_dot_newline) ? re_detail::test_not_newline : re_detail::test_newline);
+   match_any_mask = static_cast<unsigned char>((f & match_not_dot_newline) ? BOOST_REGEX_DETAIL_NS::test_not_newline : BOOST_REGEX_DETAIL_NS::test_newline);
 }
 
 template <class BidiIterator, class Allocator, class traits>
@@ -101,7 +101,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std
    // Calculate NS^2 first:
    //
    static const std::ptrdiff_t k = 100000;
-   std::ptrdiff_t dist = boost::re_detail::distance(base, last);
+   std::ptrdiff_t dist = boost::BOOST_REGEX_DETAIL_NS::distance(base, last);
    if(dist == 0)
       dist = 1;
    std::ptrdiff_t states = re.size();
@@ -165,7 +165,7 @@ template <class BidiIterator, class Allocator, class traits>
 inline bool perl_matcher<BidiIterator, Allocator, traits>::protected_call(
    protected_proc_type proc)
 {
-   ::boost::re_detail::concrete_protected_call
+   ::boost::BOOST_REGEX_DETAIL_NS::concrete_protected_call
       <perl_matcher<BidiIterator, Allocator, traits> >
       obj(this, proc);
    return obj.execute();
@@ -703,7 +703,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
 #endif
    if( ::boost::is_random_access_iterator<BidiIterator>::value)
    {
-      std::ptrdiff_t maxlen = ::boost::re_detail::distance(backstop, position);
+      std::ptrdiff_t maxlen = ::boost::BOOST_REGEX_DETAIL_NS::distance(backstop, position);
       if(maxlen < static_cast<const re_brace*>(pstate)->index)
          return false;
       std::advance(position, -static_cast<const re_brace*>(pstate)->index);
@@ -966,7 +966,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
    return false;
 }
 
-} // namespace re_detail
+} // namespace BOOST_REGEX_DETAIL_NS
 
 } // namespace boost
 

@@ -31,7 +31,7 @@
 #endif
 
 namespace boost{
-namespace re_detail{
+namespace BOOST_REGEX_DETAIL_NS{
 
 /*** mask_type *******************************************************
 Whenever we have a choice of two alternatives, we use an array of bytes
@@ -281,7 +281,7 @@ iterator BOOST_REGEX_CALL re_is_set_member(iterator next,
                           const re_set_long<char_classT>* set_, 
                           const regex_data<charT, traits_type>& e, bool icase);
 
-} // namespace re_detail
+} // namespace BOOST_REGEX_DETAIL_NS
 
 } // namespace boost
 

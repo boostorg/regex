@@ -218,12 +218,12 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
          p = static_cast<wc_regex_type*>(e->guts)->get_traits().error_string(static_cast< ::boost::regex_constants::error_type>(code));
       else
       {
-         p = re_detail::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
+         p = BOOST_REGEX_DETAIL_NS::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
       }
       std::size_t len = p.size();
       if(len < buf_size)
       {
-         re_detail::copy(p.c_str(), p.c_str() + p.size() + 1, buf);
+         BOOST_REGEX_DETAIL_NS::copy(p.c_str(), p.c_str() + p.size() + 1, buf);
       }
       return len + 1;
    }

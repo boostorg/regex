@@ -154,7 +154,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
       {
          result = std::strlen(names[code]) + 1;
          if(buf_size >= result)
-            re_detail::strcpy_s(buf, buf_size, names[code]);
+            BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, names[code]);
          return result;
       }
       return result;
@@ -180,7 +180,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             if(r < 0)
                return 0; // sprintf failed
             if(std::strlen(localbuf) < buf_size)
-               re_detail::strcpy_s(buf, buf_size, localbuf);
+               BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);
             return std::strlen(localbuf) + 1;
          }
       }
@@ -190,7 +190,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
       (std::sprintf)(localbuf, "%d", 0);
 #endif
       if(std::strlen(localbuf) < buf_size)
-         re_detail::strcpy_s(buf, buf_size, localbuf);
+         BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);
       return std::strlen(localbuf) + 1;
    }
    if(code <= (int)REG_E_UNKNOWN)
@@ -200,12 +200,12 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
          p = static_cast<c_regex_type*>(e->guts)->get_traits().error_string(static_cast< ::boost::regex_constants::error_type>(code));
       else
       {
-         p = re_detail::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
+         p = BOOST_REGEX_DETAIL_NS::get_default_error_string(static_cast< ::boost::regex_constants::error_type>(code));
       }
       std::size_t len = p.size();
       if(len < buf_size)
       {
-         re_detail::strcpy_s(buf, buf_size, p.c_str());
+         BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, p.c_str());
       }
       return len + 1;
    }

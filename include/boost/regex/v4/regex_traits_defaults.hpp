@@ -30,6 +30,8 @@
 #pragma warning(pop)
 #endif
 
+#include <boost/regex/config.hpp>
+
 #ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
 #include <boost/regex/v4/syntax_type.hpp>
 #endif
@@ -43,7 +45,7 @@ namespace std{
 }
 #endif
 
-namespace boost{ namespace re_detail{
+namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
 
 //
@@ -153,7 +155,7 @@ struct character_pointer_range
       // calling std::equal, but there is no other algorithm available:
       // not even a non-standard MS one.  So forward to unchecked_equal
       // in the MS case.
-      return ((p2 - p1) == (r.p2 - r.p1)) && re_detail::equal(p1, p2, r.p1);
+      return ((p2 - p1) == (r.p2 - r.p1)) && BOOST_REGEX_DETAIL_NS::equal(p1, p2, r.p1);
    }
 };
 template <class charT>
@@ -354,7 +356,7 @@ inline const char* get_escape_R_string<char>()
 #endif
 }
 
-} // re_detail
+} // BOOST_REGEX_DETAIL_NS
 } // boost
 
 #ifdef BOOST_MSVC
