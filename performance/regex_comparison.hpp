@@ -26,7 +26,9 @@ extern bool time_greta;
 extern bool time_safe_greta;
 extern bool time_posix;
 extern bool time_pcre;
+extern bool time_pcre_jit;
 extern bool time_xpressive;
+extern bool time_re2;
 extern bool time_std;
 
 extern bool test_matches;
@@ -55,7 +57,9 @@ struct results
    double safe_greta_time;
    double posix_time;
    double pcre_time;
+   double pcre_jit_time;
    double xpressive_time;
+   double re2_time;
    double std_time;
    double factor;
    std::string expression;
@@ -67,7 +71,9 @@ struct results
         safe_greta_time(-1),
         posix_time(-1),
         pcre_time(-1),
+        pcre_jit_time(-1),
         xpressive_time(-1),
+        re2_time(-1),
 		std_time(-1),
         factor((std::numeric_limits<double>::max)()),
         expression(ex), 
@@ -87,8 +93,12 @@ struct results
          factor = posix_time;
       if((pcre_time >= 0) && (pcre_time < factor))
          factor = pcre_time;
+      if((pcre_jit_time >= 0) && (pcre_jit_time < factor))
+         factor = pcre_jit_time;
       if((xpressive_time >= 0) && (xpressive_time < factor))
          factor = xpressive_time;
+      if((re2_time >= 0) && (re2_time < factor))
+         factor = re2_time;
       if((std_time >= 0) && (std_time < factor))
          factor = std_time;
    }
@@ -111,6 +121,12 @@ double time_find_all(const std::string& re, const std::string& text, bool icase)
 }
 namespace pcr {
 // pcre tests:
+double time_match(const std::string& re, const std::string& text, bool icase);
+double time_find_all(const std::string& re, const std::string& text, bool icase);
+
+}
+namespace pcrj {
+// pcre jit tests:
 double time_match(const std::string& re, const std::string& text, bool icase);
 double time_find_all(const std::string& re, const std::string& text, bool icase);
 
@@ -138,8 +154,13 @@ namespace dxpr {
 double time_match(const std::string& re, const std::string& text, bool icase);
 double time_find_all(const std::string& re, const std::string& text, bool icase);
 }
+namespace gre2 {
+// re2 tests:
+double time_match(const std::string& re, const std::string& text, bool icase);
+double time_find_all(const std::string& re, const std::string& text, bool icase);
+}
 namespace stdr {
-// xpressive tests:
+// C11 tests:
 double time_match(const std::string& re, const std::string& text, bool icase);
 double time_find_all(const std::string& re, const std::string& text, bool icase);
 }

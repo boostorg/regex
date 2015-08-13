@@ -33,7 +33,9 @@ bool time_greta = false;
 bool time_safe_greta = false;
 bool time_posix = false;
 bool time_pcre = false;
+bool time_pcre_jit = false;
 bool time_xpressive = false;
+bool time_re2 = false;
 bool time_std = false;
 
 bool test_matches = false;
@@ -55,7 +57,9 @@ double boost_total = 0;
 double locale_boost_total = 0;
 double posix_total = 0;
 double pcre_total = 0;
+double pcre_jit_total = 0;
 double xpressive_total = 0;
+double re2_total = 0;
 double std_total = 0;
 unsigned greta_test_count = 0;
 unsigned safe_greta_test_count = 0;
@@ -63,7 +67,9 @@ unsigned boost_test_count = 0;
 unsigned locale_boost_test_count = 0;
 unsigned posix_test_count = 0;
 unsigned pcre_test_count = 0;
+unsigned pcre_jit_test_count = 0;
 unsigned xpressive_test_count = 0;
+unsigned re2_test_count = 0;
 unsigned std_test_count = 0;
 
 int handle_argument(const std::string& what)
@@ -86,9 +92,17 @@ int handle_argument(const std::string& what)
    else if(what == "-pcre")
       time_pcre = true;
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+   else if(what == "-pcrejit")
+      time_pcre_jit = true;
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
    else if(what == "-xpressive" || what == "-dxpr")
       time_xpressive = true;
+#endif
+#ifdef BOOST_HAS_RE2
+   else if(what == "-re2")
+      time_re2 = true;
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
    else if(what == "-std")
@@ -108,8 +122,14 @@ int handle_argument(const std::string& what)
 #ifdef BOOST_HAS_PCRE
       time_pcre = true;
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+      time_pcre_jit = true;
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
       time_xpressive = true;
+#endif
+#ifdef BOOST_HAS_RE2
+      time_re2 = true;
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
       time_std = true;
@@ -174,8 +194,14 @@ int show_usage()
 #ifdef BOOST_HAS_PCRE
       "      -pcre  Apply tests to PCRE library\n"
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+      "      -pcrejit  Apply tests to PCRE library (int JIT mode)\n"
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
       "      -dxpr  Apply tests to dynamic xpressive library\n"
+#endif
+#ifdef BOOST_HAS_RE2
+      "      -re2  Apply tests to google RE2 library\n"
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
 	  "      -std  Apply tests to std::regex.\n"
@@ -283,9 +309,17 @@ void output_html_results(bool show_description, const std::string& tagname)
       if(time_pcre == true)
          os << "<td><strong>PCRE</strong></td>";
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+      if(time_pcre_jit == true)
+         os << "<td><strong>PCRE JIT</strong></td>";
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
       if(time_xpressive == true)
          os << "<td><strong>Dynamic Xpressive</strong></td>";
+#endif
+#ifdef BOOST_HAS_RE2
+      if(time_re2 == true)
+         os << "<td><strong>RE2</strong></td>";
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
       if(time_std == true)
@@ -362,6 +396,17 @@ void output_html_results(bool show_description, const std::string& tagname)
             }
          }
 #endif
+#if defined(BOOST_HAS_PCRE_JIT)
+         if(time_pcre_jit == true)
+         {
+            print_result(os, first->pcre_jit_time, first->factor);
+            if(first->pcre_jit_time > 0)
+            {
+               pcre_jit_total += first->pcre_jit_time / first->factor;
+               ++pcre_jit_test_count;
+            }
+         }
+#endif
 #if defined(BOOST_HAS_XPRESSIVE)
          if(time_xpressive == true)
          {
@@ -370,6 +415,17 @@ void output_html_results(bool show_description, const std::string& tagname)
             {
                xpressive_total += first->xpressive_time / first->factor;
                ++xpressive_test_count;
+            }
+         }
+#endif
+#if defined(BOOST_HAS_RE2)
+         if(time_re2 == true)
+         {
+            print_result(os, first->re2_time, first->factor);
+            if(first->re2_time > 0)
+            {
+               re2_total += first->re2_time / first->factor;
+               ++re2_test_count;
             }
          }
 #endif
@@ -450,10 +506,22 @@ std::string get_averages_table()
       os << "<td><strong>PCRE</strong></td>";
    }
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+   if(time_pcre_jit == true)
+   {
+      os << "<td><strong>PCRE JIT</strong></td>";
+   }
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
    if(time_xpressive == true)
    {
       os << "<td><strong>Dynamic Xpressive</strong></td>";
+   }
+#endif
+#ifdef BOOST_HAS_RE2
+   if(time_re2 == true)
+   {
+      os << "<td><strong>google RE2</strong></td>";
    }
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
@@ -474,23 +542,29 @@ std::string get_averages_table()
    if(time_safe_greta == true)
       os << "<td>" << (safe_greta_total / safe_greta_test_count) << "</td>\n";
 #endif
-#if defined(BOOST_HAS_POSIX)
-   if(time_boost == true)
-      os << "<td>" << (boost_total / boost_test_count) << "</td>\n";
-#endif
    if(time_boost == true)
       os << "<td>" << (boost_total / boost_test_count) << "</td>\n";
    if(time_localised_boost == true)
       os << "<td>" << (locale_boost_total / locale_boost_test_count) << "</td>\n";
+#if defined(BOOST_HAS_POSIX)
    if(time_posix == true)
       os << "<td>" << (posix_total / posix_test_count) << "</td>\n";
+#endif
 #if defined(BOOST_HAS_PCRE)
    if(time_pcre == true)
       os << "<td>" << (pcre_total / pcre_test_count) << "</td>\n";
 #endif
+#if defined(BOOST_HAS_PCRE_JIT)
+   if(time_pcre_jit == true)
+      os << "<td>" << (pcre_jit_total / pcre_jit_test_count) << "</td>\n";
+#endif
 #if defined(BOOST_HAS_XPRESSIVE)
    if(time_xpressive == true)
       os << "<td>" << (xpressive_total / xpressive_test_count) << "</td>\n";
+#endif
+#if defined(BOOST_HAS_RE2)
+   if(time_re2 == true)
+      os << "<td>" << (re2_total / re2_test_count) << "</td>\n";
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
    if(time_std == true)
