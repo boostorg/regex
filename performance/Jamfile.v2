@@ -3,12 +3,14 @@
 # (See accompanying file LICENSE_1_0.txt or copy at 
 # http://www.boost.org/LICENSE_1_0.txt.
 
-SOURCES = command_line main time_boost time_greta time_localised_boost time_pcre time_dynamic_xpressive time_posix time_safe_greta ;
+SOURCES = command_line main time_boost time_greta time_localised_boost time_pcre time_pcre_jit time_dynamic_xpressive time_posix time_safe_greta time_re2 ;
 
 local HS_REGEX_PATH = [ modules.peek : HS_REGEX_PATH ] ;
 local USE_POSIX = [ modules.peek : USE_POSIX ] ;
 local PCRE_PATH = [ modules.peek : PCRE_PATH ] ;
 local USE_PCRE = [ modules.peek : USE_PCRE ] ;
+local GRETA_PATH = [ modules.peek : GRETA_PATH ] ;
+local USE_RE2 = [ modules.peek : USE_RE2 ] ;
 
 if $(HS_REGEX_PATH)
 {
@@ -20,17 +22,32 @@ else if $(USE_POSIX)
    POSIX_OPTS = <define>BOOST_HAS_POSIX=1 ;
 }
 
-lib pcre : : <name>pcre ;
+lib pcre : : <name>pcre <search>/usr/local/lib ;
 
 if $(PCRE_PATH)
 {
+# currently pcre have more source files
    PCRE_SOURCES = $(PCRE_PATH)/chartables.c $(PCRE_PATH)/get.c $(PCRE_PATH)/pcre.c $(PCRE_PATH)/study.c ;
    PCRE_OPTS = <define>BOOST_HAS_PCRE=1 <include>$(PCRE_PATH) ;
 }
 else if $(USE_PCRE)
 {
-   PCRE_OPTS = <define>BOOST_HAS_PCRE=1 ;
+   PCRE_OPTS = <define>BOOST_HAS_PCRE=1 <define>BOOST_HAS_PCRE_JIT=1 ;
    PCRE_SOURCES = pcre ;
+}
+
+if $(GRETA_PATH)
+{
+   GRETA_SOURCES = $(GRETA_PATH)/regexpr2.cpp $(GRETA_PATH)/syntax2.cpp ;
+   GRETA_OPTS = <define>BOOST_HAS_GRETA=1 <include>$(GRETA_PATH) ;
+}
+
+lib re2 : : <name>re2 ;
+
+if $(USE_RE2)
+{
+   RE2_OPTS = <define>BOOST_HAS_RE2=1 ;
+   RE2_SOURCES = re2 ;
 }
 
 
@@ -38,13 +55,18 @@ exe regex_comparison :
     $(SOURCES).cpp
     $(HS_SOURCES)
     $(PCRE_SOURCES)
+    $(GRETA_SOURCES)
+    $(RE2_SOURCES)
     ../build//boost_regex
     ../../test/build//boost_prg_exec_monitor/<link>static
     : 
     <define>BOOST_REGEX_NO_LIB=1
     <define>BOOST_REGEX_STATIC_LINK=1
+    <define>BOOST_HAS_XPRESSIVE=1
     $(POSIX_OPTS)
     $(PCRE_OPTS)
+    $(GRETA_OPTS)
+    $(RE2_OPTS)
     ;
 
 
