@@ -100,7 +100,13 @@
 #if defined(_MSC_VER) && !defined(_MSC_EXTENSIONS)
 #  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
 #endif
-/*
+ /*
+ * Oracle compiler in C++11 mode doesn't like external templates for some reason:
+ */
+#ifdef __SUNPRO_CC
+#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
+#endif
+ /*
  * Shared regex lib will crash without this, frankly it looks a lot like a gcc bug:
  */
 #if defined(__MINGW32__)
