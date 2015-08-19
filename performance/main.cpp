@@ -66,12 +66,28 @@ void test_match(const std::string& re, const std::string& text, const std::strin
       std::cout << "\tPCRE regex: " << time << "s\n";
    }
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+   if(time_pcre_jit == true)
+   {
+      time = pcrj::time_match(re, text, icase);
+      r.pcre_jit_time = time;
+      std::cout << "\tPCRE JIT regex: " << time << "s\n";
+   }
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
    if(time_xpressive == true)
    {
       time = dxpr::time_match(re, text, icase);
       r.xpressive_time = time;
       std::cout << "\txpressive regex: " << time << "s\n";
+   }
+#endif
+#ifdef BOOST_HAS_RE2
+   if(time_re2 == true)
+   {
+      time = gre2::time_match(re, text, icase);
+      r.re2_time = time;
+      std::cout << "\tRE2 regex: " << time << "s\n";
    }
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
@@ -135,12 +151,28 @@ void test_find_all(const std::string& re, const std::string& text, const std::st
       std::cout << "\tPCRE regex: " << time << "s\n";
    }
 #endif
+#ifdef BOOST_HAS_PCRE_JIT
+   if(time_pcre_jit == true)
+   {
+      time = pcrj::time_find_all(re, text, icase);
+      r.pcre_jit_time = time;
+      std::cout << "\tPCRE JIT regex: " << time << "s\n";
+   }
+#endif
 #ifdef BOOST_HAS_XPRESSIVE
    if(time_xpressive == true)
    {
       time = dxpr::time_find_all(re, text, icase);
       r.xpressive_time = time;
       std::cout << "\txpressive regex: " << time << "s\n";
+   }
+#endif
+#ifdef BOOST_HAS_RE2
+   if(time_re2 == true)
+   {
+      time = gre2::time_find_all(re, text, icase);
+      r.re2_time = time;
+      std::cout << "\tRE2 regex: " << time << "s\n";
    }
 #endif
 #ifndef BOOST_NO_CXX11_HDR_REGEX
@@ -226,10 +258,13 @@ int cpp_main(int argc, char * argv[])
       const char* boost_include_expression = "^[ \t]*#[ \t]*include[ \t]+(\"boost/[^\"]+\"|<boost/[^>]+>)";
 
 
+      bool time_posix_orig = time_posix;
+      time_posix = false;
       test_find_all(class_expression, file_contents);
       test_find_all(highlight_expression, file_contents);
       test_find_all(include_expression, file_contents);
       test_find_all(boost_include_expression, file_contents);
+      time_posix = time_posix_orig;
    }
    output_html_results(false, "%code_search%");
 
@@ -237,11 +272,15 @@ int cpp_main(int argc, char * argv[])
    {
       load_file(file_contents, "../../../libs/libraries.htm");
       test_find_all("beman|john|dave", file_contents, true);
-      test_find_all("<p>.*?</p>", file_contents, true);
       test_find_all("<a[^>]+href=(\"[^\"]*\"|[^[:space:]]+)[^>]*>", file_contents, true);
-      test_find_all("<h[12345678][^>]*>.*?</h[12345678]>", file_contents, true);
       test_find_all("<img[^>]+src=(\"[^\"]*\"|[^[:space:]]+)[^>]*>", file_contents, true);
+      bool time_posix_orig = time_posix;
+      time_posix = false;
+      // POSIX-Extended unspport Non greedy repeats 
+      test_find_all("<p>.*?</p>", file_contents, true); 
+      test_find_all("<h[12345678][^>]*>.*?</h[12345678]>", file_contents, true);
       test_find_all("<font[^>]+face=(\"[^\"]*\"|[^[:space:]]+)[^>]*>.*?</font>", file_contents, true);
+      time_posix = time_posix_orig;
    }
    output_html_results(false, "%html_search%");
 
@@ -252,7 +291,10 @@ int cpp_main(int argc, char * argv[])
       test_find_all("Twain", file_contents);
       test_find_all("Huck[[:alpha:]]+", file_contents);
       test_find_all("[[:alpha:]]+ing", file_contents);
+      bool time_posix_orig = time_posix;
+      time_posix = false;
       test_find_all("^[^\n]*?Twain", file_contents);
+      time_posix = time_posix_orig;
       test_find_all("Tom|Sawyer|Huckleberry|Finn", file_contents);
       test_find_all("(Tom|Sawyer|Huckleberry|Finn).{0,30}river|river.{0,30}(Tom|Sawyer|Huckleberry|Finn)", file_contents);
    }
@@ -260,16 +302,17 @@ int cpp_main(int argc, char * argv[])
 
    if(test_long_twain)
    {
-      load_file(file_contents, "mtent13.txt");
+      load_file(file_contents, "mtent12.txt");
 
       test_find_all("Twain", file_contents);
       test_find_all("Huck[[:alpha:]]+", file_contents);
       test_find_all("[[:alpha:]]+ing", file_contents);
-      test_find_all("^[^\n]*?Twain", file_contents);
-      test_find_all("Tom|Sawyer|Huckleberry|Finn", file_contents);
+      bool time_posix_orig = time_posix;
       time_posix = false;
+      test_find_all("^[^\n]*?Twain", file_contents); // POSIX-Extended: the escape character is not "special" inside a character class declaration
+      time_posix = time_posix_orig;
+      test_find_all("Tom|Sawyer|Huckleberry|Finn", file_contents);
       test_find_all("(Tom|Sawyer|Huckleberry|Finn).{0,30}river|river.{0,30}(Tom|Sawyer|Huckleberry|Finn)", file_contents);
-      time_posix = true;
    }   
    output_html_results(false, "%long_twain_search%");
 
