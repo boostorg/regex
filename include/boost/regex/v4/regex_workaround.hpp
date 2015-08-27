@@ -46,12 +46,6 @@
 #   include <locale>
 #endif
 
-#if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{
-   using ::sprintf; using ::strcpy; using ::strcat; using ::strlen;
-}
-#endif
-
 namespace boost{ namespace re_detail{
 #ifdef BOOST_NO_STD_DISTANCE
 template <class T>
@@ -83,6 +77,7 @@ namespace std{
    using ::abs;
    using ::memset;
    using ::memcpy;
+   using ::strlen;
 }
 
 #endif
@@ -196,9 +191,10 @@ namespace boost{ namespace re_detail{
       const char *strSource 
    )
    {
-      if(std::strlen(strSource)+1 > sizeInBytes)
+      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
+      if(lenSourceWithNull > sizeInBytes)
          return 1;
-      std::strcpy(strDestination, strSource);
+      std::memcpy(strDestination, strSource, lenSourceWithNull);
       return 0;
    }
    inline std::size_t strcat_s(
@@ -207,9 +203,11 @@ namespace boost{ namespace re_detail{
       const char *strSource 
    )
    {
-      if(std::strlen(strSource) + std::strlen(strDestination) + 1 > sizeInBytes)
+      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
+      std::size_t lenDestination = std::strlen(strDestination);
+      if(lenSourceWithNull + lenDestination > sizeInBytes)
          return 1;
-      std::strcat(strDestination, strSource);
+      std::memcpy(strDestination + lenDestination, strSource,lenSourceWithNull);
       return 0;
    }
 
