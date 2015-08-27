@@ -191,10 +191,10 @@ namespace boost{ namespace re_detail{
       const char *strSource 
    )
    {
-      std::size_t lenSource = std::strlen(strSource) + 1;
-      if(lenSource > sizeInBytes)
+      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
+      if(lenSourceWithNull > sizeInBytes)
          return 1;
-      std::memcpy(strDestination, strSource, lenSource);
+      std::memcpy(strDestination, strSource, lenSourceWithNull);
       return 0;
    }
    inline std::size_t strcat_s(
@@ -203,11 +203,11 @@ namespace boost{ namespace re_detail{
       const char *strSource 
    )
    {
-      std::size_t lenSource = std::strlen(strSource) + 1;
+      std::size_t lenSourceWithNull = std::strlen(strSource) + 1;
       std::size_t lenDestination = std::strlen(strDestination);
-      if(lenSource + lenDestination > sizeInBytes)
+      if(lenSourceWithNull + lenDestination > sizeInBytes)
          return 1;
-      std::memcpy(strDestination + lenDestination, strSource, lenSource);
+      std::memcpy(strDestination + lenDestination, strSource,lenSourceWithNull);
       return 0;
    }
 
