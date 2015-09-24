@@ -53,7 +53,7 @@ namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 //
 template <class charT>
 inline bool is_extended(charT c)
-{ return c > 256; }
+{ return c >= 256u; }
 inline bool is_extended(char)
 { return false; }
 
