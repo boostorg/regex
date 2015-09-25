@@ -78,23 +78,20 @@ typedef boost::basic_regex<wchar_t, c_regex_traits<wchar_t> > wc_regex_type;
 
 BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wchar_t* ptr, int f)
 {
-   if(expression->re_magic != wmagic_value)
-   {
-      expression->guts = 0;
 #ifndef BOOST_NO_EXCEPTIONS
-      try{
+   try{
 #endif
       expression->guts = new wc_regex_type();
 #ifndef BOOST_NO_EXCEPTIONS
-      } catch(...)
-      {
-         return REG_ESPACE;
-      }
-#else
-      if(0 == expression->guts)
-         return REG_E_MEMORY;
-#endif
+   } catch(...)
+   {
+      expression->guts = 0;
+      return REG_ESPACE;
    }
+#else
+   if(0 == expression->guts)
+      return REG_E_MEMORY;
+#endif
    // set default flags:
    boost::uint_fast32_t flags = (f & REG_PERLEX) ? 0 : ((f & REG_EXTENDED) ? wregex::extended : wregex::basic);
    expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : match_default;
