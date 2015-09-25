@@ -68,6 +68,8 @@ public:
    bool parse_inner_set(basic_char_set<charT, traits>& char_set);
    bool parse_QE();
    bool parse_perl_extension();
+   bool parse_perl_verb();
+   bool match_verb(const char*);
    bool add_emacs_code(bool negate);
    bool unwind_alts(std::ptrdiff_t last_paren_start);
    digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
@@ -421,6 +423,8 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    {
       if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
          return parse_perl_extension();
+      if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_star)
+         return parse_perl_verb();
    }
    //
    // update our mark count, and append the required state:
@@ -2650,6 +2654,70 @@ option_group_jump:
          this->m_backrefs |= 1u << (markid - 1);
    }
    return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::match_verb(const char* verb)
+{
+   while(*verb)
+   {
+      if(static_cast<charT>(*verb) != *m_position)
+      {
+         while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+         fail(regex_constants::error_perl_extension, m_position - m_base);
+         return false;
+      }
+      if(++m_position == m_end)
+      {
+         --m_position;
+         while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+         fail(regex_constants::error_perl_extension, m_position - m_base);
+         return false;
+      }
+      ++verb;
+   }
+   return true;
+}
+
+template <class charT, class traits>
+bool basic_regex_parser<charT, traits>::parse_perl_verb()
+{
+   if(++m_position == m_end)
+   {
+      // Rewind to start of (* sequence:
+      --m_position;
+      while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+      fail(regex_constants::error_perl_extension, m_position - m_base);
+      return false;
+   }
+   switch(*m_position)
+   {
+   case 'F':
+      if(++m_position == m_end)
+      {
+         // Rewind to start of (* sequence:
+         --m_position;
+         while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+         fail(regex_constants::error_perl_extension, m_position - m_base);
+         return false;
+      }
+      if((this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark) || match_verb("AIL"))
+      {
+         if((m_position == m_end) || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark))
+         {
+            // Rewind to start of (* sequence:
+            --m_position;
+            while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+            fail(regex_constants::error_perl_extension, m_position - m_base);
+            return false;
+         }
+         ++m_position;
+         this->append_state(syntax_element_fail);
+         return true;
+      }
+      return false;
+   }
+   return false;
 }
 
 template <class charT, class traits>

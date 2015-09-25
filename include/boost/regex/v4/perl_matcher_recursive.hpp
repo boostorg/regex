@@ -60,7 +60,7 @@ public:
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[30] = 
+   static matcher_proc_type const s_match_vtable[31] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -96,6 +96,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref,
       &perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case,
       &perl_matcher<BidiIterator, Allocator, traits>::match_recursion,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_fail,
    };
 
    if(state_count > max_state_count)

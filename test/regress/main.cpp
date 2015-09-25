@@ -82,6 +82,7 @@ void run_tests()
    RUN_TESTS(test_pocessive_repeats);
    RUN_TESTS(test_mark_resets);
    RUN_TESTS(test_recursion);
+   RUN_TESTS(test_verbs);
 }
 
 int cpp_main(int /*argc*/, char * /*argv*/[])

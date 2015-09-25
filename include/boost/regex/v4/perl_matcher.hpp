@@ -443,6 +443,7 @@ private:
    bool backtrack_till_match(std::size_t count);
 #endif
    bool match_recursion();
+   bool match_fail();
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();

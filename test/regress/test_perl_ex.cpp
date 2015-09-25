@@ -932,3 +932,11 @@ void test_recursion()
    TEST_REGEX_SEARCH("(?:(?<A>a+)|(?<A>b+)|c+)\\.\\k<A>", perl, "cccc.cccc", match_default, make_array(-2, -2));
 }
 
+void test_verbs()
+{
+   using namespace boost::regex_constants;
+
+   TEST_INVALID_REGEX("a+(*", perl);
+   TEST_INVALID_REGEX("a+(*FX)", perl);
+   TEST_REGEX_SEARCH("a+(*FAIL)b", perl, "aaaab", match_default, make_array(-2, -2));
+}

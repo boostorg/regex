@@ -793,6 +793,13 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case()
    return true;
 }
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_fail()
+{
+   // Just force a backtrack:
+   return false;
+}
+
 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()

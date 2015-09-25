@@ -120,7 +120,9 @@ enum syntax_element_type
    syntax_element_assert_backref = syntax_element_backstep + 1,
    syntax_element_toggle_case = syntax_element_assert_backref + 1,
    // a recursive expression:
-   syntax_element_recurse = syntax_element_toggle_case + 1
+   syntax_element_recurse = syntax_element_toggle_case + 1,
+   // Verbs:
+   syntax_element_fail = syntax_element_recurse + 1,
 };
 
 #ifdef BOOST_REGEX_DEBUG
