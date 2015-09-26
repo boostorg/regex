@@ -123,6 +123,7 @@ enum syntax_element_type
    syntax_element_recurse = syntax_element_toggle_case + 1,
    // Verbs:
    syntax_element_fail = syntax_element_recurse + 1,
+   syntax_element_accept = syntax_element_fail + 1,
 };
 
 #ifdef BOOST_REGEX_DEBUG

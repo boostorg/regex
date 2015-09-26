@@ -800,6 +800,20 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_fail()
    return false;
 }
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
+{
+   // Almost the same as match_match, but we need to close any half-open capturing groups:
+   for(unsigned i = 1; i < m_result.size(); ++i)
+   {
+      if((m_result[i].matched == false) && (m_result[i].first != last))
+      {
+         m_result.set_second(position, i);
+      }
+   }
+   return match_match();
+}
+
 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()

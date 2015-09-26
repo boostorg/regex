@@ -939,4 +939,6 @@ void test_verbs()
    TEST_INVALID_REGEX("a+(*", perl);
    TEST_INVALID_REGEX("a+(*FX)", perl);
    TEST_REGEX_SEARCH("a+(*FAIL)b", perl, "aaaab", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "AB", match_default, make_array(0, 2, 0, 2, 1, 2, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "ACDE", match_default, make_array(0, 4, 0, 3, 1, 2, 3, 4, -2, -2));
 }

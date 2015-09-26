@@ -444,6 +444,7 @@ private:
 #endif
    bool match_recursion();
    bool match_fail();
+   bool match_accept();
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();
