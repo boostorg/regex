@@ -445,6 +445,8 @@ private:
    bool match_recursion();
    bool match_fail();
    bool match_accept();
+   bool match_commit();
+   bool skip_until_paren(int index, bool match = true);
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();
@@ -527,6 +529,7 @@ private:
    bool unwind_non_greedy_repeat(bool);
    bool unwind_recursion(bool);
    bool unwind_recursion_pop(bool);
+   bool unwind_commit(bool);
    void destroy_single_repeat();
    void push_matched_paren(int index, const sub_match<BidiIterator>& sub);
    void push_recursion_stopper();

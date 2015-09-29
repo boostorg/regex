@@ -141,7 +141,7 @@ struct saved_recursion : public saved_state
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[32] = 
+   static matcher_proc_type const s_match_vtable[33] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -179,6 +179,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_recursion,
       &perl_matcher<BidiIterator, Allocator, traits>::match_fail,
       &perl_matcher<BidiIterator, Allocator, traits>::match_accept,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_commit,
    };
 
    push_recursion_stopper();
@@ -1006,6 +1007,116 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
    return true;
 }
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
+{
+   // Ideally we would just junk all the states that are on the stack,
+   // however we might not unwind correctly in that case, so for now,
+   // just mark that we don't backtrack into whatever is left (or rather
+   // we'll unwind it unconditionally without pausing to try other matches).
+   saved_state* pmp = m_backup_state;
+   --pmp;
+   if(pmp < m_stack_base)
+   {
+      extend_stack();
+      pmp = m_backup_state;
+      --pmp;
+   }
+   (void) new (pmp)saved_state(16);
+   m_backup_state = pmp;
+   pstate = pstate->next.p;
+   // If we don't find a match we don't want to search further either:
+   restart = last;
+   return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, bool match)
+{
+   while(pstate)
+   {
+      if(pstate->type == syntax_element_endmark)
+      {
+         if(static_cast<const re_brace*>(pstate)->index == index)
+         {
+            if(match)
+               return this->match_endmark();
+            pstate = pstate->next.p;
+            return true;
+         }
+         else
+         {
+            // Unenclosed closing ), occurs when (*ACCEPT) is inside some other 
+            // parenthesis which may or may not have other side effects associated with it.
+            match_endmark();
+            if(!pstate)
+            {
+               unwind(true);
+            }
+         }
+         continue;
+      }
+      else if(pstate->type == syntax_element_match)
+         return true;
+      else if(pstate->type == syntax_element_startmark)
+      {
+         int index = static_cast<const re_brace*>(pstate)->index;
+         pstate = pstate->next.p;
+         skip_until_paren(index, false);
+         continue;
+      }
+      pstate = pstate->next.p;
+   }
+   return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
+{
+#if 0
+   // Almost the same as match_match, but we need to close any half-open capturing groups:
+   for(unsigned i = 1; i < m_result.size(); ++i)
+   {
+      if((m_result[i].matched == false) && (m_result[i].first != last))
+      {
+         m_result.set_second(position, i);
+      }
+   }
+   if(!recursion_stack.empty())
+   {
+      // Skip forward to the end of this recursion:
+      while(pstate)
+      {
+         if(pstate->type == syntax_element_endmark)
+            if(static_cast<const re_brace*>(pstate)->index == recursion_stack.back().idx)
+               break;
+         pstate = pstate->next.p;
+      }
+      return true;
+      /*
+      int index = recursion_stack.back().idx;
+      pstate = recursion_stack.back().preturn_address;
+      *m_presult = recursion_stack.back().results;
+      push_recursion(index, recursion_stack.back().preturn_address, &recursion_stack.back().results);
+      recursion_stack.pop_back();
+      push_repeater_count(-(2 + index), &next_count);
+      return true;
+      */
+   }
+   else
+      return match_match();
+#endif
+   if(!recursion_stack.empty())
+   {
+      skip_until_paren(recursion_stack.back().idx);
+   }
+   else
+   {
+      skip_until_paren(INT_MAX);
+   }
+   return true;
+}
+
 /****************************************************************************
 
 Unwind and associated proceedures follow, these perform what normal stack
@@ -1034,6 +1145,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind(bool have_match)
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_non_greedy_repeat,
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion,
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_pop,
+      &perl_matcher<BidiIterator, Allocator, traits>::unwind_commit,
    };
 
    m_recursive_result = have_match;
@@ -1583,6 +1695,15 @@ void perl_matcher<BidiIterator, Allocator, traits>::push_recursion_pop()
    (void) new (pmp)saved_state(15);
    m_backup_state = pmp;
 }
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::unwind_commit(bool b)
+{
+   boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(m_backup_state++);
+   while(unwind(b)) {}
+   return false;
+}
+
 /*
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind_parenthesis_pop(bool r)

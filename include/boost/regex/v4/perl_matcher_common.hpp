@@ -85,6 +85,9 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    m_word_mask = re.get_data().m_word_mask; 
    // find bitmask to use for matching '.':
    match_any_mask = static_cast<unsigned char>((f & match_not_dot_newline) ? BOOST_REGEX_DETAIL_NS::test_not_newline : BOOST_REGEX_DETAIL_NS::test_newline);
+   // Disable match_any if requested in the state machine:
+   if(e.get_data().m_disable_match_any)
+      m_match_flags &= ~regex_constants::match_any;
 }
 
 template <class BidiIterator, class Allocator, class traits>
@@ -799,21 +802,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_fail()
    // Just force a backtrack:
    return false;
 }
-
-template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
-{
-   // Almost the same as match_match, but we need to close any half-open capturing groups:
-   for(unsigned i = 1; i < m_result.size(); ++i)
-   {
-      if((m_result[i].matched == false) && (m_result[i].first != last))
-      {
-         m_result.set_second(position, i);
-      }
-   }
-   return match_match();
-}
-
 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()

@@ -941,4 +941,144 @@ void test_verbs()
    TEST_REGEX_SEARCH("a+(*FAIL)b", perl, "aaaab", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "AB", match_default, make_array(0, 2, 0, 2, 1, 2, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "ACDE", match_default, make_array(0, 4, 0, 3, 1, 2, 3, 4, -2, -2));
+
+   TEST_REGEX_SEARCH("^a+(*FAIL)", perl, "aaaaaa", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a+b?c+(*FAIL)", perl, "aaabccc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a+b?(*COMMIT)c+(*FAIL)", perl, "aaabccc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "AB", match_default, make_array(0, 2, 0, 2, 1, 2, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "ABX", match_default, make_array(0, 2, 0, 2, 1, 2, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "AADE", match_default, make_array(0, 4, 0, 3, 1, 2, 3, 4, -2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "ACDE", match_default, make_array(0, 4, 0, 3, 1, 2, 3, 4, -2, -2));
+   TEST_REGEX_SEARCH("(A(A|B(*ACCEPT)|C)D)(E)", perl, "AD", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "AAD", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "ACD", match_default, make_array(0, 3, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "BAD", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "BCD", match_default, make_array(0, 3, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "BAX", match_default, make_array(0, 2, 1, 2, -2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "ACX", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?:(?1)|B)(A(*ACCEPT)XX|C)D", perl, "ABC", match_default, make_array(-2, -2));
+       
+   TEST_REGEX_SEARCH("^(?=a(*ACCEPT)b)", perl, "ac", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("A(*COMMIT)(B|D)", perl, "ACABX", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(*COMMIT)(A|P)(B|P)(C|P)", perl, "ABCDEFG", match_default, make_array(0, 3, 0, 1, 1, 2, 2, 3, -2, -2));
+   TEST_REGEX_SEARCH("(*COMMIT)(A|P)(B|P)(C|P)", perl, "DEFGABC", match_default, make_array(-2, -2));
+
+   TEST_REGEX_SEARCH("(\\w+)(?>b(*COMMIT))\\w{2}", perl, "abbb", match_default, make_array(0, 4, 0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(\\w+)b(*COMMIT)\\w{2}", perl, "abbb", match_default, make_array(-2, -2));
+
+//
+    
+
+#if 0
+/a+b?(*PRUNE)c+(*FAIL)/
+    aaabccc
+
+/a+b?(*SKIP)c+(*FAIL)/
+    aaabcccaaabccc
+
+/^(?:aaa(*THEN)\w{6}|bbb(*THEN)\w{5}|ccc(*THEN)\w{4}|\w{3})/
+    aaaxxxxxx
+    aaa++++++ 
+    bbbxxxxx
+    bbb+++++ 
+    cccxxxx
+    ccc++++ 
+    dddddddd   
+
+/^(aaa(*THEN)\w{6}|bbb(*THEN)\w{5}|ccc(*THEN)\w{4}|\w{3})/
+    aaaxxxxxx
+    aaa++++++ 
+    bbbxxxxx
+    bbb+++++ 
+    cccxxxx
+    ccc++++ 
+    dddddddd   
+
+/a+b?(*THEN)c+(*FAIL)/
+    aaabccc
+
+/^(?=a(*SKIP)b|ac)/
+    ** Failers
+    ac
+    
+/^(?=a(*PRUNE)b)/
+    ab  
+    ** Failers 
+    ac
+
+~~~~~
+
+# Check the use of names for failure
+
+/^(A(*PRUNE:A)B|C(*PRUNE:B)D)/mark
+    ** Failers
+    AC
+    CB    
+    
+/(*MARK:A)(*SKIP:B)(C|X)/mark
+    C
+    D
+     
+/^(A(*THEN:A)B|C(*THEN:B)D)/mark
+    ** Failers
+    CB    
+
+/^(?:A(*THEN:A)B|C(*THEN:B)D)/mark
+    CB    
+    
+/^(?>A(*THEN:A)B|C(*THEN:B)D)/mark
+    CB    
+    
+# This should succeed, as the skip causes bump to offset 1 (the mark). Note
+# that we have to have something complicated such as (B|Z) at the end because,
+# for Perl, a simple character somehow causes an unwanted optimization to mess
+# with the handling of backtracking verbs.
+
+/A(*MARK:A)A+(*SKIP:A)(B|Z) | AC/x,mark
+    AAAC
+    
+# Test skipping over a non-matching mark.
+
+/A(*MARK:A)A+(*MARK:B)(*SKIP:A)(B|Z) | AC/x,mark
+    AAAC
+    
+# Check shorthand for MARK.
+
+/A(*:A)A+(*SKIP:A)(B|Z) | AC/x,mark
+    AAAC
+
+/(*:A)A+(*SKIP:A)(B|Z)/mark
+    AAAC
+
+# This should succeed, as a non-existent skip name disables the skip.
+
+/A(*MARK:A)A+(*SKIP:B)(B|Z) | AC/x,mark
+    AAAC
+
+/A(*MARK:A)A+(*SKIP:B)(B|Z) | AC(*:B)/x,mark
+    AAAC
+
+# COMMIT should override THEN.
+
+/(?>(*COMMIT)(?>yes|no)(*THEN)(*F))?/
+  yes
+
+/(?>(*COMMIT)(yes|no)(*THEN)(*F))?/
+  yes
+
+/b?(*SKIP)c/
+    bc
+    abc
+   
+/(*SKIP)bc/
+    a
+
+/(*SKIP)b/
+    a 
+
+#endif
+
+
 }

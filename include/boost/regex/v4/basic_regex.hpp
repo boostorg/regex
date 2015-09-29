@@ -164,9 +164,9 @@ struct regex_data : public named_subexpressions
 
    regex_data(const ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits> >& t) 
-      : m_ptraits(t), m_expression(0), m_expression_len(0) {}
+      : m_ptraits(t), m_expression(0), m_expression_len(0), m_disable_match_any(false) {}
    regex_data() 
-      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_expression(0), m_expression_len(0) {}
+      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_expression(0), m_expression_len(0), m_disable_match_any(false) {}
 
    ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits>
@@ -186,6 +186,7 @@ struct regex_data : public named_subexpressions
       std::pair<
       std::size_t, std::size_t> > m_subs;                 // Position of sub-expressions within the *string*.
    bool                        m_has_recursions;          // whether we have recursive expressions;
+   bool                        m_disable_match_any;       // when set we need to disable the match_any flag as it causes different/buggy behaviour.
 };
 //
 // class basic_regex_implementation

@@ -124,6 +124,7 @@ enum syntax_element_type
    // Verbs:
    syntax_element_fail = syntax_element_recurse + 1,
    syntax_element_accept = syntax_element_fail + 1,
+   syntax_element_commit = syntax_element_accept + 1,
 };
 
 #ifdef BOOST_REGEX_DEBUG

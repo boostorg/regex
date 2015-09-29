@@ -49,6 +49,7 @@ int error_count = 0;
 
 void run_tests()
 {
+#if 0
    RUN_TESTS(basic_tests);
    RUN_TESTS(test_simple_repeats);
    RUN_TESTS(test_alt);
@@ -82,6 +83,7 @@ void run_tests()
    RUN_TESTS(test_pocessive_repeats);
    RUN_TESTS(test_mark_resets);
    RUN_TESTS(test_recursion);
+#endif
    RUN_TESTS(test_verbs);
 }
 
@@ -160,6 +162,7 @@ const int* make_array(int first, ...)
 #else
    static int data[200];
 #endif
+   std::fill_n(data, 200, -2);
    va_list ap;
    va_start(ap, first);
    //

@@ -1149,6 +1149,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          set_all_masks(l_map, mask);
          return;
       }
+      case syntax_element_accept:
       case syntax_element_match:
       {
          // must be null, any character can match:
@@ -1335,6 +1336,11 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
          state = state->next.p;
          break;
 
+      case syntax_element_commit:
+         set_all_masks(l_map, mask);
+         // Continue scanning so we can figure out whether we can be null:
+         state = state->next.p;
+         break;
       case syntax_element_startmark:
          // need to handle independent subs as a special case:
          if(static_cast<re_brace*>(state)->index == -3)
