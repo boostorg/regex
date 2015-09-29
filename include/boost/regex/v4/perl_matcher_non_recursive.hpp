@@ -1073,39 +1073,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
 {
-#if 0
-   // Almost the same as match_match, but we need to close any half-open capturing groups:
-   for(unsigned i = 1; i < m_result.size(); ++i)
-   {
-      if((m_result[i].matched == false) && (m_result[i].first != last))
-      {
-         m_result.set_second(position, i);
-      }
-   }
-   if(!recursion_stack.empty())
-   {
-      // Skip forward to the end of this recursion:
-      while(pstate)
-      {
-         if(pstate->type == syntax_element_endmark)
-            if(static_cast<const re_brace*>(pstate)->index == recursion_stack.back().idx)
-               break;
-         pstate = pstate->next.p;
-      }
-      return true;
-      /*
-      int index = recursion_stack.back().idx;
-      pstate = recursion_stack.back().preturn_address;
-      *m_presult = recursion_stack.back().results;
-      push_recursion(index, recursion_stack.back().preturn_address, &recursion_stack.back().results);
-      recursion_stack.pop_back();
-      push_repeater_count(-(2 + index), &next_count);
-      return true;
-      */
-   }
-   else
-      return match_match();
-#endif
    if(!recursion_stack.empty())
    {
       skip_until_paren(recursion_stack.back().idx);

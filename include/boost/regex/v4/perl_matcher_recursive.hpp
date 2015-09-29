@@ -151,7 +151,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          m_independent = true;
          const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
          pstate = pstate->next.p->next.p;
+         bool can_backtrack = m_can_backtrack;
          r = match_all_states();
+         m_can_backtrack = can_backtrack;
          pstate = next_pstate;
          m_independent = old_independent;
 #ifdef BOOST_REGEX_MATCH_EXTRA
@@ -286,7 +288,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_alt()
             pstate = old_pstate;
             position = oldposition;
          }
-         return true;
+         return m_can_backtrack;
       }
       pstate = pstate->next.p;
       return true;
@@ -357,6 +359,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
          pstate = rep->next.p;
          if(match_all_states())
             return true;
+         if(!m_can_backtrack)
+            return false;
          // failed repeat, reset posistion and fall through for alternative:
          position = pos;
       }
@@ -377,6 +381,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
          pstate = rep->alt.p;
          if(match_all_states())
             return true;
+         if(!m_can_backtrack)
+            return false;
          // failed alternative, reset posistion and fall through for repeat:
          position = pos;
       }
@@ -441,7 +447,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow()
          ++state_count;
          if(match_all_states())
             return true;
-         if(count >= rep->max)
+         if((count >= rep->max) || !m_can_backtrack)
             return false;
          ++count;
          pstate = psingle;
@@ -506,7 +512,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
       ++state_count;
       if(match_all_states())
          return true;
-      if(count >= rep->max)
+      if((count >= rep->max) || !m_can_backtrack)
          return false;
       if(save_pos == last)
          return false;
@@ -600,7 +606,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
       ++state_count;
       if(match_all_states())
          return true;
-      if(count >= rep->max)
+      if((count >= rep->max) || !m_can_backtrack)
          return false;
       position = save_pos;
       if(position == last)
@@ -695,7 +701,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
       ++state_count;
       if(match_all_states())
          return true;
-      if(count >= rep->max)
+      if((count >= rep->max) || !m_can_backtrack)
          return false;
       position = save_pos;
       if(position == last)
@@ -791,7 +797,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       ++state_count;
       if(match_all_states())
          return true;
-      if(count >= rep->max)
+      if((count >= rep->max) || !m_can_backtrack)
          return false;
       position = save_pos;
       if(position == last)
@@ -821,6 +827,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::backtrack_till_match(std::si
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
+   if(!m_can_backtrack)
+      return false;
    if((m_match_flags & match_partial) && (position == last))
       m_has_partial_match = true;
 
@@ -886,7 +894,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
    repeater_count<BidiIterator>* saved = next_count;
    repeater_count<BidiIterator> r(&next_count); // resets all repeat counts since we're recursing and starting fresh on those
    next_count = &r;
+   bool can_backtrack = m_can_backtrack;
    bool result = match_all_states();
+   m_can_backtrack = can_backtrack;
    next_count = saved;
 
    if(!result)
@@ -983,7 +993,20 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
    return true;
 }
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
+{
+   m_can_backtrack = false;
+   restart = last;
+   pstate = pstate->next.p;
+   return true;
+}
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
+{
+   return true;
+}
 
 } // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
