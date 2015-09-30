@@ -142,6 +142,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
             r = false;
          else
             r = true;
+         if(r && m_have_accept)
+            r = skip_until_paren(INT_MAX);
          break;
       }
    case -3:
@@ -183,6 +185,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
             }
          }
 #endif
+         if(r && m_have_accept)
+            r = skip_until_paren(INT_MAX);
          break;
       }
    case -4:
@@ -1003,10 +1007,44 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
 }
 
 template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
+bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, bool match)
 {
+   while(pstate)
+   {
+      if(pstate->type == syntax_element_endmark)
+      {
+         if(static_cast<const re_brace*>(pstate)->index == index)
+         {
+            if(match)
+               return this->match_endmark();
+            pstate = pstate->next.p;
+            return true;
+         }
+         else
+         {
+            // Unenclosed closing ), occurs when (*ACCEPT) is inside some other 
+            // parenthesis which may or may not have other side effects associated with it.
+            bool r = match_endmark();
+            m_have_accept = true;
+            if(!pstate)
+               return r;
+         }
+         continue;
+      }
+      else if(pstate->type == syntax_element_match)
+         return true;
+      else if(pstate->type == syntax_element_startmark)
+      {
+         int idx = static_cast<const re_brace*>(pstate)->index;
+         pstate = pstate->next.p;
+         skip_until_paren(idx, false);
+         continue;
+      }
+      pstate = pstate->next.p;
+   }
    return true;
 }
+
 
 } // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost

@@ -49,7 +49,6 @@ int error_count = 0;
 
 void run_tests()
 {
-#if 0
    RUN_TESTS(basic_tests);
    RUN_TESTS(test_simple_repeats);
    RUN_TESTS(test_alt);
@@ -83,7 +82,6 @@ void run_tests()
    RUN_TESTS(test_pocessive_repeats);
    RUN_TESTS(test_mark_resets);
    RUN_TESTS(test_recursion);
-#endif
    RUN_TESTS(test_verbs);
 }
 

@@ -446,9 +446,7 @@ private:
    bool match_fail();
    bool match_accept();
    bool match_commit();
-#ifdef BOOST_REGEX_NON_RECURSIVE
    bool skip_until_paren(int index, bool match = true);
-#endif
 
    // find procs stored in s_find_vtable:
    bool find_restart_any();
@@ -509,6 +507,7 @@ private:
 #ifdef BOOST_REGEX_RECURSIVE
    // Set to false by a (*COMMIT):
    bool m_can_backtrack;
+   bool m_have_accept;
 #endif
 #ifdef BOOST_REGEX_NON_RECURSIVE
    //

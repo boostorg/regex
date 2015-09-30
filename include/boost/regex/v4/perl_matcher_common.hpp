@@ -82,6 +82,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    m_backup_state = 0;
 #elif defined(BOOST_REGEX_RECURSIVE)
    m_can_backtrack = true;
+   m_have_accept = false;
 #endif
    // find the value to use for matching word boundaries:
    m_word_mask = re.get_data().m_word_mask; 
@@ -805,6 +806,18 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_fail()
    return false;
 }
 
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
+{
+   if(!recursion_stack.empty())
+   {
+      return skip_until_paren(recursion_stack.back().idx);
+   }
+   else
+   {
+      return skip_until_paren(INT_MAX);
+   }
+}
 
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_any()

@@ -1070,20 +1070,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
    return true;
 }
 
-template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::match_accept()
-{
-   if(!recursion_stack.empty())
-   {
-      skip_until_paren(recursion_stack.back().idx);
-   }
-   else
-   {
-      skip_until_paren(INT_MAX);
-   }
-   return true;
-}
-
 /****************************************************************************
 
 Unwind and associated proceedures follow, these perform what normal stack
