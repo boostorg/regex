@@ -354,6 +354,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_prefix()
 #endif
    if(!m_has_found_match)
       position = restart; // reset search postion
+#ifdef BOOST_REGEX_RECURSIVE
+   m_can_backtrack = true; // reset for further searches
+#endif
    return m_has_found_match;
 }
 

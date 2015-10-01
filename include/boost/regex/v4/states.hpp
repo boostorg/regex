@@ -260,6 +260,21 @@ struct re_recurse : public re_jump
    int state_id;             // identifier of first nested repeat within the recursion.
 };
 
+/*** struct re_commit *************************************************
+Used for the PRUNE, SKIP and COMMIT verbs which basically differ only in what happens
+if no match is found and we start searching forward.
+**********************************************************************/
+enum commit_type
+{
+   commit_prune,
+   commit_skip,
+   commit_commit,
+};
+struct re_commit : public re_syntax_base
+{
+   commit_type action;
+};
+
 /*** enum re_jump_size_type *******************************************
 Provides compiled size of re_jump structure (allowing for trailing alignment).
 We provide this so we know how manybytes to insert when constructing the machine

@@ -969,16 +969,19 @@ void test_verbs()
    TEST_REGEX_SEARCH("(\\w+)(?>b(*COMMIT))\\w{2}", perl, "abbb", match_default, make_array(0, 4, 0, 1, -2, -2));
    TEST_REGEX_SEARCH("(\\w+)b(*COMMIT)\\w{2}", perl, "abbb", match_default, make_array(-2, -2));
 
+   TEST_REGEX_SEARCH("a+b?(*PRUNE)c+(*FAIL)", perl, "aaabccc", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("a+b?(*SKIP)c+(*FAIL)", perl, "aaabcccaaabccc", match_default, make_array(-2, -2));
 //
-    
+   TEST_REGEX_SEARCH("^(?=a(*SKIP)b|ac)", perl, "ac", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?=a(*PRUNE)b)", perl, "ab", match_default, make_array(0, 0, -2, -2));
+   TEST_REGEX_SEARCH("^(?=a(*PRUNE)b)", perl, "ac", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("AA+(*PRUNE)(B|Z)|AC", perl, "AAAC", match_default, make_array(2, 4, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|AC", perl, "AAAC", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|C", perl, "AAAC", match_default, make_array(3, 4, -1, -1, -2, -2));
+   TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|AC", perl, "AAAC", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("AA+(*SKIP)B|C", perl, "AAAC", match_default, make_array(3, 4, -2, -2));
 
 #if 0
-/a+b?(*PRUNE)c+(*FAIL)/
-    aaabccc
-
-/a+b?(*SKIP)c+(*FAIL)/
-    aaabcccaaabccc
-
 /^(?:aaa(*THEN)\w{6}|bbb(*THEN)\w{5}|ccc(*THEN)\w{4}|\w{3})/
     aaaxxxxxx
     aaa++++++ 
@@ -1000,14 +1003,6 @@ void test_verbs()
 /a+b?(*THEN)c+(*FAIL)/
     aaabccc
 
-/^(?=a(*SKIP)b|ac)/
-    ** Failers
-    ac
-    
-/^(?=a(*PRUNE)b)/
-    ab  
-    ** Failers 
-    ac
 
 ~~~~~
 

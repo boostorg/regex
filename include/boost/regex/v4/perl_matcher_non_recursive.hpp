@@ -1014,6 +1014,27 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
    // however we might not unwind correctly in that case, so for now,
    // just mark that we don't backtrack into whatever is left (or rather
    // we'll unwind it unconditionally without pausing to try other matches).
+
+   switch(static_cast<const re_commit*>(pstate)->action)
+   {
+   case commit_commit:
+      if(base != last)
+      {
+         restart = last;
+         --restart;
+      }
+      break;
+   case commit_skip:
+      if(position != base)
+      {
+         restart = position;
+         --restart;
+      }
+      break;
+   case commit_prune:
+      break;
+   }
+
    saved_state* pmp = m_backup_state;
    --pmp;
    if(pmp < m_stack_base)
@@ -1025,8 +1046,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
    (void) new (pmp)saved_state(16);
    m_backup_state = pmp;
    pstate = pstate->next.p;
-   // If we don't find a match we don't want to search further either:
-   restart = last;
    return true;
 }
 
@@ -1102,6 +1121,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind(bool have_match)
    };
 
    m_recursive_result = have_match;
+   m_unwound_lookahead = false;
    unwind_proc_type unwinder;
    bool cont;
    //
@@ -1166,6 +1186,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_assertion(bool r)
    m_recursive_result = pmp->positive ? r : !r;
    boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(pmp++);
    m_backup_state = pmp;
+   m_unwound_lookahead = true;
    return !result; // return false if the assertion was matched to stop search.
 }
 
@@ -1653,7 +1674,24 @@ template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind_commit(bool b)
 {
    boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(m_backup_state++);
-   while(unwind(b)) {}
+   while(unwind(b) && !m_unwound_lookahead){}
+   if(m_unwound_lookahead && pstate)
+   {
+      //
+      // If we stop because we just unwound an assertion, put the
+      // commit state back on the stack again:
+      //
+      saved_state* pmp = m_backup_state;
+      --pmp;
+      if(pmp < m_stack_base)
+      {
+         extend_stack();
+         pmp = m_backup_state;
+         --pmp;
+      }
+      (void) new (pmp)saved_state(16);
+      m_backup_state = pmp;
+   }
    return false;
 }
 

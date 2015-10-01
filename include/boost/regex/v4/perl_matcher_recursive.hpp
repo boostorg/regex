@@ -1001,7 +1001,16 @@ template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
 {
    m_can_backtrack = false;
-   restart = last;
+   int action = static_cast<const re_commit*>(pstate)->action;
+   switch(action)
+   {
+   case commit_commit:
+      restart = last;
+      break;
+   case commit_skip:
+      restart = position;
+      break;
+   }
    pstate = pstate->next.p;
    return true;
 }

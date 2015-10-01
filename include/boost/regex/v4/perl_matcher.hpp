@@ -554,6 +554,8 @@ private:
    bool m_recursive_result;
    // how many memory blocks have we used up?:
    unsigned used_block_count;
+   // We have unwound to a lookahead/lookbehind, used by COMMIT/PRUNE/SKIP:
+   bool m_unwound_lookahead;
 #endif
 
    // these operations aren't allowed, so are declared private,
