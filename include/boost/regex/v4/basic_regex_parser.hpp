@@ -2815,6 +2815,31 @@ bool basic_regex_parser<charT, traits>::parse_perl_verb()
          return true;
       }
       break;
+   case 'T':
+      if(++m_position == m_end)
+      {
+         // Rewind to start of (* sequence:
+         --m_position;
+         while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+         fail(regex_constants::error_perl_extension, m_position - m_base);
+         return false;
+      }
+      if(match_verb("HEN"))
+      {
+         if((m_position == m_end) || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark))
+         {
+            // Rewind to start of (* sequence:
+            --m_position;
+            while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+            fail(regex_constants::error_perl_extension, m_position - m_base);
+            return false;
+         }
+         ++m_position;
+         this->append_state(syntax_element_then);
+         this->m_pdata->m_disable_match_any = true;
+         return true;
+      }
+      break;
    }
    return false;
 }

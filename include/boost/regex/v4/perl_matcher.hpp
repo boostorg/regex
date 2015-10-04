@@ -446,6 +446,7 @@ private:
    bool match_fail();
    bool match_accept();
    bool match_commit();
+   bool match_then();
    bool skip_until_paren(int index, bool match = true);
 
    // find procs stored in s_find_vtable:
@@ -534,6 +535,7 @@ private:
    bool unwind_recursion(bool);
    bool unwind_recursion_pop(bool);
    bool unwind_commit(bool);
+   bool unwind_then(bool);
    void destroy_single_repeat();
    void push_matched_paren(int index, const sub_match<BidiIterator>& sub);
    void push_recursion_stopper();
@@ -549,13 +551,17 @@ private:
    saved_state* m_stack_base;
    // pointer to current stack position:
    saved_state* m_backup_state;
+   // how many memory blocks have we used up?:
+   unsigned used_block_count;
    // determines what value to return when unwinding from recursion,
    // allows for mixed recursive/non-recursive algorithm:
    bool m_recursive_result;
-   // how many memory blocks have we used up?:
-   unsigned used_block_count;
    // We have unwound to a lookahead/lookbehind, used by COMMIT/PRUNE/SKIP:
    bool m_unwound_lookahead;
+   // We have unwound to an alternative, used by THEN:
+   bool m_unwound_alt;
+   // We are unwinding a commit - used by independent subs to determine whether to stop there or carry on unwinding:
+   //bool m_unwind_commit;
 #endif
 
    // these operations aren't allowed, so are declared private,

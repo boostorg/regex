@@ -141,7 +141,7 @@ struct saved_recursion : public saved_state
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[33] = 
+   static matcher_proc_type const s_match_vtable[34] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -180,6 +180,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_fail,
       &perl_matcher<BidiIterator, Allocator, traits>::match_accept,
       &perl_matcher<BidiIterator, Allocator, traits>::match_commit,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_then,
    };
 
    push_recursion_stopper();
@@ -373,6 +374,13 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
          pstate = pstate->next.p->next.p;
          bool r = match_all_states();
+         if(!r && !m_independent)
+         {
+            // Must be unwinding from a COMMIT/SKIP/PRUNE and the independent 
+            // sub failed, need to unwind everything else:
+            while(unwind(false));
+            return false;
+         }
          pstate = next_pstate;
          m_independent = old_independent;
 #ifdef BOOST_REGEX_MATCH_EXTRA
@@ -1018,16 +1026,13 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
    switch(static_cast<const re_commit*>(pstate)->action)
    {
    case commit_commit:
-      if(base != last)
-      {
-         restart = last;
-         --restart;
-      }
+      restart = last;
       break;
    case commit_skip:
-      if(position != base)
+      if(base != position)
       {
          restart = position;
+         // Have to decrement restart since it will get incremented again later:
          --restart;
       }
       break;
@@ -1044,6 +1049,24 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
       --pmp;
    }
    (void) new (pmp)saved_state(16);
+   m_backup_state = pmp;
+   pstate = pstate->next.p;
+   return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_then()
+{
+   // Just leave a mark that we need to skip to next alternative:
+   saved_state* pmp = m_backup_state;
+   --pmp;
+   if(pmp < m_stack_base)
+   {
+      extend_stack();
+      pmp = m_backup_state;
+      --pmp;
+   }
+   (void) new (pmp)saved_state(17);
    m_backup_state = pmp;
    pstate = pstate->next.p;
    return true;
@@ -1099,7 +1122,7 @@ unwinding does in the recursive implementation.
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind(bool have_match)
 {
-   static unwind_proc_type const s_unwind_table[18] = 
+   static unwind_proc_type const s_unwind_table[19] = 
    {
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_end,
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_paren,
@@ -1118,10 +1141,12 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind(bool have_match)
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion,
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_pop,
       &perl_matcher<BidiIterator, Allocator, traits>::unwind_commit,
+      &perl_matcher<BidiIterator, Allocator, traits>::unwind_then,
    };
 
    m_recursive_result = have_match;
    m_unwound_lookahead = false;
+   m_unwound_alt = false;
    unwind_proc_type unwinder;
    bool cont;
    //
@@ -1201,6 +1226,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_alt(bool r)
    }
    boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(pmp++);
    m_backup_state = pmp;
+   m_unwound_alt = !r;
    return r; 
 }
 
@@ -1692,6 +1718,22 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_commit(bool b)
       (void) new (pmp)saved_state(16);
       m_backup_state = pmp;
    }
+   // This prevents us from stopping when we exit from an independent sub-expression:
+   m_independent = false;
+   return false;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::unwind_then(bool b)
+{
+   // Unwind everything till we hit an alternative:
+   boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(m_backup_state++);
+   bool result = false;
+   while((result = unwind(b)) && !m_unwound_alt){}
+   // We're now pointing at the next alternative, need one more backtrack 
+   // since *all* the other alternatives must fail once we've reached a THEN clause:
+   if(result && m_unwound_alt)
+      unwind(b);
    return false;
 }
 

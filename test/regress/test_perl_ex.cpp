@@ -981,30 +981,29 @@ void test_verbs()
    TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|AC", perl, "AAAC", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("AA+(*SKIP)B|C", perl, "AAAC", match_default, make_array(3, 4, -2, -2));
 
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaaxxxxxx", match_default, make_array(0, 9, -2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaa++++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "bbbxxxxx", match_default, make_array(0, 8, -2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "bbb+++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "cccxxxx", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "ccc++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "dddddddd", match_default, make_array(0, 3, -2, -2));
+
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaaxxxxxx", match_default, make_array(0, 9, 0, 9, -2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaa++++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "bbbxxxxx", match_default, make_array(0, 8, 0, 8, -2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "bbb+++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "cccxxxx", match_default, make_array(0, 7, 0, 7, -2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "ccc++++", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("^(aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "dddddddd", match_default, make_array(0, 3, 0, 3, -2, -2));
+
+   TEST_REGEX_SEARCH("(?:a+(*THEN)\\w{6}|x\\w{3})", perl, "aaaxxxxx", match_default, make_array(3, 7, -2, -2));
+   TEST_REGEX_SEARCH("(?>(*COMMIT)(?>yes|no)(*THEN)(*F))?", perl, "yes", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?>(*COMMIT)(yes|no)(*THEN)(*F))?", perl, "yes", match_default, make_array(-2, -2));
+
+
 #if 0
-/^(?:aaa(*THEN)\w{6}|bbb(*THEN)\w{5}|ccc(*THEN)\w{4}|\w{3})/
-    aaaxxxxxx
-    aaa++++++ 
-    bbbxxxxx
-    bbb+++++ 
-    cccxxxx
-    ccc++++ 
-    dddddddd   
 
-/^(aaa(*THEN)\w{6}|bbb(*THEN)\w{5}|ccc(*THEN)\w{4}|\w{3})/
-    aaaxxxxxx
-    aaa++++++ 
-    bbbxxxxx
-    bbb+++++ 
-    cccxxxx
-    ccc++++ 
-    dddddddd   
-
-/a+b?(*THEN)c+(*FAIL)/
-    aaabccc
-
-
-~~~~~
 
 # Check the use of names for failure
 
@@ -1056,23 +1055,6 @@ void test_verbs()
 /A(*MARK:A)A+(*SKIP:B)(B|Z) | AC(*:B)/x,mark
     AAAC
 
-# COMMIT should override THEN.
-
-/(?>(*COMMIT)(?>yes|no)(*THEN)(*F))?/
-  yes
-
-/(?>(*COMMIT)(yes|no)(*THEN)(*F))?/
-  yes
-
-/b?(*SKIP)c/
-    bc
-    abc
-   
-/(*SKIP)bc/
-    a
-
-/(*SKIP)b/
-    a 
 
 #endif
 
