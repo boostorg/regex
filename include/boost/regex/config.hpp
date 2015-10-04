@@ -178,10 +178,20 @@
  * with MSVC and the /Zc:wchar_t option we place some extra unsigned short versions
  * of the non-inline functions in the library, so that users can still link to the lib,
  * irrespective of whether their own code is built with /Zc:wchar_t.
- * Note that this does NOT WORK with VC10 when the C++ locale is in effect as
+ * Note that this does NOT WORK with VC10 and VC14 when the C++ locale is in effect as
  * the locale's <unsigned short> facets simply do not compile in that case.
+ * As we default to the C++ locale when compiling for the windows runtime we
+ * skip in this case aswell.
  */
-#if defined(__cplusplus) && (defined(BOOST_MSVC) || defined(__ICL)) && !defined(BOOST_NO_INTRINSIC_WCHAR_T) && defined(BOOST_WINDOWS) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION) && !defined(BOOST_RWSTD_VER) && ((_MSC_VER < 1600) || !defined(BOOST_REGEX_USE_CPP_LOCALE))
+#if defined(__cplusplus) && \
+      (defined(BOOST_MSVC) || defined(__ICL)) && \
+      !defined(BOOST_NO_INTRINSIC_WCHAR_T) && \
+      defined(BOOST_WINDOWS) && \
+      !defined(__SGI_STL_PORT) && \
+      !defined(_STLPORT_VERSION) && \
+      !defined(BOOST_RWSTD_VER) && \
+      ((_MSC_VER < 1600) || !defined(BOOST_REGEX_USE_CPP_LOCALE)) && \
+      !BOOST_PLAT_WINDOWS_RUNTIME
 #  define BOOST_REGEX_HAS_OTHER_WCHAR_T
 #  ifdef BOOST_MSVC
 #     pragma warning(push)
