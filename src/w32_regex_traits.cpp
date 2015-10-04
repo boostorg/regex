@@ -19,7 +19,7 @@
 #define BOOST_REGEX_SOURCE
 #include <boost/regex/config.hpp>
 
-#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
+#if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32) && !defined(BOOST_REGEX_NO_WIN32_LOCALE)
 #include <boost/regex/regex_traits.hpp>
 #include <boost/regex/pattern_except.hpp>
 

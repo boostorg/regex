@@ -278,8 +278,13 @@
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
 
+#if defined(WINAPI_FAMILY) && \
+    ( WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP )
+#  define BOOST_REGEX_NO_WIN32_LOCALE
+#endif
+
 /* Win32 defaults to native Win32 locale: */
-#if defined(_WIN32) && !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_REGEX_NO_W32)
+#if defined(_WIN32) && !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_REGEX_NO_W32) && !defined(BOOST_REGEX_NO_WIN32_LOCALE)
 #  define BOOST_REGEX_USE_WIN32_LOCALE
 #endif
 /* otherwise use C++ locale if supported: */
