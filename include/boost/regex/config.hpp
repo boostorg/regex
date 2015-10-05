@@ -42,6 +42,7 @@
 #  include BOOST_REGEX_USER_CONFIG
 
 #  include <boost/config.hpp>
+#  include <boost/predef.h>
 
 #else
    /*
@@ -288,8 +289,7 @@
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
 
-#if defined(WINAPI_FAMILY) && \
-    ( WINAPI_FAMILY == WINAPI_FAMILY_APP || WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP )
+#if BOOST_PLAT_WINDOWS_RUNTIME
 #  define BOOST_REGEX_NO_WIN32_LOCALE
 #endif
 
