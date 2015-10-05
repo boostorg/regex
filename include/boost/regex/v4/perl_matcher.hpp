@@ -509,6 +509,7 @@ private:
    // Set to false by a (*COMMIT):
    bool m_can_backtrack;
    bool m_have_accept;
+   bool m_have_then;
 #endif
 #ifdef BOOST_REGEX_NON_RECURSIVE
    //

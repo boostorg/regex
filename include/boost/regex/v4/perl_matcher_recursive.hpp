@@ -60,7 +60,7 @@ public:
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[33] = 
+   static matcher_proc_type const s_match_vtable[34] = 
    {
       (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
       &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
@@ -99,6 +99,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_fail,
       &perl_matcher<BidiIterator, Allocator, traits>::match_accept,
       &perl_matcher<BidiIterator, Allocator, traits>::match_commit,
+      &perl_matcher<BidiIterator, Allocator, traits>::match_then,
    };
 
    if(state_count > max_state_count)
@@ -155,7 +156,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          pstate = pstate->next.p->next.p;
          bool can_backtrack = m_can_backtrack;
          r = match_all_states();
-         m_can_backtrack = can_backtrack;
+         if(r)
+            m_can_backtrack = can_backtrack;
          pstate = next_pstate;
          m_independent = old_independent;
 #ifdef BOOST_REGEX_MATCH_EXTRA
@@ -287,11 +289,19 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_alt()
          BidiIterator oldposition(position);
          const re_syntax_base* old_pstate = jmp->alt.p;
          pstate = pstate->next.p;
+         m_have_then = false;
          if(!match_all_states())
          {
             pstate = old_pstate;
             position = oldposition;
+            if(m_have_then)
+            {
+               m_can_backtrack = true;
+               m_have_then = false;
+               return false;
+            }
          }
+         m_have_then = false;
          return m_can_backtrack;
       }
       pstate = pstate->next.p;
@@ -1013,6 +1023,17 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
    }
    pstate = pstate->next.p;
    return true;
+}
+
+template <class BidiIterator, class Allocator, class traits>
+bool perl_matcher<BidiIterator, Allocator, traits>::match_then()
+{
+   pstate = pstate->next.p;
+   if(match_all_states())
+      return true;
+   m_can_backtrack = false;
+   m_have_then = true;
+   return false;
 }
 
 template <class BidiIterator, class Allocator, class traits>
