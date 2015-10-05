@@ -23,6 +23,7 @@
 #include <climits>
 #include <stdexcept>
 #include <string>
+#include <boost/predef.h>
 #include <boost/throw_exception.hpp>
 #include <boost/regex/v4/fileiter.hpp>
 #include <boost/regex/v4/regex_workaround.hpp>
@@ -396,13 +397,9 @@ inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
    if (::MultiByteToWideChar(CP_ACP, 0,  wild, wild_size,  wide_wild, wild_size + 1) == 0)
       return _fi_invalid_handle;
 
-# if BOOST_PLAT_WINDOWS_RUNTIME
    return FindFirstFileExW(wide_wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
-# else
-   return FindFirstFileW(wide_wild, &data);
-# endif
 #else
-   return FindFirstFileA(wild, &data);
+   return FindFirstFileExA(wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
 #endif
 }
 
