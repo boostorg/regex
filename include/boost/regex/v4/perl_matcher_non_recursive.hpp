@@ -1073,7 +1073,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_then()
 }
 
 template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, bool match)
+bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, bool have_match)
 {
    while(pstate)
    {
@@ -1081,7 +1081,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
       {
          if(static_cast<const re_brace*>(pstate)->index == index)
          {
-            if(match)
+            if(have_match)
                return this->match_endmark();
             pstate = pstate->next.p;
             return true;
@@ -1102,9 +1102,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
          return true;
       else if(pstate->type == syntax_element_startmark)
       {
-         int index = static_cast<const re_brace*>(pstate)->index;
+         int idx = static_cast<const re_brace*>(pstate)->index;
          pstate = pstate->next.p;
-         skip_until_paren(index, false);
+         skip_until_paren(idx, false);
          continue;
       }
       pstate = pstate->next.p;

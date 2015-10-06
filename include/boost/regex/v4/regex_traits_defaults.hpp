@@ -38,6 +38,7 @@
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v4/error_type.hpp>
 #endif
+#include <boost/type_traits/make_unsigned.hpp>
 
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std{
@@ -53,7 +54,10 @@ namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 //
 template <class charT>
 inline bool is_extended(charT c)
-{ return c >= 256u; }
+{
+   typedef typename make_unsigned<charT>::type unsigned_type; 
+   return (sizeof(charT) > 1) && (static_cast<unsigned_type>(c) >= 256u); 
+}
 inline bool is_extended(char)
 { return false; }
 

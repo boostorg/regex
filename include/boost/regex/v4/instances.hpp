@@ -119,6 +119,11 @@ template class BOOST_REGEX_TEMPLATE_DECL ::boost::BOOST_REGEX_DETAIL_NS::perl_ma
 
 #elif (defined(__GNUC__) && (__GNUC__ >= 3)) || !defined(BOOST_NO_CXX11_EXTERN_TEMPLATE)
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
+
 #  ifndef BOOST_REGEX_INSTANTIATE
 #     ifdef __GNUC__
 #        define template __extension__ extern template
@@ -205,7 +210,9 @@ template BOOST_REGEX_DECL bool perl_matcher<std::basic_string<BOOST_REGEX_CHAR_T
 #     undef template
 #  endif
 
-
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 #endif
 
 } // namespace boost
