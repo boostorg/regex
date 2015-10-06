@@ -23,6 +23,7 @@
 #include <climits>
 #include <stdexcept>
 #include <string>
+#include <boost/predef.h>
 #include <boost/throw_exception.hpp>
 #include <boost/regex/v4/fileiter.hpp>
 #include <boost/regex/v4/regex_workaround.hpp>
@@ -92,8 +93,13 @@ void mapfile::open(const char* file)
    LPWSTR wide_file = (LPWSTR)_alloca( (filename_size + 1) * sizeof(WCHAR) );
    if(::MultiByteToWideChar(CP_ACP, 0,  file, filename_size,  wide_file, filename_size + 1) == 0)
       hfile = INVALID_HANDLE_VALUE;
-   else
+   else {
+#if BOOST_PLAT_WINDOWS_RUNTIME
+      hfile = CreateFile2(wide_file, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
+#else
       hfile = CreateFileW(wide_file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+#endif
+   }
 #elif defined(__CYGWIN__)||defined(__CYGWIN32__)
    char win32file[ MAX_PATH ];
    cygwin_conv_to_win32_path( file, win32file );
@@ -121,7 +127,20 @@ void mapfile::open(const char* file)
          hfile = 0;
          std::runtime_error err("Unable to create file mapping.");
       }
+#if BOOST_PLAT_WINDOWS_RUNTIME
+      FILE_STANDARD_INFO fsi;
+      if (!GetFileInformationByHandleEx(hfile, FileStandardInfo, &fsi, sizeof(fsi)))
+      {
+         // call failed
+         _last = _first;
+      }
+      else
+      {
+         _last = _first + fsi.EndOfFile.QuadPart;
+      }
+#else
       _last = _first + GetFileSize(hfile, 0);
+#endif
    }
    else
    {
@@ -378,9 +397,9 @@ inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
    if (::MultiByteToWideChar(CP_ACP, 0,  wild, wild_size,  wide_wild, wild_size + 1) == 0)
       return _fi_invalid_handle;
 
-   return FindFirstFileW(wide_wild, &data);
+   return FindFirstFileExW(wide_wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
 #else
-   return FindFirstFileA(wild, &data);
+   return FindFirstFileExA(wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
 #endif
 }
 

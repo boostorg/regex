@@ -19,6 +19,8 @@
 #ifndef BOOST_W32_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_W32_REGEX_TRAITS_HPP_INCLUDED
 
+#ifndef BOOST_REGEX_NO_WIN32_LOCALE
+
 #ifndef BOOST_RE_PAT_EXCEPT_HPP
 #include <boost/regex/pattern_except.hpp>
 #endif
@@ -735,5 +737,7 @@ static_mutex& w32_regex_traits<charT>::get_mutex_inst()
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
+
+#endif // BOOST_REGEX_NO_WIN32_LOCALE
 
 #endif
