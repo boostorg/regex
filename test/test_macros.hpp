@@ -13,7 +13,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/current_function.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/utility/enable_if.hpp>
