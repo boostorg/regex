@@ -148,8 +148,14 @@
 
 /* disable our own file-iterators and mapfiles if we can't
  * support them: */
-#if !defined(BOOST_HAS_DIRENT_H) && !(defined(_WIN32) && !defined(BOOST_REGEX_NO_W32))
-#  define BOOST_REGEX_NO_FILEITER
+#if defined(_WIN32)
+#  if defined(BOOST_REGEX_NO_W32) || BOOST_PLAT_WINDOWS_STORE
+#    define BOOST_REGEX_NO_FILEITER
+#  endif
+#else // defined(_WIN32)
+#  if !defined(BOOST_HAS_DIRENT_H)
+#    define BOOST_REGEX_NO_FILEITER
+#  endif
 #endif
 
 /* backwards compatibitity: */
