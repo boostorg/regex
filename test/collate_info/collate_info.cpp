@@ -13,6 +13,9 @@
 #include <boost/regex.hpp> 
 #include <boost/regex/v4/primary_transform.hpp>
 #include <assert.h>
+#include <boost/detail/lightweight_main.hpp>
+#include <iostream>
+#include <iomanip>
 
 #ifdef BOOST_INTEL
 #pragma warning(disable:1418 981 983 2259)
@@ -250,4 +253,3 @@ int cpp_main(int /*argc*/, char * /*argv*/[])
    return 0;
 }
 
-#include <boost/test/included/prg_exec_monitor.hpp>

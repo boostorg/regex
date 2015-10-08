@@ -19,6 +19,8 @@
 #include "test.hpp"
 #include "test_locale.hpp"
 #include <stdarg.h>
+#include <iostream>
+#include <iomanip>
 
 #ifdef BOOST_HAS_ICU
 #include <unicode/uloc.h>
@@ -232,6 +234,6 @@ int main(int argc, char * argv[])
 
 #else
 
-#include <boost/test/included/prg_exec_monitor.hpp>
+#include <boost/detail/lightweight_main.hpp>
 
 #endif
