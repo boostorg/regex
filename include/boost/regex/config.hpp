@@ -42,6 +42,7 @@
 #  include BOOST_REGEX_USER_CONFIG
 
 #  include <boost/config.hpp>
+#  include <boost/predef.h>
 
 #else
    /*
