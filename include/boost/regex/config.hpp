@@ -289,6 +289,11 @@
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif
 
+/* use C++ locale when targeting windows store */
+#if BOOST_PLAT_WINDOWS_RUNTIME
+#  define BOOST_REGEX_USE_CPP_LOCALE
+#endif
+
 /* Win32 defaults to native Win32 locale: */
 #if defined(_WIN32) && !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_REGEX_NO_W32)
 #  define BOOST_REGEX_USE_WIN32_LOCALE
