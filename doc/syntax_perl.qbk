@@ -586,7 +586,7 @@ are discarded.
 The order of precedence for of operators is as follows:
 
 # Collation-related bracket symbols 	`[==] [::] [..]`
-# Escaped characters 	[^\]
+# Escaped characters 	[^\\]
 # Character set (bracket expression) 	`[]`
 # Grouping 	[^()]
 # Single-character-ERE duplication 	[^* + ? {m,n}]
