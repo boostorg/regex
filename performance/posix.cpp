@@ -17,7 +17,7 @@ private:
    regex_t pe, pe2;
    bool init;
 public:
-   posix_regex() : pe, init(false) {}
+   posix_regex() : init(false) {}
    ~posix_regex()
    {
       if(init)
@@ -58,10 +58,10 @@ public:
       }
       void do_nothing()const {}
    };
-   static const initializer init;
+   static const initializer init2;
 };
 
-const posix_regex::initializer posix_regex::init;
+const posix_regex::initializer posix_regex::init2;
 
 
 bool posix_regex::match_test(const char * text)
@@ -79,17 +79,18 @@ unsigned posix_regex::find_all(const char * text)
    while(regexec(&pe, text, 30, m, flags) == 0)
    {
       ++count;
-      text = m[0].rm_so;
-      if(*text)
-         ++text;
-      flags = REG_NOTBOL;
+      text += m[0].rm_eo;
+      if(m[0].rm_eo - m[0].rm_so)
+         flags = *(text - 1) == '\n' ? 0 : REG_NOTBOL;
+      else
+         flags = 0;
    }
    return 0;
 }
 
 std::string posix_regex::name()
 {
-   init.do_nothing();
+   init2.do_nothing();
    return "POSIX";
 }
 

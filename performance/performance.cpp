@@ -6,6 +6,9 @@
 
 #include "performance.hpp"
 #include <list>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
 #include <boost/chrono.hpp>
 #include <boost/detail/lightweight_main.hpp>
 #include <boost/regex.hpp>
