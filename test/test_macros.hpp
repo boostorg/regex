@@ -12,6 +12,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <iomanip>
+#include <cstdlib.h>
 
 #include <boost/core/lightweight_test.hpp>
 #include <boost/current_function.hpp>
