@@ -124,7 +124,7 @@ rule regex-run-simple ( sources + : args * : input-files * : requirements * : ta
 {
    exe $(target-name)_exe : $(sources) : $(requirements) ;
    explicit $(target-name)_exe ;
-   make $(target-name).output : $(target-name)_exe : @mp_simple_run_action ;
+   make $(target-name).output : $(target-name)_exe : @regex_simple_run_action ;
    explicit $(target-name).output ;
    alias $(target-name) : $(target-name).output ;
 }
