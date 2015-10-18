@@ -115,7 +115,21 @@ if ! $(disable-icu)
 
 }
 
-exe has_icu : ./has_icu_test.cpp  : $(ICU_OPTS) ;
+actions regex_simple_run_action
+{
+      $(>) > $(<)
+}
+
+rule regex-run-simple ( sources + : args * : input-files * : requirements * : target-name )
+{
+   exe $(target-name)_exe : $(sources) : $(requirements) ;
+   explicit $(target-name)_exe ;
+   make $(target-name).output : $(target-name)_exe : @mp_simple_run_action ;
+   explicit $(target-name).output ;
+   alias $(target-name) : $(target-name).output ;
+}
+
+regex-run-simple has_icu_test.cpp : : : $(ICU_OPTS) : has_icu ;
 explicit has_icu ;
 
 alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
