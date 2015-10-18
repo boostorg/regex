@@ -23,6 +23,7 @@ int main()
 {
    UErrorCode err = U_ZERO_ERROR;
    UChar32 c = ::u_charFromName(U_UNICODE_CHAR_NAME, "GREEK SMALL LETTER ALPHA", &err);
+   std::cout << (int)c << std::endl;
    if(err) return err;
    U_NAMESPACE_QUALIFIER Locale l;
    boost::scoped_ptr<U_NAMESPACE_QUALIFIER Collator> p_col(U_NAMESPACE_QUALIFIER Collator::createInstance(l, err));
