@@ -23,6 +23,11 @@
 
 int main()
 {
+   // To detect possible binary mismatches between the installed ICU build, and whatever
+   // C++ std lib's we're using, we need to:
+   // * Make sure we call ICU C++ API's
+   // * Make sure we call std lib C++ API's as well (cout).
+   // * Be sure this program is run, not just built.
    UErrorCode err = U_ZERO_ERROR;
    UChar32 c = ::u_charFromName(U_UNICODE_CHAR_NAME, "GREEK SMALL LETTER ALPHA", &err);
    std::cout << (int)c << std::endl;
