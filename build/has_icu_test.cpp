@@ -14,6 +14,8 @@
 #include <unicode/uchar.h>
 #include <unicode/coll.h>
 #include <boost/scoped_ptr.hpp>
+#include <iostream>
+#include <iomanip>
 
 #if defined(_MSC_VER) && !defined(_DLL)
 #error "Mixing ICU with a static runtime doesn't work"
