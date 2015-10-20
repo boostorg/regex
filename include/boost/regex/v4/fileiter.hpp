@@ -226,7 +226,8 @@ public:
    mapfile_iterator(const mapfile* f, long arg_position)
    {
       file = f;
-      node = f->_first + arg_position / mapfile::buf_size;
+      if(f)
+         node = f->_first + arg_position / mapfile::buf_size;
       offset = arg_position % mapfile::buf_size;
       if(file)
          file->lock(node);
