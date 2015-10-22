@@ -22,6 +22,7 @@
 #ifdef __cplusplus
 #  include <boost/cstdint.hpp>
 #endif
+#include <boost/detail/workaround.hpp>
 
 #ifdef __cplusplus
 namespace boost{
