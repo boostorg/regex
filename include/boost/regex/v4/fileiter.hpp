@@ -229,14 +229,15 @@ public:
       file = f;
       node = f->_first + arg_position / mapfile::buf_size;
       offset = arg_position % mapfile::buf_size;
-      file->lock(node);
+      if(file && node)
+         file->lock(node);
    }
    mapfile_iterator(const mapfile_iterator& i)
    {
       file = i.file;
       node = i.node;
       offset = i.offset;
-      if(file)
+      if(file && node)
          file->lock(node);
    }
    ~mapfile_iterator()

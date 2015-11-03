@@ -53,6 +53,12 @@ namespace std{
 #include <sys/cygwin.h>
 #endif
 
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+WINBASEAPI HANDLE WINAPI CreateFileMappingFromAppW(HANDLE, LPSECURITY_ATTRIBUTES, ULONG, ULONG64, LPCWSTR);
+WINBASEAPI LPVOID WINAPI MapViewOfFileFromAppW(HANDLE, ULONG, ULONG64, SIZE_T);
+WINBASEAPI BOOL WINAPI UnmapViewOfFile(LPCVOID);
+#endif	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+
 #ifdef BOOST_MSVC
 #  pragma warning(disable: 4800)
 #endif
@@ -87,13 +93,23 @@ const char* _fi_sep_alt = _fi_sep;
 
 void mapfile::open(const char* file)
 {
-#if defined(BOOST_NO_ANSI_APIS)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    int filename_size = strlen(file);
    LPWSTR wide_file = (LPWSTR)_alloca( (filename_size + 1) * sizeof(WCHAR) );
    if(::MultiByteToWideChar(CP_ACP, 0,  file, filename_size,  wide_file, filename_size + 1) == 0)
       hfile = INVALID_HANDLE_VALUE;
    else
+   {
+# if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+      CREATEFILE2_EXTENDED_PARAMETERS params = { 0 };
+
+      params.dwSize = sizeof (CREATEFILE2_EXTENDED_PARAMETERS);
+      params.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
+      hfile = CreateFile2(wide_file, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, &params);
+# else
       hfile = CreateFileW(wide_file, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+# endif
+   }
 #elif defined(__CYGWIN__)||defined(__CYGWIN32__)
    char win32file[ MAX_PATH ];
    cygwin_conv_to_win32_path( file, win32file );
@@ -103,7 +119,11 @@ void mapfile::open(const char* file)
 #endif
    if(hfile != INVALID_HANDLE_VALUE)
    {
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+      hmap = CreateFileMappingFromAppW(hfile, 0, PAGE_READONLY, 0, 0);
+#else
       hmap = CreateFileMapping(hfile, 0, PAGE_READONLY, 0, 0, 0);
+#endif
       if((hmap == INVALID_HANDLE_VALUE) || (hmap == NULL))
       {
          CloseHandle(hfile);
@@ -112,7 +132,13 @@ void mapfile::open(const char* file)
          std::runtime_error err("Unable to create file mapping.");
          boost::BOOST_REGEX_DETAIL_NS::raise_runtime_error(err);
       }
+
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+	  _first = static_cast<const char*>(MapViewOfFileFromAppW(hmap, FILE_MAP_READ, 0, 0));
+#else
       _first = static_cast<const char*>(MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0));
+#endif
+
       if(_first == 0)
       {
          CloseHandle(hmap);
@@ -121,7 +147,14 @@ void mapfile::open(const char* file)
          hfile = 0;
          std::runtime_error err("Unable to create file mapping.");
       }
+
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+	  WIN32_FILE_ATTRIBUTE_DATA fad = { 0 };
+	  GetFileAttributesExW(wide_file, GetFileExInfoStandard, &fad);
+	  _last = _first + fad.nFileSizeLow;
+#else
       _last = _first + GetFileSize(hfile, 0);
+#endif
    }
    else
    {
@@ -372,13 +405,18 @@ void mapfile::close()
 
 inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
 {
-#ifdef BOOST_NO_ANSI_APIS
+#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    std::size_t wild_size = std::strlen(wild);
    LPWSTR wide_wild = (LPWSTR)_alloca( (wild_size + 1) * sizeof(WCHAR) );
    if (::MultiByteToWideChar(CP_ACP, 0,  wild, wild_size,  wide_wild, wild_size + 1) == 0)
       return _fi_invalid_handle;
 
+# if defined (BOOST_NO_ANSI_APIS)
    return FindFirstFileW(wide_wild, &data);
+# elif defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+   return FindFirstFileExW(wide_wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
+# endif
+
 #else
    return FindFirstFileA(wild, &data);
 #endif
@@ -386,7 +424,7 @@ inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
 
 inline bool find_next_file(_fi_find_handle hf,  _fi_find_data& data)
 {
-#ifdef BOOST_NO_ANSI_APIS
+#if defined (BOOST_NO_ANSI_APIS)
    return FindNextFileW(hf, &data);
 #else
    return FindNextFileA(hf, &data);

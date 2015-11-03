@@ -19,6 +19,10 @@
 #define BOOST_REGEX_SOURCE
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) || (WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+#include <chrono>
+#include <thread>
+#endif
 
 #ifdef BOOST_HAS_THREADS
 
@@ -99,7 +103,11 @@ void scoped_static_mutex_lock::lock()
       while(0 != InterlockedCompareExchange(reinterpret_cast<LONG*>(&(m_mutex.m_mutex)), 1, 0))
 #endif
       {
+#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) || (WINAPI_FAMILY==WINAPI_FAMILY_PHONE_APP)
+		  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+#else
          Sleep(0);
+#endif
       }
       m_have_lock = true;
    }
