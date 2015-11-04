@@ -42,7 +42,7 @@ namespace std{
 
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
 UINT get_code_page_for_locale_id(lcid_type idx)
 {
    WCHAR code_page_string[7];
@@ -129,7 +129,7 @@ void w32_regex_traits_char_layer<char>::init()
    for(int ii = 0; ii < (1 << CHAR_BIT); ++ii)
       char_map[ii] = static_cast<char>(ii);
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(this->m_locale);
    BOOST_ASSERT(code_page != 0);
 
@@ -167,7 +167,7 @@ void w32_regex_traits_char_layer<char>::init()
          this->m_lower_map[jj] = static_cast<char>(jj);
    }
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    r = ::GetStringTypeExW(this->m_locale, CT_CTYPE1, wide_char_map, 1 << CHAR_BIT, this->m_type_map);
 #else
    r = ::GetStringTypeExA(this->m_locale, CT_CTYPE1, char_map, 1 << CHAR_BIT, this->m_type_map);
@@ -189,7 +189,7 @@ BOOST_REGEX_DECL lcid_type BOOST_REGEX_CALL w32_get_default_locale()
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(char c, lcid_type idx)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
        return false;
@@ -230,7 +230,7 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(unsigned short ca, lcid_type
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(char c, lcid_type idx)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
        return false;
@@ -398,7 +398,7 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_cat_get(
 #endif
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const char* p1, const char* p2)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
       return std::string(p1, p2);
@@ -479,7 +479,7 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const
 		&*result.begin(),  // destination buffer
 		bytes        // size of destination buffer
 		);
-#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined(BOOST_NO_ANSI_APIS) */
 
    if(bytes > static_cast<int>(result.size()))
       return std::string(p1, p2);
@@ -490,7 +490,7 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const
    return result;
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX)
 BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, const wchar_t* p1, const wchar_t* p2)
 {
 #if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
@@ -544,7 +544,7 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, cons
       reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
       bytes        // size of destination buffer
       );
-#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* !defined (BOOST_NO_WREGEX) */
    if(bytes > static_cast<int>(result.size()))
       return std::wstring(p1, p2);
    while(result.size() && result[result.size()-1] == L'\0')
@@ -556,9 +556,9 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, cons
       r2.append(1, static_cast<wchar_t>(static_cast<unsigned char>(result[i])));
    return r2;
 }
-#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* !defined (BOOST_NO_WREGEX) */
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T)
 BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transform(lcid_type idx, const unsigned short* p1, const unsigned short* p2)
 {
 #if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
@@ -613,7 +613,7 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transfor
       reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
       bytes        // size of destination buffer
       );
-#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) */
    if(bytes > static_cast<int>(result.size()))
       return std::basic_string<unsigned short>(p1, p2);
    while(result.size() && result[result.size()-1] == L'\0')
@@ -630,7 +630,7 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transfor
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
 {
    char result[2];
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
       return c;
@@ -665,7 +665,7 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
       1,        // number of characters in source string
       &wide_result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined(BOOST_NO_ANSI_APIS) */
    if(b == 0)
       return c;
 
@@ -681,12 +681,12 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
 	   1);        // size of destination buffer
    if (b == 0)
 	   return c;
-#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined(BOOST_NO_ANSI_APIS) */
 
    return result[0];
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX)
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type idx)
 {
    wchar_t result[2];
@@ -714,13 +714,13 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type idx)
       1,        // number of characters in source string
       result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* !defined (BOOST_NO_WREGEX) */
    if(b == 0)
       return c;
    return result[0];
 }
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T)
 BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, lcid_type idx)
 {
    wchar_t result[2];
@@ -749,7 +749,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, l
       1,        // number of characters in source string
       result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) */
    if(b == 0)
       return c;
    return result[0];
@@ -759,7 +759,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, l
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type idx)
 {
    char result[2];
-#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
        return c;
@@ -811,11 +811,11 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type idx)
 	   1);        // size of destination buffer
    if (b == 0)
 	   return c;
-#endif	/* defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_NO_ANSI_APIS) */
    return result[0];
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX)
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type idx)
 {
    wchar_t result[2];
@@ -849,9 +849,9 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type idx)
       return c;
    return result[0];
 }
-#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* !defined (BOOST_NO_WREGEX) */
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T)
 BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_toupper(unsigned short c, lcid_type idx)
 {
    wchar_t result[2];
@@ -888,7 +888,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_toupper(unsigned short c, l
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type idx, boost::uint32_t m, char c)
 {
    WORD mask;
-#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_NO_ANSI_APIS)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
        return false;
