@@ -3,12 +3,12 @@
  * Copyright (c) 2004
  * John Maddock
  *
- * Use, modification and distribution are subject to the 
- * Boost Software License, Version 1.0. (See accompanying file 
+ * Use, modification and distribution are subject to the
+ * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  *
  */
- 
+
  /*
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE         w32_regex_traits.cpp
@@ -42,14 +42,14 @@ namespace std{
 
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 UINT get_code_page_for_locale_id(lcid_type idx)
 {
    WCHAR code_page_string[7];
 #if defined(BOOST_NO_ANSI_APIS)
    if (::GetLocaleInfoW(idx, LOCALE_IDEFAULTANSICODEPAGE, code_page_string, 7) == 0)
        return 0;
-#else	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#else	/* defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -64,7 +64,7 @@ UINT get_code_page_for_locale_id(lcid_type idx)
 #endif
 
 
-void w32_regex_traits_char_layer<char>::init() 
+void w32_regex_traits_char_layer<char>::init()
 {
    // we need to start by initialising our syntax map so we know which
    // character is used for which purpose:
@@ -115,9 +115,9 @@ void w32_regex_traits_char_layer<char>::init()
    {
       if(m_char_map[i] == 0)
       {
-         if(::boost::BOOST_REGEX_DETAIL_NS::w32_is(this->m_locale, 0x0002u, (char)i)) 
+         if(::boost::BOOST_REGEX_DETAIL_NS::w32_is(this->m_locale, 0x0002u, (char)i))
             m_char_map[i] = regex_constants::escape_type_class;
-         else if(::boost::BOOST_REGEX_DETAIL_NS::w32_is(this->m_locale, 0x0001u, (char)i)) 
+         else if(::boost::BOOST_REGEX_DETAIL_NS::w32_is(this->m_locale, 0x0001u, (char)i))
             m_char_map[i] = regex_constants::escape_type_not_class;
       }
    }while(0xFF != i++);
@@ -129,7 +129,7 @@ void w32_regex_traits_char_layer<char>::init()
    for(int ii = 0; ii < (1 << CHAR_BIT); ++ii)
       char_map[ii] = static_cast<char>(ii);
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(this->m_locale);
    BOOST_ASSERT(code_page != 0);
 
@@ -138,7 +138,7 @@ void w32_regex_traits_char_layer<char>::init()
    BOOST_ASSERT(conv_r != 0);
 
    WCHAR wide_lower_map[1 << CHAR_BIT];
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(this->m_locale, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -167,7 +167,7 @@ void w32_regex_traits_char_layer<char>::init()
          this->m_lower_map[jj] = static_cast<char>(jj);
    }
 
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    r = ::GetStringTypeExW(this->m_locale, CT_CTYPE1, wide_char_map, 1 << CHAR_BIT, this->m_type_map);
 #else
    r = ::GetStringTypeExA(this->m_locale, CT_CTYPE1, char_map, 1 << CHAR_BIT, this->m_type_map);
@@ -177,7 +177,7 @@ void w32_regex_traits_char_layer<char>::init()
 
 BOOST_REGEX_DECL lcid_type BOOST_REGEX_CALL w32_get_default_locale()
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
 	GetUserDefaultLocaleName(strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH);
@@ -189,7 +189,7 @@ BOOST_REGEX_DECL lcid_type BOOST_REGEX_CALL w32_get_default_locale()
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(char c, lcid_type idx)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
        return false;
@@ -230,7 +230,7 @@ BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_lower(unsigned short ca, lcid_type
 
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is_upper(char c, lcid_type idx)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
        return false;
@@ -276,7 +276,7 @@ void free_module(void* mod)
 
 BOOST_REGEX_DECL cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	std::string m("w32_cat_open not supported in Windows Runtime: ");
 	std::runtime_error err(m + name);
 	::boost::re_detail::raise_runtime_error(err);
@@ -297,7 +297,7 @@ BOOST_REGEX_DECL cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name)
 
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::string& def)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	(void) cat;
 	(void) i;
 
@@ -335,13 +335,13 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, l
    if (::WideCharToMultiByte(CP_ACP, 0,  wbuf, r,  buf, buf_size,  NULL, NULL) == 0)
       return def; // failed conversion.
    return std::string(buf);
-#endif	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 }
 
 #ifndef BOOST_NO_WREGEX
 BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::wstring& def)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	(void) cat;
 	(void) i;
 	(void) def;
@@ -364,12 +364,12 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, 
       return def;
    }
    return std::wstring(buf);
-#endif	/* (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 }
 #ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
 BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::basic_string<unsigned short>& def)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	(void)cat;
 	(void)i;
 	(void)def;
@@ -392,13 +392,13 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_cat_get(
       return def;
    }
    return std::basic_string<unsigned short>(buf);
-#endif	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 }
 #endif
 #endif
 BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const char* p1, const char* p2)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
       return std::string(p1, p2);
@@ -408,7 +408,7 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const
    if(::MultiByteToWideChar(code_page, 0,  p1, src_len,  wide_p1, src_len + 1) == 0)
       return std::string(p1, p2);
 
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
 	if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -479,7 +479,7 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const
 		&*result.begin(),  // destination buffer
 		bytes        // size of destination buffer
 		);
-#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 
    if(bytes > static_cast<int>(result.size()))
       return std::string(p1, p2);
@@ -490,10 +490,10 @@ BOOST_REGEX_DECL std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const
    return result;
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, const wchar_t* p1, const wchar_t* p2)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
 	if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -544,7 +544,7 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, cons
       reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
       bytes        // size of destination buffer
       );
-#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(bytes > static_cast<int>(result.size()))
       return std::wstring(p1, p2);
    while(result.size() && result[result.size()-1] == L'\0')
@@ -556,12 +556,12 @@ BOOST_REGEX_DECL std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, cons
       r2.append(1, static_cast<wchar_t>(static_cast<unsigned char>(result[i])));
    return r2;
 }
-#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transform(lcid_type idx, const unsigned short* p1, const unsigned short* p2)
 {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 	std::basic_string <unsigned short> emptyReturn;
 
@@ -613,7 +613,7 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transfor
       reinterpret_cast<wchar_t*>(&*result.begin()),  // destination buffer *of bytes*
       bytes        // size of destination buffer
       );
-#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(bytes > static_cast<int>(result.size()))
       return std::basic_string<unsigned short>(p1, p2);
    while(result.size() && result[result.size()-1] == L'\0')
@@ -630,7 +630,7 @@ BOOST_REGEX_DECL std::basic_string<unsigned short> BOOST_REGEX_CALL w32_transfor
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
 {
    char result[2];
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if (code_page == 0)
       return c;
@@ -640,7 +640,7 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
       return c;
 
    WCHAR wide_result;
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -665,7 +665,7 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
       1,        // number of characters in source string
       &wide_result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(b == 0)
       return c;
 
@@ -681,16 +681,16 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
 	   1);        // size of destination buffer
    if (b == 0)
 	   return c;
-#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 
    return result[0];
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type idx)
 {
    wchar_t result[2];
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -714,17 +714,17 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type idx)
       1,        // number of characters in source string
       result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(b == 0)
       return c;
    return result[0];
 }
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, lcid_type idx)
 {
    wchar_t result[2];
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -749,7 +749,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, l
       1,        // number of characters in source string
       result,  // destination buffer
       1);        // size of destination buffer
-#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif    /* defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(b == 0)
       return c;
    return result[0];
@@ -759,7 +759,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_tolower(unsigned short c, l
 BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type idx)
 {
    char result[2];
-#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
        return c;
@@ -811,15 +811,15 @@ BOOST_REGEX_DECL char BOOST_REGEX_CALL w32_toupper(char c, lcid_type idx)
 	   1);        // size of destination buffer
    if (b == 0)
 	   return c;
-#endif	/* defined (BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    return result[0];
 }
 
-#if !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type idx)
 {
    wchar_t result[2];
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
 	if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -844,18 +844,18 @@ BOOST_REGEX_DECL wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type idx)
       1,        // number of characters in source string
       result,  // destination buffer
       1);        // size of destination buffer
-#endif	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
    if(b == 0)
       return c;
    return result[0];
 }
-#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* !defined (BOOST_NO_WREGEX) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 
-#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_REGEX_HAS_OTHER_WCHAR_T) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_toupper(unsigned short c, lcid_type idx)
 {
    wchar_t result[2];
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    WCHAR strLocaleNameBuffer[LOCALE_NAME_MAX_LENGTH];
 
    if (LCIDToLocaleName(idx, strLocaleNameBuffer, LOCALE_NAME_MAX_LENGTH, 0) == 0)
@@ -888,7 +888,7 @@ BOOST_REGEX_DECL unsigned short BOOST_REGEX_CALL w32_toupper(unsigned short c, l
 BOOST_REGEX_DECL bool BOOST_REGEX_CALL w32_is(lcid_type idx, boost::uint32_t m, char c)
 {
    WORD mask;
-#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    UINT code_page = get_code_page_for_locale_id(idx);
    if(code_page == 0)
        return false;
