@@ -3,12 +3,12 @@
  * Copyright (c) 1998-2002
  * John Maddock
  *
- * Use, modification and distribution are subject to the 
- * Boost Software License, Version 1.0. (See accompanying file 
+ * Use, modification and distribution are subject to the
+ * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  *
  */
- 
+
  /*
   *   LOCATION:    see http://www.boost.org for most recent version.
   *   FILE:        fileiter.cpp
@@ -53,11 +53,11 @@ namespace std{
 #include <sys/cygwin.h>
 #endif
 
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 WINBASEAPI HANDLE WINAPI CreateFileMappingFromAppW(HANDLE, LPSECURITY_ATTRIBUTES, ULONG, ULONG64, LPCWSTR);
 WINBASEAPI LPVOID WINAPI MapViewOfFileFromAppW(HANDLE, ULONG, ULONG64, SIZE_T);
 WINBASEAPI BOOL WINAPI UnmapViewOfFile(LPCVOID);
-#endif	/* defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
+#endif	/* defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE) */
 
 #ifdef BOOST_MSVC
 #  pragma warning(disable: 4800)
@@ -93,14 +93,14 @@ const char* _fi_sep_alt = _fi_sep;
 
 void mapfile::open(const char* file)
 {
-#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined(BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    int filename_size = strlen(file);
    LPWSTR wide_file = (LPWSTR)_alloca( (filename_size + 1) * sizeof(WCHAR) );
    if(::MultiByteToWideChar(CP_ACP, 0,  file, filename_size,  wide_file, filename_size + 1) == 0)
       hfile = INVALID_HANDLE_VALUE;
    else
    {
-# if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+# if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
       CREATEFILE2_EXTENDED_PARAMETERS params = { 0 };
 
       params.dwSize = sizeof (CREATEFILE2_EXTENDED_PARAMETERS);
@@ -119,7 +119,7 @@ void mapfile::open(const char* file)
 #endif
    if(hfile != INVALID_HANDLE_VALUE)
    {
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
       hmap = CreateFileMappingFromAppW(hfile, 0, PAGE_READONLY, 0, 0);
 #else
       hmap = CreateFileMapping(hfile, 0, PAGE_READONLY, 0, 0, 0);
@@ -133,7 +133,7 @@ void mapfile::open(const char* file)
          boost::BOOST_REGEX_DETAIL_NS::raise_runtime_error(err);
       }
 
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	  _first = static_cast<const char*>(MapViewOfFileFromAppW(hmap, FILE_MAP_READ, 0, 0));
 #else
       _first = static_cast<const char*>(MapViewOfFile(hmap, FILE_MAP_READ, 0, 0, 0));
@@ -148,7 +148,7 @@ void mapfile::open(const char* file)
          std::runtime_error err("Unable to create file mapping.");
       }
 
-#if defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
 	  WIN32_FILE_ATTRIBUTE_DATA fad = { 0 };
 	  GetFileAttributesExW(wide_file, GetFileExInfoStandard, &fad);
 	  _last = _first + fad.nFileSizeLow;
@@ -292,23 +292,23 @@ void mapfile::lock(pointer* node)const
             *p = 0;
             *(reinterpret_cast<int*>(*node)) = 1;
          }
- 
-        std::size_t read_size = 0; 
-        int read_pos = std::fseek(hfile, (node - _first) * buf_size, SEEK_SET); 
 
-        if(0 == read_pos && node == _last - 1) 
-           read_size = std::fread(*node + sizeof(int), _size % buf_size, 1, hfile); 
+        std::size_t read_size = 0;
+        int read_pos = std::fseek(hfile, (node - _first) * buf_size, SEEK_SET);
+
+        if(0 == read_pos && node == _last - 1)
+           read_size = std::fread(*node + sizeof(int), _size % buf_size, 1, hfile);
         else
            read_size = std::fread(*node + sizeof(int), buf_size, 1, hfile);
         if((read_size == 0) || (std::ferror(hfile)))
-        { 
-#ifndef BOOST_NO_EXCEPTIONS 
+        {
+#ifndef BOOST_NO_EXCEPTIONS
            unlock(node);
-           throw std::runtime_error("Unable to read file."); 
-#else 
-           BOOST_REGEX_NOEH_ASSERT((0 == std::ferror(hfile)) && (read_size != 0)); 
-#endif 
-        } 
+           throw std::runtime_error("Unable to read file.");
+#else
+           BOOST_REGEX_NOEH_ASSERT((0 == std::ferror(hfile)) && (read_size != 0));
+#endif
+        }
       }
       else
       {
@@ -405,7 +405,7 @@ void mapfile::close()
 
 inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
 {
-#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+#if defined (BOOST_NO_ANSI_APIS) || defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    std::size_t wild_size = std::strlen(wild);
    LPWSTR wide_wild = (LPWSTR)_alloca( (wild_size + 1) * sizeof(WCHAR) );
    if (::MultiByteToWideChar(CP_ACP, 0,  wild, wild_size,  wide_wild, wild_size + 1) == 0)
@@ -413,7 +413,7 @@ inline _fi_find_handle find_first_file(const char* wild,  _fi_find_data& data)
 
 # if defined (BOOST_NO_ANSI_APIS)
    return FindFirstFileW(wide_wild, &data);
-# elif defined (BOOST_ASIO_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
+# elif defined (BOOST_PLAT_WINDOWS_RUNTIME) || defined (BOOST_PLAT_WINDOWS_PHONE)
    return FindFirstFileExW(wide_wild, FindExInfoStandard, &data, FindExSearchNameMatch, NULL, 0);
 # endif
 
@@ -430,7 +430,7 @@ inline bool find_next_file(_fi_find_handle hf,  _fi_find_data& data)
    return FindNextFileA(hf, &data);
 #endif
 }
-   
+
 inline void copy_find_file_result_with_overflow_check(const _fi_find_data& data,  char* path, size_t max_size)
 {
 #ifdef BOOST_NO_ANSI_APIS
