@@ -192,9 +192,9 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL put_mem_block(void* p)
 #else
 
 #ifdef BOOST_HAS_THREADS
-mem_block_cache block_cache = { 0, 0, BOOST_STATIC_MUTEX_INIT, };
+mem_block_cache block_cache;
 #else
-mem_block_cache block_cache = { 0, 0, };
+mem_block_cache block_cache;
 #endif
 
 BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block()

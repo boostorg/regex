@@ -19,9 +19,7 @@
 #define BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
 
 #include <new>
-#ifdef BOOST_HAS_THREADS
-#include <boost/regex/pending/static_mutex.hpp>
-#endif
+#include <boost/atomic/atomic.hpp>
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
@@ -30,59 +28,41 @@
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
-struct mem_block_node
-{
-   mem_block_node* next;
-};
-
 struct mem_block_cache
 {
-   // this member has to be statically initialsed:
-   mem_block_node* next;
-   unsigned cached_blocks;
-#ifdef BOOST_HAS_THREADS
-   boost::static_mutex mut;
-#endif
+   boost::atomic<void*> cache[BOOST_REGEX_MAX_CACHE_BLOCKS];
 
+   mem_block_cache() {
+     for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
+       cache[i].store(NULL);
+     }
+
+   }
    ~mem_block_cache()
    {
-      while(next)
-      {
-         mem_block_node* old = next;
-         next = next->next;
-         ::operator delete(old);
-      }
+     for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
+       if (cache[i].load()) ::operator delete(cache[i].load());
+     }
    }
    void* get()
    {
-#ifdef BOOST_HAS_THREADS
-      boost::static_mutex::scoped_lock g(mut);
-#endif
-     if(next)
-      {
-         mem_block_node* result = next;
-         next = next->next;
-         --cached_blocks;
-         return result;
-      }
-      return ::operator new(BOOST_REGEX_BLOCKSIZE);
+     for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
+       void* p = cache[i].load();
+       if (p != NULL) {
+         if (cache[i].compare_exchange_strong(p, NULL)) return p;
+       }
+     }
+     return ::operator new(BOOST_REGEX_BLOCKSIZE);
    }
-   void put(void* p)
+   void put(void* ptr)
    {
-#ifdef BOOST_HAS_THREADS
-      boost::static_mutex::scoped_lock g(mut);
-#endif
-      if(cached_blocks >= BOOST_REGEX_MAX_CACHE_BLOCKS)
-      {
-         ::operator delete(p);
-      }
-      else
-      {
-         mem_block_node* old = static_cast<mem_block_node*>(p);
-         old->next = next;
-         next = old;
-         ++cached_blocks;
-      }
+     for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
+       void* p = cache[i].load();
+       if (p == NULL) {
+         if (cache[i].compare_exchange_strong(p, ptr)) return;
+       }
+     }
+     ::operator delete(ptr);
    }
 };
 
