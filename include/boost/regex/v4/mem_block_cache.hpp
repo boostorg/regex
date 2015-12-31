@@ -19,6 +19,9 @@
 #define BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
 
 #include <new>
+#ifdef BOOST_HAS_THREADS
+#include <boost/regex/pending/static_mutex.hpp>
+#endif
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
