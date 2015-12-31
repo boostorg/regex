@@ -19,18 +19,12 @@
 #define BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
 
 #include <new>
-#include <boost/atomic/atomic.hpp>
 
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
 
-#ifdef BOOST_NO_CXX11_HDR_ATOMIC
-  #if BOOST_ATOMIC_POINTER_LOCK_FREE == 2
-    #define BOOST_REGEX_MEM_BLOCK_CACHE_LOCK_FREE
-    #define BOOST_REGEX_ATOMIC_POINTER boost::atomic
-  #endif
-#else // BOOST_NOCXX11_HDR_ATOMIC not defined
+#ifndef BOOST_NO_CXX11_HDR_ATOMIC
   #include <atomic>
   #if ATOMIC_POINTER_LOCK_FREE == 2
     #define BOOST_REGEX_MEM_BLOCK_CACHE_LOCK_FREE
@@ -44,14 +38,8 @@ namespace BOOST_REGEX_DETAIL_NS{
 #ifdef BOOST_REGEX_MEM_BLOCK_CACHE_LOCK_FREE /* lock free implementation */
 struct mem_block_cache
 {
-   BOOST_REGEX_ATOMIC_POINTER<void*> cache[BOOST_REGEX_MAX_CACHE_BLOCKS];
+  std::atomic<void*> cache[BOOST_REGEX_MAX_CACHE_BLOCKS];
 
-   mem_block_cache() {
-     for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
-       cache[i].store(NULL);
-     }
-
-   }
    ~mem_block_cache()
    {
      for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
@@ -80,7 +68,6 @@ struct mem_block_cache
    }
 };
 
-#undef BOOST_REGEX_ATOMIC_POINTER
 
 #else /* lock-based implementation */
 
