@@ -9,15 +9,18 @@
 *
 */
 
-#include <boost/regex.hpp>
 
 #ifndef BOOST_NO_CXX11_CHAR32_T
 
+#include <cstddef>
+
 namespace boost {
 
-   std::size_t hash_value(char32_t c) { return c; }
+   std::size_t hash_value(char32_t const& c) { return c; }
 
 }
+
+#include <boost/regex.hpp>
 
 struct char32_traits
 {
