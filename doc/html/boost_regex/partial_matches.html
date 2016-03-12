@@ -178,6 +178,17 @@
           It's more efficient to work this way, but may not be the behavior you want
           in all situations.
         </li>
+<li class="listitem">
+          There are situations where full matches are found even though partial matches
+          are also possible: for example if the partial string terminates with "abc"
+          and the regular expression is "\w+", then a full match is found
+          even though there may be more alphabetical characters to come. This particular
+          case can be detected by checking if the match found terminates at the end
+          of current input string. However, there are situations where that is not
+          possible: for example an expression such as "abc.*123" may always
+          have longer matches available since it could conceivably match the entire
+          input string (no matter how long it may be).
+        </li>
 </ul></div>
 <p>
       The following example tests to see whether the text could be a valid credit
