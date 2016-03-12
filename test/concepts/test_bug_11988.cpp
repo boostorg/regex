@@ -9,6 +9,7 @@
 *
 */
 
+#include <boost/config.hpp>
 
 #ifndef BOOST_NO_CXX11_CHAR32_T
 
