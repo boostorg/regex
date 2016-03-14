@@ -245,6 +245,10 @@ void test_options2()
    TEST_REGEX_SEARCH("a(?i:b)*c", perl, "aBBc", match_default, make_array(0, 4, -2, -2));
    TEST_REGEX_SEARCH("a(?i:b)*c", perl, "aBC", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a(?i:b)*c", perl, "aBBC", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("(?i:j)|h", perl, "J", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?i:j)|h", perl, "j", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?i:j)|h", perl, "h", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("(?i:j)|h", perl, "H", match_default, make_array(-2, -2));
 
    TEST_REGEX_SEARCH("a(?=b(?i)c)\\w\\wd", perl, "abcd", match_default, make_array(0, 4, -2, -2));
    TEST_REGEX_SEARCH("a(?=b(?i)c)\\w\\wd", perl, "abCd", match_default, make_array(0, 4, -2, -2));

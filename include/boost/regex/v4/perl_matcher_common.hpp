@@ -794,15 +794,6 @@ inline bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref(
 }
 
 template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case()
-{
-   // change our case sensitivity:
-   this->icase = static_cast<const re_case*>(pstate)->icase;
-   pstate = pstate->next.p;
-   return true;
-}
-
-template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_fail()
 {
    // Just force a backtrack:
