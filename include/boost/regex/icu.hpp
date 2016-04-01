@@ -152,7 +152,7 @@ public:
    char_class_type lookup_classname(const char_type* p1, const char_type* p2) const;
    string_type lookup_collatename(const char_type* p1, const char_type* p2) const;
    bool isctype(char_type c, char_class_type f) const;
-   int toi(const char_type*& p1, const char_type* p2, int radix)const
+   boost::intmax_t toi(const char_type*& p1, const char_type* p2, int radix)const
    {
       return BOOST_REGEX_DETAIL_NS::global_toi(p1, p2, radix, *this);
    }
