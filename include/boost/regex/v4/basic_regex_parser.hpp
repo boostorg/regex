@@ -543,7 +543,11 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_basic_escape()
 {
-   ++m_position;
+   if(++m_position == m_end)
+   {
+      fail(regex_constants::error_paren, m_position - m_base);
+      return false;
+   }
    bool result = true;
    switch(this->m_traits.escape_syntax_type(*m_position))
    {
