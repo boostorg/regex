@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #if defined(_MSC_VER) && !defined(_DLL)
-#error "Mixing ICU with a static runtime doesn't work"
+//#error "Mixing ICU with a static runtime doesn't work"
 #endif
 
 void print_error(UErrorCode err, const char* func)
