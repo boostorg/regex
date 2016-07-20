@@ -26,7 +26,6 @@ rule path_options ( properties * )
     return $(result) ;
 }
 
-
 #
 # ICU configuration:
 #
@@ -78,9 +77,12 @@ if ! $(disable-icu)
 
       ICU_OPTS = 
          <include>$(ICU_PATH)/include 
-         <library>icuuc
-         <library>icudt
-         <library>icuin
+         <runtime-link>shared:<library>icuuc/<link>shared
+         <runtime-link>shared:<library>icudt/<link>shared
+         <runtime-link>shared:<library>icuin/<link>shared
+         <runtime-link>static:<library>icuuc
+         <runtime-link>static:<library>icudt
+         <runtime-link>static:<library>icuin
          <define>BOOST_HAS_ICU=1 
          <runtime-link>static:<define>U_STATIC_IMPLEMENTATION=1
          ;
