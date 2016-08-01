@@ -20,6 +20,7 @@
 #include <boost/detail/lightweight_main.hpp>
 #include "../test_macros.hpp"
 #include <boost/array.hpp>
+#include <cstring>
 
 #ifdef BOOST_HAS_ICU
 #include <boost/regex/icu.hpp>
@@ -38,7 +39,7 @@ int array_size(const char* (&p)[N])
 
 std::wstring make_wstring(const char* p)
 {
-   return std::wstring(p, p + strlen(p));
+   return std::wstring(p, p + std::strlen(p));
 }
 
 #ifdef __sgi
