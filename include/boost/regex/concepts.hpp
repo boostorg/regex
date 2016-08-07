@@ -102,7 +102,7 @@ public:
    pointer address(reference r){ return &r; }
    const_pointer address(const_reference r) { return &r; }
    pointer allocate(size_type n) { return static_cast<pointer>(std::malloc(n)); }
-   pointer allocate(size_type, pointer) { return static_cast<pointer>(std::malloc(n)); }
+   pointer allocate(size_type n, pointer) { return static_cast<pointer>(std::malloc(n)); }
    void deallocate(pointer p, size_type) { std::free(p); }
    size_type max_size()const { return UINT_MAX; }
 
