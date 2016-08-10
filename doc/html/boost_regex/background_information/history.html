@@ -4,7 +4,7 @@
 <title>History</title>
 <link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.77.1">
-<link rel="home" href="../../index.html" title="Boost.Regex 5.1.1">
+<link rel="home" href="../../index.html" title="Boost.Regex 5.1.2">
 <link rel="up" href="../background_information.html" title="Background Information">
 <link rel="prev" href="acknowledgements.html" title="Acknowledgements">
 </head>
@@ -37,18 +37,34 @@
       </p>
 <h5>
 <a name="boost_regex.background_information.history.h0"></a>
-        <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_1_1"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_1_1">Boost.Regex-5.1.1</a>
+        <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_1_2"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_1_2">Boost.Regex-5.1.2</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
 <li class="listitem">
-            Change to lockfree implementation of memory cache, see <a href="https://github.com/boostorg/regex/pull/23" target="_top">PR#23</a>.
+            Fix buffer over-run error when parsing certain invalid regexes, see
+            <a href="https://svn.boost.org/trac/boost/ticket/12222" target="_top">#12222</a>.
+          </li>
+<li class="listitem">
+            Fix detection of ICU in library build, see <a href="https://svn.boost.org/trac/boost/ticket/12152" target="_top">#12152</a>.
           </li>
 <li class="listitem">
             Fix bug in case sensitivity change, see <a href="https://svn.boost.org/trac/boost/ticket/11940" target="_top">#11940</a>.
           </li>
+<li class="listitem">
+            Allow types wider than int in <code class="computeroutput"><span class="special">\</span><span class="identifier">x</span><span class="special">{}</span></code>
+            expressions (for char32_t etc), see <a href="https://svn.boost.org/trac/boost/ticket/11988" target="_top">#11988</a>.
+          </li>
 </ul></div>
 <h5>
 <a name="boost_regex.background_information.history.h1"></a>
+        <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_1_1_boost_1_61_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_1_1_boost_1_61_0">Boost.Regex-5.1.1
+        (Boost-1.61.0)</a>
+      </h5>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+            Change to lockfree implementation of memory cache, see <a href="https://github.com/boostorg/regex/pull/23" target="_top">PR#23</a>.
+          </li></ul></div>
+<h5>
+<a name="boost_regex.background_information.history.h2"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_1_0_boost_1_60_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_1_0_boost_1_60_0">Boost.Regex-5.1.0
         (Boost-1.60.0)</a>
       </h5>
@@ -71,7 +87,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h2"></a>
+<a name="boost_regex.background_information.history.h3"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_0_1_boost_1_58_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_0_1_boost_1_58_0">Boost.Regex-5.0.1
         (Boost-1.58.0)</a>
       </h5>
@@ -104,7 +120,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h3"></a>
+<a name="boost_regex.background_information.history.h4"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_regex_5_0_0_boost_1_56_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_regex_5_0_0_boost_1_56_0">Boost.Regex-5.0.0
         (Boost-1.56.0)</a>
       </h5>
@@ -137,14 +153,14 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h4"></a>
+<a name="boost_regex.background_information.history.h5"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_54"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_54">Boost-1.54</a>
       </h5>
 <p>
         Fixed issue <a href="https://svn.boost.org/trac/boost/ticket/8569" target="_top">#8569</a>.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h5"></a>
+<a name="boost_regex.background_information.history.h6"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_53"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_53">Boost-1.53</a>
       </h5>
 <p>
@@ -152,7 +168,7 @@
         <a href="https://svn.boost.org/trac/boost/ticket/7644" target="_top">#7644</a>.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h6"></a>
+<a name="boost_regex.background_information.history.h7"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_51"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_51">Boost-1.51</a>
       </h5>
 <p>
@@ -162,7 +178,7 @@
         <a href="https://svn.boost.org/trac/boost/ticket/6346" target="_top">#6346</a>.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h7"></a>
+<a name="boost_regex.background_information.history.h8"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_50"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_50">Boost-1.50</a>
       </h5>
 <p>
@@ -171,7 +187,7 @@
         expression.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h8"></a>
+<a name="boost_regex.background_information.history.h9"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_48"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_48">Boost-1.48</a>
       </h5>
 <p>
@@ -181,7 +197,7 @@
         <a href="https://svn.boost.org/trac/boost/ticket/5736" target="_top">#5736</a>.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h9"></a>
+<a name="boost_regex.background_information.history.h10"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_47"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_47">Boost 1.47</a>
       </h5>
 <p>
@@ -193,7 +209,7 @@
         <a href="https://svn.boost.org/trac/boost/ticket/5504" target="_top">#5504</a>.
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h10"></a>
+<a name="boost_regex.background_information.history.h11"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_44"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_44">Boost 1.44</a>
       </h5>
 <p>
@@ -211,7 +227,7 @@
         <a href="https://svn.boost.org/trac/boost/ticket/3890" target="_top">#3890</a>
       </p>
 <h5>
-<a name="boost_regex.background_information.history.h11"></a>
+<a name="boost_regex.background_information.history.h12"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_42"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_42">Boost 1.42</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -239,7 +255,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h12"></a>
+<a name="boost_regex.background_information.history.h13"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_40"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_40">Boost 1.40</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -247,7 +263,7 @@
             branch resets and recursive regular expressions.
           </li></ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h13"></a>
+<a name="boost_regex.background_information.history.h14"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_38"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_38">Boost 1.38</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -274,7 +290,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h14"></a>
+<a name="boost_regex.background_information.history.h15"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_34"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_34">Boost 1.34</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -296,7 +312,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h15"></a>
+<a name="boost_regex.background_information.history.h16"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_33_1"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_33_1">Boost 1.33.1</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -365,7 +381,7 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h16"></a>
+<a name="boost_regex.background_information.history.h17"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_33_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_33_0">Boost 1.33.0</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
@@ -419,14 +435,14 @@
           </li>
 </ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h17"></a>
+<a name="boost_regex.background_information.history.h18"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_32_1"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_32_1">Boost 1.32.1</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
             Fixed bug in partial matches of bounded repeats of '.'.
           </li></ul></div>
 <h5>
-<a name="boost_regex.background_information.history.h18"></a>
+<a name="boost_regex.background_information.history.h19"></a>
         <span class="phrase"><a name="boost_regex.background_information.history.boost_1_31_0"></a></span><a class="link" href="history.html#boost_regex.background_information.history.boost_1_31_0">Boost 1.31.0</a>
       </h5>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">

@@ -158,7 +158,7 @@ test-suite regex
      [ run
     # sources
     captures/captures_test.cpp
-    captures//boost_regex_extra
+    captures//boost_regex_extra ../build//icu_options
  :  # additional args
  :  # test-files
  :  # requirements
