@@ -15,7 +15,7 @@ Currently open issues can be viewed [@https://svn.boost.org/trac/boost/query?sta
 
 All issues including closed ones can be viewed [@https://svn.boost.org/trac/boost/query?status=assigned&status=closed&status=new&status=reopened&component=regex&order=priority&col=id&col=summary&col=status&col=type&col=milestone&col=component here].
 
-[h4 Boost.Regex-5.1.2]
+[h4 Boost.Regex-5.1.2 (Boost-1.62.0)]
 
 
 * Fix buffer over-run error when parsing certain invalid regexes, see [@https://svn.boost.org/trac/boost/ticket/12222 #12222].
