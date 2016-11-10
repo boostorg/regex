@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt.
 
 import modules ;
+import testing ;
 
 project : requirements
    # default to all warnings on:
