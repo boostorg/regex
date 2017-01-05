@@ -219,6 +219,7 @@ function vc6_gen()
 # path to ICU library installation goes here:
 #
 ICU_PATH=
+ICU_LIBPATH=
 #
 # Add additional compiler options here:
 #
@@ -257,9 +258,15 @@ ICU_LINK_OPTS=
 !MESSAGE Hint: set ICU_PATH on the nmake command line to point 
 !MESSAGE to your ICU installation if you have one.
 !ELSE
+!IF "\$(ICU_LIBPATH)" == ""
 ICU_COMPILE_OPTS= -DBOOST_HAS_ICU=1 -I"\$(ICU_PATH)\\include"
 ICU_LINK_OPTS= /LIBPATH:"\$(ICU_PATH)\\lib" icuin.lib icuuc.lib
 !MESSAGE Building Boost.Regex with ICU in \$(ICU_PATH)
+!ELSE
+ICU_COMPILE_OPTS= -DBOOST_HAS_ICU=1 -I"\$(ICU_PATH)\\include"
+ICU_LINK_OPTS= /LIBPATH:"\$(ICU_LIBPATH)" /LIBPATH:"\$(ICU_PATH)\\lib" icuin.lib icuuc.lib
+!MESSAGE Building Boost.Regex with ICU in \$(ICU_PATH) and libs in \$(ICU_LIBPATH)
+!ENDIF
 !ENDIF
 
 EOF
@@ -351,6 +358,7 @@ function vc6_stlp_gen()
 # ICU setup:
 #
 ICU_PATH=
+ICU_LIBPATH=
 #
 # Add additional compiler options here:
 #
@@ -389,9 +397,15 @@ ICU_LINK_OPTS=
 !MESSAGE Hint: set ICU_PATH on the nmake command line to point 
 !MESSAGE to your ICU installation if you have one.
 !ELSE
+!IF "\$(ICU_LIBPATH)" == ""
 ICU_COMPILE_OPTS= -DBOOST_HAS_ICU=1 -I"\$(ICU_PATH)\\include"
 ICU_LINK_OPTS= /LIBPATH:"\$(ICU_PATH)\\lib" icuin.lib icuuc.lib
 !MESSAGE Building Boost.Regex with ICU in \$(ICU_PATH)
+!ELSE
+ICU_COMPILE_OPTS= -DBOOST_HAS_ICU=1 -I"\$(ICU_PATH)\\include"
+ICU_LINK_OPTS= /LIBPATH:"\$(ICU_LIBPATH)" /LIBPATH:"\$(ICU_PATH)\\lib" icuin.lib icuuc.lib
+!MESSAGE Building Boost.Regex with ICU in \$(ICU_PATH) and libs in \$(ICU_LIBPATH)
+!ENDIF
 !ENDIF
 
 EOF

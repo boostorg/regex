@@ -18,11 +18,11 @@ rule path_options ( properties * )
     local result ;
     if <address-model>64 in $(properties) && <toolset>msvc in $(properties) 
     {
-    	result = <search>$(ICU_PATH)/bin64 <search>$(ICU_PATH)/lib64 ;
+        result = <search>$(ICU_PATH)/bin64 <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64 ;
     }
     else
     {
-    	result = <search>$(ICU_PATH)/bin <search>$(ICU_PATH)/lib ;
+        result = <search>$(ICU_PATH)/bin <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib ;
     }
     return $(result) ;
 }
@@ -34,11 +34,15 @@ if ! $(disable-icu)
 {
 
    if [ modules.peek : ICU_PATH ]
-   {    
+   {
        ICU_PATH =  [ modules.peek : ICU_PATH ] ;
    }
+   if [ modules.peek : ICU_LIBPATH ]
+   {
+       ICU_LIBPATH =  [ modules.peek : ICU_LIBPATH ] ;
+   }
    if [ modules.peek : ICU_LINK ]
-   {    
+   {
        ICU_LINK =  [ modules.peek : ICU_LINK ] ;
    }
 

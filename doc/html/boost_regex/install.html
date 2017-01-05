@@ -136,6 +136,11 @@
       might use:
     </p>
 <pre class="programlisting">bjam -sICU_PATH=c:\download\icu --toolset=toolset-name install</pre>
+<p>
+      If your libraries are in a different (sub)directory then you can additionally use <code class="computeroutput"><span class="identifier">ICU_LIBPATH</span></code>
+      to explicitly point to the correct directory where the ICU libraries are located.
+    </p>
+<pre class="programlisting">bjam -sICU_PATH=c:\download\icu -sICU_LIBPATH=c:\download\icu\debug-libs --toolset=toolset-name install</pre>
 <div class="important"><table border="0" summary="Important">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../../../doc/src/images/important.png"></td>
