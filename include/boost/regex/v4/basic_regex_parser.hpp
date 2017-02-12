@@ -901,7 +901,7 @@ escape_type_class_jump:
          }
          if(negative)
             i = 1 + m_mark_count - i;
-         if(((i > 0) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
+         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
@@ -2596,7 +2596,7 @@ option_group_jump:
          re_alt* alt = static_cast<re_alt*>(this->insert_state(expected_alt_point, syntax_element_alt, sizeof(re_alt)));
          alt->alt.i = this->m_pdata->m_data.size() - this->getoffset(alt);
       }
-      else if(this->getaddress(static_cast<re_alt*>(b)->alt.i, b)->type == syntax_element_alt)
+      else if(((std::ptrdiff_t)this->m_pdata->m_data.size() > static_cast<re_alt*>(b)->alt.i) && (static_cast<re_alt*>(b)->alt.i > 0) && this->getaddress(static_cast<re_alt*>(b)->alt.i, b)->type == syntax_element_alt)
       {
          // Can't have seen more than one alternative:
          // Rewind to start of (? sequence:
