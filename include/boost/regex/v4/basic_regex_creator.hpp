@@ -77,7 +77,7 @@ public:
 
    void add_single(const digraph_type& s)
    {
-      m_singles.insert(m_singles.end(), s);
+      m_singles.insert(s);
       if(s.second)
          m_has_digraphs = true;
       m_empty = false;
@@ -136,11 +136,12 @@ public:
       return m_negate;
    }
    typedef typename std::vector<digraph_type>::const_iterator  list_iterator;
-   list_iterator singles_begin()const
+   typedef typename std::set<digraph_type>::const_iterator     set_iterator;
+   set_iterator singles_begin()const
    {
       return m_singles.begin();
    }
-   list_iterator singles_end()const
+   set_iterator singles_end()const
    {
       return m_singles.end();
    }
@@ -152,11 +153,11 @@ public:
    {
       return m_ranges.end();
    }
-   list_iterator equivalents_begin()const
+   set_iterator equivalents_begin()const
    {
       return m_equivalents.begin();
    }
-   list_iterator equivalents_end()const
+   set_iterator equivalents_end()const
    {
       return m_equivalents.end();
    }
@@ -173,14 +174,14 @@ public:
       return m_empty;
    }
 private:
-   std::vector<digraph_type> m_singles;         // a list of single characters to match
+   std::set<digraph_type>    m_singles;         // a list of single characters to match
    std::vector<digraph_type> m_ranges;          // a list of end points of our ranges
    bool                      m_negate;          // true if the set is to be negated
    bool                      m_has_digraphs;    // true if we have digraphs present
    m_type                    m_classes;         // character classes to match
    m_type                    m_negated_classes; // negated character classes to match
    bool                      m_empty;           // whether we've added anything yet
-   std::vector<digraph_type> m_equivalents;     // a list of equivalence classes
+   std::set<digraph_type>    m_equivalents;     // a list of equivalence classes
 };
    
 template <class charT, class traits>
@@ -365,6 +366,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
 {
    typedef typename traits::string_type string_type;
    typedef typename basic_char_set<charT, traits>::list_iterator item_iterator;
+   typedef typename basic_char_set<charT, traits>::set_iterator  set_iterator;
    typedef typename traits::char_class_type m_type;
    
    re_set_long<m_type>* result = static_cast<re_set_long<m_type>*>(append_state(syntax_element_long_set, sizeof(re_set_long<m_type>)));
@@ -395,24 +397,25 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    // now extend with all the singles:
    //
    item_iterator first, last;
-   first = char_set.singles_begin();
-   last = char_set.singles_end();
-   while(first != last)
+   set_iterator sfirst, slast;
+   sfirst = char_set.singles_begin();
+   slast = char_set.singles_end();
+   while(sfirst != slast)
    {
-      charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (first->first ? 1 : first->second ? 3 : 2)));
-      p[0] = m_traits.translate(first->first, m_icase);
-      if(first->first)
+      charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (sfirst->first == static_cast<charT>(0) ? 1 : sfirst->second ? 3 : 2)));
+      p[0] = m_traits.translate(sfirst->first, m_icase);
+      if(sfirst->first == static_cast<charT>(0))
       {
          p[0] = 0;
       }
-      else if(first->second)
+      else if(sfirst->second)
       {
-         p[1] = m_traits.translate(first->second, m_icase);
+         p[1] = m_traits.translate(sfirst->second, m_icase);
          p[2] = 0;
       }
       else
          p[1] = 0;
-      ++first;
+      ++sfirst;
    }
    //
    // now extend with all the ranges:
@@ -476,24 +479,24 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    //
    // now process the equivalence classes:
    //
-   first = char_set.equivalents_begin();
-   last = char_set.equivalents_end();
-   while(first != last)
+   sfirst = char_set.equivalents_begin();
+   slast = char_set.equivalents_end();
+   while(sfirst != slast)
    {
       string_type s;
-      if(first->second)
+      if(sfirst->second)
       {
-         charT cs[3] = { first->first, first->second, charT(0), };
+         charT cs[3] = { sfirst->first, sfirst->second, charT(0), };
          s = m_traits.transform_primary(cs, cs+2);
       }
       else
-         s = m_traits.transform_primary(&first->first, &first->first+1);
+         s = m_traits.transform_primary(&sfirst->first, &sfirst->first+1);
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s.size()+1) ) );
       BOOST_REGEX_DETAIL_NS::copy(s.begin(), s.end(), p);
       p[s.size()] = charT(0);
-      ++first;
+      ++sfirst;
    }
    //
    // finally reset the address of our last state:
@@ -522,7 +525,8 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
 {
    typedef typename traits::string_type string_type;
    typedef typename basic_char_set<charT, traits>::list_iterator item_iterator;
-   
+   typedef typename basic_char_set<charT, traits>::set_iterator set_iterator;
+
    re_set* result = static_cast<re_set*>(append_state(syntax_element_set, sizeof(re_set)));
    bool negate = char_set.is_negated();
    std::memset(result->_map, 0, sizeof(result->_map));
@@ -530,17 +534,18 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    // handle singles first:
    //
    item_iterator first, last;
-   first = char_set.singles_begin();
-   last = char_set.singles_end();
-   while(first != last)
+   set_iterator sfirst, slast;
+   sfirst = char_set.singles_begin();
+   slast = char_set.singles_end();
+   while(sfirst != slast)
    {
       for(unsigned int i = 0; i < (1 << CHAR_BIT); ++i)
       {
          if(this->m_traits.translate(static_cast<charT>(i), this->m_icase)
-            == this->m_traits.translate(first->first, this->m_icase))
+            == this->m_traits.translate(sfirst->first, this->m_icase))
             result->_map[i] = true;
       }
-      ++first;
+      ++sfirst;
    }
    //
    // OK now handle ranges:
@@ -627,13 +632,13 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    //
    // now process the equivalence classes:
    //
-   first = char_set.equivalents_begin();
-   last = char_set.equivalents_end();
-   while(first != last)
+   sfirst = char_set.equivalents_begin();
+   slast = char_set.equivalents_end();
+   while(sfirst != slast)
    {
       string_type s;
-      BOOST_ASSERT(static_cast<charT>(0) == first->second);
-      s = m_traits.transform_primary(&first->first, &first->first+1);
+      BOOST_ASSERT(static_cast<charT>(0) == sfirst->second);
+      s = m_traits.transform_primary(&sfirst->first, &sfirst->first+1);
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
@@ -643,7 +648,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          if(s == s2)
             result->_map[i] = true;
       }
-      ++first;
+      ++sfirst;
    }
    if(negate)
    {
