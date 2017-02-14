@@ -399,9 +399,13 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    last = char_set.singles_end();
    while(first != last)
    {
-      charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (first->second ? 3 : 2)));
+      charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (first->first ? 1 : first->second ? 3 : 2)));
       p[0] = m_traits.translate(first->first, m_icase);
-      if(first->second)
+      if(first->first)
+      {
+         p[0] = 0;
+      }
+      else if(first->second)
       {
          p[1] = m_traits.translate(first->second, m_icase);
          p[2] = 0;
