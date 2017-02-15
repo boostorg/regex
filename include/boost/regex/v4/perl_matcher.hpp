@@ -348,6 +348,7 @@ struct recursion_info
    const re_syntax_base* preturn_address;
    Results results;
    repeater_count<iterator>* repeater_stack;
+   iterator location_of_start;
 };
 
 #ifdef BOOST_MSVC

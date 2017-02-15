@@ -953,6 +953,19 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
 {
    BOOST_ASSERT(pstate->type == syntax_element_recurse);
    //
+   // See if we've seen this recursion before at this location, if we have then
+   // we need to prevent infinite recursion:
+   //
+   for(std::vector<recursion_info<results_type> >::const_reverse_iterator i = recursion_stack.rbegin(); i != recursion_stack.rend(); ++i)
+   {
+      if(i->idx == static_cast<const re_brace*>(static_cast<const re_jump*>(pstate)->alt.p)->index)
+      {
+         if(i->location_of_start == position)
+            return false;
+         break;
+      }
+   }
+   //
    // Backup call stack:
    //
    push_recursion_pop();
@@ -968,6 +981,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
    recursion_stack.back().results = *m_presult;
    pstate = static_cast<const re_jump*>(pstate)->alt.p;
    recursion_stack.back().idx = static_cast<const re_brace*>(pstate)->index;
+   recursion_stack.back().location_of_start = position;
    //if(static_cast<const re_recurse*>(pstate)->state_id > 0)
    {
       push_repeater_count(-(2 + static_cast<const re_brace*>(pstate)->index), &next_count);
