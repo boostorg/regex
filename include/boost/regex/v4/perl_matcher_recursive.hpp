@@ -904,7 +904,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
    // See if we've seen this recursion before at this location, if we have then
    // we need to prevent infinite recursion:
    //
-   for(std::vector<recursion_info<results_type> >::const_reverse_iterator i = recursion_stack.rbegin(); i != recursion_stack.rend(); ++i)
+   for(typename std::vector<recursion_info<results_type> >::const_reverse_iterator i = recursion_stack.rbegin(); i != recursion_stack.rend(); ++i)
    {
       if(i->idx == static_cast<const re_brace*>(static_cast<const re_jump*>(pstate)->alt.p)->index)
       {
