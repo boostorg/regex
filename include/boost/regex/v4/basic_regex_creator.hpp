@@ -240,7 +240,7 @@ protected:
    unsigned                      m_backrefs;           // bitmask of permitted backrefs
    boost::uintmax_t              m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
    bool                          m_has_recursions;     // set when we have recursive expresisons to fixup
-   std::vector<bool>             m_recursion_checks;   // notes which recursions we've followed while analysing this expression
+   std::vector<unsigned char>    m_recursion_checks;   // notes which recursions we've followed while analysing this expression
    typename traits::char_class_type m_word_mask;       // mask used to determine if a character is a word character
    typename traits::char_class_type m_mask_space;      // mask used to determine if a character is a word character
    typename traits::char_class_type m_lower_mask;       // mask used to determine if a character is a lowercase character
@@ -699,7 +699,7 @@ void basic_regex_creator<charT, traits>::finalize(const charT* p1, const charT* 
 
    m_bad_repeats = 0;
    if(m_has_recursions)
-      m_recursion_checks.assign(1 + m_pdata->m_mark_count, false);
+      m_recursion_checks.assign(1 + m_pdata->m_mark_count, 0u);
    create_startmap(m_pdata->m_first_state, m_pdata->m_startmap, &(m_pdata->m_can_be_null), mask_all);
    // get the restart type:
    m_pdata->m_restart_type = get_restart_type(m_pdata->m_first_state);
@@ -943,7 +943,7 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
    {
       // Initialize m_recursion_checks if we need it:
       if(m_has_recursions)
-         m_recursion_checks.assign(1 + m_pdata->m_mark_count, false);
+         m_recursion_checks.assign(1 + m_pdata->m_mark_count, 0u);
 
       const std::pair<bool, re_syntax_base*>& p = v.back();
       m_icase = p.first;
@@ -956,7 +956,7 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
       m_bad_repeats = 0;
 
       if(m_has_recursions)
-         m_recursion_checks.assign(1 + m_pdata->m_mark_count, false);
+         m_recursion_checks.assign(1 + m_pdata->m_mark_count, 0u);
       create_startmap(static_cast<re_alt*>(state)->alt.p, static_cast<re_alt*>(state)->_map, &static_cast<re_alt*>(state)->can_be_null, mask_skip);
       // adjust the type of the state to allow for faster matching:
       state->type = this->get_repeat_type(state);
@@ -1111,11 +1111,9 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       }
       case syntax_element_recurse:
          {
-            if(state->type == syntax_element_startmark)
-               recursion_sub = static_cast<re_brace*>(state)->index;
-            else
-               recursion_sub = 0;
-            if(m_recursion_checks[recursion_sub])
+            BOOST_ASSERT(static_cast<const re_jump*>(state)->alt.p->type == syntax_element_startmark);
+            recursion_sub = static_cast<re_brace*>(static_cast<const re_jump*>(state)->alt.p)->index;
+            if(m_recursion_checks[recursion_sub] & 1u)
             {
                // Infinite recursion!!
                if(0 == this->m_pdata->m_status) // update the error code if not already set
@@ -1140,10 +1138,10 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
                recursion_start = state;
                recursion_restart = state->next.p;
                state = static_cast<re_jump*>(state)->alt.p;
-               m_recursion_checks[recursion_sub] = true;
+               m_recursion_checks[recursion_sub] |= 1u;
                break;
             }
-            m_recursion_checks[recursion_sub] = true;
+            m_recursion_checks[recursion_sub] |= 1u;
             // can't handle nested recursion here...
             BOOST_FALLTHROUGH;
          }
@@ -1337,8 +1335,9 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
                }
                p = p->next.p;
             }
-            if(ok)
+            if(ok && ((m_recursion_checks[static_cast<re_brace*>(state)->index] & 2u) == 0))
             {
+               m_recursion_checks[static_cast<re_brace*>(state)->index] |= 2u;
                create_startmap(p->next.p, l_map, pnull, mask);
             }
          }
