@@ -479,7 +479,8 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    // now recursively add more states, this will terminate when we get to a
    // matching ')' :
    //
-   parse_all();
+   if(!parse_all())
+      return false;
    //
    // Unwind pushed alternatives:
    //
@@ -2860,6 +2861,10 @@ bool basic_regex_parser<charT, traits>::parse_perl_verb()
       }
       break;
    }
+   // Rewind to start of (* sequence:
+   --m_position;
+   while(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_open_mark) --m_position;
+   fail(regex_constants::error_perl_extension, m_position - m_base);
    return false;
 }
 
