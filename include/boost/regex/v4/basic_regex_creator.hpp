@@ -84,8 +84,8 @@ public:
    }
    void add_range(const digraph_type& first, const digraph_type& end)
    {
-      m_ranges.insert(m_ranges.end(), first);
-      m_ranges.insert(m_ranges.end(), end);
+      m_ranges.push_back(first);
+      m_ranges.push_back(end);
       if(first.second)
       {
          m_has_digraphs = true;
@@ -110,7 +110,7 @@ public:
    }
    void add_equivalent(const digraph_type& s)
    {
-      m_equivalents.insert(m_equivalents.end(), s);
+      m_equivalents.insert(s);
       if(s.second)
       {
          m_has_digraphs = true;
