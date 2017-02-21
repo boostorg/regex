@@ -479,8 +479,7 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    // now recursively add more states, this will terminate when we get to a
    // matching ')' :
    //
-   if(!parse_all())
-      return false;
+   parse_all();
    //
    // Unwind pushed alternatives:
    //
@@ -512,7 +511,8 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
       this->fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_end));
       return false;
    }
-   BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
+   if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark)
+      return false;
 #ifndef BOOST_NO_STD_DISTANCE
    if(markid && (this->flags() & regbase::save_subexpression_location))
       this->m_pdata->m_subs.at(markid - 1).second = std::distance(m_base, m_position);
