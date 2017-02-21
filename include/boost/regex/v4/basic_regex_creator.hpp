@@ -1427,7 +1427,7 @@ bool basic_regex_creator<charT, traits>::is_bad_repeat(re_syntax_base* pt)
    case syntax_element_long_set_rep:
       {
          unsigned state_id = static_cast<re_repeat*>(pt)->state_id;
-         if(state_id > sizeof(m_bad_repeats) * CHAR_BIT)
+         if(state_id >= sizeof(m_bad_repeats) * CHAR_BIT)
             return true;  // run out of bits, assume we can't traverse this one.
          static const boost::uintmax_t one = 1uL;
          return m_bad_repeats & (one << state_id);
