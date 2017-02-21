@@ -1719,6 +1719,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion(bool r)
       recursion_stack.back().idx = pmp->recursion_id;
       recursion_stack.back().preturn_address = pmp->preturn_address;
       recursion_stack.back().results = pmp->results;
+      recursion_stack.back().location_of_start = position;
    }
    boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(pmp++);
    m_backup_state = pmp;

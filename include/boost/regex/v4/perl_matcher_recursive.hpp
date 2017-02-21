@@ -996,6 +996,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
          recursion_stack.push_back(recursion_info<results_type>());
          recursion_stack.back().preturn_address = saved_state;
          recursion_stack.back().results = *m_presult;
+         recursion_stack.back().location_of_start = position;
          return false;
       }
       return true;
