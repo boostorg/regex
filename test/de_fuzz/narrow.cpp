@@ -7,6 +7,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size)
     return 0;
   try{
     size_t len = (Data[1] << 8) | Data[0];
+    if(len > Size - 2) len = Size - 2;
     std::string str((char*)(Data + 2), len);
     std::string text((char*)(Data + len), Size - len);
     boost::regex e(str);
