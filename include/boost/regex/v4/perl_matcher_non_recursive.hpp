@@ -132,11 +132,18 @@ struct saved_recursion : public saved_state
 {
    saved_recursion(int idx, const re_syntax_base* p, Results* pr) 
       : saved_state(14), recursion_id(idx), preturn_address(p), results(*pr)
-   {}
+   {
+       ++count;
+   }
+   ~saved_recursion() { --count; }
    int recursion_id;
    const re_syntax_base* preturn_address;
    Results results;
+   static int count;
 };
+
+template <class Results>
+int saved_recursion<Results>::count = 0;
 
 struct saved_change_case : public saved_state
 {
@@ -464,14 +471,29 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          BidiIterator saved_position = position;
          const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
          pstate = pstate->next.p->next.p;
-         bool r = match_all_states();
-         position = saved_position;
-         if(negated)
-            r = !r;
-         if(r)
+#if !defined(BOOST_NO_EXCEPTIONS)
+         try{
+#endif
+            bool r = match_all_states();
+            position = saved_position;
+            if(negated)
+               r = !r;
+            if(r)
+               pstate = next_pstate;
+            else
+               pstate = alt->alt.p;
+#if !defined(BOOST_NO_EXCEPTIONS)
+         }
+         catch(...)
+         {
             pstate = next_pstate;
-         else
-            pstate = alt->alt.p;
+            // unwind all pushed states, apart from anything else this
+            // ensures that all the states are correctly destructed
+            // not just the memory freed.
+            while(unwind(true)){}
+            throw;
+         }
+#endif
          break;
       }
       }
