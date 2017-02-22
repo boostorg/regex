@@ -902,7 +902,7 @@ escape_type_class_jump:
          }
          if(negative)
             i = 1 + m_mark_count - i;
-         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
+         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (i - 1 < sizeof(unsigned) * CHAR_BIT) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (this->m_pdata->get_id(i)-1 < sizeof(unsigned) * CHAR_BIT) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
