@@ -131,19 +131,11 @@ template <class Results>
 struct saved_recursion : public saved_state
 {
    saved_recursion(int idx, const re_syntax_base* p, Results* pr) 
-      : saved_state(14), recursion_id(idx), preturn_address(p), results(*pr)
-   {
-       ++count;
-   }
-   ~saved_recursion() { --count; }
+      : saved_state(14), recursion_id(idx), preturn_address(p), results(*pr) {}
    int recursion_id;
    const re_syntax_base* preturn_address;
    Results results;
-   static int count;
 };
-
-template <class Results>
-int saved_recursion<Results>::count = 0;
 
 struct saved_change_case : public saved_state
 {
