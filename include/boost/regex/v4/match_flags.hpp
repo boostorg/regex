@@ -78,7 +78,7 @@ typedef enum _match_flags
       | match_extra | match_single_line | match_unused1 | match_unused2 
       | match_unused3 | match_max | format_perl | format_default | format_sed
       | format_all | format_no_copy | format_first_only | format_is_if
-      | format_literal,
+      | format_literal
 
 
 } match_flags;
