@@ -404,7 +404,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          m_independent = true;
          const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
          pstate = pstate->next.p->next.p;
-         bool r = match_all_states();
+         bool r = false;
+#if !defined(BOOST_NO_EXCEPTIONS)
+      try{
+#endif
+         r = match_all_states();
          if(!r && !m_independent)
          {
             // Must be unwinding from a COMMIT/SKIP/PRUNE and the independent 
@@ -412,8 +416,20 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
             while(unwind(false));
             return false;
          }
+#if !defined(BOOST_NO_EXCEPTIONS)
+      }
+      catch(...)
+      {
          pstate = next_pstate;
-         m_independent = old_independent;
+         // unwind all pushed states, apart from anything else this
+         // ensures that all the states are correctly destructed
+         // not just the memory freed.
+         while(unwind(true)) {}
+         throw;
+      }
+#endif
+      pstate = next_pstate;
+      m_independent = old_independent;
 #ifdef BOOST_REGEX_MATCH_EXTRA
          if(r && (m_match_flags & match_extra))
          {
@@ -427,8 +443,23 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
             for(i = 0; i < temp_match.size(); ++i)
                (*m_presult)[i].get_captures().clear();
             // match everything else:
-            r = match_all_states();
-            // now place the stored captures back:
+#if !defined(BOOST_NO_EXCEPTIONS)
+            try{
+#endif
+               r = match_all_states();
+#if !defined(BOOST_NO_EXCEPTIONS)
+            }
+            catch(...)
+            {
+               pstate = next_pstate;
+               // unwind all pushed states, apart from anything else this
+               // ensures that all the states are correctly destructed
+               // not just the memory freed.
+               while(unwind(true)) {}
+               throw;
+            }
+#endif
+         // now place the stored captures back:
             for(i = 0; i < temp_match.size(); ++i)
             {
                typedef typename sub_match<BidiIterator>::capture_sequence_type seq;
