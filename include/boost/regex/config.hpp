@@ -152,7 +152,7 @@
 #  if defined(BOOST_REGEX_NO_W32) || BOOST_PLAT_WINDOWS_RUNTIME
 #    define BOOST_REGEX_NO_FILEITER
 #  endif
-#else // defined(_WIN32)
+#else /* defined(_WIN32) */
 #  if !defined(BOOST_HAS_DIRENT_H)
 #    define BOOST_REGEX_NO_FILEITER
 #  endif
