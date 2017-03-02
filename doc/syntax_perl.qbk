@@ -28,6 +28,8 @@ following special characters:
 
 [pre .\[{}()\\\*+?|^$]
 
+Other characters are special only in certain situations - for example `]` is special only after an opening `[`.
+
 [h4 Wildcard]
 
 The single character '.' when used outside of a character set will match 

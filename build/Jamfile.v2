@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt.
 
 import modules ;
+import testing ;
 
 project : requirements
    # default to all warnings on:
@@ -119,7 +120,6 @@ lib boost_regex : ../src/$(SOURCES) icu_options
     :         
 	     <link>shared:<define>BOOST_REGEX_DYN_LINK=1
 	     <toolset>gcc-cygwin:<link>static
-        <toolset>sun:<link>static
     ;
 
 boost-install boost_regex ;
