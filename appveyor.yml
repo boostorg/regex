@@ -47,7 +47,7 @@ install:
   - cd boost-root
   - git submodule update --init tools/build
   - git submodule update --init libs/config
-  - git submodule update --init libs/prohram_options
+  - git submodule update --init libs/program_options
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\regex
   - git submodule update --init tools/boostdep
   - python tools/boostdep/depinst/depinst.py regex
