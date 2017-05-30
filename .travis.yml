@@ -431,9 +431,11 @@ install:
   - cd boost-root
   - git submodule update --init tools/build
   - git submodule update --init libs/config
+  - git submodule update --init libs/program_options
   - cp -r $TRAVIS_BUILD_DIR/* libs/regex
   - git submodule update --init tools/boostdep
   - python tools/boostdep/depinst/depinst.py regex
+  - python tools/boostdep/depinst/depinst.py program_options
   - ./bootstrap.sh
   - ./b2 headers
 
