@@ -86,6 +86,9 @@ install:
   - git submodule update --init libs/math
   - git submodule update --init libs/tokenizer
   - git submodule update --init libs/optional
+  - git submodule update --init libs/atomic
+  - git submodule update --init libs/rational
+  - git submodule update --init libs/algorithm
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\regex
   - bootstrap
   - b2 headers
