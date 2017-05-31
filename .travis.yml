@@ -473,6 +473,7 @@ install:
   - git submodule update --init libs/optional
   - git submodule update --init libs/atomic
   - git submodule update --init libs/rational
+  - git submodule update --init libs/algorithm
   - cp -r $TRAVIS_BUILD_DIR/* libs/regex
   - ./bootstrap.sh
   - ./b2 headers
