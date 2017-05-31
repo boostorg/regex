@@ -471,6 +471,7 @@ install:
   - git submodule update --init libs/math
   - git submodule update --init libs/tokenizer
   - git submodule update --init libs/optional
+  - git submodule update --init libs/atomic
   - cp -r $TRAVIS_BUILD_DIR/* libs/regex
   - ./bootstrap.sh
   - ./b2 headers
