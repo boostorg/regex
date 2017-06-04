@@ -86,25 +86,15 @@ public:
    // See https://svn.boost.org/trac/boost/ticket/3632.
    //
    match_results(const match_results& m)
-      : m_subs(m.m_subs), m_named_subs(m.m_named_subs), m_last_closed_paren(m.m_last_closed_paren), m_is_singular(m.m_is_singular) 
-   {
-      if(!m_is_singular)
-      {
-         m_base = m.m_base;
-         m_null = m.m_null;
-      }
-   }
+      : m_subs(m.m_subs), m_base(m.m_base), m_null(m.m_null), m_named_subs(m.m_named_subs), m_last_closed_paren(m.m_last_closed_paren), m_is_singular(m.m_is_singular) {}
    match_results& operator=(const match_results& m)
    {
       m_subs = m.m_subs;
       m_named_subs = m.m_named_subs;
       m_last_closed_paren = m.m_last_closed_paren;
       m_is_singular = m.m_is_singular;
-      if(!m_is_singular)
-      {
-         m_base = m.m_base;
-         m_null = m.m_null;
-      }
+      m_base = m.m_base;
+      m_null = m.m_null;
       return *this;
    }
    ~match_results(){}
@@ -415,24 +405,8 @@ public:
       std::swap(m_subs, that.m_subs);
       std::swap(m_named_subs, that.m_named_subs);
       std::swap(m_last_closed_paren, that.m_last_closed_paren);
-      if(m_is_singular)
-      {
-         if(!that.m_is_singular)
-         {
-            m_base = that.m_base;
-            m_null = that.m_null;
-         }
-      }
-      else if(that.m_is_singular)
-      {
-         that.m_base = m_base;
-         that.m_null = m_null;
-      }
-      else
-      {
-         std::swap(m_base, that.m_base);
-         std::swap(m_null, that.m_null);
-      }
+      std::swap(m_base, that.m_base);
+      std::swap(m_null, that.m_null);
       std::swap(m_is_singular, that.m_is_singular);
    }
    bool operator==(const match_results& that)const
