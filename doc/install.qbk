@@ -87,6 +87,11 @@ might use:
 
 [pre bjam -sICU_PATH=c:\download\icu --toolset=toolset-name install]
 
+If your libraries are in a different (sub)directory then you can additionally use `ICU_LIBPATH`
+to explicitly point to the correct directory where the ICU libraries are located.
+
+[pre bjam -sICU_PATH=c:\download\icu -sICU_LIBPATH=C:\download\icu\debug-libs --toolset=toolset-name install]
+
 [important ICU is a C++ library just like Boost is, as such your copy of 
 ICU must have been built with the same C++ compiler (and compiler version) 
 that you are using to build Boost.  Boost.Regex will not work correctly unless 

@@ -14,11 +14,12 @@
 
 #
 # the following environment variables are recognised:
-# ICU_PATH= Path to ICU installation.
-# CXXFLAGS= extra compiler options - note applies to all build variants
-# INCLUDES= additional include directories
-# LDFLAGS=  additional linker options
-# LIBS=     additional library files
+# ICU_PATH=    Path to ICU installation.
+# ICU_LIBPATH= Path to ICU libraries.
+# CXXFLAGS=    extra compiler options - note applies to all build variants
+# INCLUDES=    additional include directories
+# LDFLAGS=     additional linker options
+# LIBS=        additional library files
 
 # compiler:
 CXX?=g++
@@ -39,9 +40,15 @@ $(warning "Hint: set ICU_PATH on the nmake command line to point ")
 $(warning "to your ICU installation if you have one.")
 else
 ICU_CXXFLAGS= -DBOOST_HAS_ICU=1 -I$(ICU_PATH)/include
+ifeq "$(ICU_LIBPATH)" ""
 ICU_LDFLAGS= -L$(ICU_PATH)/lib
 ICU_LIBS= -licui18n -licuuc
 $(warning "Building Boost.Regex with ICU in $(ICU_PATH)")
+else
+ICU_LDFLAGS= -L$(ICU_LIBPATH) -L$(ICU_PATH)/lib
+ICU_LIBS= -licui18n -licuuc
+$(warning "Building Boost.Regex with ICU in $(ICU_PATH) and libs in $(ICU_LIBPATH)")
+endif
 endif
 
 
