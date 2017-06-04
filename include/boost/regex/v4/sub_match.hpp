@@ -193,6 +193,30 @@ typedef sub_match<const wchar_t*> wcsub_match;
 typedef sub_match<std::wstring::const_iterator> wssub_match;
 #endif
 
+template <typename BidiIterator>
+inline typename sub_match<BidiIterator>::iterator range_begin(sub_match<BidiIterator>& m)
+{
+   return m.first;
+}
+
+template <typename BidiIterator>
+inline typename sub_match<BidiIterator>::const_iterator range_begin(const sub_match<BidiIterator>& m)
+{
+   return m.first;
+}
+
+template <typename BidiIterator>
+inline typename sub_match<BidiIterator>::iterator range_end(sub_match<BidiIterator>& m)
+{
+   return m.second;
+}
+
+template <typename BidiIterator>
+inline typename sub_match<BidiIterator>::const_iterator range_end(const sub_match<BidiIterator>& m)
+{
+   return m.second;
+}
+
 // comparison to std::basic_string<> part 1:
 template <class RandomAccessIterator, class traits, class Allocator>
 inline bool operator == (const std::basic_string<typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<RandomAccessIterator>::value_type, traits, Allocator>& s,
