@@ -110,9 +110,14 @@ void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std
    std::ptrdiff_t dist = boost::BOOST_REGEX_DETAIL_NS::distance(base, last);
    if(dist == 0)
       dist = 1;
-   std::ptrdiff_t states = re.size();
+   std::size_t states = re.size();
    if(states == 0)
       states = 1;
+   else if((std::numeric_limits<std::ptrdiff_t>::max)() / states < states)
+   {
+      max_state_count = (std::min)((std::ptrdiff_t)BOOST_REGEX_MAX_STATE_COUNT, (std::numeric_limits<std::ptrdiff_t>::max)() - 2);
+      return;
+   }
    states *= states;
    if((std::numeric_limits<std::ptrdiff_t>::max)() / dist < states)
    {
