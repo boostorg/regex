@@ -688,7 +688,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow()
 {
-   unsigned count = 0;
+   std::size_t count = 0;
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    re_syntax_base* psingle = rep->next.p;
    // match compulsary repeats first:
@@ -740,7 +740,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
 
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    bool greedy = (rep->greedy) && (!(m_match_flags & regex_constants::match_any) || m_independent);   
-   unsigned count = static_cast<unsigned>((std::min)(static_cast<unsigned>(::boost::BOOST_REGEX_DETAIL_NS::distance(position, last)), static_cast<unsigned>(greedy ? rep->max : rep->min)));
+   std::size_t count = static_cast<std::size_t>((std::min)(static_cast<std::size_t>(::boost::BOOST_REGEX_DETAIL_NS::distance(position, last)), greedy ? rep->max : rep->min));
    if(rep->min > count)
    {
       position = last;

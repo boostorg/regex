@@ -122,7 +122,7 @@ inline int string_compare(const Seq& s, const C* p)
    {
       ++i;
    }
-   return (i == s.size()) ? -p[i] : s[i] - p[i];
+   return (i == s.size()) ? -(int)p[i] : (int)s[i] - (int)p[i];
 }
 # define STR_COMP(s,p) string_compare(s,p)
 
