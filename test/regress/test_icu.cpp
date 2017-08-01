@@ -96,6 +96,40 @@ void compare_result(const MR1& w1, const MR2& w2, boost::mpl::int_<2> const*)
          BOOST_REGEX_TEST_ERROR("Matched mismatch in match_results class", UChar32);
       }
    }
+   //
+   // We don't have a way to access a list of named sub-expressions since we only store
+   // hashes, but "abc" and "N" are common names used in our tests, so check those:
+   //
+   if (w1["abc"].matched)
+   {
+      if (w2["abc"].matched == 0)
+      {
+         BOOST_REGEX_TEST_ERROR("Matched mismatch in match_results class", UChar32);
+      }
+      if ((w1.position("abc") != boost::BOOST_REGEX_DETAIL_NS::distance(iterator_type(w2.prefix().first), iterator_type(w2["abc"].first))) || (w1.length("abc") != boost::BOOST_REGEX_DETAIL_NS::distance(iterator_type(w2["abc"].first), iterator_type(w2["abc"].second))))
+      {
+         BOOST_REGEX_TEST_ERROR("Iterator mismatch in match_results class", UChar32);
+      }
+   }
+   else if (w2["abc"].matched)
+   {
+      BOOST_REGEX_TEST_ERROR("Matched mismatch in match_results class", UChar32);
+   }
+   if (w1["N"].matched)
+   {
+      if (w2["N"].matched == 0)
+      {
+         BOOST_REGEX_TEST_ERROR("Matched mismatch in match_results class", UChar32);
+      }
+      if ((w1.position("N") != boost::BOOST_REGEX_DETAIL_NS::distance(iterator_type(w2.prefix().first), iterator_type(w2["N"].first))) || (w1.length("N") != boost::BOOST_REGEX_DETAIL_NS::distance(iterator_type(w2["N"].first), iterator_type(w2["N"].second))))
+      {
+         BOOST_REGEX_TEST_ERROR("Iterator mismatch in match_results class", UChar32);
+      }
+   }
+   else if (w2["N"].matched)
+   {
+      BOOST_REGEX_TEST_ERROR("Matched mismatch in match_results class", UChar32);
+   }
 }
 template <class MR1, class MR2>
 void compare_result(const MR1& w1, const MR2& w2, boost::mpl::int_<1> const*)
