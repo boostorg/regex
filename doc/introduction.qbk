@@ -5,7 +5,7 @@
   http://www.boost.org/LICENSE_1_0.txt).
 ]
 
-[section Introduction and Overview]
+[section:intro Introduction and Overview]
 
 Regular expressions are a form of pattern-matching that are often used in 
 text processing; many users will be familiar with the Unix utilities grep, sed  

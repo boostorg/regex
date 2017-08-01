@@ -81,20 +81,20 @@ PDF version of this manual is also available].
 [include posix_api.qbk]
 [include concepts.qbk]
 
-[section Deprecated Interfaces]
+[section:deprecated Deprecated Interfaces]
 [include regex_format.qbk]
 [include regex_grep.qbk]
 [include regex_split.qbk]
 [include old_regex.qbk]
 [endsect]
 
-[section Internal Details]
+[section:internals Internal Details]
 [include unicode_iterators.qbk]
 [endsect]
 
 [endsect]
 
-[section Background Information]
+[section:background Background Information]
 
 [include headers.qbk]
 [include locale.qbk]
