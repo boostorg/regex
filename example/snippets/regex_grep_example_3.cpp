@@ -17,9 +17,9 @@
   *                using a bound member function callback.
   */
 
+#include <boost/regex.hpp>
 #include <string>
 #include <map>
-#include <boost/regex.hpp>
 #include <functional>
 #include <boost/detail/workaround.hpp>
 

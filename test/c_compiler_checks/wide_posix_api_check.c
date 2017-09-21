@@ -20,11 +20,11 @@
 #define UNICODE
 #define _UNICODE
 
+#include <boost/regex.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <boost/regex.h>
 
 #ifndef BOOST_NO_WREGEX
 #include <wchar.h>

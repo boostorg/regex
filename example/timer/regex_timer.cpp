@@ -13,6 +13,12 @@
 #pragma warning(disable: 4996 4127)
 #endif
 
+#include <boost/config.hpp>
+#include <boost/regex.hpp>
+#include <boost/cregex.hpp>
+#include <boost/timer.hpp> 
+#include <boost/smart_ptr.hpp>
+
 #include <string>
 #include <algorithm>
 #include <deque>
@@ -34,12 +40,6 @@ using std::ifstream;
 using std::streambuf;
 using std::getline;
 #endif
-
-#include <boost/config.hpp>
-#include <boost/regex.hpp>
-#include <boost/cregex.hpp>
-#include <boost/timer.hpp> 
-#include <boost/smart_ptr.hpp>
 
 #if defined(_WIN32) && defined(BOOST_REGEX_USE_WIN32_LOCALE)
 #include <windows.h>

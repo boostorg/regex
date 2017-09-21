@@ -19,6 +19,7 @@
 #ifndef BOOST_REGEX_ICU_HPP
 #define BOOST_REGEX_ICU_HPP
 
+#include <boost/config.hpp>
 #include <unicode/utypes.h>
 #include <unicode/uchar.h>
 #include <unicode/coll.h>
