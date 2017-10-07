@@ -777,7 +777,7 @@ inline bool perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref(
    {
       // Have we recursed into subexpression "index"?
       // If index == 0 then check for any recursion at all, otherwise for recursion to -index-1.
-      int idx = -index-1;
+      int idx = -(index+1);
       if(idx >= 10000)
       {
          named_subexpressions::range_type r = re.get_data().equal_range(idx);
