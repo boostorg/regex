@@ -2070,6 +2070,11 @@ insert_recursion:
          fail(regex_constants::error_perl_extension, m_position - m_base, "An invalid or unterminated recursive sub-expression.");
          return false;
       }
+      if ((std::numeric_limits<boost::intmax_t>::max)() - m_mark_count < v)
+      {
+         fail(regex_constants::error_perl_extension, m_position - m_base, "An invalid or unterminated recursive sub-expression.");
+         return false;
+      }
       v += m_mark_count;
       goto insert_recursion;
    case regex_constants::syntax_dash:

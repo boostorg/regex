@@ -307,6 +307,7 @@ template <class charT, class traits>
 boost::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const traits& t)
 {
    (void)t; // warning suppression
+   boost::intmax_t limit = (std::numeric_limits<boost::intmax_t>::max)() / radix;
    boost::intmax_t next_value = t.value(*p1, radix);
    if((p1 == p2) || (next_value < 0) || (next_value >= radix))
       return -1;
@@ -319,6 +320,8 @@ boost::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const t
       result *= radix;
       result += next_value;
       ++p1;
+      if (result > limit)
+         return -1;
    }
    return result;
 }
