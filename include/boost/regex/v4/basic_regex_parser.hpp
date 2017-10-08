@@ -971,7 +971,13 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
       )
    {
       // OK we have a perl or emacs regex, check for a '?':
-      if(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question)
+      if ((this->flags() & (regbase::main_option_type | regbase::mod_x | regbase::no_perl_ex)) == regbase::mod_x)
+      {
+         // whitespace skip:
+         while ((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
+            ++m_position;
+      }
+      if((m_position != m_end) && (this->m_traits.syntax_type(*m_position) == regex_constants::syntax_question))
       {
          greedy = false;
          ++m_position;
@@ -1064,6 +1070,12 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
          // Check for illegal following quantifier, we have to do this here, because
          // the extra states we insert below circumvents our usual error checking :-(
          //
+         if ((this->flags() & (regbase::main_option_type | regbase::mod_x | regbase::no_perl_ex)) == regbase::mod_x)
+         {
+            // whitespace skip:
+            while ((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
+               ++m_position;
+         }
          switch(this->m_traits.syntax_type(*m_position))
          {
          case regex_constants::syntax_star:
