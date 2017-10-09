@@ -155,12 +155,19 @@ void test_assertion_escapes()
    TEST_REGEX_SEARCH("\\R", perl, "foo\nbar", match_default, make_array(3, 4, -2, -2));
    TEST_REGEX_SEARCH("\\R", perl, "foo\rbar", match_default, make_array(3, 4, -2, -2));
    TEST_REGEX_SEARCH("\\R", perl, "foo\r\nbar", match_default, make_array(3, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl, "abc\r\nbar", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl, "abc\012bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl, "abc\013bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl, "abc\013bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl, "abc\205bar", match_default, make_array(0, 4, -2, -2));
    // see if \u works:
    const wchar_t* w = L"\u2028";
    if(*w == 0x2028u)
    {
       TEST_REGEX_SEARCH_W(L"\\R", perl, L"foo\u2028bar", match_default, make_array(3, 4, -2, -2));
       TEST_REGEX_SEARCH_W(L"\\R", perl, L"foo\u2029bar", match_default, make_array(3, 4, -2, -2));
+      TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2028bar", match_default, make_array(0, 4, -2, -2));
+      TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2029bar", match_default, make_array(0, 4, -2, -2));
    }
 }
 

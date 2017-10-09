@@ -161,7 +161,7 @@ aaaa
         is in the range 1-9, matches the same string that was matched by sub-expression
         <span class="emphasis"><em>n</em></span>. For example the expression:
       </p>
-<pre class="programlisting">^\(a*\).*\1$</pre>
+<pre class="programlisting">^\(a*\)[^a]*\1$</pre>
 <p>
         Will match the string:
       </p>
