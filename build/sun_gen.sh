@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 # copyright John Maddock 2003
 # Distributed under the Boost Software License, Version 1.0. 
