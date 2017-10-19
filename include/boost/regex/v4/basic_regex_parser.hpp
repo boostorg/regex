@@ -105,6 +105,7 @@ private:
    std::ptrdiff_t             m_paren_start;    // where the last seen ')' began (where repeats are inserted).
    std::ptrdiff_t             m_alt_insert_point; // where to insert the next alternative
    bool                       m_has_case_change; // true if somewhere in the current block the case has changed
+   unsigned                   m_recursion_count; // How many times we've called parse_all.
 #if defined(BOOST_MSVC) && defined(_M_IX86)
    // This is an ugly warning suppression workaround (for warnings *inside* std::vector
    // that can not otherwise be suppressed)...
@@ -120,7 +121,7 @@ private:
 
 template <class charT, class traits>
 basic_regex_parser<charT, traits>::basic_regex_parser(regex_data<charT, traits>* data)
-   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_mark_reset(-1), m_max_mark(0), m_paren_start(0), m_alt_insert_point(0), m_has_case_change(false)
+   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_mark_reset(-1), m_max_mark(0), m_paren_start(0), m_alt_insert_point(0), m_has_case_change(false), m_recursion_count(0)
 {
 }
 
@@ -245,11 +246,17 @@ void basic_regex_parser<charT, traits>::fail(regex_constants::error_type error_c
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_all()
 {
+   if (++m_recursion_count > 400)
+   {
+      // exceeded internal limits
+      fail(boost::regex_constants::error_complexity, m_position - m_base, "Exceeded nested brace limit.");
+   }
    bool result = true;
    while(result && (m_position != m_end))
    {
       result = (this->*m_parser_proc)();
    }
+   --m_recursion_count;
    return result;
 }
 
