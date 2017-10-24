@@ -352,83 +352,23 @@ matrix:
       osx_image: xcode8.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-      osx_image: xcode8.2
-
-    - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
       osx_image: xcode8.2
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-      osx_image: xcode8.2
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
-      osx_image: xcode8.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-      osx_image: xcode8.1
-
-    - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
       osx_image: xcode8.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-      osx_image: xcode8.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
-      osx_image: xcode8.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-      osx_image: xcode8.0
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
       osx_image: xcode8.0
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-      osx_image: xcode8.0
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
-      osx_image: xcode8.0
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-      osx_image: xcode7.3
-
-    - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
       osx_image: xcode7.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-      osx_image: xcode7.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
-      osx_image: xcode7.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-      osx_image: xcode6.4
-
-    - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
-      osx_image: xcode6.4
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-      osx_image: xcode6.4
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
       osx_image: xcode6.4
 
 install:
