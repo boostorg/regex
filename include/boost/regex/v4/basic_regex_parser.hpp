@@ -1077,21 +1077,40 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
          // Check for illegal following quantifier, we have to do this here, because
          // the extra states we insert below circumvents our usual error checking :-(
          //
-         if ((this->flags() & (regbase::main_option_type | regbase::mod_x | regbase::no_perl_ex)) == regbase::mod_x)
+         bool contin = false;
+         do
          {
-            // whitespace skip:
-            while ((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
-               ++m_position;
-         }
-         switch(this->m_traits.syntax_type(*m_position))
-         {
-         case regex_constants::syntax_star:
-         case regex_constants::syntax_plus:
-         case regex_constants::syntax_question:
-         case regex_constants::syntax_open_brace:
-            fail(regex_constants::error_badrepeat, m_position - m_base);
-            return false;
-         }
+            if ((this->flags() & (regbase::main_option_type | regbase::mod_x | regbase::no_perl_ex)) == regbase::mod_x)
+            {
+               // whitespace skip:
+               while ((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
+                  ++m_position;
+            }
+            if (m_position != m_end)
+            {
+               switch (this->m_traits.syntax_type(*m_position))
+               {
+               case regex_constants::syntax_star:
+               case regex_constants::syntax_plus:
+               case regex_constants::syntax_question:
+               case regex_constants::syntax_open_brace:
+                  fail(regex_constants::error_badrepeat, m_position - m_base);
+                  return false;
+               case regex_constants::syntax_open_mark:
+                  // Do we have a comment?  If so we need to skip it here...
+                  if ((m_position + 2 < m_end) && this->m_traits.syntax_type(*(m_position + 1)) == regex_constants::syntax_question
+                     && this->m_traits.syntax_type(*(m_position + 2)) == regex_constants::syntax_hash)
+                  {
+                     while ((m_position != m_end)
+                        && (this->m_traits.syntax_type(*m_position++) != regex_constants::syntax_close_mark)) {
+                     }
+                  }
+                  contin = true;
+               }
+            }
+            else
+               contin = false;
+         } while (contin);
       }
       re_brace* pb = static_cast<re_brace*>(this->insert_state(insert_point, syntax_element_startmark, sizeof(re_brace)));
       pb->index = -3;
@@ -2010,7 +2029,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    {
       while((m_position != m_end) 
          && (this->m_traits.syntax_type(*m_position++) != regex_constants::syntax_close_mark))
-      {}      
+      {}
       return true;
    }
    //

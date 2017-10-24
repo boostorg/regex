@@ -205,6 +205,11 @@ void test_options()
    TEST_REGEX_SEARCH("(a (?x)b c)d e", perl, "a bcde", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("(a b(?x)c d (?-x)e f)", perl, "a bcde f", match_default, make_array(0, 8, 0, 8, -2, -2));
    TEST_REGEX_SEARCH("(a b(?x)c d (?-x)e f)", perl, "abcdef", match_default, make_array(-2, -2));
+
+   TEST_INVALID_REGEX("a++(?#abc)+", perl);
+   TEST_INVALID_REGEX("a++(?#abc)?", perl);
+   TEST_INVALID_REGEX("a++(?#abc)*", perl);
+   TEST_INVALID_REGEX("a++(?#abc){2}", perl);
 }
 
 void test_options2()
