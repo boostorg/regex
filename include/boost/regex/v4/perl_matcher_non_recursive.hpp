@@ -1181,10 +1181,15 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
          {
             // Unenclosed closing ), occurs when (*ACCEPT) is inside some other 
             // parenthesis which may or may not have other side effects associated with it.
+            const re_syntax_base* sp = pstate;
             match_endmark();
             if(!pstate)
             {
                unwind(true);
+               // unwind may leave pstate NULL if we've unwound a forward lookahead, in which
+               // case just move to the next state and keep looking...
+               if (!pstate)
+                  pstate = sp->next.p;
             }
          }
          continue;
