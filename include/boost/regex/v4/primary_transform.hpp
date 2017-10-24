@@ -20,6 +20,10 @@
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #define BOOST_REGEX_PRIMARY_TRANSFORM
 
+#ifndef BOOST_REGEX_CONFIG_HPP
+#include <boost/regex/config.hpp>
+#endif
+
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
