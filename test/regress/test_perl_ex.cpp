@@ -210,6 +210,13 @@ void test_options()
    TEST_INVALID_REGEX("a++(?#abc)?", perl);
    TEST_INVALID_REGEX("a++(?#abc)*", perl);
    TEST_INVALID_REGEX("a++(?#abc){2}", perl);
+   TEST_INVALID_REGEX("a++(?#abc)(?#more)+", perl);
+   TEST_REGEX_SEARCH("(?x) ab (?#first comment) (?#more)   +", perl, "abbbb", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("ab(?#first comment)(?#more)+", perl, "abbbb", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?x) ab (?#first comment) (?#more)   (c)", perl, "abc", match_default, make_array(0, 3, 2, 3, -2, -2));
+   TEST_REGEX_SEARCH("ab(?#first comment)(?#more)(c)", perl, "abc", match_default, make_array(0, 3, 2, 3, -2, -2));
+   TEST_REGEX_SEARCH("(?x) ab (?#first comment) (?#more)   (?:c)", perl, "abc", match_default, make_array(0, 3, -2, -2));
+   TEST_REGEX_SEARCH("ab(?#first comment)(?#more)(?:c)", perl, "abc", match_default, make_array(0, 3, -2, -2));
 }
 
 void test_options2()
