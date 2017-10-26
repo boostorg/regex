@@ -1104,8 +1104,10 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
                      while ((m_position != m_end)
                         && (this->m_traits.syntax_type(*m_position++) != regex_constants::syntax_close_mark)) {
                      }
+                     contin = true;
                   }
-                  contin = true;
+                  else
+                     contin = false;
                }
             }
             else
