@@ -378,7 +378,10 @@ public:
       BidiIterator l_base)
       :  m_result(what), base(first), last(end), 
          position(first), backstop(l_base), re(e), traits_inst(e.get_traits()), 
-         m_independent(false), next_count(&rep_obj), rep_obj(&next_count), m_recursions(0)
+         m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
+#ifdef BOOST_REGEX_NON_RECURSIVE
+      , m_recursions(0)
+#endif
    {
       construct_init(e, f);
    }
