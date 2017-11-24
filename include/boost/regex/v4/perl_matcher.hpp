@@ -379,6 +379,9 @@ public:
       :  m_result(what), base(first), last(end), 
          position(first), backstop(l_base), re(e), traits_inst(e.get_traits()), 
          m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
+#ifdef BOOST_REGEX_NON_RECURSIVE
+      , m_recursions(0)
+#endif
    {
       construct_init(e, f);
    }
@@ -566,6 +569,8 @@ private:
    bool m_unwound_alt;
    // We are unwinding a commit - used by independent subs to determine whether to stop there or carry on unwinding:
    //bool m_unwind_commit;
+   // Recursion limit:
+   unsigned m_recursions;
 #endif
 
    // these operations aren't allowed, so are declared private,

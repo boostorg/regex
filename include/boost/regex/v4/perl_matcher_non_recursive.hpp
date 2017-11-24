@@ -143,6 +143,15 @@ struct saved_change_case : public saved_state
    saved_change_case(bool c) : saved_state(18), icase(c) {}
 };
 
+struct incrementer
+{
+   incrementer(unsigned* pu) : m_pu(pu) { ++*m_pu; }
+   ~incrementer() { --*m_pu; }
+   bool operator > (unsigned i) { return *m_pu > i; }
+private:
+   unsigned* m_pu;
+};
+
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
@@ -187,7 +196,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
       &perl_matcher<BidiIterator, Allocator, traits>::match_commit,
       &perl_matcher<BidiIterator, Allocator, traits>::match_then,
    };
-
+   incrementer inc(&m_recursions);
+   if(inc > 80)
+      raise_error(traits_inst, regex_constants::error_complexity);
    push_recursion_stopper();
    do{
       while(pstate)
@@ -1762,8 +1773,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_non_greedy_repeat(boo
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion(bool r)
 {
+   // We are backtracking back inside a recursion, need to push the info
+   // back onto the recursion stack, and do so unconditionally, otherwise
+   // we can get mismatched pushes and pops...
    saved_recursion<results_type>* pmp = static_cast<saved_recursion<results_type>*>(m_backup_state);
-   if(!r)
+   if (!r)
    {
       recursion_stack.push_back(recursion_info<results_type>());
       recursion_stack.back().idx = pmp->recursion_id;
@@ -1780,8 +1794,10 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion(bool r)
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_pop(bool r)
 {
+   // Backtracking out of a recursion, we must pop state off the recursion
+   // stack unconditionally to ensure matched pushes and pops:
    saved_state* pmp = static_cast<saved_state*>(m_backup_state);
-   if(!r)
+   if (!r)
    {
       *m_presult = recursion_stack.back().results;
       position = recursion_stack.back().location_of_start;
