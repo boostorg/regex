@@ -19,18 +19,18 @@ bool validate_card_format(const std::string& s)
     return boost::regex_match(s, e);
 }
 
-const boost::regex e("\\A(\\d{3,4})[- ]?(\\d{4})[- ]?(\\d{4})[- ]?(\\d{4})\\z");
+const boost::regex card_rx("\\A(\\d{3,4})[- ]?(\\d{4})[- ]?(\\d{4})[- ]?(\\d{4})\\z");
 const std::string machine_format("\\1\\2\\3\\4");
 const std::string human_format("\\1-\\2-\\3-\\4");
 
 std::string machine_readable_card_number(const std::string& s)
 {
-    return boost::regex_replace(s, e, machine_format, boost::match_default | boost::format_sed);
+    return boost::regex_replace(s, card_rx, machine_format, boost::match_default | boost::format_sed);
 }
 
 std::string human_readable_card_number(const std::string& s)
 {
-    return boost::regex_replace(s, e, human_format, boost::match_default | boost::format_sed);
+    return boost::regex_replace(s, card_rx, human_format, boost::match_default | boost::format_sed);
 }
 
 int main()
