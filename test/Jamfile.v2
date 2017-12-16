@@ -194,4 +194,5 @@ compile test_consolidated.cpp ;
 
 build-project ../example ;
 
-
+# `quick` target (for CI)
+run quick.cpp ../build//boost_regex ;
