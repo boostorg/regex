@@ -72,11 +72,13 @@ class string_out_iterator
 #endif // ndef BOOST_NO_STD_ITERATOR
 {
 #ifdef BOOST_NO_STD_ITERATOR
+public:
    typedef std::output_iterator_tag iterator_category;
    typedef void value_type;
    typedef void difference_type;
    typedef void pointer;
    typedef void reference;
+private:
 #endif // BOOST_NO_STD_ITERATOR
 
    S* out;
