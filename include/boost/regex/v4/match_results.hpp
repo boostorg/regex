@@ -56,7 +56,9 @@ private:
 #endif
 public: 
    typedef          sub_match<BidiIterator>                         value_type;
-#if  !defined(BOOST_NO_STD_ALLOCATOR) && !(defined(BOOST_MSVC) && defined(_STLPORT_VERSION))
+#ifndef BOOST_NO_CXX11_ALLOCATOR
+   typedef typename std::allocator_traits<Allocator>::value_type const &    const_reference;
+#elif  !defined(BOOST_NO_STD_ALLOCATOR) && !(defined(BOOST_MSVC) && defined(_STLPORT_VERSION))
    typedef typename Allocator::const_reference                              const_reference;
 #else
    typedef          const value_type&                                       const_reference;
@@ -66,7 +68,11 @@ public:
    typedef          const_iterator                                          iterator;
    typedef typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<
                                     BidiIterator>::difference_type          difference_type;
+#ifdef BOOST_NO_CXX11_ALLOCATOR
    typedef typename Allocator::size_type                                    size_type;
+#else
+   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+#endif
    typedef          Allocator                                               allocator_type;
    typedef typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<
                                     BidiIterator>::value_type               char_type;
