@@ -33,16 +33,16 @@ namespace unnecessary_fix{
 //
 template <class Seq>
 class back_insert_iterator 
-#ifndef BOOST_NO_STD_ITERATOR
-   : public std::iterator<std::output_iterator_tag,void,void,void,void>
-#endif
 {
 private:
    Seq* container;
 public:
    typedef const typename Seq::value_type value_type;
    typedef Seq                  container_type;
-   typedef std::output_iterator_tag  iterator_category;
+   typedef void                     difference_type;
+   typedef void                     pointer;
+   typedef void                     reference;
+   typedef std::output_iterator_tag iterator_category;
 
    explicit back_insert_iterator(Seq& x) : container(&x) {}
    back_insert_iterator& operator=(const value_type& val) 
