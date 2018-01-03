@@ -1797,7 +1797,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_pop(bool r)
    // Backtracking out of a recursion, we must pop state off the recursion
    // stack unconditionally to ensure matched pushes and pops:
    saved_state* pmp = static_cast<saved_state*>(m_backup_state);
-   if (!r)
+   if (!r && !recursion_stack.empty())
    {
       *m_presult = recursion_stack.back().results;
       position = recursion_stack.back().location_of_start;
