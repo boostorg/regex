@@ -1834,6 +1834,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_commit(bool b)
       // If we stop because we just unwound an assertion, put the
       // commit state back on the stack again:
       //
+      m_unwound_lookahead = false;
       saved_state* pmp = m_backup_state;
       --pmp;
       if(pmp < m_stack_base)
