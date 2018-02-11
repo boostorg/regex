@@ -569,7 +569,7 @@ private:
    //
    static void raise_logic_error()
    {
-      std::logic_error e("Attempt to access an uninitialzed boost::match_results<> class.");
+      std::logic_error e("Attempt to access an uninitialized boost::match_results<> class.");
       boost::throw_exception(e);
    }
 
