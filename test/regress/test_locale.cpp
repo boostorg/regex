@@ -49,7 +49,9 @@ test_locale::test_locale(const char* c_name, boost::uint32_t lcid)
 #else
   s_c_locale = no_test;
 #endif
-#if !defined(BOOST_NO_STD_LOCALE) && !defined(BOOST_NO_EXCEPTIONS)
+  // Disabled for VC15.7 (and later?) as the C runtime asserts if you pass an invalid
+  // locale name to std::locale, rather than throwing the expected exception.
+#if !defined(BOOST_NO_STD_LOCALE) && !defined(BOOST_NO_EXCEPTIONS) && !BOOST_WORKAROUND(BOOST_MSVC, > 1913)
    // back up the C++ locale and create the new one:
    m_old_cpp_locale = s_cpp_locale_inst;
    m_old_cpp_state = s_cpp_locale;
