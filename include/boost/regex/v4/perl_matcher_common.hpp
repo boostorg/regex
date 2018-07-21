@@ -476,12 +476,14 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary()
    }
    else
    {
-      b = (m_match_flags & match_not_eow) ? true : false;
+      if (m_match_flags & match_not_eow)
+         return false;
+      b = false;
    }
    if((position == backstop) && ((m_match_flags & match_prev_avail) == 0))
    {
       if(m_match_flags & match_not_bow)
-         b ^= true;
+         return false;
       else
          b ^= false;
    }

@@ -169,5 +169,30 @@ void test_assertion_escapes()
       TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2028bar", match_default, make_array(0, 4, -2, -2));
       TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2029bar", match_default, make_array(0, 4, -2, -2));
    }
+   // Bug report: https://github.com/boostorg/regex/issues/40
+   TEST_REGEX_SEARCH("\\b", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
 }
 
