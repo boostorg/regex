@@ -124,7 +124,9 @@ template class BOOST_REGEX_TEMPLATE_DECL ::boost::BOOST_REGEX_DETAIL_NS::perl_ma
 
 #ifdef __clang__
 #pragma clang diagnostic push
+#if (__clang_major__ > 3) || ((__clang_major__ == 3) && (__clang_minor__ > 5))
 #pragma clang diagnostic ignored "-Wkeyword-macro"
+#endif
 #endif
 
 #  ifndef BOOST_REGEX_INSTANTIATE
