@@ -241,7 +241,7 @@ inline std::ptrdiff_t global_length<char>(const char* p)
 template<>
 inline std::ptrdiff_t global_length<wchar_t>(const wchar_t* p)
 {
-   return (std::wcslen)(p);
+   return (std::ptrdiff_t)(std::wcslen)(p);
 }
 #endif
 template <class charT>
