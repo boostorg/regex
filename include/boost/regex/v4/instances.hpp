@@ -122,11 +122,17 @@ template class BOOST_REGEX_TEMPLATE_DECL ::boost::BOOST_REGEX_DETAIL_NS::perl_ma
 
 #elif (defined(__GNUC__) && (__GNUC__ >= 3)) || !defined(BOOST_NO_CXX11_EXTERN_TEMPLATE)
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#if (__clang_major__ > 3) || ((__clang_major__ == 3) && (__clang_minor__ > 5))
-#pragma clang diagnostic ignored "-Wkeyword-macro"
-#endif
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  if defined(__APPLE_CC__)
+#    if (__clang_major__ > 6)
+#      pragma clang diagnostic ignored "-Wkeyword-macro"
+#    endif
+#  else
+#    if (__clang_major__ > 3) || ((__clang_major__ == 3) && (__clang_minor__ > 5))
+#      pragma clang diagnostic ignored "-Wkeyword-macro"
+#    endif
+#  endif
 #endif
 
 #  ifndef BOOST_REGEX_INSTANTIATE
