@@ -103,6 +103,42 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,1z CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,1z CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
 
     - os: linux
