@@ -244,7 +244,7 @@ public:
       //
       // Scan for the leftmost *matched* subexpression with the specified named:
       //
-      if(m_is_singular)
+      if(m_is_singular || !m_named_subs)
          raise_logic_error();
       BOOST_REGEX_DETAIL_NS::named_subexpressions::range_type r = m_named_subs->equal_range(i, j);
       while((r.first != r.second) && ((*this)[r.first->index].matched == false))
