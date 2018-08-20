@@ -21,6 +21,7 @@ project
       #<toolset>gcc-mingw:<link>static
       <toolset>gcc-cygwin:<link>static
       <toolset>sun:<link>static
+      <toolset>clang:<visibility>global
     ;
 
 #
