@@ -113,6 +113,13 @@
 #if defined(__MINGW32__)
 #  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
 #endif
+/*
+ * Clang fails to export template instances with -fvisibility=hidden, see
+ * https://github.com/boostorg/regex/issues/49
+ */
+#ifdef __clang__
+#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
+#endif
 
 /*
  * If there isn't good enough wide character support then there will
