@@ -9,6 +9,7 @@ import testing ;
 project : requirements
    # default to all warnings on:
    <warnings>all
+   <toolset>clang:<visibility>global
    ;
 
 local disable-icu = [ MATCH (--disable-icu) : [ modules.peek : ARGV ] ] ;
