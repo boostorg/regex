@@ -194,4 +194,10 @@ compile test_consolidated.cpp ;
 
 build-project ../example ;
 
+# `quick` target (for CI)
+run quick.cpp ../build//boost_regex ;
 
+compile test_warnings.cpp 
+   :     <toolset>msvc:<warnings>all <toolset>msvc:<warnings-as-errors>on
+         <toolset>gcc:<warnings>all <toolset>gcc:<warnings-as-errors>on
+         <toolset>clang:<warnings>all <toolset>clang:<warnings-as-errors>on ;

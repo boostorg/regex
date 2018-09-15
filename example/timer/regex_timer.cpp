@@ -67,18 +67,14 @@ ostream& operator << (ostream& os, const std::wstring& s)
 
 template <class S>
 class string_out_iterator 
-#ifndef BOOST_NO_STD_ITERATOR
-  : public std::iterator<std::output_iterator_tag, void, void, void, void>
-#endif // ndef BOOST_NO_STD_ITERATOR
 {
-#ifdef BOOST_NO_STD_ITERATOR
+public:
    typedef std::output_iterator_tag iterator_category;
    typedef void value_type;
    typedef void difference_type;
    typedef void pointer;
    typedef void reference;
-#endif // BOOST_NO_STD_ITERATOR
-
+private:
    S* out;
 public:
    string_out_iterator(S& s) : out(&s) {}

@@ -29,9 +29,9 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
 template <int N>
-int array_size(const char* (&p)[N])
+size_t array_size(const char* (&p)[N])
 {
-   for(int i = 0; i < N; ++i)
+   for(size_t i = 0; i < N; ++i)
       if(p[i] == 0)
          return i;
    return N;
