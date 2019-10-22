@@ -30,6 +30,10 @@ rule path_options ( properties * )
 #
 # ICU configuration:
 #
+
+local ICU_OPTS ;
+local ICU_INSTALL_OPTS ;
+
 if ! $(disable-icu)
 {
 
@@ -44,7 +48,8 @@ if ! $(disable-icu)
 
    if $(ICU_LINK)
    {
-      ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin <define>BOOST_HAS_ICU=1 <runtime-link>shared ;
+      ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <define>BOOST_HAS_ICU=1 <runtime-link>shared ;
+      ICU_INSTALL_OPTS = <dll-path>$(ICU_PATH)/bin ;
    }
    else
    {
@@ -122,12 +127,4 @@ lib boost_regex : ../src/$(SOURCES) icu_options
 	     <toolset>gcc-cygwin:<link>static
     ;
 
-boost-install boost_regex ;
-
-
-
-
-
-
-
-
+boost-install boost_regex : $(ICU_INSTALL_OPTS) ;
