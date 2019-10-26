@@ -60,32 +60,22 @@ If you think that it should have been found, then you will need to take a look
 at the contents of the file ['boost-root/bin.v2/config.log] for the actual error
 messages obtained when the build carried out the configuration check.  You will
 then need to fix these errors by ensuring your compiler gets invoked with the correct
-options, for example:
+options.  The main options that you're likely to pass to `b2` are:
 
-[pre bjam include=some-include-path --toolset=toolset-name install]
-
-will add "some-include-path" to your compilers header include path, or if ICU
-has been built with non-standard names for it's binaries, then:
-
-[pre bjam -sICU_LINK="linker-options-for-icu" --toolset=toolset-name install]
-
-Will use ['"linker-options-for-icu"] when linking the library rather than the default
-ICU binary names.
-
-You might also need to use the options "cxxflags=-option" and "linkflags=-option" to set compiler and linker
-specific options.
+[table
+[[Option][Description]]
+[[include=/some/path][Adds "/some/path" to the list of paths seached for include files, normally equivalent to `-I/some/path` on most compilers.]]
+[[library-path=/some/path][Adds "/some/path" to the list of paths searched for external libraries, set this to the location of the ICU binaries if they're in a non-standard location.]]
+[[-sICU_ICUUC_NAME=NAME][If `libicuuc` has a non-standard name then this sets the name of the library linked against, defaults to either `icuuc`, `icuucd`, `sicuuc` or `sicuucd` depending on build options.]]
+[[-sICU_ICUDT_NAME=NAME][If `libicudata` has a non-standard name then this sets the name of the library linked against, defaults to either `icudt`, `icudata`, `sicudt` or `sicudata` depending on build options and platform.]]
+[[-sICU_ICUIN_NAME=NAME][If `libicui18n` has a non-standatd name then this sets the name of the library linked against, defaults to either `icui18n`, `icuin`, `icuind`, sicuin` or `sicuins` depending on build options and platform.]]
+[[cxxstd=XX][Sets the C++ standard supported: XX should be either 03, 11, 14, 17 or 2a.]]
+[[cxxflags="FLAGS"][Passes "FLAGS" directly to the compiler, an option of last resort!]]
+[[linflags="FLAGS"][Passes "FLAGS" directly to the compiler on the link step, an option of last resort!]]
+]
 
 [important Configuration results are cached - if you try rebuilding with different compiler
 options then add an "-a" to the bjam command line to force all targets to be rebuilt.]
-
-If ICU is not already in your compiler's path, but instead headers, libraries and binaries
-are located at ['path-to-icu/include], ['path-to-icu/lib] and ['path-to-icu/bin] respectively
-then you need to set the environment variable `ICU_PATH` to point to the root directory of your 
-ICU installation: this typically happens if you're building with MSVC. 
-For example if ICU was installed to `c:\download\icu` you 
-might use:
-
-[pre bjam -sICU_PATH=c:\download\icu --toolset=toolset-name install]
 
 [important ICU is a C++ library just like Boost is, as such your copy of 
 ICU must have been built with the same C++ compiler (and compiler version) 
