@@ -4,8 +4,8 @@
 <title>Building and Installing the Library</title>
 <link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
-<link rel="home" href="../index.html" title="Boost.Regex 5.1.3">
-<link rel="up" href="../index.html" title="Boost.Regex 5.1.3">
+<link rel="home" href="../index.html" title="Boost.Regex 5.1.4">
+<link rel="up" href="../index.html" title="Boost.Regex 5.1.4">
 <link rel="prev" href="configuration/tuning.html" title="Algorithm Tuning">
 <link rel="next" href="intro.html" title="Introduction and Overview">
 </head>
@@ -99,22 +99,143 @@
       at the contents of the file <span class="emphasis"><em>boost-root/bin.v2/config.log</em></span>
       for the actual error messages obtained when the build carried out the configuration
       check. You will then need to fix these errors by ensuring your compiler gets
-      invoked with the correct options, for example:
+      invoked with the correct options. The main options that you're likely to pass
+      to <code class="computeroutput"><span class="identifier">b2</span></code> are:
     </p>
-<pre class="programlisting">bjam include=some-include-path --toolset=toolset-name install</pre>
-<p>
-      will add "some-include-path" to your compilers header include path,
-      or if ICU has been built with non-standard names for it's binaries, then:
-    </p>
-<pre class="programlisting">bjam -sICU_LINK="linker-options-for-icu" --toolset=toolset-name install</pre>
-<p>
-      Will use <span class="emphasis"><em>"linker-options-for-icu"</em></span> when linking
-      the library rather than the default ICU binary names.
-    </p>
-<p>
-      You might also need to use the options "cxxflags=-option" and "linkflags=-option"
-      to set compiler and linker specific options.
-    </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Option
+              </p>
+            </th>
+<th>
+              <p>
+                Description
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                include=/some/path
+              </p>
+            </td>
+<td>
+              <p>
+                Adds "/some/path" to the list of paths seached for include
+                files, normally equivalent to <code class="computeroutput"><span class="special">-</span><span class="identifier">I</span><span class="special">/</span><span class="identifier">some</span><span class="special">/</span><span class="identifier">path</span></code> on most compilers.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                library-path=/some/path
+              </p>
+            </td>
+<td>
+              <p>
+                Adds "/some/path" to the list of paths searched for external
+                libraries, set this to the location of the ICU binaries if they're
+                in a non-standard location.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                -sICU_ICUUC_NAME=NAME
+              </p>
+            </td>
+<td>
+              <p>
+                If <code class="computeroutput"><span class="identifier">libicuuc</span></code> has a
+                non-standard name then this sets the name of the library linked against,
+                defaults to either <code class="computeroutput"><span class="identifier">icuuc</span></code>,
+                <code class="computeroutput"><span class="identifier">icuucd</span></code>, <code class="computeroutput"><span class="identifier">sicuuc</span></code> or <code class="computeroutput"><span class="identifier">sicuucd</span></code>
+                depending on build options.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                -sICU_ICUDT_NAME=NAME
+              </p>
+            </td>
+<td>
+              <p>
+                If <code class="computeroutput"><span class="identifier">libicudata</span></code> has
+                a non-standard name then this sets the name of the library linked
+                against, defaults to either <code class="computeroutput"><span class="identifier">icudt</span></code>,
+                <code class="computeroutput"><span class="identifier">icudata</span></code>, <code class="computeroutput"><span class="identifier">sicudt</span></code> or <code class="computeroutput"><span class="identifier">sicudata</span></code>
+                depending on build options and platform.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                -sICU_ICUIN_NAME=NAME
+              </p>
+            </td>
+<td>
+              <p>
+                If <code class="computeroutput"><span class="identifier">libicui18n</span></code> has
+                a non-standatd name then this sets the name of the library linked
+                against, defaults to either <code class="computeroutput"><span class="identifier">icui18n</span></code>,
+                <code class="computeroutput"><span class="identifier">icuin</span></code>, <code class="computeroutput"><span class="identifier">icuind</span></code>, sicuin<code class="computeroutput"> <span class="keyword">or</span>
+                </code>sicuins` depending on build options and platform.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cxxstd=XX
+              </p>
+            </td>
+<td>
+              <p>
+                Sets the C++ standard supported: XX should be either 03, 11, 14,
+                17 or 2a.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cxxflags="FLAGS"
+              </p>
+            </td>
+<td>
+              <p>
+                Passes "FLAGS" directly to the compiler, an option of last
+                resort!
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                linflags="FLAGS"
+              </p>
+            </td>
+<td>
+              <p>
+                Passes "FLAGS" directly to the compiler on the link step,
+                an option of last resort!
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
 <div class="important"><table border="0" summary="Important">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../../../doc/src/images/important.png"></td>
@@ -126,16 +247,6 @@
         targets to be rebuilt.
       </p></td></tr>
 </table></div>
-<p>
-      If ICU is not already in your compiler's path, but instead headers, libraries
-      and binaries are located at <span class="emphasis"><em>path-to-icu/include</em></span>, <span class="emphasis"><em>path-to-icu/lib</em></span>
-      and <span class="emphasis"><em>path-to-icu/bin</em></span> respectively then you need to set
-      the environment variable <code class="computeroutput"><span class="identifier">ICU_PATH</span></code>
-      to point to the root directory of your ICU installation: this typically happens
-      if you're building with MSVC. For example if ICU was installed to <code class="computeroutput"><span class="identifier">c</span><span class="special">:\</span><span class="identifier">download</span><span class="special">\</span><span class="identifier">icu</span></code> you
-      might use:
-    </p>
-<pre class="programlisting">bjam -sICU_PATH=c:\download\icu --toolset=toolset-name install</pre>
 <div class="important"><table border="0" summary="Important">
 <tr>
 <td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../../../doc/src/images/important.png"></td>
