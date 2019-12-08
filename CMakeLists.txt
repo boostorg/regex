@@ -9,6 +9,7 @@ cmake_minimum_required( VERSION 3.5 )
 project( BoostRegex LANGUAGES CXX )
 
 option( BOOST_REGEX_INCLUDE_EXAMPLES "Also build (some) boost regex examples" OFF )
+option( BOOST_REGEX_USE_ICU "Enable ICU support in boost regex" OFF )
 
 file( GLOB BOOST_REGEX_SRC ./src/*.cpp )
 
@@ -33,6 +34,19 @@ target_link_libraries( boost_regex
         Boost::throw_exception
         Boost::type_traits
 )
+
+if( BOOST_REGEX_USE_ICU )
+    if( NOT TARGET ICU::dt )
+        # components need to be listed explicitly
+        find_package( ICU COMPONENTS dt in uc REQUIRED )
+    endif()
+
+    target_link_libraries( boost_regex
+        PRIVATE
+            ICU::dt ICU::in ICU::uc
+    )
+    target_compile_definitions( boost_regex PRIVATE BOOST_HAS_ICU=1 )
+endif()
 
 if( BOOST_REGEX_INCLUDE_EXAMPLES )
     add_subdirectory( example/snippets )
