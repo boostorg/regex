@@ -28,20 +28,31 @@ matrix:
 
   include:
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++ CXXSTD=03
-
-    - os: linux
-      env: TEST_CMAKE=true # unused - just for identification in travis ci gui
-      script: 
+      env: TEST_CMAKE=true # variables unused - just for identification in travis ci gui
+      script:
         - git submodule update --init tools/cmake
-        - git submodule update --init libs/typeof
         - git submodule update --init libs/conversion
         - git submodule update --init libs/function_types
         - git submodule update --init libs/fusion
-        - mkdir __build__
-        - cd __build__
-        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON 
+        - git submodule update --init libs/typeof
+        - mkdir __build__ && cd __build__
+        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
         - cmake --build .
+
+    - os: linux
+      env: TEST_CMAKE=true BUILD_SHARED_LIBS=On # variables unused - just for identification in travis ci gui
+      script:
+        - git submodule update --init tools/cmake
+        - git submodule update --init libs/conversion
+        - git submodule update --init libs/function_types
+        - git submodule update --init libs/fusion
+        - git submodule update --init libs/typeof
+        - mkdir __build__ && cd __build__
+        - cmake .. -DBUILD_SHARED_LIBS=ON -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
+        - cmake --build .
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++ CXXSTD=03
 
     - os: linux
       env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
