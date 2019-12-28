@@ -17,6 +17,7 @@ add_library( boost_regex ${BOOST_REGEX_SRC} )
 add_library( Boost::regex ALIAS boost_regex )
 
 target_include_directories( boost_regex PUBLIC include )
+target_compile_definitions( boost_regex PUBLIC BOOST_REGEX_NO_LIB)
 
 target_link_libraries( boost_regex
     PUBLIC
