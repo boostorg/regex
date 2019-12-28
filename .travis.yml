@@ -31,8 +31,13 @@ matrix:
       env: TOOLSET=gcc COMPILER=g++ CXXSTD=03
 
     - os: linux
-      env: TEST_CMAKE=true
+      env: TEST_CMAKE=true # unused - just for identification in travis ci gui
       script: 
+        - git submodule update --init tools/cmake
+        - git submodule update --init libs/typeof
+        - git submodule update --init libs/conversion
+        - git submodule update --init libs/function_types
+        - git submodule update --init libs/fusion
         - mkdir __build__
         - cd __build__
         - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON 
