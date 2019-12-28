@@ -16,9 +16,26 @@ file( GLOB BOOST_REGEX_SRC ./src/*.cpp )
 add_library( boost_regex ${BOOST_REGEX_SRC} )
 add_library( Boost::regex ALIAS boost_regex )
 
-target_include_directories( boost_regex PUBLIC include )
-target_compile_definitions( boost_regex PUBLIC BOOST_REGEX_NO_LIB)
+# Currently, installation isn't supported directly,
+# but someone else might install this target from the parent
+# CMake script, so lets proactively differentiate between
+# the include directory during regular use (BUILD_INTERFACE)
+# and after installation
+target_include_directories( boost_regex
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      $<INSTALL_INTERFACE:include>
+)
 
+target_compile_definitions( boost_regex
+    PUBLIC
+        # No need for autolink and we don't mangle library name anyway
+        BOOST_REGEX_NO_LIB
+        $<$<STREQUAL:$<TARGET_PROPERTY:boost_regex,TYPE>,SHARED_LIBRARY>:BOOST_REGEX_DYN_LINK=1>
+        $<$<STREQUAL:$<TARGET_PROPERTY:boost_regex,TYPE>,STATIC_LIBRARY>:BOOST_REGEX_STATIC_LINK=1>
+)
+
+# Specify dependencies (including header-only libraries)
 target_link_libraries( boost_regex
     PUBLIC
         Boost::assert
