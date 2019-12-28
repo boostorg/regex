@@ -31,6 +31,14 @@ matrix:
       env: TOOLSET=gcc COMPILER=g++ CXXSTD=03
 
     - os: linux
+      env: TEST_CMAKE=true
+      script: 
+        - mkdir __build__
+        - cd __build__
+        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON 
+        - cmake --build .
+
+    - os: linux
       env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
       addons:
         apt:
@@ -241,6 +249,8 @@ matrix:
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode6.4
+
+
 
 install:
   - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
