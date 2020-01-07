@@ -859,7 +859,7 @@ escape_type_class_jump:
       {
          bool have_brace = false;
          bool negative = false;
-         static const char* incomplete_message = "Incomplete \\g escape found.";
+         static const char incomplete_message[] = "Incomplete \\g escape found.";
          if(++m_position == m_end)
          {
             fail(regex_constants::error_escape, m_position - m_base, incomplete_message);
@@ -1133,7 +1133,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
 {
-   static const char* incomplete_message = "Missing } in quantified repetition.";
+   static const char incomplete_message[] = "Missing } in quantified repetition.";
    //
    // parse a repeat-range:
    //
@@ -1339,7 +1339,7 @@ bool basic_regex_parser<charT, traits>::parse_alt()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_set()
 {
-   static const char* incomplete_message = "Character set declaration starting with [ terminated prematurely - either no ] was found or the set had no content.";
+   static const char incomplete_message[] = "Character set declaration starting with [ terminated prematurely - either no ] was found or the set had no content.";
    ++m_position;
    if(m_position == m_end)
    {
@@ -1431,7 +1431,7 @@ bool basic_regex_parser<charT, traits>::parse_set()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_inner_set(basic_char_set<charT, traits>& char_set)
 {
-   static const char* incomplete_message = "Character class declaration starting with [ terminated prematurely - either no ] was found or the set had no content.";
+   static const char incomplete_message[] = "Character class declaration starting with [ terminated prematurely - either no ] was found or the set had no content.";
    //
    // we have either a character class [:name:]
    // a collating element [.name.]
