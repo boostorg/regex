@@ -60,15 +60,11 @@ add_library( Boost::regex ALIAS boost_regex )
 # CMake script, so lets proactively differentiate between
 # the include directory during regular use (BUILD_INTERFACE)
 # and after installation
-target_include_directories( boost_regex
-    PUBLIC
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-      $<INSTALL_INTERFACE:include>
-)
+target_include_directories( boost_regex PUBLIC include )
 
 target_compile_definitions( boost_regex
     PUBLIC
-        # No need for autolink and we don't mangle library name anyway
+        # No need for autolink
         BOOST_REGEX_NO_LIB
         $<$<STREQUAL:$<TARGET_PROPERTY:boost_regex,TYPE>,SHARED_LIBRARY>:BOOST_REGEX_DYN_LINK=1>
         $<$<STREQUAL:$<TARGET_PROPERTY:boost_regex,TYPE>,STATIC_LIBRARY>:BOOST_REGEX_STATIC_LINK=1>
