@@ -912,7 +912,7 @@ escape_type_class_jump:
          }
          if(negative)
             i = 1 + m_mark_count - i;
-         if(((i > 0) && (this->m_backrefs.test(i)) || ((i >= hash_value_mask) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id(i))))))
+         if(((i < hash_value_mask) && (i > 0) && (this->m_backrefs.test(i))) || ((i >= hash_value_mask) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id(i)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
