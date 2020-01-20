@@ -4,18 +4,11 @@
 
 language: cpp
 
-sudo: false
-
-python: "2.7"
-
-os:
-  - linux
-  - osx
-
 branches:
   only:
     - master
     - develop
+    - /feature\/.*/
 
 env:
   matrix:
@@ -30,25 +23,15 @@ matrix:
     - os: linux
       env: TEST_CMAKE=true # variables unused - just for identification in travis ci gui
       script:
-        - git submodule update --init tools/cmake
-        - git submodule update --init libs/conversion
-        - git submodule update --init libs/function_types
-        - git submodule update --init libs/fusion
-        - git submodule update --init libs/typeof
         - mkdir __build__ && cd __build__
-        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
+        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_INCLUDE_LIBRARIES=regex -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
         - cmake --build .
 
     - os: linux
       env: TEST_CMAKE=true BUILD_SHARED_LIBS=On # variables unused - just for identification in travis ci gui
       script:
-        - git submodule update --init tools/cmake
-        - git submodule update --init libs/conversion
-        - git submodule update --init libs/function_types
-        - git submodule update --init libs/fusion
-        - git submodule update --init libs/typeof
         - mkdir __build__ && cd __build__
-        - cmake .. -DBUILD_SHARED_LIBS=ON -DBOOST_ENABLE_CMAKE=ON -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
+        - cmake .. -DBUILD_SHARED_LIBS=ON -DBOOST_ENABLE_CMAKE=ON -DBOOST_INCLUDE_LIBRARIES=regex -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
         - cmake --build .
 
     - os: linux
@@ -275,6 +258,7 @@ install:
   - cd boost-root
   - git submodule update --init tools/build
   - git submodule update --init tools/boost_install
+  - git submodule update --init tools/cmake
   - git submodule update --init libs/headers
   - git submodule update --init libs/config
   - git submodule update --init libs/core
