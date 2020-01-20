@@ -248,7 +248,17 @@ matrix:
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode6.4
-
+      # On this image, git doesn't support --jobs 3
+      install:
+        - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
+        - cd ..
+        - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+        - cd boost-root
+        - git submodule update --init tools/boostdep
+        - cp -r $TRAVIS_BUILD_DIR/* libs/regex
+        - python tools/boostdep/depinst/depinst.py -I example regex
+        - ./bootstrap.sh
+        - ./b2 headers
 
 
 install:
