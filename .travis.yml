@@ -258,7 +258,7 @@ install:
   - cd boost-root
   - git submodule update --init tools/boostdep
   - cp -r $TRAVIS_BUILD_DIR/* libs/regex
-  - python tools/boostdep/depinst/depinst.py -g "--jobs 3" regex
+  - python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
   - ./bootstrap.sh
   - ./b2 headers
 
