@@ -267,7 +267,8 @@ private:
 
 template <class charT, class traits>
 basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits>* data)
-   : m_pdata(data), m_traits(*(data->m_ptraits)), m_last_state(0), m_repeater_id(0), m_has_backrefs(false), m_backrefs(0), m_has_recursions(false)
+   : m_pdata(data), m_traits(*(data->m_ptraits)), m_last_state(0), m_icase(false), m_repeater_id(0), 
+   m_has_backrefs(false), m_backrefs(0), m_bad_repeats(0), m_has_recursions(false), m_word_mask(0), m_mask_space(0), m_lower_mask(0), m_upper_mask(0), m_alpha_mask(0)
 {
    m_pdata->m_data.clear();
    m_pdata->m_status = ::boost::regex_constants::error_ok;
@@ -1512,6 +1513,10 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
             state = state->next.p;
             continue;
          }
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#pragma warning(disable:6011)
+#endif
          if((static_cast<re_brace*>(state)->index == -1)
             || (static_cast<re_brace*>(state)->index == -2))
          {
@@ -1519,6 +1524,9 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
             state = static_cast<const re_jump*>(state->next.p)->alt.p->next.p;
             continue;
          }
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
          if(static_cast<re_brace*>(state)->index == -3)
          {
             // Have to skip the leading jump state:

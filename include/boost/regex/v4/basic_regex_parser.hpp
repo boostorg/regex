@@ -22,6 +22,9 @@
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable: 26812)
+#endif
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
@@ -124,7 +127,8 @@ private:
 
 template <class charT, class traits>
 basic_regex_parser<charT, traits>::basic_regex_parser(regex_data<charT, traits>* data)
-   : basic_regex_creator<charT, traits>(data), m_mark_count(0), m_mark_reset(-1), m_max_mark(0), m_paren_start(0), m_alt_insert_point(0), m_has_case_change(false), m_recursion_count(0)
+   : basic_regex_creator<charT, traits>(data), m_parser_proc(), m_base(0), m_end(0), m_position(0), 
+   m_mark_count(0), m_mark_reset(-1), m_max_mark(0), m_paren_start(0), m_alt_insert_point(0), m_has_case_change(false), m_recursion_count(0)
 {
 }
 
@@ -321,6 +325,12 @@ bool basic_regex_parser<charT, traits>::parse_basic()
    return true;
 }
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable:26812)
+#endif
+#endif
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_extended()
 {
@@ -408,6 +418,9 @@ bool basic_regex_parser<charT, traits>::parse_extended()
    }
    return result;
 }
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
@@ -911,8 +924,8 @@ escape_type_class_jump:
             pc = m_position;
          }
          if(negative)
-            i = 1 + m_mark_count - i;
-         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (i - 1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (this->m_pdata->get_id(i)-1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
+            i = 1 + (static_cast<boost::intmax_t>(m_mark_count) - i);
+         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (i - 1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (static_cast<boost::intmax_t>(this->m_pdata->get_id(i))-1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
@@ -2132,7 +2145,7 @@ insert_recursion:
          // Oops not a relative recursion at all, but a (?-imsx) group:
          goto option_group_jump;
       }
-      v = m_mark_count + 1 - v;
+      v = static_cast<boost::intmax_t>(m_mark_count) + 1 - v;
       if(v <= 0)
       {
          // Rewind to start of (? sequence:
@@ -2747,6 +2760,12 @@ bool basic_regex_parser<charT, traits>::match_verb(const char* verb)
    return true;
 }
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable:26812)
+#endif
+#endif
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_perl_verb()
 {
@@ -2915,6 +2934,9 @@ bool basic_regex_parser<charT, traits>::parse_perl_verb()
    fail(regex_constants::error_perl_extension, m_position - m_base);
    return false;
 }
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::add_emacs_code(bool negate)

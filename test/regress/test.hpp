@@ -99,7 +99,7 @@ void do_test(const charT& c, const tagT& tag)
    boost::call_once(f, proc);
 #endif
    if(test_locale::cpp_locale_state() == test_locale::test_with_locale)
-      e1.imbue(test_locale::cpp_locale());
+      (void)e1.imbue(test_locale::cpp_locale());
    if(test_locale::cpp_locale_state() != test_locale::no_test)
       test(e1, tag);
 #endif

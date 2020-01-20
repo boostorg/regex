@@ -170,9 +170,19 @@ struct regex_data : public named_subexpressions
 
    regex_data(const ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits> >& t) 
-      : m_ptraits(t), m_expression(0), m_expression_len(0), m_disable_match_any(false) {}
+      : m_ptraits(t), m_flags(0), m_status(0), m_expression(0), m_expression_len(0),
+         m_mark_count(0), m_first_state(0), m_restart_type(0),
+#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_MSVC) && (BOOST_MSVC < 1900))
+         m_startmap{ 0 },
+#endif
+         m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
    regex_data() 
-      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_expression(0), m_expression_len(0), m_disable_match_any(false) {}
+      : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_flags(0), m_status(0), m_expression(0), m_expression_len(0), 
+         m_mark_count(0), m_first_state(0), m_restart_type(0), 
+#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_MSVC) && (BOOST_MSVC < 1900))
+      m_startmap{ 0 },
+#endif
+         m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
 
    ::boost::shared_ptr<
       ::boost::regex_traits_wrapper<traits>

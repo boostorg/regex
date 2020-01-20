@@ -23,6 +23,9 @@
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable: 26812)
+#endif
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
@@ -44,7 +47,11 @@
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
-template <class BidiIterator, class Allocator, class traits>
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#pragma warning(disable:26812)
+#endif
+   template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_regex<char_type, traits>& e, match_flag_type f)
 { 
    typedef typename regex_iterator_traits<BidiIterator>::iterator_category category;
@@ -94,6 +101,9 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    if(e.get_data().m_disable_match_any)
       m_match_flags &= regex_constants::match_not_any;
 }
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std::random_access_iterator_tag*)

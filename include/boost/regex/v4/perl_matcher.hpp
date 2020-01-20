@@ -341,6 +341,12 @@ enum saved_state_type
    saved_state_count = 14
 };
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable:26495)
+#endif
+#endif
 template <class Results>
 struct recursion_info
 {
@@ -352,6 +358,9 @@ struct recursion_info
    repeater_count<iterator>* repeater_stack;
    iterator location_of_start;
 };
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -578,6 +587,12 @@ private:
    unsigned m_recursions;
 #endif
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable:26495)
+#endif
+#endif
    // these operations aren't allowed, so are declared private,
    // bodies are provided to keep explicit-instantiation requests happy:
    perl_matcher& operator=(const perl_matcher&)
@@ -587,9 +602,8 @@ private:
    perl_matcher(const perl_matcher& that)
       : m_result(that.m_result), re(that.re), traits_inst(that.traits_inst), rep_obj(0) {}
 };
-
 #ifdef BOOST_MSVC
-#pragma warning(pop)
+#  pragma warning(pop)
 #endif
 
 } // namespace BOOST_REGEX_DETAIL_NS
@@ -607,6 +621,9 @@ private:
 
 } // namespace boost
 
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 #ifdef BOOST_MSVC
 #  pragma warning(pop)
 #endif
