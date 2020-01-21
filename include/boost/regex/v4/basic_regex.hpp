@@ -70,13 +70,14 @@ void bubble_down_one(I first, I last)
    }
 }
 
+static const int hash_value_mask = 1 << (std::numeric_limits<int>::digits - 1);
+
 template <class Iterator>
 inline int hash_value_from_capture_name(Iterator i, Iterator j)
 {
    std::size_t r = boost::hash_range(i, j);
-   r %= ((std::numeric_limits<int>::max)() - 10001);
-   r += 10000;
-   return static_cast<int>(r);
+   r %= ((std::numeric_limits<int>::max)());
+   return static_cast<int>(r) | hash_value_mask;
 }
 
 class named_subexpressions

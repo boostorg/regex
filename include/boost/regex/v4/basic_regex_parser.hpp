@@ -558,8 +558,8 @@ bool basic_regex_parser<charT, traits>::parse_open_paren()
    //
    // allow backrefs to this mark:
    //
-   if((markid > 0) && (markid < sizeof(unsigned) * CHAR_BIT))
-      this->m_backrefs |= 1u << (markid - 1);
+   if(markid > 0)
+      this->m_backrefs.set(markid);
 
    return true;
 }
@@ -925,7 +925,7 @@ escape_type_class_jump:
          }
          if(negative)
             i = 1 + (static_cast<boost::intmax_t>(m_mark_count) - i);
-         if(((i > 0) && (i < std::numeric_limits<unsigned>::digits) && (i - 1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (i-1)))) || ((i > 10000) && (this->m_pdata->get_id(i) > 0) && (static_cast<boost::intmax_t>(this->m_pdata->get_id(i))-1 < static_cast<boost::intmax_t>(sizeof(unsigned) * CHAR_BIT)) && (this->m_backrefs & (1u << (this->m_pdata->get_id(i)-1)))))
+         if(((i < hash_value_mask) && (i > 0) && (this->m_backrefs.test(i))) || ((i >= hash_value_mask) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id(i)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
@@ -1957,7 +1957,7 @@ bool basic_regex_parser<charT, traits>::parse_backref()
       charT c = unescape_character();
       this->append_literal(c);
    }
-   else if((i > 0) && (this->m_backrefs & (1u << (i-1))))
+   else if((i > 0) && (this->m_backrefs.test(i)))
    {
       m_position = pc;
       re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
@@ -2731,8 +2731,7 @@ option_group_jump:
       //
       // allow backrefs to this mark:
       //
-      if(markid < (int)(sizeof(unsigned) * CHAR_BIT))
-         this->m_backrefs |= 1u << (markid - 1);
+      this->m_backrefs.set(markid);
    }
    return true;
 }
