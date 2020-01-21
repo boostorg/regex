@@ -103,5 +103,10 @@ void test_backrefs()
    TEST_REGEX_SEARCH("a(?'foo'(?'bar'(?'bb'(?'aa'b*))))c\\g{foo}d", perl, "abbcbbbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("^(?'foo'.)\\g{foo}", perl, "abc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a(?'foo'[bc])\\g{foo}d", perl, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
+
+   // Bug cases from https://github.com/boostorg/regex/issues/75
+   TEST_REGEX_SEARCH("(?:(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)\\g{-1}|WORKING)", perl, "WORKING", match_default, make_array(0, 7, -2, -2));
+   TEST_REGEX_SEARCH("(?:(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)(z)\\g{-1}|WORKING)", perl, "WORKING", match_default, make_array(0, 7, -2, -2));
+
 }
 
