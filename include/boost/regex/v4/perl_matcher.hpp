@@ -27,6 +27,13 @@
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
+#pragma warning(disable : 4251)
+#if BOOST_MSVC < 1700
+#     pragma warning(disable : 4231)
+#endif
+#  if BOOST_MSVC < 1600
+#     pragma warning(disable : 4660)
+#  endif
 #if BOOST_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
@@ -362,17 +369,6 @@ struct recursion_info
 #  pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
-#pragma warning(push)
-#pragma warning(disable : 4251)
-#if BOOST_MSVC < 1700
-#     pragma warning(disable : 4231)
-#endif
-#  if BOOST_MSVC < 1600
-#     pragma warning(disable : 4660)
-#  endif
-#endif
-
 template <class BidiIterator, class Allocator, class traits>
 class perl_matcher
 {
@@ -601,12 +597,16 @@ private:
    }
    perl_matcher(const perl_matcher& that)
       : m_result(that.m_result), re(that.re), traits_inst(that.traits_inst), rep_obj(0) {}
-};
 #ifdef BOOST_MSVC
 #  pragma warning(pop)
 #endif
+};
 
 } // namespace BOOST_REGEX_DETAIL_NS
+
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -620,13 +620,6 @@ private:
 #endif
 
 } // namespace boost
-
-#ifdef BOOST_MSVC
-#  pragma warning(pop)
-#endif
-#ifdef BOOST_MSVC
-#  pragma warning(pop)
-#endif
 
 //
 // include the implementation of perl_matcher:
