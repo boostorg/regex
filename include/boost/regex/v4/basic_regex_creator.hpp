@@ -594,7 +594,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
             return 0;
          }
          // everything in range matches:
-         std::memset(result->_map + static_cast<unsigned char>(c1), true, 1 + static_cast<unsigned char>(c2) - static_cast<unsigned char>(c1));
+         std::memset(result->_map + static_cast<unsigned char>(c1), true, static_cast<unsigned char>(1u) + static_cast<unsigned char>(static_cast<unsigned char>(c2) - static_cast<unsigned char>(c1)));
       }
    }
    //
@@ -1070,9 +1070,21 @@ int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state
    return -1;
 }
 
+struct recursion_saver
+{
+   std::vector<unsigned char> saved_state;
+   std::vector<unsigned char>* state;
+   recursion_saver(std::vector<unsigned char>* p) : saved_state(*p), state(p) {}
+   ~recursion_saver()
+   {
+      state->swap(saved_state);
+   }
+};
+
 template <class charT, class traits>
 void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, unsigned char* l_map, unsigned int* pnull, unsigned char mask)
 {
+   recursion_saver saved_recursions(&m_recursion_checks);
    int not_last_jump = 1;
    re_syntax_base* recursion_start = 0;
    int recursion_sub = 0;

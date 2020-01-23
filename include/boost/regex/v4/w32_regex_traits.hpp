@@ -546,7 +546,7 @@ typename w32_regex_traits_implementation<charT>::char_class_type
       if(pos != m_custom_class_names.end())
          return pos->second;
    }
-   std::size_t state_id = 1 + BOOST_REGEX_DETAIL_NS::get_default_class_id(p1, p2);
+   std::size_t state_id = 1u + (std::size_t)BOOST_REGEX_DETAIL_NS::get_default_class_id(p1, p2);
    if(state_id < sizeof(masks) / sizeof(masks[0]))
       return masks[state_id];
    return masks[0];
