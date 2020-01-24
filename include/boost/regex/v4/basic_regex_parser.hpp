@@ -197,7 +197,7 @@ void basic_regex_parser<charT, traits>::parse(const charT* p1, const charT* p2, 
    if(this->m_pdata->m_status)
       return;
    // fill in our sub-expression count:
-   this->m_pdata->m_mark_count = 1 + m_mark_count;
+   this->m_pdata->m_mark_count = 1u + (std::size_t)m_mark_count;
    this->finalize(p1, p2);
 }
 
@@ -2723,7 +2723,7 @@ option_group_jump:
    {
 #ifndef BOOST_NO_STD_DISTANCE
       if(this->flags() & regbase::save_subexpression_location)
-         this->m_pdata->m_subs.at(markid - 1).second = std::distance(m_base, m_position) - 1;
+         this->m_pdata->m_subs.at((std::size_t)markid - 1).second = std::distance(m_base, m_position) - 1;
 #else
       if(this->flags() & regbase::save_subexpression_location)
          this->m_pdata->m_subs.at(markid - 1).second = (m_position - m_base) - 1;
