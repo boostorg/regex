@@ -89,7 +89,7 @@ public:
 };
 
 namespace boost{
-#if defined(BOOST_MSVC) || (defined(__BORLANDC__) && (__BORLANDC__ == 0x550)) || defined(__SGI_STL_PORT)
+#if defined(BOOST_MSVC) || (defined(BOOST_BORLANDC) && (BOOST_BORLANDC == 0x550)) || defined(__SGI_STL_PORT)
 //
 // problem with std::getline under MSVC6sp3
 // and C++ Builder 5.5, is this really that hard?

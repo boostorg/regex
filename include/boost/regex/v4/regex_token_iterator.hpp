@@ -21,7 +21,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/detail/workaround.hpp>
-#if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
+#if (BOOST_WORKAROUND(BOOST_BORLANDC, >= 0x560) && BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
 //
 // Borland C++ Builder 6, and Visual C++ 6,
@@ -71,7 +71,7 @@ public:
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const std::vector<int>& v, match_flag_type f)
       : end(last), re(*p), flags(f), N(0), subs(v){}
 #if !BOOST_WORKAROUND(__HP_aCC, < 60700)
-#if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
+#if (BOOST_WORKAROUND(BOOST_BORLANDC, >= 0x560) && BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
       || BOOST_WORKAROUND(__HP_aCC, < 60700)
    template <class T>
@@ -196,7 +196,7 @@ public:
          pdata.reset();
    }
 #if !BOOST_WORKAROUND(__HP_aCC, < 60700)
-#if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
+#if (BOOST_WORKAROUND(BOOST_BORLANDC, >= 0x560) && BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
       || BOOST_WORKAROUND(__HP_aCC, < 60700)
    template <class T>
