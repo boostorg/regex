@@ -278,9 +278,14 @@
 #  define BOOST_REGEX_CCALL __cdecl
 #endif
 
-#if defined(__BORLANDC__) && !defined(__clang__) && !defined(BOOST_DISABLE_WIN32)
+#if defined(__BORLANDC__) && !defined(BOOST_DISABLE_WIN32)
+#if defined(__clang__)
+#  define BOOST_REGEX_CALL __cdecl
+#  define BOOST_REGEX_CCALL __cdecl
+#else
 #  define BOOST_REGEX_CALL __fastcall
 #  define BOOST_REGEX_CCALL __stdcall
+#endif
 #endif
 
 #ifndef BOOST_REGEX_CALL
