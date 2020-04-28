@@ -139,10 +139,10 @@ int cpp_main(int /*argc*/, char * /*argv*/[])
 
 int* get_array_data()
 {
-   static boost::thread_specific_ptr<boost::array<int, 200> > tp;
+   static boost::thread_specific_ptr<boost::array<int, 800> > tp;
 
    if(tp.get() == 0)
-      tp.reset(new boost::array<int, 200>);
+      tp.reset(new boost::array<int, 800>);
 
    return tp.get()->data();
 }
@@ -160,9 +160,9 @@ const int* make_array(int first, ...)
 #ifdef TEST_THREADS
    int* data = get_array_data();
 #else
-   static int data[200];
+   static int data[800];
 #endif
-   std::fill_n(data, 200, -2);
+   std::fill_n(data, 800, -2);
    va_list ap;
    va_start(ap, first);
    //

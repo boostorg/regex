@@ -174,7 +174,7 @@ template <class charT>
 struct cpp_regex_traits_base
 {
    cpp_regex_traits_base(const std::locale& l)
-   { imbue(l); }
+   { (void)imbue(l); }
    std::locale imbue(const std::locale& l);
 
    std::locale m_locale;

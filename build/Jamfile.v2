@@ -116,7 +116,7 @@ if ! $(disable-icu)
 
 }
 
-unit-test has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
+exe has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
 explicit has_icu ;
 
 alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;

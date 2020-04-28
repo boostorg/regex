@@ -72,7 +72,7 @@ regex_error::regex_error(regex_constants::error_type err)
 {
 }
 
-regex_error::~regex_error() throw() 
+regex_error::~regex_error() BOOST_NOEXCEPT_OR_NOTHROW
 {
 }
 

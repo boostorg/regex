@@ -28,6 +28,13 @@ namespace boost{
    namespace regex_constants{
 #endif
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#if BOOST_MSVC >= 1800
+#pragma warning(disable : 26812)
+#endif
+#endif
+
 typedef enum _match_flags
 {
    match_default = 0,
@@ -142,6 +149,11 @@ using regex_constants::format_default;
 using regex_constants::format_no_copy;
 using regex_constants::format_first_only;
 /*using regex_constants::format_is_if;*/
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+
 
 } /* namespace boost */
 #endif /* __cplusplus */

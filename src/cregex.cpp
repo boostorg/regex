@@ -70,6 +70,10 @@ inline std::string to_string(const char* i, const char* j)
 }
 namespace BOOST_REGEX_DETAIL_NS{
 
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#pragma warning(disable:26812)
+#endif
 class RegExData
 {
 public:
@@ -103,6 +107,9 @@ public:
 #endif
    strings(), positions() {}
 };
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 void RegExData::update()
 {
