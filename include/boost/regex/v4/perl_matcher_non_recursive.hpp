@@ -217,7 +217,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
             bool successful_unwind = unwind(false);
             if((m_match_flags & match_partial) && (position == last) && (position != search_base))
                m_has_partial_match = true;
-            if(false == successful_unwind)
+            if(!successful_unwind)
                return m_recursive_result;
          }
       }
@@ -348,7 +348,7 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::push_repeater_count(i
       pmp = static_cast<saved_repeater<BidiIterator>*>(m_backup_state);
       --pmp;
    }
-   (void) new (pmp)saved_repeater<BidiIterator>(i, s, position, this->recursion_stack.size() ? this->recursion_stack.back().idx : (INT_MIN + 3));
+   (void) new (pmp)saved_repeater<BidiIterator>(i, s, position, this->recursion_stack.empty() ? (INT_MIN + 3) : this->recursion_stack.back().idx);
    m_backup_state = pmp;
 }
 
@@ -705,7 +705,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow()
    std::size_t count = 0;
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    re_syntax_base* psingle = rep->next.p;
-   // match compulsary repeats first:
+   // match compulsory repeats first:
    while(count < rep->min)
    {
       pstate = psingle;
@@ -1224,7 +1224,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
 
 /****************************************************************************
 
-Unwind and associated proceedures follow, these perform what normal stack
+Unwind and associated procedures follow, these perform what normal stack
 unwinding does in the recursive implementation.
 
 ****************************************************************************/
@@ -1296,7 +1296,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_paren(bool have_match
 {
    saved_matched_paren<BidiIterator>* pmp = static_cast<saved_matched_paren<BidiIterator>*>(m_backup_state);
    // restore previous values if no match was found:
-   if(have_match == false)
+   if(!have_match)
    {
       m_presult->set_first(pmp->sub.first, pmp->index, pmp->index == 0);
       m_presult->set_second(pmp->sub.second, pmp->index, pmp->sub.matched, pmp->index == 0);
@@ -1944,5 +1944,3 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::push_parenthesis_push
 #endif
 
 #endif
-
-

@@ -22,11 +22,11 @@
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
 #if !defined(BOOST_NO_STD_STRING)
-#include <map>
+#include <cstdio>
 #include <list>
+#include <map>
 #include <boost/regex/v4/fileiter.hpp>
 typedef boost::match_flag_type match_flag_type;
-#include <cstdio>
 
 #ifdef BOOST_MSVC
 #pragma warning(disable:4309)
@@ -417,7 +417,7 @@ unsigned int RegEx::GrepFiles(GrepFileCallback cb, const char* files, bool recur
       result += r;
       ++start;
       pdata->clean();
-      if(pred.ok == false)
+      if(!pred.ok)
          return result;
    }
 
@@ -443,7 +443,7 @@ unsigned int RegEx::FindFiles(FindFilesCallback cb, const char* files, bool recu
       if(regex_search(map.begin(), map.end(), pdata->fm, pdata->e, flags))
       {
          ++result;
-         if(false == cb((*start).c_str()))
+         if(!cb((*start).c_str()))
             return result;
       }
       //pdata->update();
@@ -649,19 +649,3 @@ basic_string<wchar_t>::replace<const wchar_t*>(wchar_t* f1, wchar_t* f2, const w
 #endif
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

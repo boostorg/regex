@@ -23,8 +23,8 @@
 #include <boost/regex/config.hpp>
 #endif
 
-#include <stdexcept>
 #include <cstddef>
+#include <stdexcept>
 #include <boost/regex/v4/error_type.hpp>
 
 namespace boost{
@@ -52,7 +52,7 @@ class BOOST_REGEX_DECL regex_error : public std::runtime_error
 public:
    explicit regex_error(const std::string& s, regex_constants::error_type err = regex_constants::error_unknown, std::ptrdiff_t pos = 0);
    explicit regex_error(regex_constants::error_type err);
-   ~regex_error() BOOST_NOEXCEPT_OR_NOTHROW;
+   ~regex_error() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
    regex_constants::error_type code()const
    { return m_error_code; }
    std::ptrdiff_t position()const
@@ -98,6 +98,3 @@ void raise_error(const traits& t, regex_constants::error_type code)
 } // namespace boost
 
 #endif
-
-
-
