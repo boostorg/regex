@@ -68,6 +68,8 @@ void test_captures(const std::string& regx, const std::string& text, T& expected
          }
       }
    }
+   
+#if !defined(BOOST_NO_WREGEX)
 
    std::wstring wre(regx.begin(), regx.end());
    std::wstring wtext(text.begin(), text.end());
@@ -89,6 +91,8 @@ void test_captures(const std::string& regx, const std::string& text, T& expected
          }
       }
    }
+   
+#endif
 
 #ifdef BOOST_HAS_ICU
    boost::u32regex ure = boost::make_u32regex(regx);

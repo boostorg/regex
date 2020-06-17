@@ -403,7 +403,7 @@ typename w32_regex_traits_implementation<charT>::string_type
          return pos->second;
    }
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
+               && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
    std::string name(p1, p2);
 #else
    std::string name;
@@ -413,7 +413,7 @@ typename w32_regex_traits_implementation<charT>::string_type
 #endif
    name = lookup_default_collate_name(name);
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(__BORLANDC__, <= 0x0551)
+               && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
    if(name.size())
       return string_type(name.begin(), name.end());
 #else

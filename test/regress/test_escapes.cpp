@@ -61,7 +61,7 @@ void test_character_escapes()
    TEST_REGEX_SEARCH("a\\Q+*?\\\\Eb", perl, "a+*?\\b", match_default, make_array(0, 6, -2, -2));
    TEST_REGEX_SEARCH("\\C+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
    TEST_REGEX_SEARCH("\\X+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
    TEST_REGEX_SEARCH_W(L"\\X", perl, L"a\x0300\x0301", match_default, make_array(0, 3, -2, -2));
 #endif
    // unknown escape sequences match themselves:

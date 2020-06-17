@@ -61,7 +61,7 @@ namespace boost{
    namespace BOOST_REGEX_DETAIL_NS{
 // start with the operating system specific stuff:
 
-#if (defined(__BORLANDC__) || defined(BOOST_REGEX_FI_WIN32_DIR) || defined(BOOST_MSVC)) && !defined(BOOST_RE_NO_WIN32)
+#if (defined(BOOST_BORLANDC) || defined(BOOST_REGEX_FI_WIN32_DIR) || defined(BOOST_MSVC)) && !defined(BOOST_RE_NO_WIN32)
 
 // platform is DOS or Windows
 // directories are separated with '\\'

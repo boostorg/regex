@@ -103,7 +103,7 @@ void do_test(const charT& c, const tagT& tag)
    if(test_locale::cpp_locale_state() != test_locale::no_test)
       test(e1, tag);
 #endif
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1200) && defined(TEST_THREADS)
    // typeid appears to fail in multithreaded environments:
    test_info<charT>::set_typename("");
