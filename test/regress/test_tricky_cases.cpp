@@ -276,7 +276,7 @@ void test_tricky_cases3()
    // posix only:
    TEST_REGEX_SEARCH("^[[:blank:]]*#([^\\n]*\\\\[[:space:]]+)*[^\\n]*", awk, "#define some_symbol(x) \\  \r\n  foo();\\\r\n   printf(#x);", match_default, make_array(0, 53, 28, 42, -2, -2));
    // now try and test some unicode specific characters:
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
    TEST_REGEX_SEARCH_W(L"[[:unicode:]]+", perl, L"a\x0300\x0400z", match_default, make_array(1, 3, -2, -2));
    TEST_REGEX_SEARCH_W(L"[\x10-\xff]", perl, L"\x0300\x0400", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH_W(L"[\01-\05]{5}", perl, L"\x0300\x0400\x0300\x0400\x0300\x0400", match_default, make_array(-2, -2));

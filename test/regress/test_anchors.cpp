@@ -59,7 +59,7 @@ void test_anchors()
    //
    TEST_REGEX_SEARCH("^.", boost::regex::extended, "  \n  \r\n  ", match_default, make_array(0, 1, -2, 3, 4, -2, 7, 8, -2, -2));
    TEST_REGEX_SEARCH(".$", boost::regex::extended, "  \n  \r\n  ", match_default, make_array(1, 2, -2, 4, 5, -2, 8, 9, -2, -2));
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
    TEST_REGEX_SEARCH_W(L"^.", boost::regex::extended, L"\x2028 \x2028", match_default, make_array(0, 1, -2, 1, 2, -2, -2));
    TEST_REGEX_SEARCH_W(L".$", boost::regex::extended, L" \x2028 \x2028", match_default, make_array(0, 1, -2, 2, 3, -2, 3, 4, -2, -2));
 #endif

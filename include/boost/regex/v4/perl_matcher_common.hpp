@@ -34,7 +34,7 @@
 #pragma warning(pop)
 #endif
 
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #  pragma option push -w-8008 -w-8066
 #endif
 #ifdef BOOST_MSVC
@@ -1012,7 +1012,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
 #  pragma warning(pop)
 #endif
 
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #  pragma option pop
 #endif
 #ifdef BOOST_MSVC

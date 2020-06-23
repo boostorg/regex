@@ -30,7 +30,7 @@ unsigned tokenise(std::list<std::string>& l, std::string& s)
 using namespace std;
 
 
-#if defined(BOOST_MSVC) || (defined(__BORLANDC__) && (__BORLANDC__ == 0x550))
+#if defined(BOOST_MSVC) || (defined(BOOST_BORLANDC) && (BOOST_BORLANDC == 0x550))
 //
 // problem with std::getline under MSVC6sp3
 istream& getline(istream& is, std::string& s)

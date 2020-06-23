@@ -23,7 +23,7 @@
 #include <boost/detail/workaround.hpp>
 #include "internals.hpp"
 
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
 
 #include <boost/regex/v4/c_regex_traits.hpp>
 #include <boost/regex/v4/primary_transform.hpp>
