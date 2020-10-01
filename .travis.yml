@@ -4,18 +4,11 @@
 
 language: cpp
 
-sudo: false
-
-python: "2.7"
-
-os:
-  - linux
-  - osx
-
 branches:
   only:
     - master
     - develop
+    - /feature\/.*/
 
 env:
   matrix:
@@ -27,6 +20,20 @@ matrix:
     - env: BOGUS_JOB=true
 
   include:
+    - os: linux
+      env: TEST_CMAKE=true # variables unused - just for identification in travis ci gui
+      script:
+        - mkdir __build__ && cd __build__
+        - cmake .. -DBOOST_ENABLE_CMAKE=ON -DBOOST_INCLUDE_LIBRARIES=regex -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
+        - cmake --build .
+
+    - os: linux
+      env: TEST_CMAKE=true BUILD_SHARED_LIBS=On # variables unused - just for identification in travis ci gui
+      script:
+        - mkdir __build__ && cd __build__
+        - cmake .. -DBUILD_SHARED_LIBS=ON -DBOOST_ENABLE_CMAKE=ON -DBOOST_INCLUDE_LIBRARIES=regex -DBOOST_REGEX_INCLUDE_EXAMPLES=ON
+        - cmake --build .
+
     - os: linux
       env: TOOLSET=gcc COMPILER=g++ CXXSTD=03
 
@@ -99,6 +106,42 @@ matrix:
         apt:
           packages:
             - g++-6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,1z CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,1z CXXSTD_DIALECT=cxxstd-dialect=gnu
+      addons:
+        apt:
+          packages:
+            - g++-8
           sources:
             - ubuntu-toolchain-r-test
 
@@ -205,58 +248,27 @@ matrix:
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode6.4
+      # On this image, git doesn't support --jobs 3
+      install:
+        - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
+        - cd ..
+        - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+        - cd boost-root
+        - git submodule update --init tools/boostdep
+        - cp -r $TRAVIS_BUILD_DIR/* libs/regex
+        - python tools/boostdep/depinst/depinst.py -I example regex
+        - ./bootstrap.sh
+        - ./b2 headers
+
 
 install:
+  - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
   - cd ..
-  - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+  - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
-  - git submodule update --init tools/build
-  - git submodule update --init libs/config
-  - git submodule update --init libs/core
-  - git submodule update --init libs/container_hash
-  - git submodule update --init libs/detail
-  - git submodule update --init libs/smart_ptr
-  - git submodule update --init libs/predef
-  - git submodule update --init libs/assert
-  - git submodule update --init libs/throw_exception
-  - git submodule update --init libs/mpl
-  - git submodule update --init libs/type_traits
-  - git submodule update --init libs/static_assert
-  - git submodule update --init libs/integer
-  - git submodule update --init libs/preprocessor
-  - git submodule update --init libs/functional
-  - git submodule update --init libs/program_options
-  - git submodule update --init libs/chrono
-  - git submodule update --init libs/system
-  - git submodule update --init libs/thread
-  - git submodule update --init libs/winapi
-  - git submodule update --init libs/move
-  - git submodule update --init libs/date_time
-  - git submodule update --init libs/ratio
-  - git submodule update --init libs/iterator
-  - git submodule update --init libs/range
-  - git submodule update --init libs/any
-  - git submodule update --init libs/concept_check
-  - git submodule update --init libs/array
-  - git submodule update --init libs/timer
-  - git submodule update --init libs/bind
-  - git submodule update --init libs/utility
-  - git submodule update --init libs/io
-  - git submodule update --init libs/intrusive
-  - git submodule update --init libs/container
-  - git submodule update --init libs/tuple
-  - git submodule update --init libs/exception
-  - git submodule update --init libs/function
-  - git submodule update --init libs/type_index
-  - git submodule update --init libs/lexical_cast
-  - git submodule update --init libs/numeric
-  - git submodule update --init libs/math
-  - git submodule update --init libs/tokenizer
-  - git submodule update --init libs/optional
-  - git submodule update --init libs/atomic
-  - git submodule update --init libs/rational
-  - git submodule update --init libs/algorithm
+  - git submodule update --init tools/boostdep
   - cp -r $TRAVIS_BUILD_DIR/* libs/regex
+  - python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
   - ./bootstrap.sh
   - ./b2 headers
 

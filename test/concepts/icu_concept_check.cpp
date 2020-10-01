@@ -21,7 +21,7 @@
 // this lets us compile at warning level 4 without seeing concept-check related warnings
 #  pragma warning(disable:4100)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option -w-8019 -w-8004 -w-8008
 #endif
 

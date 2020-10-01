@@ -106,7 +106,9 @@ void test_named_subexpressions(charT)
 int cpp_main( int , char* [] )
 {
    test_named_subexpressions(char(0));
+#if !defined(BOOST_NO_WREGEX)
    test_named_subexpressions(wchar_t(0));
+#endif
    return 0;
 }
 

@@ -29,9 +29,9 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
 template <int N>
-int array_size(const char* (&p)[N])
+size_t array_size(const char* (&p)[N])
 {
-   for(int i = 0; i < N; ++i)
+   for(size_t i = 0; i < N; ++i)
       if(p[i] == 0)
          return i;
    return N;
@@ -68,6 +68,8 @@ void test_captures(const std::string& regx, const std::string& text, T& expected
          }
       }
    }
+   
+#if !defined(BOOST_NO_WREGEX)
 
    std::wstring wre(regx.begin(), regx.end());
    std::wstring wtext(text.begin(), text.end());
@@ -89,6 +91,8 @@ void test_captures(const std::string& regx, const std::string& text, T& expected
          }
       }
    }
+   
+#endif
 
 #ifdef BOOST_HAS_ICU
    boost::u32regex ure = boost::make_u32regex(regx);

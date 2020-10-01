@@ -33,7 +33,10 @@
 namespace boost{
 #ifdef BOOST_MSVC
 #pragma warning(push)
-#pragma warning(disable : 4251 4231)
+#pragma warning(disable : 4251)
+#if BOOST_MSVC < 1700
+#     pragma warning(disable : 4231)
+#endif
 #  if BOOST_MSVC < 1600
 #     pragma warning(disable : 4660)
 #  endif
@@ -92,7 +95,7 @@ public:
    // See https://svn.boost.org/trac/boost/ticket/3632.
    //
    match_results(const match_results& m)
-      : m_subs(m.m_subs), m_named_subs(m.m_named_subs), m_last_closed_paren(m.m_last_closed_paren), m_is_singular(m.m_is_singular) 
+      : m_subs(m.m_subs), m_base(), m_null(), m_named_subs(m.m_named_subs), m_last_closed_paren(m.m_last_closed_paren), m_is_singular(m.m_is_singular)
    {
       if(!m_is_singular)
       {

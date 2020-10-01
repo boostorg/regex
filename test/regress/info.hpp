@@ -112,7 +112,7 @@ private:
       boost::call_once(f,&init_data);
       return do_get_data();
 #else
-      static data_type d;
+      static data_type d = {};
       return d;
 #endif
    }

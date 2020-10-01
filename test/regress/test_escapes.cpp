@@ -61,7 +61,7 @@ void test_character_escapes()
    TEST_REGEX_SEARCH("a\\Q+*?\\\\Eb", perl, "a+*?\\b", match_default, make_array(0, 6, -2, -2));
    TEST_REGEX_SEARCH("\\C+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
    TEST_REGEX_SEARCH("\\X+", perl, "abcde", match_default, make_array(0, 5, -2, -2));
-#if !BOOST_WORKAROUND(__BORLANDC__, < 0x560)
+#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
    TEST_REGEX_SEARCH_W(L"\\X", perl, L"a\x0300\x0301", match_default, make_array(0, 3, -2, -2));
 #endif
    // unknown escape sequences match themselves:
@@ -168,6 +168,49 @@ void test_assertion_escapes()
       TEST_REGEX_SEARCH_W(L"\\R", perl, L"foo\u2029bar", match_default, make_array(3, 4, -2, -2));
       TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2028bar", match_default, make_array(0, 4, -2, -2));
       TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl, L"abc\u2029bar", match_default, make_array(0, 4, -2, -2));
+   }
+   // Bug report: https://github.com/boostorg/regex/issues/40
+   TEST_REGEX_SEARCH("\\b", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\b", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\<", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "", match_not_bow | match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_bow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_eow, make_array(-2, -2));
+   TEST_REGEX_SEARCH("\\>", perl, "-", match_not_bow | match_not_eow, make_array(-2, -2));
+   // Bug report https://github.com/boostorg/regex/issues/57
+   // Line ending \R:
+   TEST_REGEX_SEARCH("\\R", perl | no_escape_in_lists, "foo\nbar", match_default, make_array(3, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\R", perl | no_escape_in_lists, "foo\rbar", match_default, make_array(3, 4, -2, -2));
+   TEST_REGEX_SEARCH("\\R", perl | no_escape_in_lists, "foo\r\nbar", match_default, make_array(3, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl | no_escape_in_lists, "abc\r\nbar", match_default, make_array(0, 5, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl | no_escape_in_lists, "abc\012bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl | no_escape_in_lists, "abc\013bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl | no_escape_in_lists, "abc\013bar", match_default, make_array(0, 4, -2, -2));
+   TEST_REGEX_SEARCH("(?x) abc \\R", perl | no_escape_in_lists, "abc\205bar", match_default, make_array(0, 4, -2, -2));
+   // see if \u works:
+   if(*w == 0x2028u)
+   {
+      TEST_REGEX_SEARCH_W(L"\\R", perl | no_escape_in_lists, L"foo\u2028bar", match_default, make_array(3, 4, -2, -2));
+      TEST_REGEX_SEARCH_W(L"\\R", perl | no_escape_in_lists, L"foo\u2029bar", match_default, make_array(3, 4, -2, -2));
+      TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl | no_escape_in_lists, L"abc\u2028bar", match_default, make_array(0, 4, -2, -2));
+      TEST_REGEX_SEARCH_W(L"(?x) abc \\R", perl | no_escape_in_lists, L"abc\u2029bar", match_default, make_array(0, 4, -2, -2));
    }
 }
 

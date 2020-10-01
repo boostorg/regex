@@ -34,7 +34,10 @@
 #endif
 #ifdef BOOST_MSVC
 #  pragma warning(push)
-#  pragma warning(disable: 4800 4706)
+#  pragma warning(disable: 4706)
+#if BOOST_MSVC < 1910
+#pragma warning(disable:4800)
+#endif
 #endif
 
 namespace boost{
@@ -64,7 +67,7 @@ struct saved_matched_paren : public saved_state
 {
    int index;
    sub_match<BidiIterator> sub;
-   saved_matched_paren(int i, const sub_match<BidiIterator>& s) : saved_state(1), index(i), sub(s){};
+   saved_matched_paren(int i, const sub_match<BidiIterator>& s) : saved_state(1), index(i), sub(s){}
 };
 
 template <class BidiIterator>
@@ -72,7 +75,7 @@ struct saved_position : public saved_state
 {
    const re_syntax_base* pstate;
    BidiIterator position;
-   saved_position(const re_syntax_base* ps, BidiIterator pos, int i) : saved_state(i), pstate(ps), position(pos){};
+   saved_position(const re_syntax_base* ps, BidiIterator pos, int i) : saved_state(i), pstate(ps), position(pos){}
 };
 
 template <class BidiIterator>
@@ -80,7 +83,7 @@ struct saved_assertion : public saved_position<BidiIterator>
 {
    bool positive;
    saved_assertion(bool p, const re_syntax_base* ps, BidiIterator pos) 
-      : saved_position<BidiIterator>(ps, pos, saved_type_assertion), positive(p){};
+      : saved_position<BidiIterator>(ps, pos, saved_type_assertion), positive(p){}
 };
 
 template <class BidiIterator>
@@ -597,7 +600,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 #pragma warning(push)
 #pragma warning(disable:4127 4244)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -688,7 +691,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
       }
    }
    return false;
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -787,7 +790,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -847,7 +850,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -862,7 +865,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
@@ -921,7 +924,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
@@ -936,7 +939,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    typedef typename traits::char_class_type m_type;
@@ -996,7 +999,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
       pstate = rep->alt.p;
       return (position == last) ? (rep->can_be_null & mask_skip) : can_start(*position, rep->_map, mask_skip);
    }
-#ifdef __BORLANDC__
+#ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
 #ifdef BOOST_MSVC
