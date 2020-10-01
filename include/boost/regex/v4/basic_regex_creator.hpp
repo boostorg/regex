@@ -303,7 +303,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_state(syntax_element_
    // set the offset to the next state in our last one:
    if(m_last_state)
       m_last_state->next.i = m_pdata->m_data.size() - getoffset(m_last_state);
-   // now actually extent our data:
+   // now actually extend our data:
    m_last_state = static_cast<re_syntax_base*>(m_pdata->m_data.extend(s));
    // fill in boilerplate options in the new state:
    m_last_state->next.i = 0;
