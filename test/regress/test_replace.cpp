@@ -98,7 +98,7 @@ void test_replace()
    TEST_REGEX_REPLACE("(?<one>a+)|(?<two>b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "(?{one}A:B)C", "...ACBC,,,ACBC*ACBC?");
    TEST_REGEX_REPLACE("(?<one>a+)|(?<two>b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all, "?{one}:B", "...B,,,B*B?");
 
-   // move to copying unmatched data, but replace first occurance only:
+   // move to copying unmatched data, but replace first occurrence only:
    TEST_REGEX_REPLACE("a+", perl, "...aaa,,,", match_default|format_all|format_first_only, "bbb", "...bbb,,,");
    TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,", match_default|format_all|format_first_only, "$1", "...bb,,,");
    TEST_REGEX_REPLACE("a+(b+)", perl, "...aaabb,,,ab*abbb?", match_default|format_all|format_first_only, "$1", "...bb,,,ab*abbb?");

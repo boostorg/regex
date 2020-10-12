@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 12003
+ * Copyright (c) 2003
  * John Maddock
  *
  * Use, modification and distribution are subject to the 

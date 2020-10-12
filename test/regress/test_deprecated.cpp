@@ -99,7 +99,7 @@ void test_deprecated(const char&, const test_regex_search_tag&)
       BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" did not compile with the POSIX C API.", char);
       return;
    }
-   // try and find the first occurance:
+   // try and find the first occurrence:
    static const unsigned max_subs = 100;
    boost::regmatch_t matches[max_subs];
    if(boost::regexecA(&re, search_text.c_str(), max_subs, matches, posix_match_options) == 0)
@@ -227,7 +227,7 @@ void test_deprecated(const wchar_t&, const test_regex_search_tag&)
       BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" did not compile with the POSIX C API.", wchar_t);
       return;
    }
-   // try and find the first occurance:
+   // try and find the first occurrence:
    static const unsigned max_subs = 100;
    boost::regmatch_t matches[max_subs];
    if(boost::regexecW(&re, search_text.c_str(), max_subs, matches, posix_match_options) == 0)
