@@ -41,9 +41,9 @@
 #include <boost/regex/pending/object_cache.hpp>
 #endif
 
-#include <istream>
-#include <ios>
 #include <climits>
+#include <ios>
+#include <istream>
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -89,9 +89,9 @@ public:
    parser_buf() : base_type() { setbuf(0, 0); }
    const charT* getnext() { return this->gptr(); }
 protected:
-   std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n);
-   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which);
-   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which);
+   std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n) BOOST_OVERRIDE;
+   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which) BOOST_OVERRIDE;
+   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which) BOOST_OVERRIDE;
 private:
    parser_buf& operator=(const parser_buf&);
    parser_buf(const parser_buf&);
@@ -225,7 +225,7 @@ std::locale cpp_regex_traits_base<charT>::imbue(const std::locale& l)
 
 //
 // class cpp_regex_traits_char_layer:
-// implements methods that require specialisation for narrow characters:
+// implements methods that require specialization for narrow characters:
 //
 template <class charT>
 class cpp_regex_traits_char_layer : public cpp_regex_traits_base<charT>
@@ -281,7 +281,7 @@ void cpp_regex_traits_char_layer<charT>::init()
    typename std::messages<charT>::catalog cat = reinterpret_cast<std::messages<char>::catalog>(-1);
 #endif
    std::string cat_name(cpp_regex_traits<charT>::get_catalog_name());
-   if(cat_name.size() && (this->m_pmessages != 0))
+   if((!cat_name.empty()) && (this->m_pmessages != 0))
    {
       cat = this->m_pmessages->open(
          cat_name, 
@@ -352,7 +352,7 @@ typename cpp_regex_traits_char_layer<charT>::string_type
 }
 
 //
-// specialised version for narrow characters:
+// specialized version for narrow characters:
 //
 template <>
 class BOOST_REGEX_DECL cpp_regex_traits_char_layer<char> : public cpp_regex_traits_base<char>
@@ -566,7 +566,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
 #ifndef BOOST_NO_EXCEPTIONS
    }catch(...){}
 #endif
-   while(result.size() && (charT(0) == *result.rbegin()))
+   while((!result.empty()) && (charT(0) == *result.rbegin()))
       result.erase(result.size() - 1);
    if(result.empty())
    {
@@ -621,7 +621,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
 #else
       //
       // some implementations (Dinkumware) append unnecessary trailing \0's:
-      while(result.size() && (charT(0) == *result.rbegin()))
+      while((!result.empty()) && (charT(0) == *result.rbegin()))
          result.erase(result.size() - 1);
 #endif
       //
@@ -662,7 +662,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    cpp_regex_traits_implementation<charT>::lookup_collatename(const charT* p1, const charT* p2) const
 {
    typedef typename std::map<string_type, string_type>::const_iterator iter_type;
-   if(m_custom_collate_names.size())
+   if(!m_custom_collate_names.empty())
    {
       iter_type pos = m_custom_collate_names.find(string_type(p1, p2));
       if(pos != m_custom_collate_names.end())
@@ -680,10 +680,10 @@ typename cpp_regex_traits_implementation<charT>::string_type
    name = lookup_default_collate_name(name);
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
                && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
-   if(name.size())
+   if(!name.empty())
       return string_type(name.begin(), name.end());
 #else
-   if(name.size())
+   if(!name.empty())
    {
       string_type result;
       typedef std::string::const_iterator iter;
@@ -709,7 +709,7 @@ void cpp_regex_traits_implementation<charT>::init()
    typename std::messages<charT>::catalog cat = reinterpret_cast<std::messages<char>::catalog>(-1);
 #endif
    std::string cat_name(cpp_regex_traits<charT>::get_catalog_name());
-   if(cat_name.size() && (this->m_pmessages != 0))
+   if((!cat_name.empty()) && (this->m_pmessages != 0))
    {
       cat = this->m_pmessages->open(
          cat_name, 
@@ -796,7 +796,7 @@ void cpp_regex_traits_implementation<charT>::init()
       for(unsigned int j = 0; j <= 13; ++j)
       {
          string_type s(this->m_pmessages->get(cat, 0, j+300, null_string));
-         if(s.size())
+         if(!s.empty())
             this->m_custom_class_names[s] = masks[j];
       }
    }
@@ -864,7 +864,7 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
       ::boost::BOOST_REGEX_DETAIL_NS::char_class_xdigit,
    };
 #endif
-   if(m_custom_class_names.size())
+   if(!m_custom_class_names.empty())
    {
       typedef typename std::map<std::basic_string<charT>, char_class_type>::const_iterator map_iter;
       map_iter pos = m_custom_class_names.find(string_type(p1, p2));
@@ -1129,7 +1129,6 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
 }
 #endif
 
-
 } // boost
 
 #ifdef BOOST_MSVC
@@ -1150,5 +1149,3 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
 #endif
 
 #endif
-
-

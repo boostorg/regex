@@ -894,7 +894,7 @@ OutputIterator do_regex_replace(OutputIterator out,
       {
          if(!(flags & regex_constants::format_no_copy))
             out = BOOST_REGEX_DETAIL_NS::copy(i->prefix().first, i->prefix().second, out); 
-         if(f.size())
+         if(!f.empty())
             out = ::boost::BOOST_REGEX_DETAIL_NS::regex_format_imp(out, *i, &*f.begin(), &*f.begin() + f.size(), flags, e.get_traits());
          else
             out = ::boost::BOOST_REGEX_DETAIL_NS::regex_format_imp(out, *i, static_cast<UChar32 const*>(0), static_cast<UChar32 const*>(0), flags, e.get_traits());

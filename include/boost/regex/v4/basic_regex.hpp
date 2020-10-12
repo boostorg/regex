@@ -416,7 +416,7 @@ public:
    {
       typedef typename traits::string_type seq_type;
       seq_type a(arg_first, arg_last);
-      if(a.size())
+      if(!a.empty())
          assign(static_cast<const charT*>(&*a.begin()), static_cast<const charT*>(&*a.begin() + a.size()), f);
       else
          assign(static_cast<const charT*>(0), static_cast<const charT*>(0), f);
@@ -657,7 +657,7 @@ private:
 //
 // out of line members;
 // these are the only members that mutate the basic_regex object,
-// and are designed to provide the strong exception guarentee
+// and are designed to provide the strong exception guarantee
 // (in the event of a throw, the state of the object remains unchanged).
 //
 template <class charT, class traits>
@@ -795,4 +795,3 @@ public:
 #endif
 
 #endif
-

@@ -145,7 +145,7 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::t
    case ::boost::BOOST_REGEX_DETAIL_NS::sort_delim:
          // get a regular sort key, and then truncate everything after the delim:
          result = c_regex_traits<wchar_t>::transform(&*result.begin(), &*result.begin() + result.size());
-         if(result.size() && (result[0] == s_delim))
+         if((!result.empty()) && (result[0] == s_delim))
             break;
          std::size_t i;
          for(i = 0; i < result.size(); ++i)
@@ -236,7 +236,7 @@ c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::l
 #if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
                && !BOOST_WORKAROUND(BOOST_MSVC, < 1300)\
                && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
-   if(name.size())
+   if(!name.empty())
       return string_type(name.begin(), name.end());
 #else
    if(name.size())
@@ -311,4 +311,3 @@ int BOOST_REGEX_CALL c_regex_traits<unsigned short>::value(unsigned short c, int
 #endif // BOOST_NO_WREGEX
 
 #endif // BOOST_BORLANDC
-

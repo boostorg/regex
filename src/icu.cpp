@@ -44,14 +44,14 @@ icu_regex_traits_implementation::string_type icu_regex_traits_implementation::do
 #endif
    ::uint8_t result[100];
    ::int32_t len;
-   if(t.size())
+   if(!t.empty())
       len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), result, sizeof(result));
    else
       len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast< ::int32_t>(0), result, sizeof(result));
    if(std::size_t(len) > sizeof(result))
    {
       scoped_array< ::uint8_t> presult(new ::uint8_t[len+1]);
-      if(t.size())
+      if(!t.empty())
          len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), presult.get(), len+1);
       else
          len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast< ::int32_t>(0), presult.get(), len+1);
@@ -414,11 +414,11 @@ icu_regex_traits::char_class_type icu_regex_traits::lookup_classname(const char_
             ++i;
          }
       }
-      if(s.size())
+      if(!s.empty())
          idx = ::boost::BOOST_REGEX_DETAIL_NS::get_default_class_id(&*s.begin(), &*s.begin() + s.size());
       if(idx >= 0)
          return masks[idx+1];
-      if(s.size())
+      if(!s.empty())
          result = lookup_icu_mask(&*s.begin(), &*s.begin() + s.size());
       if(result != 0)
          return result;

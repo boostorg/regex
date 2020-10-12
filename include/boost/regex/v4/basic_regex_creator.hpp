@@ -246,7 +246,7 @@ protected:
    bool                          m_has_backrefs;       // true if there are actually any backrefs
    indexed_bit_flag              m_backrefs;           // bitmask of permitted backrefs
    boost::uintmax_t              m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
-   bool                          m_has_recursions;     // set when we have recursive expresisons to fixup
+   bool                          m_has_recursions;     // set when we have recursive expressions to fixup
    std::vector<unsigned char>    m_recursion_checks;   // notes which recursions we've followed while analysing this expression
    typename traits::char_class_type m_word_mask;       // mask used to determine if a character is a word character
    typename traits::char_class_type m_mask_space;      // mask used to determine if a character is a word character
@@ -450,9 +450,9 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          charT a2[3] = { c2.first, c2.second, charT(0), };
          s1 = this->m_traits.transform(a1, (a1[1] ? a1+2 : a1+1));
          s2 = this->m_traits.transform(a2, (a2[1] ? a2+2 : a2+1));
-         if(s1.size() == 0)
+         if(s1.empty())
             s1 = string_type(1, charT(0));
-         if(s2.size() == 0)
+         if(s2.empty())
             s2 = string_type(1, charT(0));
       }
       else
@@ -954,7 +954,7 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
    }
 
    // now work through our list, building all the maps as we go:
-   while(v.size())
+   while(!v.empty())
    {
       // Initialize m_recursion_checks if we need it:
       if(m_has_recursions)
@@ -1519,7 +1519,7 @@ template <class charT, class traits>
 void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* state)
 {
    // enumerate our states, and see if we have a leading repeat 
-   // for which failed search restarts can be optimised;
+   // for which failed search restarts can be optimized;
    do
    {
       switch(state->type)
@@ -1576,7 +1576,6 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
    }while(state);
 }
 
-
 } // namespace BOOST_REGEX_DETAIL_NS
 
 } // namespace boost
@@ -1597,4 +1596,3 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
 #endif
 
 #endif
-
