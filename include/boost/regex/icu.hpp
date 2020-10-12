@@ -554,7 +554,7 @@ inline bool u32regex_match(const U_NAMESPACE_QUALIFIER UnicodeString& s,
                         const u32regex& e, 
                         match_flag_type flags = match_default)
 {
-   return BOOST_REGEX_DETAIL_NS::do_regex_match(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, static_cast<mpl::int_<sizeof(wchar_t)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_regex_match(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, static_cast<mpl::int_<2> const*>(0));
 }
 //
 // regex_match overloads that do not return what matched:
@@ -618,7 +618,7 @@ inline bool u32regex_match(const U_NAMESPACE_QUALIFIER UnicodeString& s,
                         match_flag_type flags = match_default)
 {
    match_results<const UChar*> m;
-   return BOOST_REGEX_DETAIL_NS::do_regex_match(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, static_cast<mpl::int_<sizeof(wchar_t)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_regex_match(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, static_cast<mpl::int_<2> const*>(0));
 }
 
 //
@@ -739,7 +739,7 @@ inline bool u32regex_search(const U_NAMESPACE_QUALIFIER UnicodeString& s,
                         const u32regex& e, 
                         match_flag_type flags = match_default)
 {
-   return BOOST_REGEX_DETAIL_NS::do_regex_search(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, s.getBuffer(), static_cast<mpl::int_<sizeof(wchar_t)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_regex_search(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, s.getBuffer(), static_cast<mpl::int_<2> const*>(0));
 }
 template <class BidiIterator>
 inline bool u32regex_search(BidiIterator first, BidiIterator last, 
@@ -800,7 +800,7 @@ inline bool u32regex_search(const U_NAMESPACE_QUALIFIER UnicodeString& s,
                         match_flag_type flags = match_default)
 {
    match_results<const UChar*> m;
-   return BOOST_REGEX_DETAIL_NS::do_regex_search(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, s.getBuffer(), static_cast<mpl::int_<sizeof(wchar_t)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_regex_search(s.getBuffer(), s.getBuffer() + s.length(), m, e, flags, s.getBuffer(), static_cast<mpl::int_<2> const*>(0));
 }
 
 //
