@@ -97,7 +97,7 @@ Otherwise, for each match found, if
 
 calls
 
-   std::copy(m.prefix().first, m.prefix().last, out), 
+   std::copy(m.prefix().first, m.prefix().second, out), 
 
 and then calls
 
@@ -109,7 +109,7 @@ Finally if
 
 calls
 
-   std::copy(last_m.suffix().first, last_m,suffix().last, out) 
+   std::copy(last_m.suffix().first, last_m.suffix().second, out) 
 
 where /last_m/ is a copy of the last match found.
 
