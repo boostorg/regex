@@ -130,13 +130,13 @@ to a [match_results] object, whose members are set as follows:
 [[`(*it).empty()`][`false`]]
 [[`(*it).prefix().first`][The end of the last match found, or the start 
    of the underlying sequence if this is the first match enumerated]]
-[[`(*it).prefix().last`][The same as the start of the match found:
+[[`(*it).prefix().second`][The same as the start of the match found:
       `(*it)[0].first`]]
 [[`(*it).prefix().matched`][True if the prefix did not match an empty string:
       `(*it).prefix().first != (*it).prefix().second`]]
 [[`(*it).suffix().first`][The same as the end of the match found:
       `(*it)[0].second`]]
-[[`(*it).suffix().last`][The end of the underlying sequence.]]
+[[`(*it).suffix().second`][The end of the underlying sequence.]]
 [[`(*it).suffix().matched`][True if the suffix did not match an empty string:
       `(*it).suffix().first != (*it).suffix().second`]]
 [[`(*it)[0].first`][The start of the sequence of characters that matched the regular expression]]
