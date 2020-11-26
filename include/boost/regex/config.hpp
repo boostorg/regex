@@ -104,43 +104,6 @@
 #endif
 
 /*
- * Intel C++ before 8.0 ends up with unresolved externals unless we turn off
- * extern template support:
- */
-#if defined(BOOST_INTEL) && defined(__cplusplus) && (BOOST_INTEL <= 800)
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
-/*
- * Visual C++ doesn't support external templates with C++ extensions turned off:
- */
-#if defined(_MSC_VER) && !defined(_MSC_EXTENSIONS)
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
- /*
- * Oracle compiler in C++11 mode doesn't like external templates for some reason:
- */
-#ifdef __SUNPRO_CC
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
- /*
- * Shared regex lib will crash without this, frankly it looks a lot like a gcc bug:
- */
-#if defined(__MINGW32__)
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
-/*
- * Clang fails to export template instances with -fvisibility=hidden, see
- * https://github.com/boostorg/regex/issues/49
- */
-#ifdef __clang__
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
-#ifdef __CYGWIN__
-/* We get multiply defined symbols without this: */
-#  define BOOST_REGEX_NO_EXTERNAL_TEMPLATES
-#endif
-
-/*
  * If there isn't good enough wide character support then there will
  * be no wide character regular expressions:
  */
@@ -196,52 +159,6 @@
 #endif
 #if defined(__COMO__) && !defined(BOOST_REGEX_NO_W32) && !defined(_MSC_EXTENSIONS)
 #  define BOOST_REGEX_NO_W32
-#endif
-
-/*****************************************************************************
- *
- *  Wide character workarounds:
- *
- ****************************************************************************/
-
-/*
- * define BOOST_REGEX_HAS_OTHER_WCHAR_T when wchar_t is a native type, but the users
- * code may be built with wchar_t as unsigned short: basically when we're building
- * with MSVC and the /Zc:wchar_t option we place some extra unsigned short versions
- * of the non-inline functions in the library, so that users can still link to the lib,
- * irrespective of whether their own code is built with /Zc:wchar_t.
- * Note that this does NOT WORK with VC10 and VC14 when the C++ locale is in effect as
- * the locale's <unsigned short> facets simply do not compile in that case.
- * As we default to the C++ locale when compiling for the windows runtime we
- * skip in this case aswell.
- */
-#if defined(__cplusplus) && \
-      (defined(BOOST_MSVC) || defined(__ICL)) && \
-      !defined(BOOST_NO_INTRINSIC_WCHAR_T) && \
-      defined(BOOST_WINDOWS) && \
-      !defined(__SGI_STL_PORT) && \
-      !defined(_STLPORT_VERSION) && \
-      !defined(BOOST_RWSTD_VER) && \
-      ((_MSC_VER < 1600) || !defined(BOOST_REGEX_USE_CPP_LOCALE)) && \
-      !BOOST_PLAT_WINDOWS_RUNTIME
-#  define BOOST_REGEX_HAS_OTHER_WCHAR_T
-#  ifdef BOOST_MSVC
-#     pragma warning(push)
-#     pragma warning(disable : 4251)
-#if BOOST_MSVC < 1700
-#     pragma warning(disable : 4231)
-#endif
-#     if BOOST_MSVC < 1600
-#        pragma warning(disable : 4660)
-#     endif
-#  endif
-#  if defined(_DLL) && defined(BOOST_MSVC) && (BOOST_MSVC < 1600)
-#     include <string>
-      extern template class __declspec(dllimport) std::basic_string<unsigned short>;
-#  endif
-#  ifdef BOOST_MSVC
-#     pragma warning(pop)
-#  endif
 #endif
 
 
@@ -505,7 +422,4 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL print_regex_library_info();
 #endif
 
 #endif
-
-
-
 

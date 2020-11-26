@@ -215,24 +215,6 @@ private:
 
 } // namespace boost
 
-//
-// template instances:
-//
-#define BOOST_REGEX_CHAR_T UChar32
-#undef BOOST_REGEX_TRAITS_T
-#define BOOST_REGEX_TRAITS_T , icu_regex_traits
-#define BOOST_REGEX_ICU_INSTANCES
-#ifdef BOOST_REGEX_ICU_INSTANTIATE
-#  define BOOST_REGEX_INSTANTIATE
-#endif
-#include <boost/regex/v4/instances.hpp>
-#undef BOOST_REGEX_CHAR_T
-#undef BOOST_REGEX_TRAITS_T
-#undef BOOST_REGEX_ICU_INSTANCES
-#ifdef BOOST_REGEX_INSTANTIATE
-#  undef BOOST_REGEX_INSTANTIATE
-#endif
-
 namespace boost{
 
 // types:

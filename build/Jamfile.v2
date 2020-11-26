@@ -124,10 +124,8 @@ alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
 SOURCES = 
    c_regex_traits.cpp
    cpp_regex_traits.cpp
-   cregex.cpp
    fileiter.cpp
    icu.cpp
-   instances.cpp
    posix_api.cpp
    regex.cpp
    regex_debug.cpp
@@ -137,8 +135,6 @@ SOURCES =
    w32_regex_traits.cpp
    wc_regex_traits.cpp
    wide_posix_api.cpp
-   winstances.cpp 
-   usinstances.cpp ;
 
 
 lib boost_regex : ../src/$(SOURCES) icu_options
