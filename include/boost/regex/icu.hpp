@@ -1063,7 +1063,12 @@ inline U_NAMESPACE_QUALIFIER UnicodeString u32regex_replace(const U_NAMESPACE_QU
 #pragma warning (pop)
 #endif
 
+#ifdef BOOST_REGEX_CXX03
 #include <boost/regex/v4/u32regex_iterator.hpp>
 #include <boost/regex/v4/u32regex_token_iterator.hpp>
+#else
+#include <boost/regex/v5/u32regex_iterator.hpp>
+#include <boost/regex/v5/u32regex_token_iterator.hpp>
+#endif
 
 #endif

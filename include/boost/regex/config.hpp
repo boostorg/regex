@@ -18,6 +18,17 @@
 
 #ifndef BOOST_REGEX_CONFIG_HPP
 #define BOOST_REGEX_CONFIG_HPP
+
+#if !((__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1600)))
+#  define BOOST_REGEX_CXX03
+#endif
+
+#if defined(__has_include)
+#if !defined(BOOST_REGEX_STANDALONE) && !__has_include(<boost/version.hpp>)
+#define BOOST_REGEX_STANDALONE
+#endif
+#endif
+
 /*
  * Borland C++ Fix/error check
  * this has to go *before* we include any std lib headers:
@@ -25,7 +36,9 @@
 #if defined(__BORLANDC__) && !defined(__clang__)
 #  include <boost/regex/config/borland.hpp>
 #endif
+#ifndef BOOST_REGEX_STANDALONE
 #include <boost/version.hpp>
+#endif
 
 /*****************************************************************************
  *
@@ -41,8 +54,10 @@
 
 #  include BOOST_REGEX_USER_CONFIG
 
+#ifndef BOOST_REGEX_STANDALONE
 #  include <boost/config.hpp>
 #  include <boost/predef.h>
+#endif
 
 #else
    /*
@@ -64,7 +79,7 @@
  ****************************************************************************/
 
 /* Obsolete macro, use BOOST_VERSION instead: */
-#define BOOST_RE_VERSION 320
+#define BOOST_RE_VERSION 500
 
 /* fix: */
 #if defined(_UNICODE) && !defined(UNICODE)
@@ -76,7 +91,7 @@
 * Define a macro for the namespace that details are placed in, this includes the Boost
 * version number to avoid mismatched header and library versions:
 */
-#define BOOST_REGEX_DETAIL_NS BOOST_JOIN(re_detail_, BOOST_VERSION)
+#define BOOST_REGEX_DETAIL_NS BOOST_JOIN(re_detail_, BOOST_RE_VERSION)
 
 /*
  * Fix for gcc prior to 3.4: std::ctype<wchar_t> doesn't allow
@@ -84,7 +99,7 @@
  * std::use_facet<std::ctype<wchar_t> >.is(std::ctype_base::lower|std::ctype_base::upper, L'a');
  * returns *false*.
  */
-#ifdef __GLIBCPP__
+#if defined(__GLIBCPP__) && defined(BOOST_REGEX_CXX03)
 #  define BOOST_REGEX_BUGGY_CTYPE_FACET
 #endif
 
@@ -333,7 +348,7 @@
 #if !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE) && !defined(BOOST_NO_STD_LOCALE)
 #  define BOOST_REGEX_USE_CPP_LOCALE
 #endif
-/* otherwise use C+ locale: */
+/* otherwise use C locale: */
 #if !defined(BOOST_REGEX_USE_WIN32_LOCALE) && !defined(BOOST_REGEX_USE_C_LOCALE) && !defined(BOOST_REGEX_USE_CPP_LOCALE)
 #  define BOOST_REGEX_USE_C_LOCALE
 #endif

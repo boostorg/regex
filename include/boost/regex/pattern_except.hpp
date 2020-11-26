@@ -25,7 +25,11 @@
 
 #include <cstddef>
 #include <stdexcept>
+#ifdef BOOST_REGEX_CXX03
 #include <boost/regex/v4/error_type.hpp>
+#else
+#include <boost/regex/v5/error_type.hpp>
+#endif
 
 namespace boost{
 
