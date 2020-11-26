@@ -389,9 +389,7 @@ public:
       :  m_result(what), base(first), last(end), 
          position(first), backstop(l_base), re(e), traits_inst(e.get_traits()), 
          m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
-#ifdef BOOST_REGEX_NON_RECURSIVE
       , m_recursions(0)
-#endif
    {
       construct_init(e, f);
    }
@@ -453,9 +451,6 @@ private:
    bool match_backstep();
    bool match_assert_backref();
    bool match_toggle_case();
-#ifdef BOOST_REGEX_RECURSIVE
-   bool backtrack_till_match(std::size_t count);
-#endif
    bool match_recursion();
    bool match_fail();
    bool match_accept();
@@ -519,13 +514,6 @@ private:
    unsigned char match_any_mask;
    // recursion information:
    std::vector<recursion_info<results_type> > recursion_stack;
-#ifdef BOOST_REGEX_RECURSIVE
-   // Set to false by a (*COMMIT):
-   bool m_can_backtrack;
-   bool m_have_accept;
-   bool m_have_then;
-#endif
-#ifdef BOOST_REGEX_NON_RECURSIVE
    //
    // additional members for non-recursive version:
    //
@@ -581,7 +569,6 @@ private:
    //bool m_unwind_commit;
    // Recursion limit:
    unsigned m_recursions;
-#endif
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -624,11 +611,7 @@ private:
 //
 // include the implementation of perl_matcher:
 //
-#ifdef BOOST_REGEX_RECURSIVE
-#include <boost/regex/v5/perl_matcher_recursive.hpp>
-#else
 #include <boost/regex/v5/perl_matcher_non_recursive.hpp>
-#endif
 // this one has to be last:
 #include <boost/regex/v5/perl_matcher_common.hpp>
 

@@ -339,12 +339,13 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 
 /*****************************************************************************
  *
- *  Algorithm selection and configuration:
+ *  Algorithm selection and configuration.
+ *  These options are now obsolete for C++11 and later (regex v5).
  *
  ****************************************************************************/
 
 #if !defined(BOOST_REGEX_RECURSIVE) && !defined(BOOST_REGEX_NON_RECURSIVE)
-#  if defined(BOOST_REGEX_HAS_MS_STACK_GUARD) && !defined(_STLP_DEBUG) && !defined(__STL_DEBUG) && !(defined(_MSC_VER) && (_MSC_VER >= 1400))
+#  if defined(BOOST_REGEX_HAS_MS_STACK_GUARD) && !defined(_STLP_DEBUG) && !defined(__STL_DEBUG) && !(defined(_MSC_VER) && (_MSC_VER >= 1400)) && defined(BOOST_REGEX_CXX03)
 #     define BOOST_REGEX_RECURSIVE
 #  else
 #     define BOOST_REGEX_NON_RECURSIVE

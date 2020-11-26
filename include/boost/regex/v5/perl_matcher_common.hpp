@@ -86,13 +86,8 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    }
    else
       m_presult = &m_result;
-#ifdef BOOST_REGEX_NON_RECURSIVE
    m_stack_base = 0;
    m_backup_state = 0;
-#elif defined(BOOST_REGEX_RECURSIVE)
-   m_can_backtrack = true;
-   m_have_accept = false;
-#endif
    // find the value to use for matching word boundaries:
    m_word_mask = re.get_data().m_word_mask; 
    // find bitmask to use for matching '.':
@@ -210,12 +205,10 @@ template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_imp()
 {
    // initialise our stack if we are non-recursive:
-#ifdef BOOST_REGEX_NON_RECURSIVE
    save_state_init init(&m_stack_base, &m_backup_state);
    used_block_count = BOOST_REGEX_MAX_BLOCKS;
 #if !defined(BOOST_NO_EXCEPTIONS)
    try{
-#endif
 #endif
 
    // reset our state machine:
@@ -233,7 +226,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_imp()
       return false;
    return (m_result[0].second == last) && (m_result[0].first == base);
 
-#if defined(BOOST_REGEX_NON_RECURSIVE) && !defined(BOOST_NO_EXCEPTIONS)
+#if !defined(BOOST_NO_EXCEPTIONS)
    }
    catch(...)
    {
@@ -271,12 +264,10 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_imp()
    };
 
    // initialise our stack if we are non-recursive:
-#ifdef BOOST_REGEX_NON_RECURSIVE
    save_state_init init(&m_stack_base, &m_backup_state);
    used_block_count = BOOST_REGEX_MAX_BLOCKS;
 #if !defined(BOOST_NO_EXCEPTIONS)
    try{
-#endif
 #endif
 
    state_count = 0;
@@ -324,7 +315,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_imp()
    matcher_proc_type proc = s_find_vtable[type];
    return (this->*proc)();
 
-#if defined(BOOST_REGEX_NON_RECURSIVE) && !defined(BOOST_NO_EXCEPTIONS)
+#if !defined(BOOST_NO_EXCEPTIONS)
    }
    catch(...)
    {
@@ -371,9 +362,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_prefix()
 #endif
    if(!m_has_found_match)
       position = restart; // reset search postion
-#ifdef BOOST_REGEX_RECURSIVE
-   m_can_backtrack = true; // reset for further searches
-#endif
    return m_has_found_match;
 }
 
