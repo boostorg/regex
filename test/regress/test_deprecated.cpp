@@ -133,6 +133,11 @@ void test_deprecated(const char&, const test_regex_search_tag&)
 
 }
 
+std::string to_narrow_string(std::wstring const& w)
+{
+   return std::string(w.begin(), w.end());
+}
+
 void test_deprecated(const wchar_t&, const test_regex_search_tag&)
 {
 #ifndef BOOST_NO_WREGEX
@@ -154,7 +159,7 @@ void test_deprecated(const wchar_t&, const test_regex_search_tag&)
    boost::regex_tW re;
    if(boost::regcompW(&re, expression.c_str(), posix_options) != 0)
    {
-      BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" did not compile with the POSIX C API.", wchar_t);
+      BOOST_REGEX_TEST_ERROR("Expression : \"" << to_narrow_string(expression.c_str()) << "\" did not compile with the POSIX C API.", wchar_t);
       return;
    }
    // try and find the first occurrence:
@@ -183,7 +188,7 @@ void test_deprecated(const wchar_t&, const test_regex_search_tag&)
    {
       if(results[0] >= 0)
       {
-         BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" was not found with the POSIX C API.", wchar_t);
+         BOOST_REGEX_TEST_ERROR("Expression : \"" << to_narrow_string(expression.c_str()) << "\" was not found with the POSIX C API.", wchar_t);
       }
    }
    // clean up whatever:
@@ -248,7 +253,7 @@ void test_deprecated(const wchar_t&, const test_invalid_regex_tag&)
    if(code == 0)
    {
       boost::regfreeW(&re);
-      BOOST_REGEX_TEST_ERROR("Expression : \"" << expression.c_str() << "\" unexpectedly compiled with the POSIX C API.", wchar_t);
+      BOOST_REGEX_TEST_ERROR("Expression : \"" << to_narrow_string(expression.c_str()) << "\" unexpectedly compiled with the POSIX C API.", wchar_t);
    }
    else
    {

@@ -122,9 +122,7 @@ explicit has_icu ;
 alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
 
 SOURCES = 
-   c_regex_traits.cpp
    cpp_regex_traits.cpp
-   fileiter.cpp
    icu.cpp
    posix_api.cpp
    regex.cpp
@@ -133,9 +131,8 @@ SOURCES =
    regex_traits_defaults.cpp
    static_mutex.cpp
    w32_regex_traits.cpp
-   wc_regex_traits.cpp
    wide_posix_api.cpp
-
+;
 
 lib boost_regex : ../src/$(SOURCES) icu_options
     :         
@@ -144,11 +141,4 @@ lib boost_regex : ../src/$(SOURCES) icu_options
     ;
 
 boost-install boost_regex ;
-
-
-
-
-
-
-
 
