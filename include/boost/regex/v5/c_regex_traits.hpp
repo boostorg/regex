@@ -75,7 +75,7 @@ template <class charT>
 struct c_regex_traits;
 
 template<>
-struct BOOST_REGEX_DECL c_regex_traits<char>
+struct c_regex_traits<char>
 {
    c_regex_traits(){}
    typedef char char_type;
@@ -120,7 +120,7 @@ private:
 
 #ifndef BOOST_NO_WREGEX
 template<>
-struct BOOST_REGEX_DECL c_regex_traits<wchar_t>
+struct c_regex_traits<wchar_t>
 {
    c_regex_traits(){}
    typedef wchar_t char_type;
