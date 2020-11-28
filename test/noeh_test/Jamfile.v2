@@ -29,7 +29,6 @@ lib boost_regex_noeh :
    ../../src/regex.cpp
    ../../src/regex_debug.cpp
    ../../src/regex_raw_buffer.cpp
-   ../../src/regex_traits_defaults.cpp
    ../../src/static_mutex.cpp
    ../../src/wide_posix_api.cpp
    ../../build//icu_options

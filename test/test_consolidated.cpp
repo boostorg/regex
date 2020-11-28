@@ -15,6 +15,5 @@
 #include <libs/regex/src/regex.cpp>
 #include <libs/regex/src/regex_debug.cpp>
 #include <libs/regex/src/regex_raw_buffer.cpp>
-#include <libs/regex/src/regex_traits_defaults.cpp>
 #include <libs/regex/src/static_mutex.cpp>
 #include <libs/regex/src/wide_posix_api.cpp>
