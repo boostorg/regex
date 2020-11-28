@@ -122,7 +122,6 @@ explicit has_icu ;
 alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
 
 SOURCES = 
-   icu.cpp
    posix_api.cpp
    regex.cpp
    regex_debug.cpp

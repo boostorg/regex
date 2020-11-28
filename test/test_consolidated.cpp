@@ -10,7 +10,6 @@
  */
 
 
-#include <libs/regex/src/icu.cpp>
 #include <libs/regex/src/posix_api.cpp>
 #include <libs/regex/src/regex.cpp>
 #include <libs/regex/src/regex_debug.cpp>

@@ -61,7 +61,6 @@ test_operators.cpp
 ;
 
 lib boost_regex_recursive :    
-   ../src/icu.cpp
    ../src/posix_api.cpp
    ../src/regex.cpp
    ../src/regex_debug.cpp

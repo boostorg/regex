@@ -8,7 +8,6 @@ project
     ;
 
 EX_SOURCES = 
-   icu.cpp
    posix_api.cpp
    regex.cpp
    regex_debug.cpp

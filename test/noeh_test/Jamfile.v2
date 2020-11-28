@@ -24,7 +24,6 @@ project
 
 
 lib boost_regex_noeh :    
-   ../../src/icu.cpp
    ../../src/posix_api.cpp
    ../../src/regex.cpp
    ../../src/regex_debug.cpp
