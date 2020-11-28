@@ -68,7 +68,6 @@ lib boost_regex_recursive :
    ../src/regex_raw_buffer.cpp
    ../src/regex_traits_defaults.cpp
    ../src/static_mutex.cpp
-   ../src/w32_regex_traits.cpp
    ../src/wide_posix_api.cpp
    ../build//icu_options
     : 

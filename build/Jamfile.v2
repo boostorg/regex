@@ -129,7 +129,6 @@ SOURCES =
    regex_raw_buffer.cpp
    regex_traits_defaults.cpp
    static_mutex.cpp
-   w32_regex_traits.cpp
    wide_posix_api.cpp
 ;
 
