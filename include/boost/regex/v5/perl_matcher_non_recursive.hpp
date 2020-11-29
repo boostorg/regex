@@ -20,7 +20,7 @@
 #ifndef BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
 #define BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
 
-#include <new>
+#include <boost/regex/v5/mem_block_cache.hpp>
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

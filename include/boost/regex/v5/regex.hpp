@@ -81,9 +81,6 @@
 #ifndef BOOST_REGEX_V4_MATCH_RESULTS_HPP
 #include <boost/regex/v5/match_results.hpp>
 #endif
-#ifndef BOOST_REGEX_V4_PROTECTED_CALL_HPP
-#include <boost/regex/v5/protected_call.hpp>
-#endif
 #ifndef BOOST_REGEX_MATCHER_HPP
 #include <boost/regex/v5/perl_matcher.hpp>
 #endif

@@ -38,8 +38,10 @@
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v5/error_type.hpp>
 #endif
+#include <boost/regex/v5/regex_workaround.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/cstdint.hpp>
 
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std{

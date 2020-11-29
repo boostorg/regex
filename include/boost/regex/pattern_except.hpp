@@ -27,8 +27,10 @@
 #include <stdexcept>
 #ifdef BOOST_REGEX_CXX03
 #include <boost/regex/v4/error_type.hpp>
+#include <boost/regex/v4/regex_traits_defaults.hpp>
 #else
 #include <boost/regex/v5/error_type.hpp>
+#include <boost/regex/v5/regex_traits_defaults.hpp>
 #endif
 
 namespace boost{
@@ -51,17 +53,32 @@ namespace boost{
 #pragma warning(disable : 26812)
 #endif
 #endif
-class BOOST_REGEX_DECL regex_error : public std::runtime_error
+class regex_error : public std::runtime_error
 {
 public:
-   explicit regex_error(const std::string& s, regex_constants::error_type err = regex_constants::error_unknown, std::ptrdiff_t pos = 0);
-   explicit regex_error(regex_constants::error_type err);
-   ~regex_error() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE;
+   explicit regex_error(const std::string& s, regex_constants::error_type err = regex_constants::error_unknown, std::ptrdiff_t pos = 0)
+      : std::runtime_error(s)
+      , m_error_code(err)
+      , m_position(pos)
+   {
+   }
+   explicit regex_error(regex_constants::error_type err)
+      : std::runtime_error(::boost::BOOST_REGEX_DETAIL_NS::get_default_error_string(err))
+      , m_error_code(err)
+      , m_position(0)
+   {
+   }
+   ~regex_error() BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE {}
    regex_constants::error_type code()const
    { return m_error_code; }
    std::ptrdiff_t position()const
    { return m_position; }
-   void raise()const;
+   void raise()const 
+   {
+#ifndef BOOST_NO_EXCEPTIONS
+      ::boost::throw_exception(*this);
+#endif
+   }
 private:
    regex_constants::error_type m_error_code;
    std::ptrdiff_t m_position;
@@ -72,7 +89,10 @@ typedef regex_error bad_expression;
 
 namespace BOOST_REGEX_DETAIL_NS{
 
-BOOST_REGEX_DECL void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex);
+inline void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex)
+{
+   ::boost::throw_exception(ex);
+}
 
 template <class traits>
 void raise_error(const traits& t, regex_constants::error_type code)

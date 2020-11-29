@@ -178,27 +178,10 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_co
    max_state_count = BOOST_REGEX_MAX_STATE_COUNT;
 }
 
-#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
-template <class BidiIterator, class Allocator, class traits>
-inline bool perl_matcher<BidiIterator, Allocator, traits>::protected_call(
-   protected_proc_type proc)
-{
-   ::boost::BOOST_REGEX_DETAIL_NS::concrete_protected_call
-      <perl_matcher<BidiIterator, Allocator, traits> >
-      obj(this, proc);
-   return obj.execute();
-
-}
-#endif
-
 template <class BidiIterator, class Allocator, class traits>
 inline bool perl_matcher<BidiIterator, Allocator, traits>::match()
 {
-#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
-   return protected_call(&perl_matcher<BidiIterator, Allocator, traits>::match_imp);
-#else
    return match_imp();
-#endif
 }
 
 template <class BidiIterator, class Allocator, class traits>
@@ -242,11 +225,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_imp()
 template <class BidiIterator, class Allocator, class traits>
 inline bool perl_matcher<BidiIterator, Allocator, traits>::find()
 {
-#ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
-   return protected_call(&perl_matcher<BidiIterator, Allocator, traits>::find_imp);
-#else
    return find_imp();
-#endif
 }
 
 template <class BidiIterator, class Allocator, class traits>

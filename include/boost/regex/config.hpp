@@ -23,6 +23,10 @@
 #  define BOOST_REGEX_CXX03
 #endif
 
+#if defined(BOOST_REGEX_RECURSIVE) && !defined(BOOST_REGEX_CXX03)
+#  define BOOST_REGEX_CXX03
+#endif
+
 #if defined(__has_include)
 #if !defined(BOOST_REGEX_STANDALONE) && !__has_include(<boost/version.hpp>)
 #define BOOST_REGEX_STANDALONE
@@ -373,21 +377,6 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL reset_stack_guard_page();
 #  endif
 #endif
 
-
-/*****************************************************************************
- *
- *  helper memory allocation functions:
- *
- ****************************************************************************/
-
-#if defined(__cplusplus) && defined(BOOST_REGEX_NON_RECURSIVE)
-namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
-
-BOOST_REGEX_DECL void* BOOST_REGEX_CALL get_mem_block();
-BOOST_REGEX_DECL void BOOST_REGEX_CALL put_mem_block(void*);
-
-}} /* namespaces */
-#endif
 
 /*****************************************************************************
  *
