@@ -125,7 +125,6 @@ SOURCES =
    posix_api.cpp
    regex.cpp
    regex_debug.cpp
-   regex_raw_buffer.cpp
    static_mutex.cpp
    wide_posix_api.cpp
 ;
