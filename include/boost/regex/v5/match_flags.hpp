@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares match_flags type.
   */
 
-#ifndef BOOST_REGEX_V4_MATCH_FLAGS
-#define BOOST_REGEX_V4_MATCH_FLAGS
+#ifndef BOOST_REGEX_V5_MATCH_FLAGS
+#define BOOST_REGEX_V5_MATCH_FLAGS
 
 #ifdef __cplusplus
 #  include <boost/cstdint.hpp>

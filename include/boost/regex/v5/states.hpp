@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares internal state machine structures.
   */
 
-#ifndef BOOST_REGEX_V4_STATES_HPP
-#define BOOST_REGEX_V4_STATES_HPP
+#ifndef BOOST_REGEX_V5_STATES_HPP
+#define BOOST_REGEX_V5_STATES_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

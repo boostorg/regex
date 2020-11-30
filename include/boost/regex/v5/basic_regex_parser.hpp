@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares template class basic_regex_parser.
   */
 
-#ifndef BOOST_REGEX_V4_BASIC_REGEX_PARSER_HPP
-#define BOOST_REGEX_V4_BASIC_REGEX_PARSER_HPP
+#ifndef BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
+#define BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

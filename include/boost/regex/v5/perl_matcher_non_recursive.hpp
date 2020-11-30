@@ -17,8 +17,8 @@
   *                specific to the non-recursive implementation.
   */
 
-#ifndef BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
-#define BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
+#ifndef BOOST_REGEX_V5_PERL_MATCHER_NON_RECURSIVE_HPP
+#define BOOST_REGEX_V5_PERL_MATCHER_NON_RECURSIVE_HPP
 
 #include <boost/regex/v5/mem_block_cache.hpp>
 

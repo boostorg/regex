@@ -18,8 +18,8 @@
   *                by regex.hpp, do not include on its own.
   */
 
-#ifndef BOOST_REGEX_V4_REGEX_REPLACE_HPP
-#define BOOST_REGEX_V4_REGEX_REPLACE_HPP
+#ifndef BOOST_REGEX_V5_REGEX_REPLACE_HPP
+#define BOOST_REGEX_V5_REGEX_REPLACE_HPP
 
 
 namespace boost{
@@ -94,6 +94,6 @@ std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
 
 } // namespace boost
 
-#endif  // BOOST_REGEX_V4_REGEX_REPLACE_HPP
+#endif  // BOOST_REGEX_V5_REGEX_REPLACE_HPP
 
 

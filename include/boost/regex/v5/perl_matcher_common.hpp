@@ -17,8 +17,8 @@
   *                common to both the recursive and non-recursive versions.
   */
 
-#ifndef BOOST_REGEX_V4_PERL_MATCHER_COMMON_HPP
-#define BOOST_REGEX_V4_PERL_MATCHER_COMMON_HPP
+#ifndef BOOST_REGEX_V5_PERL_MATCHER_COMMON_HPP
+#define BOOST_REGEX_V5_PERL_MATCHER_COMMON_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

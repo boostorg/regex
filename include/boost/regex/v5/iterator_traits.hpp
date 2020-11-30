@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares iterator traits workarounds.
   */
 
-#ifndef BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
-#define BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
+#ifndef BOOST_REGEX_V5_ITERATOR_TRAITS_HPP
+#define BOOST_REGEX_V5_ITERATOR_TRAITS_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

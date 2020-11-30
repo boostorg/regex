@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares template class match_results.
   */
 
-#ifndef BOOST_REGEX_V4_MATCH_RESULTS_HPP
-#define BOOST_REGEX_V4_MATCH_RESULTS_HPP
+#ifndef BOOST_REGEX_V5_MATCH_RESULTS_HPP
+#define BOOST_REGEX_V5_MATCH_RESULTS_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

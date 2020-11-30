@@ -19,8 +19,8 @@
 #include <boost/regex/config.hpp>
 #include <set>
 
-#ifndef BOOST_REGEX_V4_INDEXED_BIT_FLAG_HPP
-#define BOOST_REGEX_V4_INDEXED_BIT_FLAG_HPP
+#ifndef BOOST_REGEX_V5_INDEXED_BIT_FLAG_HPP
+#define BOOST_REGEX_V5_INDEXED_BIT_FLAG_HPP
 
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{

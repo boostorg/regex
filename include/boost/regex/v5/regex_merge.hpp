@@ -18,8 +18,8 @@
   *                by regex.hpp, do not include on its own.
   */
 
-#ifndef BOOST_REGEX_V4_REGEX_MERGE_HPP
-#define BOOST_REGEX_V4_REGEX_MERGE_HPP
+#ifndef BOOST_REGEX_V5_REGEX_MERGE_HPP
+#define BOOST_REGEX_V5_REGEX_MERGE_HPP
 
 
 namespace boost{
@@ -88,6 +88,6 @@ inline std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
 
 } // namespace boost
 
-#endif  // BOOST_REGEX_V4_REGEX_MERGE_HPP
+#endif  // BOOST_REGEX_V5_REGEX_MERGE_HPP
 
 

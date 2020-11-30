@@ -16,8 +16,8 @@
   *   DESCRIPTION: Provides regex_iterator implementation.
   */
 
-#ifndef BOOST_REGEX_V4_REGEX_ITERATOR_HPP
-#define BOOST_REGEX_V4_REGEX_ITERATOR_HPP
+#ifndef BOOST_REGEX_V5_REGEX_ITERATOR_HPP
+#define BOOST_REGEX_V5_REGEX_ITERATOR_HPP
 
 #include <boost/shared_ptr.hpp>
 
@@ -191,5 +191,5 @@ inline regex_iterator<typename std::basic_string<charT, ST, SA>::const_iterator,
 
 } // namespace boost
 
-#endif // BOOST_REGEX_V4_REGEX_ITERATOR_HPP
+#endif // BOOST_REGEX_V5_REGEX_ITERATOR_HPP
 

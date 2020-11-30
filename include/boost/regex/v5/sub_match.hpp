@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares template class sub_match.
   */
 
-#ifndef BOOST_REGEX_V4_SUB_MATCH_HPP
-#define BOOST_REGEX_V4_SUB_MATCH_HPP
+#ifndef BOOST_REGEX_V5_SUB_MATCH_HPP
+#define BOOST_REGEX_V5_SUB_MATCH_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

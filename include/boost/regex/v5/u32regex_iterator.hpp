@@ -16,8 +16,8 @@
   *   DESCRIPTION: Provides u32regex_iterator implementation.
   */
 
-#ifndef BOOST_REGEX_V4_U32REGEX_ITERATOR_HPP
-#define BOOST_REGEX_V4_U32REGEX_ITERATOR_HPP
+#ifndef BOOST_REGEX_V5_U32REGEX_ITERATOR_HPP
+#define BOOST_REGEX_V5_U32REGEX_ITERATOR_HPP
 
 namespace boost{
 
@@ -181,5 +181,5 @@ inline u32regex_iterator<const UChar*> make_u32regex_iterator(const U_NAMESPACE_
 
 } // namespace boost
 
-#endif // BOOST_REGEX_V4_REGEX_ITERATOR_HPP
+#endif // BOOST_REGEX_V5_REGEX_ITERATOR_HPP
 

@@ -16,8 +16,8 @@
   *   DESCRIPTION: Provides regex_grep implementation.
   */
 
-#ifndef BOOST_REGEX_V4_REGEX_GREP_HPP
-#define BOOST_REGEX_V4_REGEX_GREP_HPP
+#ifndef BOOST_REGEX_V5_REGEX_GREP_HPP
+#define BOOST_REGEX_V5_REGEX_GREP_HPP
 
 
 namespace boost{
@@ -151,5 +151,5 @@ inline unsigned int regex_grep(bool (*foo)(const match_results<std::basic_string
 
 } // namespace boost
 
-#endif  // BOOST_REGEX_V4_REGEX_GREP_HPP
+#endif  // BOOST_REGEX_V5_REGEX_GREP_HPP
 

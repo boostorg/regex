@@ -16,8 +16,8 @@
   *   DESCRIPTION: Provides regex_search implementation.
   */
 
-#ifndef BOOST_REGEX_V4_REGEX_SEARCH_HPP
-#define BOOST_REGEX_V4_REGEX_SEARCH_HPP
+#ifndef BOOST_REGEX_V5_REGEX_SEARCH_HPP
+#define BOOST_REGEX_V5_REGEX_SEARCH_HPP
 
 
 namespace boost{
@@ -212,6 +212,6 @@ inline bool regex_search(const std::basic_string<wchar_t>& s,
 
 } // namespace boost
 
-#endif  // BOOST_REGEX_V4_REGEX_SEARCH_HPP
+#endif  // BOOST_REGEX_V5_REGEX_SEARCH_HPP
 
 

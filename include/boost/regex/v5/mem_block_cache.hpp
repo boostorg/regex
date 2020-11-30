@@ -15,8 +15,8 @@
   *   DESCRIPTION: memory block cache used by the non-recursive matcher.
   */
 
-#ifndef BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
-#define BOOST_REGEX_V4_MEM_BLOCK_CACHE_HPP
+#ifndef BOOST_REGEX_V5_MEM_BLOCK_CACHE_HPP
+#define BOOST_REGEX_V5_MEM_BLOCK_CACHE_HPP
 
 #include <new>
 #ifdef BOOST_HAS_THREADS

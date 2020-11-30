@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares class regbase.
   */
 
-#ifndef BOOST_REGEX_V4_REGBASE_HPP
-#define BOOST_REGEX_V4_REGBASE_HPP
+#ifndef BOOST_REGEX_V5_REGBASE_HPP
+#define BOOST_REGEX_V5_REGBASE_HPP
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

@@ -17,8 +17,8 @@
   *                the data members of a regex_data object.
   */
 
-#ifndef BOOST_REGEX_V4_BASIC_REGEX_CREATOR_HPP
-#define BOOST_REGEX_V4_BASIC_REGEX_CREATOR_HPP
+#ifndef BOOST_REGEX_V5_BASIC_REGEX_CREATOR_HPP
+#define BOOST_REGEX_V5_BASIC_REGEX_CREATOR_HPP
 
 #include <boost/regex/v5/indexed_bit_flag.hpp>
 

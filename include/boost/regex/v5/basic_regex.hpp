@@ -16,8 +16,8 @@
   *   DESCRIPTION: Declares template class basic_regex.
   */
 
-#ifndef BOOST_REGEX_V4_BASIC_REGEX_HPP
-#define BOOST_REGEX_V4_BASIC_REGEX_HPP
+#ifndef BOOST_REGEX_V5_BASIC_REGEX_HPP
+#define BOOST_REGEX_V5_BASIC_REGEX_HPP
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/container_hash/hash.hpp>
