@@ -34,12 +34,12 @@
 #include <boost/cstdint.hpp>
 
 #ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
-#include <boost/regex/v5/syntax_type.hpp>
+#include <boost/regex/v4/syntax_type.hpp>
 #endif
 #ifndef BOOST_REGEX_ERROR_TYPE_HPP
-#include <boost/regex/v5/error_type.hpp>
+#include <boost/regex/v4/error_type.hpp>
 #endif
-#include <boost/regex/v5/regex_workaround.hpp>
+#include <boost/regex/v4/regex_workaround.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/utility/enable_if.hpp>
 

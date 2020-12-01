@@ -65,7 +65,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
 #endif
    difference_type BOOST_REGEX_CALL length()const
    {
-      difference_type n = matched ? ::boost::BOOST_REGEX_DETAIL_NS::distance((BidiIterator)this->first, (BidiIterator)this->second) : 0;
+      difference_type n = matched ? std::distance((BidiIterator)this->first, (BidiIterator)this->second) : 0;
       return n;
    }
    std::basic_string<value_type> str()const
@@ -73,7 +73,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
       std::basic_string<value_type> result;
       if(matched)
       {
-         std::size_t len = ::boost::BOOST_REGEX_DETAIL_NS::distance((BidiIterator)this->first, (BidiIterator)this->second);
+         std::size_t len = std::distance((BidiIterator)this->first, (BidiIterator)this->second);
          result.reserve(len);
          BidiIterator i = this->first;
          while(i != this->second)
@@ -132,7 +132,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
    }
 
 private:
-   mutable boost::scoped_ptr<capture_sequence_type> m_captures;
+   mutable std::unique_ptr<capture_sequence_type> m_captures;
 public:
 
 #endif

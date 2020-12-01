@@ -48,7 +48,7 @@ OutputIterator regex_replace(OutputIterator out,
    if(i == j)
    {
       if(!(flags & regex_constants::format_no_copy))
-         out = BOOST_REGEX_DETAIL_NS::copy(first, last, out);
+         out = std::copy(first, last, out);
    }
    else
    {
@@ -56,7 +56,7 @@ OutputIterator regex_replace(OutputIterator out,
       while(i != j)
       {
          if(!(flags & regex_constants::format_no_copy))
-            out = BOOST_REGEX_DETAIL_NS::copy(i->prefix().first, i->prefix().second, out); 
+            out = std::copy(i->prefix().first, i->prefix().second, out); 
          out = i->format(out, fmt, flags, e);
          last_m = (*i)[0].second;
          if(flags & regex_constants::format_first_only)
@@ -64,7 +64,7 @@ OutputIterator regex_replace(OutputIterator out,
          ++i;
       }
       if(!(flags & regex_constants::format_no_copy))
-         out = BOOST_REGEX_DETAIL_NS::copy(last_m, last, out);
+         out = std::copy(last_m, last, out);
    }
    return out;
 }

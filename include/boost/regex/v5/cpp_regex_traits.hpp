@@ -19,9 +19,10 @@
 #ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 
-#include <boost/config.hpp>
-#include <boost/integer.hpp>
-#include <boost/type_traits/make_unsigned.hpp>
+#include <boost/regex/config.hpp>
+#include <cstdint>
+#include <locale>
+#include <type_traits>
 
 #ifndef BOOST_NO_STD_LOCALE
 
@@ -32,13 +33,13 @@
 #include <boost/regex/v5/regex_traits_defaults.hpp>
 #endif
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/pending/static_mutex.hpp>
+#include <mutex>
 #endif
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v5/primary_transform.hpp>
 #endif
 #ifndef BOOST_REGEX_OBJECT_CACHE_HPP
-#include <boost/regex/pending/object_cache.hpp>
+#include <boost/regex/v5/object_cache.hpp>
 #endif
 
 #include <climits>
@@ -109,14 +110,12 @@ template<class charT, class traits>
 typename parser_buf<charT, traits>::pos_type
 parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which)
 {
-   typedef typename boost::int_t<sizeof(way) * CHAR_BIT>::least cast_type;
-
    if(which & ::std::ios_base::out)
       return pos_type(off_type(-1));
    std::ptrdiff_t size = this->egptr() - this->eback();
    std::ptrdiff_t pos = this->gptr() - this->eback();
    charT* g = this->eback();
-   switch(static_cast<cast_type>(way))
+   switch(static_cast<std::intmax_t>(way))
    {
    case ::std::ios_base::beg:
       if((off < 0) || (off > size))
@@ -417,7 +416,7 @@ class cpp_regex_traits_implementation : public cpp_regex_traits_char_layer<charT
 public:
    typedef typename cpp_regex_traits<charT>::char_class_type      char_class_type;
    typedef typename std::ctype<charT>::mask                       native_mask_type;
-   typedef typename boost::make_unsigned<native_mask_type>::type  unsigned_native_mask_type;
+   typedef typename std::make_unsigned<native_mask_type>::type    unsigned_native_mask_type;
 #ifndef BOOST_REGEX_BUGGY_CTYPE_FACET
    BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 24);
    BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 25);
@@ -508,7 +507,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we work around this elsewhere, but just assert here that
    // we adhere to gcc's (buggy) preconditions...
    //
-   BOOST_ASSERT(*p2 == 0);
+   BOOST_REGEX_ASSERT(*p2 == 0);
    string_type result;
 #if defined(_CPPLIB_VER)
    //
@@ -588,7 +587,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we work around this elsewhere, but just assert here that
    // we adhere to gcc's (buggy) preconditions...
    //
-   BOOST_ASSERT(*p2 == 0);
+   BOOST_REGEX_ASSERT(*p2 == 0);
    //
    // swallowing all exceptions here is a bad idea
    // however at least one std lib will always throw
@@ -646,7 +645,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
             result2.append(1, static_cast<charT>(1 + static_cast<uchar_type>(result[i]))).append(1, charT('b') - 1);
          }
       }
-      BOOST_ASSERT(std::find(result2.begin(), result2.end(), charT(0)) == result2.end());
+      BOOST_REGEX_ASSERT(std::find(result2.begin(), result2.end(), charT(0)) == result2.end());
 #ifndef BOOST_NO_EXCEPTIONS
    }
    catch(...)
@@ -872,7 +871,7 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
          return pos->second;
    }
    std::size_t state_id = 1 + BOOST_REGEX_DETAIL_NS::get_default_class_id(p1, p2);
-   BOOST_ASSERT(state_id < sizeof(masks) / sizeof(masks[0]));
+   BOOST_REGEX_ASSERT(state_id < sizeof(masks) / sizeof(masks[0]));
    return masks[state_id];
 }
 
@@ -900,7 +899,7 @@ bool cpp_regex_traits_implementation<charT>::isctype(const charT c, char_class_t
 
 
 template <class charT>
-inline boost::shared_ptr<const cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l)
+inline std::shared_ptr<const cpp_regex_traits_implementation<charT> > create_cpp_regex_traits(const std::locale& l)
 {
    cpp_regex_traits_base<charT> key(l);
    return ::boost::object_cache<cpp_regex_traits_base<charT>, cpp_regex_traits_implementation<charT> >::get(key, 5);
@@ -918,7 +917,7 @@ public:
    typedef std::size_t                  size_type;
    typedef std::basic_string<char_type> string_type;
    typedef std::locale                  locale_type;
-   typedef boost::uint_least32_t        char_class_type;
+   typedef std::uint_least32_t          char_class_type;
 
    struct boost_extensions_tag{};
 
@@ -1027,7 +1026,7 @@ public:
       return m_pimpl->isctype(c, f);
 #endif
    }
-   boost::intmax_t toi(const charT*& p1, const charT* p2, int radix)const;
+   std::intmax_t toi(const charT*& p1, const charT* p2, int radix)const;
    int value(charT c, int radix)const
    {
       const charT* pc = &c;
@@ -1056,20 +1055,20 @@ public:
    static std::string get_catalog_name();
 
 private:
-   boost::shared_ptr<const BOOST_REGEX_DETAIL_NS::cpp_regex_traits_implementation<charT> > m_pimpl;
+   std::shared_ptr<const BOOST_REGEX_DETAIL_NS::cpp_regex_traits_implementation<charT> > m_pimpl;
    //
    // catalog name handler:
    //
    static std::string& get_catalog_name_inst();
 
 #ifdef BOOST_HAS_THREADS
-   static static_mutex& get_mutex_inst();
+   static std::mutex& get_mutex_inst();
 #endif
 };
 
 
 template <class charT>
-boost::intmax_t cpp_regex_traits<charT>::toi(const charT*& first, const charT* last, int radix)const
+std::intmax_t cpp_regex_traits<charT>::toi(const charT*& first, const charT* last, int radix)const
 {
    BOOST_REGEX_DETAIL_NS::parser_buf<charT>   sbuf;            // buffer for parsing numbers.
    std::basic_istream<charT>      is(&sbuf);       // stream for parsing numbers.
@@ -1082,7 +1081,7 @@ boost::intmax_t cpp_regex_traits<charT>::toi(const charT*& first, const charT* l
    if(std::abs(radix) == 16) is >> std::hex;
    else if(std::abs(radix) == 8) is >> std::oct;
    else is >> std::dec;
-   boost::intmax_t val;
+   std::intmax_t val;
    if(is >> val)
    {
       first = first + ((last - first) - sbuf.in_avail());
@@ -1096,7 +1095,7 @@ template <class charT>
 std::string cpp_regex_traits<charT>::catalog_name(const std::string& name)
 {
 #ifdef BOOST_HAS_THREADS
-   static_mutex::scoped_lock lk(get_mutex_inst());
+   std::lock_guard<std::mutex> lk(get_mutex_inst());
 #endif
    std::string result(get_catalog_name_inst());
    get_catalog_name_inst() = name;
@@ -1114,7 +1113,7 @@ template <class charT>
 std::string cpp_regex_traits<charT>::get_catalog_name()
 {
 #ifdef BOOST_HAS_THREADS
-   static_mutex::scoped_lock lk(get_mutex_inst());
+   std::lock_guard<std::mutex> lk(get_mutex_inst());
 #endif
    std::string result(get_catalog_name_inst());
    return result;
@@ -1122,9 +1121,9 @@ std::string cpp_regex_traits<charT>::get_catalog_name()
 
 #ifdef BOOST_HAS_THREADS
 template <class charT>
-static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
+std::mutex& cpp_regex_traits<charT>::get_mutex_inst()
 {
-   static static_mutex s_mutex = BOOST_STATIC_MUTEX_INIT;
+   static std::mutex s_mutex;
    return s_mutex;
 }
 #endif

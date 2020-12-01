@@ -58,8 +58,8 @@ struct digraph : public std::pair<charT, charT>
    template <class Seq>
    digraph(const Seq& s) : std::pair<charT, charT>()
    {
-      BOOST_ASSERT(s.size() <= 2);
-      BOOST_ASSERT(s.size());
+      BOOST_REGEX_ASSERT(s.size() <= 2);
+      BOOST_REGEX_ASSERT(s.size());
       this->first = s[0];
       this->second = (s.size() > 1) ? s[1] : 0;
    }
@@ -233,8 +233,8 @@ public:
    re_syntax_base* insert_state(std::ptrdiff_t pos, syntax_element_type t, std::size_t s = sizeof(re_syntax_base));
    re_literal* append_literal(charT c);
    re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set);
-   re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, mpl::false_*);
-   re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, mpl::true_*);
+   re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, false>*);
+   re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, true>*);
    void finalize(const charT* p1, const charT* p2);
 protected:
    regex_data<charT, traits>*    m_pdata;              // pointer to the basic_regex_data struct we are filling in
@@ -288,11 +288,11 @@ basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits
    m_upper_mask = m_traits.lookup_classname(u, u + 5);
    m_alpha_mask = m_traits.lookup_classname(a, a + 5);
    m_pdata->m_word_mask = m_word_mask;
-   BOOST_ASSERT(m_word_mask != 0); 
-   BOOST_ASSERT(m_mask_space != 0); 
-   BOOST_ASSERT(m_lower_mask != 0); 
-   BOOST_ASSERT(m_upper_mask != 0); 
-   BOOST_ASSERT(m_alpha_mask != 0); 
+   BOOST_REGEX_ASSERT(m_word_mask != 0); 
+   BOOST_REGEX_ASSERT(m_mask_space != 0); 
+   BOOST_REGEX_ASSERT(m_lower_mask != 0); 
+   BOOST_REGEX_ASSERT(m_upper_mask != 0); 
+   BOOST_REGEX_ASSERT(m_alpha_mask != 0); 
 }
 
 template <class charT, class traits>
@@ -362,15 +362,15 @@ template <class charT, class traits>
 inline re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    const basic_char_set<charT, traits>& char_set)
 {
-   typedef mpl::bool_< (sizeof(charT) == 1) > truth_type;
+   typedef std::integral_constant<bool, (sizeof(charT) == 1) > truth_type;
    return char_set.has_digraphs() 
-      ? append_set(char_set, static_cast<mpl::false_*>(0))
+      ? append_set(char_set, static_cast<std::integral_constant<bool, false>*>(0))
       : append_set(char_set, static_cast<truth_type*>(0));
 }
 
 template <class charT, class traits>
 re_syntax_base* basic_regex_creator<charT, traits>::append_set(
-   const basic_char_set<charT, traits>& char_set, mpl::false_*)
+   const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, false>*)
 {
    typedef typename traits::string_type string_type;
    typedef typename basic_char_set<charT, traits>::list_iterator item_iterator;
@@ -381,9 +381,9 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    //
    // fill in the basics:
    //
-   result->csingles = static_cast<unsigned int>(::boost::BOOST_REGEX_DETAIL_NS::distance(char_set.singles_begin(), char_set.singles_end()));
-   result->cranges = static_cast<unsigned int>(::boost::BOOST_REGEX_DETAIL_NS::distance(char_set.ranges_begin(), char_set.ranges_end())) / 2;
-   result->cequivalents = static_cast<unsigned int>(::boost::BOOST_REGEX_DETAIL_NS::distance(char_set.equivalents_begin(), char_set.equivalents_end()));
+   result->csingles = static_cast<unsigned int>(std::distance(char_set.singles_begin(), char_set.singles_end()));
+   result->cranges = static_cast<unsigned int>(std::distance(char_set.ranges_begin(), char_set.ranges_end())) / 2;
+   result->cequivalents = static_cast<unsigned int>(std::distance(char_set.equivalents_begin(), char_set.equivalents_end()));
    result->cclasses = char_set.classes();
    result->cnclasses = char_set.negated_classes();
    if(flags() & regbase::icase)
@@ -478,10 +478,10 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          return 0;
       }
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s1.size() + s2.size() + 2) ) );
-      BOOST_REGEX_DETAIL_NS::copy(s1.begin(), s1.end(), p);
+      std::copy(s1.begin(), s1.end(), p);
       p[s1.size()] = charT(0);
       p += s1.size() + 1;
-      BOOST_REGEX_DETAIL_NS::copy(s2.begin(), s2.end(), p);
+      std::copy(s2.begin(), s2.end(), p);
       p[s2.size()] = charT(0);
    }
    //
@@ -502,7 +502,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s.size()+1) ) );
-      BOOST_REGEX_DETAIL_NS::copy(s.begin(), s.end(), p);
+      std::copy(s.begin(), s.end(), p);
       p[s.size()] = charT(0);
       ++sfirst;
    }
@@ -529,7 +529,7 @@ inline bool char_less(signed char t1, signed char t2)
 
 template <class charT, class traits>
 re_syntax_base* basic_regex_creator<charT, traits>::append_set(
-   const basic_char_set<charT, traits>& char_set, mpl::true_*)
+   const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, true>*)
 {
    typedef typename traits::string_type string_type;
    typedef typename basic_char_set<charT, traits>::list_iterator item_iterator;
@@ -580,7 +580,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
             // Oops error:
             return 0;
          }
-         BOOST_ASSERT(c3[1] == charT(0));
+         BOOST_REGEX_ASSERT(c3[1] == charT(0));
          for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
          {
             c3[0] = static_cast<charT>(i);
@@ -645,7 +645,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    while(sfirst != slast)
    {
       string_type s;
-      BOOST_ASSERT(static_cast<charT>(0) == sfirst->second);
+      BOOST_REGEX_ASSERT(static_cast<charT>(0) == sfirst->second);
       s = m_traits.transform_primary(&sfirst->first, &sfirst->first+1);
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
@@ -681,7 +681,7 @@ void basic_regex_creator<charT, traits>::finalize(const charT* p1, const charT* 
    m_pdata->m_expression_len = len;
    charT* ps = static_cast<charT*>(m_pdata->m_data.extend(sizeof(charT) * (1 + (p2 - p1))));
    m_pdata->m_expression = ps;
-   BOOST_REGEX_DETAIL_NS::copy(p1, p2, ps);
+   std::copy(p1, p2, ps);
    ps[p2 - p1] = 0;
    // fill in our other data...
    // successful parsing implies a zero status:
@@ -1038,7 +1038,7 @@ int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state
             }
             else if(state->type == syntax_element_long_set_rep)
             {
-               BOOST_ASSERT(rep->next.p->type == syntax_element_long_set);
+               BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_long_set);
                if(static_cast<re_set_long<m_type>*>(rep->next.p)->singleton == 0)
                   return -1;
                if(rep->max != rep->min)
@@ -1138,7 +1138,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       }
       case syntax_element_recurse:
          {
-            BOOST_ASSERT(static_cast<const re_jump*>(state)->alt.p->type == syntax_element_startmark);
+            BOOST_REGEX_ASSERT(static_cast<const re_jump*>(state)->alt.p->type == syntax_element_startmark);
             recursion_sub = static_cast<re_brace*>(static_cast<const re_jump*>(state)->alt.p)->index;
             if(m_recursion_checks[recursion_sub] & 1u)
             {

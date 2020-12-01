@@ -53,9 +53,6 @@
 #include <boost/regex_fwd.hpp>
 #endif
 
-#include "boost/mpl/has_xxx.hpp"
-#include <boost/static_assert.hpp>
-
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
@@ -83,15 +80,18 @@ struct regex_traits : public implementationT
 // required "standard" ones:
 //
 namespace BOOST_REGEX_DETAIL_NS{
-#if !BOOST_WORKAROUND(__HP_aCC, < 60000)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(boost_extensions_tag)
-#else
-template<class T>
-struct has_boost_extensions_tag
-{
-   BOOST_STATIC_CONSTANT(bool, value = false);
-};
-#endif
+
+   template <class T>
+   struct has_boost_extensions_tag
+   {
+      template <class U>
+      static double checker(U*, typename U::boost_extensions_tag* = nullptr);
+      static char   checker(...);
+      static T* get();
+
+      static const bool value = sizeof(checker(get())) > 1;
+   };
+   
 
 template <class BaseT>
 struct default_wrapper : public BaseT

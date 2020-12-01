@@ -277,7 +277,7 @@ inline c_regex_traits<char>::char_class_type BOOST_REGEX_CALL c_regex_traits<cha
          s[i] = static_cast<char>((std::tolower)(static_cast<unsigned char>(s[i])));
       idx = ::boost::BOOST_REGEX_DETAIL_NS::get_default_class_id(&*s.begin(), &*s.begin() + s.size());
    }
-   BOOST_ASSERT(std::size_t(idx) + 1u < sizeof(masks) / sizeof(masks[0]));
+   BOOST_REGEX_ASSERT(std::size_t(idx) + 1u < sizeof(masks) / sizeof(masks[0]));
    return masks[idx + 1];
 }
 
@@ -433,7 +433,7 @@ inline c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<
          s[i] = (std::towlower)(s[i]);
       idx = ::boost::BOOST_REGEX_DETAIL_NS::get_default_class_id(&*s.begin(), &*s.begin() + s.size());
    }
-   BOOST_ASSERT(idx + 1 < static_cast<int>(sizeof(masks) / sizeof(masks[0])));
+   BOOST_REGEX_ASSERT(idx + 1 < static_cast<int>(sizeof(masks) / sizeof(masks[0])));
    return masks[idx + 1];
 }
 

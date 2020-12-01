@@ -44,6 +44,20 @@
 #include <boost/version.hpp>
 #endif
 
+/*************************************************************************
+*
+* Asserts:
+*
+*************************************************************************/
+
+#ifdef BOOST_REGEX_STANDALONE
+#include <cassert>
+#  define BOOST_REGEX_ASSERT(x) assert(x)
+#else
+#include <boost/assert.hpp>
+#  define BOOST_REGEX_ASSERT(x) BOOST_ASSERT(x)
+#endif
+
 /*****************************************************************************
  *
  *  Include all the headers we need here:

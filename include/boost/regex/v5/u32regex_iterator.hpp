@@ -75,7 +75,7 @@ class u32regex_iterator
 {
 private:
    typedef u32regex_iterator_implementation<BidirectionalIterator> impl;
-   typedef shared_ptr<impl> pimpl;
+   typedef std::shared_ptr<impl> pimpl;
 public:
    typedef          u32regex                                                regex_type;
    typedef          match_results<BidirectionalIterator>                    value_type;

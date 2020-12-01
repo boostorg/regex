@@ -61,7 +61,7 @@ Accepts UTF-32 code points and forwards them on as UTF-16 code points.
 #ifndef BOOST_REGEX_UNICODE_ITERATOR_HPP
 #define BOOST_REGEX_UNICODE_ITERATOR_HPP
 #include <boost/cstdint.hpp>
-#include <boost/assert.hpp>
+#include <boost/regex/config.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/throw_exception.hpp>
@@ -232,8 +232,8 @@ private:
          m_values[0] = static_cast<U16Type>(v >> 10) + detail::high_surrogate_base;
          m_values[1] = static_cast<U16Type>(v & detail::ten_bit_mask) + detail::low_surrogate_base;
          m_current = 0;
-         BOOST_ASSERT(detail::is_high_surrogate(m_values[0]));
-         BOOST_ASSERT(detail::is_low_surrogate(m_values[1]));
+         BOOST_REGEX_ASSERT(detail::is_high_surrogate(m_values[0]));
+         BOOST_REGEX_ASSERT(detail::is_low_surrogate(m_values[1]));
       }
       else
       {

@@ -28,13 +28,13 @@
 #include <boost/regex/v5/regex_traits_defaults.hpp>
 #endif
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/pending/static_mutex.hpp>
+#include <mutex>
 #endif
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v5/primary_transform.hpp>
 #endif
 #ifndef BOOST_REGEX_OBJECT_CACHE_HPP
-#include <boost/regex/pending/object_cache.hpp>
+#include <boost/regex/v5/object_cache.hpp>
 #endif
 
 #include <windows.h>
@@ -76,7 +76,7 @@ namespace BOOST_REGEX_DETAIL_NS{
 // start by typedeffing the types we'll need:
 //
 typedef ::boost::uint32_t lcid_type;   // placeholder for LCID.
-typedef ::boost::shared_ptr<void> cat_type; // placeholder for dll HANDLE.
+typedef ::std::shared_ptr<void> cat_type; // placeholder for dll HANDLE.
 
 //
 // then add wrappers around the actual Win32 API's (ie implementation hiding):
@@ -543,7 +543,7 @@ typename w32_regex_traits_implementation<charT>::char_class_type
 
 
 template <class charT>
-boost::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::BOOST_REGEX_DETAIL_NS::lcid_type l)
+std::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::BOOST_REGEX_DETAIL_NS::lcid_type l)
 {
    // TODO: create a cache for previously constructed objects.
    return boost::object_cache< ::boost::BOOST_REGEX_DETAIL_NS::lcid_type, w32_regex_traits_implementation<charT> >::get(l, 5);
@@ -663,14 +663,14 @@ public:
    static std::string get_catalog_name();
 
 private:
-   boost::shared_ptr<const BOOST_REGEX_DETAIL_NS::w32_regex_traits_implementation<charT> > m_pimpl;
+   std::shared_ptr<const BOOST_REGEX_DETAIL_NS::w32_regex_traits_implementation<charT> > m_pimpl;
    //
    // catalog name handler:
    //
    static std::string& get_catalog_name_inst();
 
 #ifdef BOOST_HAS_THREADS
-   static static_mutex& get_mutex_inst();
+   static std::mutex& get_mutex_inst();
 #endif
 };
 
@@ -678,7 +678,7 @@ template <class charT>
 std::string w32_regex_traits<charT>::catalog_name(const std::string& name)
 {
 #ifdef BOOST_HAS_THREADS
-   static_mutex::scoped_lock lk(get_mutex_inst());
+   std::lock_guard<std::mutex> lk(get_mutex_inst());
 #endif
    std::string result(get_catalog_name_inst());
    get_catalog_name_inst() = name;
@@ -696,7 +696,7 @@ template <class charT>
 std::string w32_regex_traits<charT>::get_catalog_name()
 {
 #ifdef BOOST_HAS_THREADS
-   static_mutex::scoped_lock lk(get_mutex_inst());
+   std::lock_guard<std::mutex> lk(get_mutex_inst());
 #endif
    std::string result(get_catalog_name_inst());
    return result;
@@ -704,9 +704,9 @@ std::string w32_regex_traits<charT>::get_catalog_name()
 
 #ifdef BOOST_HAS_THREADS
 template <class charT>
-static_mutex& w32_regex_traits<charT>::get_mutex_inst()
+std::mutex& w32_regex_traits<charT>::get_mutex_inst()
 {
-   static static_mutex s_mutex = BOOST_STATIC_MUTEX_INIT;
+   static std::mutex s_mutex;
    return s_mutex;
 }
 #endif
@@ -791,21 +791,21 @@ namespace BOOST_REGEX_DETAIL_NS {
          char_map[ii] = static_cast<char>(ii);
 #ifndef BOOST_NO_ANSI_APIS
       int r = ::LCMapStringA(this->m_locale, LCMAP_LOWERCASE, char_map, 1 << CHAR_BIT, this->m_lower_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(r != 0);
+      BOOST_REGEX_ASSERT(r != 0);
 #else
       UINT code_page = get_code_page_for_locale_id(this->m_locale);
-      BOOST_ASSERT(code_page != 0);
+      BOOST_REGEX_ASSERT(code_page != 0);
 
       WCHAR wide_char_map[1 << CHAR_BIT];
       int conv_r = ::MultiByteToWideChar(code_page, 0, char_map, 1 << CHAR_BIT, wide_char_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(conv_r != 0);
+      BOOST_REGEX_ASSERT(conv_r != 0);
 
       WCHAR wide_lower_map[1 << CHAR_BIT];
       int r = ::LCMapStringW(this->m_locale, LCMAP_LOWERCASE, wide_char_map, 1 << CHAR_BIT, wide_lower_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(r != 0);
+      BOOST_REGEX_ASSERT(r != 0);
 
       conv_r = ::WideCharToMultiByte(code_page, 0, wide_lower_map, r, this->m_lower_map, 1 << CHAR_BIT, NULL, NULL);
-      BOOST_ASSERT(conv_r != 0);
+      BOOST_REGEX_ASSERT(conv_r != 0);
 #endif
       if (r < (1 << CHAR_BIT))
       {
@@ -820,7 +820,7 @@ namespace BOOST_REGEX_DETAIL_NS {
 #else
       r = ::GetStringTypeExW(this->m_locale, CT_CTYPE1, wide_char_map, 1 << CHAR_BIT, this->m_type_map);
 #endif
-      BOOST_ASSERT(0 != r);
+      BOOST_REGEX_ASSERT(0 != r);
    }
 
    inline lcid_type BOOST_REGEX_CALL w32_get_default_locale()

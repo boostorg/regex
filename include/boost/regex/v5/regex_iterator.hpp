@@ -19,7 +19,7 @@
 #ifndef BOOST_REGEX_V5_REGEX_ITERATOR_HPP
 #define BOOST_REGEX_V5_REGEX_ITERATOR_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace boost{
 
@@ -90,7 +90,7 @@ class regex_iterator
 {
 private:
    typedef regex_iterator_implementation<BidirectionalIterator, charT, traits> impl;
-   typedef shared_ptr<impl> pimpl;
+   typedef std::shared_ptr<impl> pimpl;
 public:
    typedef          basic_regex<charT, traits>                   regex_type;
    typedef          match_results<BidirectionalIterator>                    value_type;

@@ -19,9 +19,6 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_HPP
 
-#include <boost/type_traits/is_same.hpp>
-#include <boost/container_hash/hash.hpp>
-
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
@@ -32,6 +29,8 @@
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
+
+#include <vector>
 
 namespace boost{
 #ifdef BOOST_MSVC
@@ -75,7 +74,12 @@ static const int hash_value_mask = 1 << (std::numeric_limits<int>::digits - 1);
 template <class Iterator>
 inline int hash_value_from_capture_name(Iterator i, Iterator j)
 {
-   std::size_t r = boost::hash_range(i, j);
+   std::size_t r = 0;
+   while (i != j)
+   {
+      r ^= *i + 0x9e3779b9 + (r << 6) + (r >> 2);
+      ++i;
+   }
    r %= ((std::numeric_limits<int>::max)());
    return static_cast<int>(r) | hash_value_mask;
 }
@@ -169,7 +173,7 @@ struct regex_data : public named_subexpressions
    typedef regex_constants::syntax_option_type   flag_type;
    typedef std::size_t                           size_type;  
 
-   regex_data(const ::boost::shared_ptr<
+   regex_data(const ::std::shared_ptr<
       ::boost::regex_traits_wrapper<traits> >& t) 
       : m_ptraits(t), m_flags(0), m_status(0), m_expression(0), m_expression_len(0),
          m_mark_count(0), m_first_state(0), m_restart_type(0),
@@ -185,7 +189,7 @@ struct regex_data : public named_subexpressions
 #endif
          m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
 
-   ::boost::shared_ptr<
+   ::std::shared_ptr<
       ::boost::regex_traits_wrapper<traits>
       >                        m_ptraits;                 // traits class instance
    flag_type                   m_flags;                   // flags with which we were compiled
@@ -221,7 +225,7 @@ public:
    typedef const charT*                          const_iterator;
 
    basic_regex_implementation(){}
-   basic_regex_implementation(const ::boost::shared_ptr<
+   basic_regex_implementation(const ::std::shared_ptr<
       ::boost::regex_traits_wrapper<traits> >& t)
       : regex_data<charT, traits>(t) {}
    void assign(const charT* arg_first,
@@ -617,41 +621,41 @@ public:
    //
    const BOOST_REGEX_DETAIL_NS::re_syntax_base* get_first_state()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->get_first_state();
    }
    unsigned get_restart_type()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->get_restart_type();
    }
    const unsigned char* get_map()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->get_map();
    }
    const ::boost::regex_traits_wrapper<traits>& get_traits()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->get_traits();
    }
    bool can_be_null()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->can_be_null();
    }
    const BOOST_REGEX_DETAIL_NS::regex_data<charT, traits>& get_data()const
    {
-      BOOST_ASSERT(0 != m_pimpl.get());
+      BOOST_REGEX_ASSERT(0 != m_pimpl.get());
       return m_pimpl->get_data();
    }
-   boost::shared_ptr<BOOST_REGEX_DETAIL_NS::named_subexpressions > get_named_subs()const
+   std::shared_ptr<BOOST_REGEX_DETAIL_NS::named_subexpressions > get_named_subs()const
    {
       return m_pimpl;
    }
 
 private:
-   shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > m_pimpl;
+   std::shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > m_pimpl;
 };
 
 //
@@ -665,14 +669,14 @@ basic_regex<charT, traits>& basic_regex<charT, traits>::do_assign(const charT* p
                         const charT* p2,
                         flag_type f)
 {
-   shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > temp;
+   std::shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > temp;
    if(!m_pimpl.get())
    {
-      temp = shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> >(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>());
+      temp = std::shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> >(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>());
    }
    else
    {
-      temp = shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> >(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>(m_pimpl->m_ptraits));
+      temp = std::shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> >(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>(m_pimpl->m_ptraits));
    }
    temp->assign(p1, p2, f);
    temp.swap(m_pimpl);
@@ -682,7 +686,7 @@ basic_regex<charT, traits>& basic_regex<charT, traits>::do_assign(const charT* p
 template <class charT, class traits>
 typename basic_regex<charT, traits>::locale_type BOOST_REGEX_CALL basic_regex<charT, traits>::imbue(locale_type l)
 { 
-   shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > temp(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>());
+   std::shared_ptr<BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits> > temp(new BOOST_REGEX_DETAIL_NS::basic_regex_implementation<charT, traits>());
    locale_type result = temp->imbue(l);
    temp.swap(m_pimpl);
    return result;

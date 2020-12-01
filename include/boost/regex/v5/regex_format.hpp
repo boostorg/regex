@@ -21,20 +21,8 @@
 #ifndef BOOST_REGEX_FORMAT_HPP
 #define BOOST_REGEX_FORMAT_HPP
 
-#include <boost/type_traits/is_pointer.hpp>
-#include <boost/type_traits/is_function.hpp>
-#include <boost/type_traits/is_class.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/remove_pointer.hpp>
-#include <boost/type_traits/remove_cv.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/not.hpp>
-#ifndef BOOST_NO_SFINAE
-#include <boost/mpl/has_xxx.hpp>
-#endif
-#include <boost/ref.hpp>
+#include <type_traits>
+#include <functional>
 
 namespace boost{
 
@@ -127,34 +115,34 @@ private:
    void format_until_scope_end();
    bool handle_perl_verb(bool have_brace);
 
-   inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j, const mpl::false_&)
+   inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j, const std::integral_constant<bool, false>&)
    {
       std::vector<char_type> v(i, j);
       return (i != j) ? this->m_results.named_subexpression(&v[0], &v[0] + v.size())
          : this->m_results.named_subexpression(static_cast<const char_type*>(0), static_cast<const char_type*>(0));
    }
-   inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j, const mpl::true_&)
+   inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j, const std::integral_constant<bool, true>&)
    {
       return this->m_results.named_subexpression(i, j);
    }
    inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j)
    {
-      typedef typename boost::is_convertible<ForwardIter, const char_type*>::type tag_type;
+      typedef typename std::is_convertible<ForwardIter, const char_type*>::type tag_type;
       return get_named_sub(i, j, tag_type());
    }
-   inline int get_named_sub_index(ForwardIter i, ForwardIter j, const mpl::false_&)
+   inline int get_named_sub_index(ForwardIter i, ForwardIter j, const std::integral_constant<bool, false>&)
    {
       std::vector<char_type> v(i, j);
       return (i != j) ? this->m_results.named_subexpression_index(&v[0], &v[0] + v.size())
          : this->m_results.named_subexpression_index(static_cast<const char_type*>(0), static_cast<const char_type*>(0));
    }
-   inline int get_named_sub_index(ForwardIter i, ForwardIter j, const mpl::true_&)
+   inline int get_named_sub_index(ForwardIter i, ForwardIter j, const std::integral_constant<bool, true>&)
    {
       return this->m_results.named_subexpression_index(i, j);
    }
    inline int get_named_sub_index(ForwardIter i, ForwardIter j)
    {
-      typedef typename boost::is_convertible<ForwardIter, const char_type*>::type tag_type;
+      typedef typename std::is_convertible<ForwardIter, const char_type*>::type tag_type;
       return get_named_sub_index(i, j, tag_type());
    }
 #ifdef BOOST_MSVC
@@ -162,7 +150,7 @@ private:
 #pragma warning(push)
 #pragma warning(disable:4244)
 #endif
-   inline int toi(ForwardIter& i, ForwardIter j, int base, const boost::mpl::false_&)
+   inline int toi(ForwardIter& i, ForwardIter j, int base, const std::integral_constant<bool, false>&)
    {
       if(i != j)
       {
@@ -178,7 +166,7 @@ private:
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
-   inline int toi(ForwardIter& i, ForwardIter j, int base, const boost::mpl::true_&)
+   inline int toi(ForwardIter& i, ForwardIter j, int base, const std::integral_constant<bool, true>&)
    {
       return m_traits.toi(i, j, base);
    }
@@ -187,9 +175,9 @@ private:
 #if defined(_MSC_VER) && defined(__INTEL_COMPILER) && ((__INTEL_COMPILER == 9999) || (__INTEL_COMPILER == 1210))
       // Workaround for Intel support issue #656654.
       // See also https://svn.boost.org/trac/boost/ticket/6359
-      return toi(i, j, base, mpl::false_());
+      return toi(i, j, base, std::integral_constant<bool, false>());
 #else
-      typedef typename boost::is_convertible<ForwardIter, const char_type*&>::type tag_type;
+      typedef typename std::is_convertible<ForwardIter, const char_type*&>::type tag_type;
       return toi(i, j, base, tag_type());
 #endif
    }
@@ -251,7 +239,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
             m_have_conditional = have_conditional;
             if(m_position == m_end)
                return;
-            BOOST_ASSERT(*m_position == static_cast<char_type>(')'));
+            BOOST_REGEX_ASSERT(*m_position == static_cast<char_type>(')'));
             ++m_position;  // skip the closing ')'
             break;
          }
@@ -307,7 +295,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    // On entry *m_position points to a '$' character
    // output the information that goes with it:
    //
-   BOOST_ASSERT(*m_position == '$');
+   BOOST_REGEX_ASSERT(*m_position == '$');
    //
    // see if this is a trailing '$':
    //
@@ -366,7 +354,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    default:
       // see if we have a number:
       {
-         std::ptrdiff_t len = ::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end);
+         std::ptrdiff_t len = std::distance(m_position, m_end);
          //len = (std::min)(static_cast<std::ptrdiff_t>(2), len);
          int v = this->toi(m_position, m_position + len, 10);
          if((v < 0) || (have_brace && ((m_position == m_end) || (*m_position != '}'))))
@@ -577,7 +565,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
       }
       else
       {
-         std::ptrdiff_t len = ::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end);
+         std::ptrdiff_t len = std::distance(m_position, m_end);
          len = (std::min)(static_cast<std::ptrdiff_t>(2), len);
          int val = this->toi(m_position, m_position + len, 16);
          if(val < 0)
@@ -641,7 +629,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
             break;
       }
       // see if we have a \n sed style backreference:
-      std::ptrdiff_t len = ::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end);
+      std::ptrdiff_t len = std::distance(m_position, m_end);
       len = (std::min)(static_cast<std::ptrdiff_t>(1), len);
       int v = this->toi(m_position, m_position+len, 10);
       if((v > 0) || ((v == 0) && (m_flags & ::boost::regex_constants::format_sed)))
@@ -653,10 +641,10 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
       {
          // octal ecape sequence:
          --m_position;
-         len = ::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end);
+         len = std::distance(m_position, m_end);
          len = (std::min)(static_cast<std::ptrdiff_t>(4), len);
          v = this->toi(m_position, m_position + len, 8);
-         BOOST_ASSERT(v >= 0);
+         BOOST_REGEX_ASSERT(v >= 0);
          put(static_cast<char_type>(v));
          break;
       }
@@ -700,7 +688,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    }
    else
    {
-      std::ptrdiff_t len = ::boost::BOOST_REGEX_DETAIL_NS::distance(m_position, m_end);
+      std::ptrdiff_t len = std::distance(m_position, m_end);
       len = (std::min)(static_cast<std::ptrdiff_t>(2), len);
       v = this->toi(m_position, m_position + len, 10);
    }
@@ -837,7 +825,7 @@ OutputIterator regex_format_imp(OutputIterator out,
 {
    if(flags & regex_constants::format_literal)
    {
-      return BOOST_REGEX_DETAIL_NS::copy(p1, p2, out);
+      return std::copy(p1, p2, out);
    }
 
    BOOST_REGEX_DETAIL_NS::basic_regex_formatter<
@@ -847,9 +835,17 @@ OutputIterator regex_format_imp(OutputIterator out,
    return f.format(p1, p2, flags);
 }
 
-#ifndef BOOST_NO_SFINAE
+template <class T>
+struct has_const_iterator
+{
+   template <class U>
+   static typename U::const_iterator tester(U*);
+   static char tester(...);
 
-BOOST_MPL_HAS_XXX_TRAIT_DEF(const_iterator)
+   static T* get();
+
+   static const bool value = sizeof(tester(get())) != sizeof(char);
+};
 
 struct any_type 
 {
@@ -891,7 +887,7 @@ struct unary_binary_ternary
     operator ternary_fun();
 };
 
-template<typename Formatter, bool IsFunction = boost::is_function<Formatter>::value>
+template<typename Formatter, bool IsFunction = std::is_function<Formatter>::value>
 struct formatter_wrapper
   : Formatter
   , unary_binary_ternary
@@ -913,6 +909,22 @@ struct formatter_wrapper<Formatter *, false>
     operator Formatter *();
 };
 
+template <class T>
+struct do_unwrap_reference
+{
+   typedef T type;
+};
+template <class T>
+struct do_unwrap_reference<std::reference_wrapper<T> >
+{
+   typedef T type;
+};
+
+template <class T>
+T& do_unwrap_ref(T& r) { return r; }
+template <class T>
+T& do_unwrap_ref(std::reference_wrapper<T> const& r) { return r.get(); }
+
 template <class F, class M, class O>
 struct format_traits_imp
 {
@@ -920,8 +932,8 @@ private:
    //
    // F must be a pointer, a function, or a class with a function call operator:
    //
-   BOOST_STATIC_ASSERT((::boost::is_pointer<F>::value || ::boost::is_function<F>::value || ::boost::is_class<F>::value));
-   static formatter_wrapper<typename unwrap_reference<F>::type> f;
+   BOOST_STATIC_ASSERT((::std::is_pointer<F>::value || ::std::is_function<F>::value || ::std::is_class<F>::value));
+   static formatter_wrapper<typename do_unwrap_reference<F>::type> f;
    static M m;
    static O out;
    static boost::regex_constants::match_flag_type flags;
@@ -934,7 +946,7 @@ struct format_traits
 {
 public:
    // 
-   // Type is mpl::int_<N> where N is one of:
+   // Type is std::integral_constant<int, N> where N is one of:
    //
    // 0 : F is a pointer to a presumably null-terminated string.
    // 1 : F is a character-container such as a std::string.
@@ -942,45 +954,21 @@ public:
    // 3 : F is a Binary Functor.
    // 4 : F is a Ternary Functor.
    //
-   typedef typename boost::mpl::if_<
-      boost::mpl::and_<boost::is_pointer<F>, boost::mpl::not_<boost::is_function<typename boost::remove_pointer<F>::type> > >,
-      boost::mpl::int_<0>,
-      typename boost::mpl::if_<
-         has_const_iterator<F>,
-         boost::mpl::int_<1>,
-         boost::mpl::int_<format_traits_imp<F, M, O>::value>
+   typedef typename std::conditional<
+      std::is_pointer<F>::value && !std::is_function<typename std::remove_pointer<F>::type>::value,
+      std::integral_constant<int, 0>,
+      typename std::conditional<
+         has_const_iterator<F>::value,
+         std::integral_constant<int, 1>,
+         std::integral_constant<int, format_traits_imp<F, M, O>::value>
       >::type
    >::type type;
    //
    // This static assertion will fail if the functor passed does not accept
    // the same type of arguments passed.
    //
-   BOOST_STATIC_ASSERT( boost::is_class<F>::value && !has_const_iterator<F>::value ? (type::value > 1) : true);
+   BOOST_STATIC_ASSERT( std::is_class<F>::value && !has_const_iterator<F>::value ? (type::value > 1) : true);
 };
-
-#else // BOOST_NO_SFINAE
-
-template <class F, class M, class O>
-struct format_traits
-{
-public:
-   // 
-   // Type is mpl::int_<N> where N is one of:
-   //
-   // 0 : F is a pointer to a presumably null-terminated string.
-   // 1 : F is a character-container such as a std::string.
-   //
-   // Other options such as F being a Functor are not supported without
-   // SFINAE support.
-   //
-   typedef typename boost::mpl::if_<
-      boost::is_pointer<F>,
-      boost::mpl::int_<0>,
-      boost::mpl::int_<1>
-   >::type type;
-};
-
-#endif // BOOST_NO_SFINAE
 
 template <class Base, class Match>
 struct format_functor3
@@ -989,7 +977,7 @@ struct format_functor3
    template <class OutputIter>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type f)
    {
-      return boost::unwrap_ref(func)(m, i, f);
+      return do_unwrap_ref(func)(m, i, f);
    }
    template <class OutputIter, class Traits>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type f, const Traits&)
@@ -1009,7 +997,7 @@ struct format_functor2
    template <class OutputIter>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type /*f*/)
    {
-      return boost::unwrap_ref(func)(m, i);
+      return do_unwrap_ref(func)(m, i);
    }
    template <class OutputIter, class Traits>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type f, const Traits&)
@@ -1030,7 +1018,7 @@ struct format_functor1
    template <class S, class OutputIter>
    OutputIter do_format_string(const S& s, OutputIter i)
    {
-      return BOOST_REGEX_DETAIL_NS::copy(s.begin(), s.end(), i);
+      return std::copy(s.begin(), s.end(), i);
    }
    template <class S, class OutputIter>
    inline OutputIter do_format_string(const S* s, OutputIter i)
@@ -1046,7 +1034,7 @@ struct format_functor1
    template <class OutputIter>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type /*f*/)
    {
-      return do_format_string(boost::unwrap_ref(func)(m), i);
+      return do_format_string(do_unwrap_ref(func)(m), i);
    }
    template <class OutputIter, class Traits>
    OutputIter operator()(const Match& m, OutputIter i, boost::regex_constants::match_flag_type f, const Traits&)
@@ -1099,16 +1087,16 @@ template <class Func, class Match, class OutputIterator, class Traits = BOOST_RE
 struct compute_functor_type
 {
    typedef typename format_traits<Func, Match, OutputIterator>::type tag;
-   typedef typename boost::remove_cv< typename boost::remove_pointer<Func>::type>::type maybe_char_type;
+   typedef typename std::remove_cv< typename std::remove_pointer<Func>::type>::type maybe_char_type;
 
-   typedef typename mpl::if_<
-      ::boost::is_same<tag, mpl::int_<0> >, format_functor_c_string<maybe_char_type, Match, Traits>,
-      typename mpl::if_<
-         ::boost::is_same<tag, mpl::int_<1> >, format_functor_container<Func, Match, Traits>,
-         typename mpl::if_<
-            ::boost::is_same<tag, mpl::int_<2> >, format_functor1<Func, Match>,
-            typename mpl::if_<
-               ::boost::is_same<tag, mpl::int_<3> >, format_functor2<Func, Match>, 
+   typedef typename std::conditional<
+      tag::value == 0, format_functor_c_string<maybe_char_type, Match, Traits>,
+      typename std::conditional<
+         tag::value == 1, format_functor_container<Func, Match, Traits>,
+         typename std::conditional<
+            tag::value == 2, format_functor1<Func, Match>,
+            typename std::conditional<
+               tag::value == 3, format_functor2<Func, Match>,
                format_functor3<Func, Match>
             >::type
          >::type

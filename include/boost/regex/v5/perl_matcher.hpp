@@ -475,7 +475,7 @@ private:
    // final result structure to be filled in:
    match_results<BidiIterator, Allocator>& m_result;
    // temporary result for POSIX matches:
-   scoped_ptr<match_results<BidiIterator, Allocator> > m_temp_match;
+   std::unique_ptr<match_results<BidiIterator, Allocator> > m_temp_match;
    // pointer to actual result structure to fill in:
    match_results<BidiIterator, Allocator>* m_presult;
    // start of sequence being searched:

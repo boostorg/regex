@@ -40,8 +40,9 @@
 #endif
 #include <boost/regex/v5/regex_workaround.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/cstdint.hpp>
+#include <type_traits>
+#include <cstdint>
+#include <cctype>
 
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std{
@@ -558,9 +559,9 @@ inline regex_constants::escape_syntax_type BOOST_REGEX_CALL get_default_escape_s
 }
 
 // is charT c a combining character?
-inline bool BOOST_REGEX_CALL is_combining_implementation(boost::uint_least16_t c)
+inline bool BOOST_REGEX_CALL is_combining_implementation(std::uint_least16_t c)
 {
-   const boost::uint_least16_t combining_ranges[] = { 0x0300, 0x0361,
+   const std::uint_least16_t combining_ranges[] = { 0x0300, 0x0361,
                            0x0483, 0x0486,
                            0x0903, 0x0903,
                            0x093E, 0x0940,
@@ -599,7 +600,7 @@ inline bool BOOST_REGEX_CALL is_combining_implementation(boost::uint_least16_t c
                            0xFE20, 0xFE23,
                            0xffff, 0xffff, };
 
-   const boost::uint_least16_t* p = combining_ranges + 1;
+   const std::uint_least16_t* p = combining_ranges + 1;
    while (*p < c) p += 2;
    --p;
    if ((c >= *p) && (c <= *(p + 1)))
@@ -661,9 +662,9 @@ inline bool is_separator(charT c)
       (c == static_cast<charT>('\n'))
       || (c == static_cast<charT>('\r'))
       || (c == static_cast<charT>('\f'))
-      || (static_cast<boost::uint16_t>(c) == 0x2028u)
-      || (static_cast<boost::uint16_t>(c) == 0x2029u)
-      || (static_cast<boost::uint16_t>(c) == 0x85u));
+      || (static_cast<std::uint16_t>(c) == 0x2028u)
+      || (static_cast<std::uint16_t>(c) == 0x2029u)
+      || (static_cast<std::uint16_t>(c) == 0x85u));
 }
 template <>
 inline bool is_separator<char>(char c)
@@ -766,7 +767,7 @@ struct character_pointer_range
       // calling std::equal, but there is no other algorithm available:
       // not even a non-standard MS one.  So forward to unchecked_equal
       // in the MS case.
-      return ((p2 - p1) == (r.p2 - r.p1)) && BOOST_REGEX_DETAIL_NS::equal(p1, p2, r.p1);
+      return ((p2 - p1) == (r.p2 - r.p1)) && std::equal(p1, p2, r.p1);
    }
 };
 template <class charT>
@@ -917,14 +918,14 @@ int global_value(charT c)
    return -1;
 }
 template <class charT, class traits>
-boost::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const traits& t)
+std::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const traits& t)
 {
    (void)t; // warning suppression
-   boost::intmax_t limit = (std::numeric_limits<boost::intmax_t>::max)() / radix;
-   boost::intmax_t next_value = t.value(*p1, radix);
+   std::intmax_t limit = (std::numeric_limits<std::intmax_t>::max)() / radix;
+   std::intmax_t next_value = t.value(*p1, radix);
    if((p1 == p2) || (next_value < 0) || (next_value >= radix))
       return -1;
-   boost::intmax_t result = 0;
+   std::intmax_t result = 0;
    while(p1 != p2)
    {
       next_value = t.value(*p1, radix);
@@ -940,7 +941,7 @@ boost::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const t
 }
 
 template <class charT>
-inline typename boost::enable_if_c<(sizeof(charT) > 1), const charT*>::type get_escape_R_string()
+inline typename std::enable_if<(sizeof(charT) > 1), const charT*>::type get_escape_R_string()
 {
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -962,7 +963,7 @@ inline typename boost::enable_if_c<(sizeof(charT) > 1), const charT*>::type get_
 }
 
 template <class charT>
-inline typename boost::disable_if_c<(sizeof(charT) > 1), const charT*>::type get_escape_R_string()
+inline typename std::enable_if<(sizeof(charT) == 1), const charT*>::type get_escape_R_string()
 {
 #ifdef BOOST_MSVC
 #  pragma warning(push)

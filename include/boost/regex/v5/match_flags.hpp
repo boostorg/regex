@@ -20,7 +20,7 @@
 #define BOOST_REGEX_V5_MATCH_FLAGS
 
 #ifdef __cplusplus
-#  include <boost/cstdint.hpp>
+#  include <cstdint>
 #endif
 
 #ifdef __cplusplus
@@ -97,13 +97,13 @@ typedef match_flags match_flag_type;
 
 #ifdef __cplusplus
 inline match_flags operator&(match_flags m1, match_flags m2)
-{ return static_cast<match_flags>(static_cast<boost::int32_t>(m1) & static_cast<boost::int32_t>(m2)); }
+{ return static_cast<match_flags>(static_cast<std::int32_t>(m1) & static_cast<std::int32_t>(m2)); }
 inline match_flags operator|(match_flags m1, match_flags m2)
-{ return static_cast<match_flags>(static_cast<boost::int32_t>(m1) | static_cast<boost::int32_t>(m2)); }
+{ return static_cast<match_flags>(static_cast<std::int32_t>(m1) | static_cast<std::int32_t>(m2)); }
 inline match_flags operator^(match_flags m1, match_flags m2)
-{ return static_cast<match_flags>(static_cast<boost::int32_t>(m1) ^ static_cast<boost::int32_t>(m2)); }
+{ return static_cast<match_flags>(static_cast<std::int32_t>(m1) ^ static_cast<std::int32_t>(m2)); }
 inline match_flags operator~(match_flags m1)
-{ return static_cast<match_flags>(~static_cast<boost::int32_t>(m1)); }
+{ return static_cast<match_flags>(~static_cast<std::int32_t>(m1)); }
 inline match_flags& operator&=(match_flags& m1, match_flags m2)
 { m1 = m1&m2; return m1; }
 inline match_flags& operator|=(match_flags& m1, match_flags m2)

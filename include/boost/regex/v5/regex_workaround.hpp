@@ -19,74 +19,20 @@
 #ifndef BOOST_REGEX_WORKAROUND_HPP
 #define BOOST_REGEX_WORKAROUND_HPP
 
-#include <boost/config.hpp>
-#include <new>
-#include <cstring>
-#include <cstdlib>
-#include <cstddef>
-#include <cassert>
-#include <cstdio>
-#include <climits>
-#include <string>
-#include <stdexcept>
-#include <iterator>
-#include <algorithm>
-#include <iosfwd>
-#include <vector>
-#include <set>
-#include <map>
-#include <boost/limits.hpp>
-#include <boost/assert.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/throw_exception.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/mpl/bool_fwd.hpp>
 #include <boost/regex/config.hpp>
-#ifndef BOOST_NO_STD_LOCALE
-#   include <locale>
-#endif
+#include <algorithm>
+#include <stdexcept>
+#include <cstring>
 
-#if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{
-   using ::sprintf; using ::strcpy; using ::strcat; using ::strlen;
-}
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/detail/workaround.hpp>
+#include <boost/throw_exception.hpp>
 #endif
-
-namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
-#ifdef BOOST_NO_STD_DISTANCE
-template <class T>
-std::ptrdiff_t distance(const T& x, const T& y)
-{ return y - x; }
-#else
-using std::distance;
-#endif
-}}
-
 
 #ifdef BOOST_REGEX_NO_BOOL
 #  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>((x) ? true : false)
 #else
 #  define BOOST_REGEX_MAKE_BOOL(x) static_cast<bool>(x)
-#endif
-
-/*****************************************************************************
- *
- *  Fix broken namespace support:
- *
- ****************************************************************************/
-
-#if defined(BOOST_NO_STDC_NAMESPACE) && defined(__cplusplus)
-
-namespace std{
-   using ::ptrdiff_t;
-   using ::size_t;
-   using ::abs;
-   using ::memset;
-   using ::memcpy;
-}
-
 #endif
 
 /*****************************************************************************
@@ -126,67 +72,7 @@ inline void pointer_construct(T* p, const T& t)
 
 #ifdef __cplusplus
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
-#if BOOST_WORKAROUND(BOOST_MSVC,>=1400) && BOOST_WORKAROUND(BOOST_MSVC, <1600) && defined(_CPPLIB_VER) && defined(BOOST_DINKUMWARE_STDLIB) && !(defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION))
-   //
-   // MSVC 8 will either emit warnings or else refuse to compile
-   // code that makes perfectly legitimate use of std::copy, when
-   // the OutputIterator type is a user-defined class (apparently all user 
-   // defined iterators are "unsafe").  This code works around that:
-   //
-   template<class InputIterator, class OutputIterator>
-   inline OutputIterator copy(
-      InputIterator first, 
-      InputIterator last, 
-      OutputIterator dest
-   )
-   {
-      return stdext::unchecked_copy(first, last, dest);
-   }
-   template<class InputIterator1, class InputIterator2>
-   inline bool equal(
-      InputIterator1 first, 
-      InputIterator1 last, 
-      InputIterator2 with
-   )
-   {
-      return stdext::unchecked_equal(first, last, with);
-   }
-#elif BOOST_WORKAROUND(BOOST_MSVC, > 1500)
-   //
-   // MSVC 10 will either emit warnings or else refuse to compile
-   // code that makes perfectly legitimate use of std::copy, when
-   // the OutputIterator type is a user-defined class (apparently all user 
-   // defined iterators are "unsafe").  What's more Microsoft have removed their
-   // non-standard "unchecked" versions, even though their still in the MS
-   // documentation!! Work around this as best we can: 
-   //
-   template<class InputIterator, class OutputIterator>
-   inline OutputIterator copy(
-      InputIterator first, 
-      InputIterator last, 
-      OutputIterator dest
-   )
-   {
-      while(first != last)
-         *dest++ = *first++;
-      return dest;
-   }
-   template<class InputIterator1, class InputIterator2>
-   inline bool equal(
-      InputIterator1 first, 
-      InputIterator1 last, 
-      InputIterator2 with
-   )
-   {
-      while(first != last)
-         if(*first++ != *with++) return false;
-      return true;
-   }
-#else 
-   using std::copy; 
-   using std::equal; 
-#endif 
-#if BOOST_WORKAROUND(BOOST_MSVC,>=1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__ 
+#if defined(BOOST_WORKAROUND) && BOOST_WORKAROUND(BOOST_MSVC,>=1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__ 
 
    // use safe versions of strcpy etc:
    using ::strcpy_s;
@@ -225,7 +111,11 @@ namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
       if(i)
       {
          std::overflow_error e("String buffer too small");
+#ifndef BOOST_REGEX_STANDALONE
          boost::throw_exception(e);
+#else
+         throw e;
+#endif
       }
    }
 

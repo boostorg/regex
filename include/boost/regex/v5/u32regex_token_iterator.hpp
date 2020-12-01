@@ -19,18 +19,6 @@
 #ifndef BOOST_REGEX_V5_U32REGEX_TOKEN_ITERATOR_HPP
 #define BOOST_REGEX_V5_U32REGEX_TOKEN_ITERATOR_HPP
 
-#if (BOOST_WORKAROUND(BOOST_BORLANDC, >= 0x560) && BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x570)))\
-      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
-//
-// Borland C++ Builder 6, and Visual C++ 6,
-// can't cope with the array template constructor
-// so we have a template member that will accept any type as 
-// argument, and then assert that is really is an array:
-//
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_array.hpp>
-#endif
-
 namespace boost{
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -158,7 +146,7 @@ class u32regex_token_iterator
 {
 private:
    typedef u32regex_token_iterator_implementation<BidirectionalIterator> impl;
-   typedef shared_ptr<impl> pimpl;
+   typedef std::shared_ptr<impl> pimpl;
 public:
    typedef          u32regex                                                regex_type;
    typedef          sub_match<BidirectionalIterator>                        value_type;

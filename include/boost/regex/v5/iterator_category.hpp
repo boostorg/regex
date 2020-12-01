@@ -22,8 +22,7 @@
 #define BOOST_REGEX_ITERATOR_CATEGORY_HPP
 
 #include <iterator>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_pointer.hpp>
+#include <type_traits>
 
 namespace boost{
 namespace detail{
@@ -35,7 +34,7 @@ struct is_random_imp
 private:
    typedef typename std::iterator_traits<I>::iterator_category cat;
 public:
-   BOOST_STATIC_CONSTANT(bool, value = (::boost::is_convertible<cat*, std::random_access_iterator_tag*>::value));
+   BOOST_STATIC_CONSTANT(bool, value = (std::is_convertible<cat*, std::random_access_iterator_tag*>::value));
 #else
    BOOST_STATIC_CONSTANT(bool, value = false);
 #endif
@@ -73,7 +72,7 @@ template <class I>
 struct is_random_access_iterator
 {
 private:
-   typedef detail::is_random_imp_selector< ::boost::is_pointer<I>::value> selector;
+   typedef detail::is_random_imp_selector< std::is_pointer<I>::value> selector;
    typedef typename selector::template rebind<I> bound_type;
    typedef typename bound_type::type answer;
 public:

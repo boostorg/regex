@@ -167,7 +167,7 @@ public:
          const sub_match<BidiIterator>& s = m_subs[sub];
          if(s.matched || (sub == 2))
          {
-            return ::boost::BOOST_REGEX_DETAIL_NS::distance((BidiIterator)(m_base), (BidiIterator)(s.first));
+            return std::distance((BidiIterator)(m_base), (BidiIterator)(s.first));
          }
       }
       return ~static_cast<difference_type>(0);
@@ -474,7 +474,7 @@ public:
    // private access functions:
    void BOOST_REGEX_CALL set_second(BidiIterator i)
    {
-      BOOST_ASSERT(m_subs.size() > 2);
+      BOOST_REGEX_ASSERT(m_subs.size() > 2);
       m_subs[2].second = i;
       m_subs[2].matched = true;
       m_subs[0].first = i;
@@ -490,7 +490,7 @@ public:
       if(pos)
          m_last_closed_paren = static_cast<int>(pos);
       pos += 2;
-      BOOST_ASSERT(m_subs.size() > pos);
+      BOOST_REGEX_ASSERT(m_subs.size() > pos);
       m_subs[pos].second = i;
       m_subs[pos].matched = m;
       if((pos == 2) && !escape_k)
@@ -531,7 +531,7 @@ public:
    }
    void BOOST_REGEX_CALL set_first(BidiIterator i)
    {
-      BOOST_ASSERT(m_subs.size() > 2);
+      BOOST_REGEX_ASSERT(m_subs.size() > 2);
       // set up prefix:
       m_subs[1].second = i;
       m_subs[1].matched = (m_subs[1].first != i);
@@ -546,7 +546,7 @@ public:
    }
    void BOOST_REGEX_CALL set_first(BidiIterator i, size_type pos, bool escape_k = false)
    {
-      BOOST_ASSERT(pos+2 < m_subs.size());
+      BOOST_REGEX_ASSERT(pos+2 < m_subs.size());
       if(pos || escape_k)
       {
          m_subs[pos+2].first = i;
@@ -561,7 +561,7 @@ public:
    }
    void BOOST_REGEX_CALL maybe_assign(const match_results<BidiIterator, Allocator>& m);
 
-   void BOOST_REGEX_CALL set_named_subs(boost::shared_ptr<named_sub_type> subs)
+   void BOOST_REGEX_CALL set_named_subs(std::shared_ptr<named_sub_type> subs)
    {
       m_named_subs = subs;
    }
@@ -580,7 +580,7 @@ private:
    vector_type            m_subs;                      // subexpressions
    BidiIterator   m_base;                              // where the search started from
    sub_match<BidiIterator> m_null;                     // a null match
-   boost::shared_ptr<named_sub_type> m_named_subs;     // Shared copy of named subs in the regex object
+   std::shared_ptr<named_sub_type> m_named_subs;     // Shared copy of named subs in the regex object
    int m_last_closed_paren;                            // Last ) to be seen - used for formatting
    bool m_is_singular;                                 // True if our stored iterators are singular
 };
@@ -648,17 +648,17 @@ void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const
          // p1 better than p2, and no need to calculate distances:
          return;
       }
-      base1 = ::boost::BOOST_REGEX_DETAIL_NS::distance(l_base, p1->first);
-      base2 = ::boost::BOOST_REGEX_DETAIL_NS::distance(l_base, p2->first);
-      BOOST_ASSERT(base1 >= 0);
-      BOOST_ASSERT(base2 >= 0);
+      base1 = std::distance(l_base, p1->first);
+      base2 = std::distance(l_base, p2->first);
+      BOOST_REGEX_ASSERT(base1 >= 0);
+      BOOST_REGEX_ASSERT(base2 >= 0);
       if(base1 < base2) return;
       if(base2 < base1) break;
 
-      len1 = ::boost::BOOST_REGEX_DETAIL_NS::distance((BidiIterator)p1->first, (BidiIterator)p1->second);
-      len2 = ::boost::BOOST_REGEX_DETAIL_NS::distance((BidiIterator)p2->first, (BidiIterator)p2->second);
-      BOOST_ASSERT(len1 >= 0);
-      BOOST_ASSERT(len2 >= 0);
+      len1 = std::distance((BidiIterator)p1->first, (BidiIterator)p1->second);
+      len2 = std::distance((BidiIterator)p2->first, (BidiIterator)p2->second);
+      BOOST_REGEX_ASSERT(len1 >= 0);
+      BOOST_REGEX_ASSERT(len2 >= 0);
       if((len1 != len2) || ((p1->matched == false) && (p2->matched == true)))
          break;
       if((p1->matched == true) && (p2->matched == false))

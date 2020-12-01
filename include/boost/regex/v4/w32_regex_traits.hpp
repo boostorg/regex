@@ -25,16 +25,16 @@
 #include <boost/regex/pattern_except.hpp>
 #endif
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
-#include <boost/regex/v5/regex_traits_defaults.hpp>
+#include <boost/regex/v4/regex_traits_defaults.hpp>
 #endif
 #ifdef BOOST_HAS_THREADS
 #include <boost/regex/pending/static_mutex.hpp>
 #endif
 #ifndef BOOST_REGEX_PRIMARY_TRANSFORM
-#include <boost/regex/v5/primary_transform.hpp>
+#include <boost/regex/v4/primary_transform.hpp>
 #endif
 #ifndef BOOST_REGEX_OBJECT_CACHE_HPP
-#include <boost/regex/pending/object_cache.hpp>
+#include <boost/regex/v4/object_cache.hpp>
 #endif
 
 #define VC_EXTRALEAN
@@ -794,21 +794,21 @@ namespace BOOST_REGEX_DETAIL_NS {
          char_map[ii] = static_cast<char>(ii);
 #ifndef BOOST_NO_ANSI_APIS
       int r = ::LCMapStringA(this->m_locale, LCMAP_LOWERCASE, char_map, 1 << CHAR_BIT, this->m_lower_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(r != 0);
+      BOOST_REGEX_ASSERT(r != 0);
 #else
       UINT code_page = get_code_page_for_locale_id(this->m_locale);
-      BOOST_ASSERT(code_page != 0);
+      BOOST_REGEX_ASSERT(code_page != 0);
 
       WCHAR wide_char_map[1 << CHAR_BIT];
       int conv_r = ::MultiByteToWideChar(code_page, 0, char_map, 1 << CHAR_BIT, wide_char_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(conv_r != 0);
+      BOOST_REGEX_ASSERT(conv_r != 0);
 
       WCHAR wide_lower_map[1 << CHAR_BIT];
       int r = ::LCMapStringW(this->m_locale, LCMAP_LOWERCASE, wide_char_map, 1 << CHAR_BIT, wide_lower_map, 1 << CHAR_BIT);
-      BOOST_ASSERT(r != 0);
+      BOOST_REGEX_ASSERT(r != 0);
 
       conv_r = ::WideCharToMultiByte(code_page, 0, wide_lower_map, r, this->m_lower_map, 1 << CHAR_BIT, NULL, NULL);
-      BOOST_ASSERT(conv_r != 0);
+      BOOST_REGEX_ASSERT(conv_r != 0);
 #endif
       if (r < (1 << CHAR_BIT))
       {
@@ -823,7 +823,7 @@ namespace BOOST_REGEX_DETAIL_NS {
 #else
       r = ::GetStringTypeExW(this->m_locale, CT_CTYPE1, wide_char_map, 1 << CHAR_BIT, this->m_type_map);
 #endif
-      BOOST_ASSERT(0 != r);
+      BOOST_REGEX_ASSERT(0 != r);
    }
 
    inline lcid_type BOOST_REGEX_CALL w32_get_default_locale()

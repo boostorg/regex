@@ -1948,7 +1948,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_backref()
 {
-   BOOST_ASSERT(m_position != m_end);
+   BOOST_REGEX_ASSERT(m_position != m_end);
    const charT* pc = m_position;
    boost::intmax_t i = this->m_traits.toi(pc, pc + 1, 10);
    if((i == 0) || (((this->flags() & regbase::main_option_type) == regbase::perl_syntax_group) && (this->flags() & regbase::no_bk_refs)))
@@ -2609,7 +2609,7 @@ option_group_jump:
       this->fail(regex_constants::error_paren, ::boost::BOOST_REGEX_DETAIL_NS::distance(m_base, m_end));
       return false;
    }
-   BOOST_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
+   BOOST_REGEX_ASSERT(this->m_traits.syntax_type(*m_position) == regex_constants::syntax_close_mark);
    ++m_position;
    //
    // restore the flags:
@@ -3137,7 +3137,7 @@ bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_st
       m_alt_jumps.pop_back();
       this->m_pdata->m_data.align();
       re_jump* jmp = static_cast<re_jump*>(this->getaddress(jump_offset));
-      BOOST_ASSERT(jmp->type == syntax_element_jump);
+      BOOST_REGEX_ASSERT(jmp->type == syntax_element_jump);
       jmp->alt.i = this->m_pdata->m_data.size() - jump_offset;
    }
    return true;

@@ -114,7 +114,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::estimate_max_state_count(std
    // Calculate NS^2 first:
    //
    static const std::ptrdiff_t k = 100000;
-   std::ptrdiff_t dist = boost::BOOST_REGEX_DETAIL_NS::distance(base, last);
+   std::ptrdiff_t dist = std::distance(base, last);
    if(dist == 0)
       dist = 1;
    std::ptrdiff_t states = re.size();
@@ -589,7 +589,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backref()
    if(index >= hash_value_mask)
    {
       named_subexpressions::range_type r = re.get_data().equal_range(index);
-      BOOST_ASSERT(r.first != r.second);
+      BOOST_REGEX_ASSERT(r.first != r.second);
       do
       {
          index = r.first->index;
@@ -698,7 +698,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_backstep()
 #endif
    if( ::boost::is_random_access_iterator<BidiIterator>::value)
    {
-      std::ptrdiff_t maxlen = ::boost::BOOST_REGEX_DETAIL_NS::distance(backstop, position);
+      std::ptrdiff_t maxlen = std::distance(backstop, position);
       if(maxlen < static_cast<const re_brace*>(pstate)->index)
          return false;
       std::advance(position, -static_cast<const re_brace*>(pstate)->index);

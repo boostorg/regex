@@ -27,7 +27,7 @@
 #include <boost/regex/pending/unicode_iterator.hpp>
 #include <boost/mpl/int_fwd.hpp>
 #include <boost/static_assert.hpp>
-#include <bitset>
+#include <functional>
 
 #ifdef BOOST_MSVC
 #pragma warning (push)
@@ -73,19 +73,19 @@ public:
       typedef u32_to_u16_iterator<const char_type*, ::UChar> itt;
       itt i(p1), j(p2);
       std::vector< ::UChar> t(i, j);
-      ::uint8_t result[100];
-      ::int32_t len;
+      std::uint8_t result[100];
+      std::int32_t len;
       if (!t.empty())
-         len = pcoll->getSortKey(&*t.begin(), static_cast<::int32_t>(t.size()), result, sizeof(result));
+         len = pcoll->getSortKey(&*t.begin(), static_cast<std::int32_t>(t.size()), result, sizeof(result));
       else
-         len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<::int32_t>(0), result, sizeof(result));
+         len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<std::int32_t>(0), result, sizeof(result));
       if (std::size_t(len) > sizeof(result))
       {
-         scoped_array< ::uint8_t> presult(new ::uint8_t[len + 1]);
+         std::unique_ptr< std::uint8_t[]> presult(new ::uint8_t[len + 1]);
          if (!t.empty())
-            len = pcoll->getSortKey(&*t.begin(), static_cast<::int32_t>(t.size()), presult.get(), len + 1);
+            len = pcoll->getSortKey(&*t.begin(), static_cast<std::int32_t>(t.size()), presult.get(), len + 1);
          else
-            len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<::int32_t>(0), presult.get(), len + 1);
+            len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<std::int32_t>(0), presult.get(), len + 1);
          if ((0 == presult[len - 1]) && (len > 1))
             --len;
          return string_type(presult.get(), presult.get() + len);
@@ -109,14 +109,20 @@ private:
       boost::throw_exception(e);
    }
    U_NAMESPACE_QUALIFIER Locale m_locale;                                  // The ICU locale that we're using
-   boost::scoped_ptr< U_NAMESPACE_QUALIFIER Collator> m_collator;          // The full collation object
-   boost::scoped_ptr< U_NAMESPACE_QUALIFIER Collator> m_primary_collator;  // The primary collation object
+   std::unique_ptr< U_NAMESPACE_QUALIFIER Collator> m_collator;          // The full collation object
+   std::unique_ptr< U_NAMESPACE_QUALIFIER Collator> m_primary_collator;  // The primary collation object
 };
-
+#ifdef BOOST_REGEX_CXX03
 inline boost::shared_ptr<icu_regex_traits_implementation> get_icu_regex_traits_implementation(const U_NAMESPACE_QUALIFIER Locale& loc)
 {
    return boost::shared_ptr<icu_regex_traits_implementation>(new icu_regex_traits_implementation(loc));
 }
+#else
+inline std::shared_ptr<icu_regex_traits_implementation> get_icu_regex_traits_implementation(const U_NAMESPACE_QUALIFIER Locale& loc)
+{
+   return std::shared_ptr<icu_regex_traits_implementation>(new icu_regex_traits_implementation(loc));
+}
+#endif
 
 }
 
@@ -251,17 +257,13 @@ public:
          if (result != 0)
             return result;
       }
-      BOOST_ASSERT(std::size_t(idx + 1) < sizeof(masks) / sizeof(masks[0]));
+      BOOST_REGEX_ASSERT(std::size_t(idx + 1) < sizeof(masks) / sizeof(masks[0]));
       return masks[idx + 1];
    }
    string_type lookup_collatename(const char_type* p1, const char_type* p2) const
    {
       string_type result;
-#ifdef BOOST_NO_CXX98_BINDERS
       if (std::find_if(p1, p2, std::bind(std::greater< ::UChar32>(), std::placeholders::_1, 0x7f)) == p2)
-#else
-      if (std::find_if(p1, p2, std::bind2nd(std::greater< ::UChar32>(), 0x7f)) == p2)
-#endif
       {
          std::string s(p1, p2);
          // Try Unicode name:
@@ -331,7 +333,7 @@ public:
    }
    int value(char_type c, int radix)const
    {
-      return u_digit(c, static_cast< ::int8_t>(radix));
+      return u_digit(c, static_cast< std::int8_t>(radix));
    }
    locale_type imbue(locale_type l)
    {
@@ -631,8 +633,11 @@ private:
          return icu_class_map[p - ranges_begin];
       return 0;
    }
-
+#ifdef BOOST_REGEX_CXX03
    boost::shared_ptr< ::boost::BOOST_REGEX_DETAIL_NS::icu_regex_traits_implementation> m_pimpl;
+#else
+   std::shared_ptr< ::boost::BOOST_REGEX_DETAIL_NS::icu_regex_traits_implementation> m_pimpl;
+#endif
 };
 
 } // namespace boost
@@ -653,7 +658,7 @@ template <class InputIterator>
 inline u32regex do_make_u32regex(InputIterator i, 
                               InputIterator j, 
                               boost::regex_constants::syntax_option_type opt, 
-                              const boost::mpl::int_<1>*)
+                              const std::integral_constant<int, 1>*)
 {
    typedef boost::u8_to_u32_iterator<InputIterator, UChar32> conv_type;
    return u32regex(conv_type(i, i, j), conv_type(j, i, j), opt);
@@ -663,7 +668,7 @@ template <class InputIterator>
 inline u32regex do_make_u32regex(InputIterator i, 
                               InputIterator j, 
                               boost::regex_constants::syntax_option_type opt, 
-                              const boost::mpl::int_<2>*)
+                              const std::integral_constant<int, 2>*)
 {
    typedef boost::u16_to_u32_iterator<InputIterator, UChar32> conv_type;
    return u32regex(conv_type(i, i, j), conv_type(j, i, j), opt);
@@ -673,7 +678,7 @@ template <class InputIterator>
 inline u32regex do_make_u32regex(InputIterator i, 
                               InputIterator j, 
                               boost::regex_constants::syntax_option_type opt, 
-                              const boost::mpl::int_<4>*)
+                              const std::integral_constant<int, 4>*)
 {
    return u32regex(i, j, opt);
 }
@@ -715,18 +720,18 @@ inline u32regex make_u32regex(InputIterator i,
                               InputIterator j, 
                               boost::regex_constants::syntax_option_type opt)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(i, j, opt, static_cast<boost::mpl::int_<sizeof(*i)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(i, j, opt, static_cast<std::integral_constant<int, sizeof(*i)> const*>(0));
 }
 //
 // construction from UTF-8 nul-terminated strings:
 //
 inline u32regex make_u32regex(const char* p, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::strlen(p), opt, static_cast<boost::mpl::int_<1> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::strlen(p), opt, static_cast<std::integral_constant<int, 1> const*>(0));
 }
 inline u32regex make_u32regex(const unsigned char* p, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::strlen(reinterpret_cast<const char*>(p)), opt, static_cast<boost::mpl::int_<1> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::strlen(reinterpret_cast<const char*>(p)), opt, static_cast<std::integral_constant<int, 1> const*>(0));
 }
 //
 // construction from UTF-16 nul-terminated strings:
@@ -734,13 +739,13 @@ inline u32regex make_u32regex(const unsigned char* p, boost::regex_constants::sy
 #ifndef BOOST_NO_WREGEX
 inline u32regex make_u32regex(const wchar_t* p, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::wcslen(p), opt, static_cast<boost::mpl::int_<sizeof(wchar_t)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + std::wcslen(p), opt, static_cast<std::integral_constant<int, sizeof(wchar_t)> const*>(0));
 }
 #endif
 #if !BOOST_REGEX_UCHAR_IS_WCHAR_T
 inline u32regex make_u32regex(const UChar* p, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + u_strlen(p), opt, static_cast<boost::mpl::int_<2> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(p, p + u_strlen(p), opt, static_cast<std::integral_constant<int, 2> const*>(0));
 }
 #endif
 //
@@ -749,14 +754,14 @@ inline u32regex make_u32regex(const UChar* p, boost::regex_constants::syntax_opt
 template<class C, class T, class A>
 inline u32regex make_u32regex(const std::basic_string<C, T, A>& s, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(s.begin(), s.end(), opt, static_cast<boost::mpl::int_<sizeof(C)> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(s.begin(), s.end(), opt, static_cast<std::integral_constant<int, sizeof(C)> const*>(0));
 }
 //
 // Construction from ICU string type:
 //
 inline u32regex make_u32regex(const U_NAMESPACE_QUALIFIER UnicodeString& s, boost::regex_constants::syntax_option_type opt = boost::regex_constants::perl)
 {
-   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(s.getBuffer(), s.getBuffer() + s.length(), opt, static_cast<boost::mpl::int_<2> const*>(0));
+   return BOOST_REGEX_DETAIL_NS::do_make_u32regex(s.getBuffer(), s.getBuffer() + s.length(), opt, static_cast<std::integral_constant<int, 2> const*>(0));
 }
 
 //
@@ -1222,7 +1227,7 @@ OutputIterator do_regex_replace(OutputIterator out,
    if(i == j)
    {
       if(!(flags & regex_constants::format_no_copy))
-         out = BOOST_REGEX_DETAIL_NS::copy(in.first, in.second, out);
+         out = std::copy(in.first, in.second, out);
    }
    else
    {
@@ -1230,7 +1235,7 @@ OutputIterator do_regex_replace(OutputIterator out,
       while(i != j)
       {
          if(!(flags & regex_constants::format_no_copy))
-            out = BOOST_REGEX_DETAIL_NS::copy(i->prefix().first, i->prefix().second, out); 
+            out = std::copy(i->prefix().first, i->prefix().second, out); 
          if(!f.empty())
             out = ::boost::BOOST_REGEX_DETAIL_NS::regex_format_imp(out, *i, &*f.begin(), &*f.begin() + f.size(), flags, e.get_traits());
          else
@@ -1241,7 +1246,7 @@ OutputIterator do_regex_replace(OutputIterator out,
          ++i;
       }
       if(!(flags & regex_constants::format_no_copy))
-         out = BOOST_REGEX_DETAIL_NS::copy(last_m, in.second, out);
+         out = std::copy(last_m, in.second, out);
    }
    return out;
 }

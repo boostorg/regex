@@ -158,7 +158,7 @@ public:
 
    void* BOOST_REGEX_CALL insert(size_type pos, size_type n)
    {
-      BOOST_ASSERT(pos <= size_type(end - start));
+      BOOST_REGEX_ASSERT(pos <= size_type(end - start));
       if (size_type(last - end) < n)
          resize(n + (end - start));
       void* result = start + pos;

@@ -20,7 +20,7 @@
 
 #include <new>
 #ifdef BOOST_HAS_THREADS
-#include <boost/regex/pending/static_mutex.hpp>
+#include <mutex>
 #endif
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -107,7 +107,7 @@ struct mem_block_cache
    void* get()
    {
 #ifdef BOOST_HAS_THREADS
-      boost::static_mutex::scoped_lock g(mut);
+      std::lock_guard<std::mutex> g(mut);
 #endif
      if(next)
       {
@@ -121,7 +121,7 @@ struct mem_block_cache
    void put(void* p)
    {
 #ifdef BOOST_HAS_THREADS
-      boost::static_mutex::scoped_lock g(mut);
+      std::lock_guard<std::mutex> g(mut);
 #endif
       if(cached_blocks >= BOOST_REGEX_MAX_CACHE_BLOCKS)
       {
