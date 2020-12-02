@@ -912,63 +912,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_buf()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
 {
-#if 0
-   if (position == last)
-      return false; // can't possibly match if we're at the end already
-
-   unsigned type = (m_match_flags & match_continuous) ?
-      static_cast<unsigned int>(regbase::restart_continue)
-      : static_cast<unsigned int>(re.get_restart_type());
-
-   const kmp_info<char_type>* info = access::get_kmp(re);
-   int len = info->len;
-   const char_type* x = info->pstr;
-   int j = 0;
-   while (position != last)
-   {
-      while ((j > -1) && (x[j] != traits_inst.translate(*position, icase)))
-         j = info->kmp_next[j];
-      ++position;
-      ++j;
-      if (j >= len)
-      {
-         if (type == regbase::restart_fixed_lit)
-         {
-            std::advance(position, -j);
-            restart = position;
-            std::advance(restart, len);
-            m_result.set_first(position);
-            m_result.set_second(restart);
-            position = restart;
-            return true;
-         }
-         else
-         {
-            restart = position;
-            std::advance(position, -j);
-            if (match_prefix())
-               return true;
-            else
-            {
-               for (int k = 0; (restart != position) && (k < j); ++k, --restart)
-               {
-               } // dwa 10/20/2000 - warning suppression for MWCW
-               if (restart != last)
-                  ++restart;
-               position = restart;
-               j = 0;  //we could do better than this...
-            }
-         }
-      }
-   }
-   if ((m_match_flags & match_partial) && (position == last) && j)
-   {
-      // we need to check for a partial match:
-      restart = position;
-      std::advance(position, -j);
-      return match_prefix();
-   }
-#endif
    return false;
 }
 
