@@ -40,7 +40,7 @@ namespace boost{
 //
 // Forward declaration:
 //
-   template <class BidiIterator, class Allocator = BOOST_DEDUCED_TYPENAME std::vector<sub_match<BidiIterator> >::allocator_type >
+   template <class BidiIterator, class Allocator = typename std::vector<sub_match<BidiIterator> >::allocator_type >
 class match_results;
 
 namespace BOOST_REGEX_DETAIL_NS{
@@ -932,7 +932,7 @@ private:
    //
    // F must be a pointer, a function, or a class with a function call operator:
    //
-   BOOST_STATIC_ASSERT((::std::is_pointer<F>::value || ::std::is_function<F>::value || ::std::is_class<F>::value));
+   static_assert((::std::is_pointer<F>::value || ::std::is_function<F>::value || ::std::is_class<F>::value), "The functor must be a pointer or a class with a function call operator");
    static formatter_wrapper<typename do_unwrap_reference<F>::type> f;
    static M m;
    static O out;
@@ -967,7 +967,7 @@ public:
    // This static assertion will fail if the functor passed does not accept
    // the same type of arguments passed.
    //
-   BOOST_STATIC_ASSERT( std::is_class<F>::value && !has_const_iterator<F>::value ? (type::value > 1) : true);
+   static_assert( std::is_class<F>::value && !has_const_iterator<F>::value ? (type::value > 1) : true, "Argument mismatch in Functor type");
 };
 
 template <class Base, class Match>

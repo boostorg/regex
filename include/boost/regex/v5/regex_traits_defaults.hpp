@@ -32,14 +32,9 @@
 
 #include <boost/regex/config.hpp>
 
-#ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
 #include <boost/regex/v5/syntax_type.hpp>
-#endif
-#ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v5/error_type.hpp>
-#endif
 #include <boost/regex/v5/regex_workaround.hpp>
-#include <boost/type_traits/make_unsigned.hpp>
 #include <type_traits>
 #include <cstdint>
 #include <cctype>
@@ -59,7 +54,7 @@ namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 template <class charT>
 inline bool is_extended(charT c)
 {
-   typedef typename make_unsigned<charT>::type unsigned_type; 
+   typedef typename std::make_unsigned<charT>::type unsigned_type; 
    return (sizeof(charT) > 1) && (static_cast<unsigned_type>(c) >= 256u); 
 }
 inline bool is_extended(char)
@@ -628,7 +623,6 @@ inline bool is_combining<unsigned char>(unsigned char)
 {
    return false;
 }
-#if !defined(__hpux) && !defined(__WINSCW__) // can't use WCHAR_MAX/MIN in pp-directives
 #ifdef _MSC_VER
 template<>
 inline bool is_combining<wchar_t>(wchar_t c)
@@ -648,7 +642,6 @@ inline bool is_combining<wchar_t>(wchar_t c)
 {
    return (c >= (std::numeric_limits<uint_least16_t>::max)()) ? false : is_combining_implementation(static_cast<unsigned short>(c));
 }
-#endif
 #endif
 #endif
 

@@ -1868,63 +1868,6 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_then(bool b)
    return false;
 }
 
-/*
-template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::unwind_parenthesis_pop(bool r)
-{
-   saved_state* pmp = static_cast<saved_state*>(m_backup_state);
-   if(!r)
-   {
-      --parenthesis_stack_position;
-   }
-   boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(pmp++);
-   m_backup_state = pmp;
-   return true;
-}
-
-template <class BidiIterator, class Allocator, class traits>
-void perl_matcher<BidiIterator, Allocator, traits>::push_parenthesis_pop()
-{
-   saved_state* pmp = static_cast<saved_state*>(m_backup_state);
-   --pmp;
-   if(pmp < m_stack_base)
-   {
-      extend_stack();
-      pmp = static_cast<saved_state*>(m_backup_state);
-      --pmp;
-   }
-   (void) new (pmp)saved_state(16);
-   m_backup_state = pmp;
-}
-
-template <class BidiIterator, class Allocator, class traits>
-bool perl_matcher<BidiIterator, Allocator, traits>::unwind_parenthesis_push(bool r)
-{
-   saved_position<BidiIterator>* pmp = static_cast<saved_position<BidiIterator>*>(m_backup_state);
-   if(!r)
-   {
-      parenthesis_stack[parenthesis_stack_position++] = pmp->position;
-   }
-   boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(pmp++);
-   m_backup_state = pmp;
-   return true;
-}
-
-template <class BidiIterator, class Allocator, class traits>
-inline void perl_matcher<BidiIterator, Allocator, traits>::push_parenthesis_push(BidiIterator p)
-{
-   saved_position<BidiIterator>* pmp = static_cast<saved_position<BidiIterator>*>(m_backup_state);
-   --pmp;
-   if(pmp < m_stack_base)
-   {
-      extend_stack();
-      pmp = static_cast<saved_position<BidiIterator>*>(m_backup_state);
-      --pmp;
-   }
-   (void) new (pmp)saved_position<BidiIterator>(0, p, 17);
-   m_backup_state = pmp;
-}
-*/
 } // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
 

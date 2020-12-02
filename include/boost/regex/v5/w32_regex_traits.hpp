@@ -21,21 +21,13 @@
 
 #ifndef BOOST_REGEX_NO_WIN32_LOCALE
 
-#ifndef BOOST_RE_PAT_EXCEPT_HPP
 #include <boost/regex/pattern_except.hpp>
-#endif
-#ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #include <boost/regex/v5/regex_traits_defaults.hpp>
-#endif
 #ifdef BOOST_HAS_THREADS
 #include <mutex>
 #endif
-#ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v5/primary_transform.hpp>
-#endif
-#ifndef BOOST_REGEX_OBJECT_CACHE_HPP
 #include <boost/regex/v5/object_cache.hpp>
-#endif
 
 #include <windows.h>
 
@@ -391,32 +383,10 @@ typename w32_regex_traits_implementation<charT>::string_type
       if(pos != m_custom_collate_names.end())
          return pos->second;
    }
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
    std::string name(p1, p2);
-#else
-   std::string name;
-   const charT* p0 = p1;
-   while(p0 != p2)
-      name.append(1, char(*p0++));
-#endif
    name = lookup_default_collate_name(name);
-#if !defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)\
-               && !BOOST_WORKAROUND(BOOST_BORLANDC, <= 0x0551)
    if(name.size())
       return string_type(name.begin(), name.end());
-#else
-   if(name.size())
-   {
-      string_type result;
-      typedef std::string::const_iterator iter;
-      iter b = name.begin();
-      iter e = name.end();
-      while(b != e)
-         result.append(1, charT(*b++));
-      return result;
-   }
-#endif
    if(p2 - p1 == 1)
       return string_type(1, *p1);
    return string_type();

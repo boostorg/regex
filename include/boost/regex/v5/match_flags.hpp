@@ -89,11 +89,7 @@ typedef enum _match_flags
 
 } match_flags;
 
-#if defined(BOOST_BORLANDC) || (defined(_MSC_VER) && (_MSC_VER <= 1310))
-typedef unsigned long match_flag_type;
-#else
 typedef match_flags match_flag_type;
-
 
 #ifdef __cplusplus
 inline match_flags operator&(match_flags m1, match_flags m2)
@@ -110,7 +106,6 @@ inline match_flags& operator|=(match_flags& m1, match_flags m2)
 { m1 = m1|m2; return m1; }
 inline match_flags& operator^=(match_flags& m1, match_flags m2)
 { m1 = m1^m2; return m1; }
-#endif
 #endif
 
 #ifdef __cplusplus

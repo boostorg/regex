@@ -632,7 +632,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
       // is to replace each character with 2, fortunately this code isn't used that
       // much as this is now slower than before :-(
       //
-      typedef typename make_unsigned<charT>::type uchar_type;
+      typedef typename std::make_unsigned<charT>::type uchar_type;
       result2.reserve(result.size() * 2 + 2);
       for(unsigned i = 0; i < result.size(); ++i)
       {

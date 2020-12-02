@@ -52,43 +52,25 @@ template <class BidiIterator, class Allocator>
 class match_results
 { 
 private:
-#ifndef BOOST_NO_STD_ALLOCATOR
    typedef          std::vector<sub_match<BidiIterator>, Allocator> vector_type;
-#else
-   typedef          std::vector<sub_match<BidiIterator> >           vector_type;
-#endif
 public: 
    typedef          sub_match<BidiIterator>                         value_type;
-#ifndef BOOST_NO_CXX11_ALLOCATOR
    typedef typename std::allocator_traits<Allocator>::value_type const &    const_reference;
-#elif  !defined(BOOST_NO_STD_ALLOCATOR) && !(defined(BOOST_MSVC) && defined(_STLPORT_VERSION))
-   typedef typename Allocator::const_reference                              const_reference;
-#else
-   typedef          const value_type&                                       const_reference;
-#endif
    typedef          const_reference                                         reference;
    typedef typename vector_type::const_iterator                             const_iterator;
    typedef          const_iterator                                          iterator;
-   typedef typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<
+   typedef typename std::iterator_traits<
                                     BidiIterator>::difference_type          difference_type;
-#ifdef BOOST_NO_CXX11_ALLOCATOR
    typedef typename Allocator::size_type                                    size_type;
-#else
-   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
-#endif
    typedef          Allocator                                               allocator_type;
-   typedef typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<
+   typedef typename std::iterator_traits<
                                     BidiIterator>::value_type               char_type;
    typedef          std::basic_string<char_type>                            string_type;
    typedef          BOOST_REGEX_DETAIL_NS::named_subexpressions                         named_sub_type;
 
    // construct/copy/destroy:
    explicit match_results(const Allocator& a = Allocator())
-#ifndef BOOST_NO_STD_ALLOCATOR
       : m_subs(a), m_base(), m_null(), m_last_closed_paren(0), m_is_singular(true) {}
-#else
-      : m_subs(), m_base(), m_null(), m_last_closed_paren(0), m_is_singular(true) { (void)a; }
-#endif
    //
    // IMPORTANT: in the code below, the crazy looking checks around m_is_singular are
    // all required because it is illegal to copy a singular iterator.
@@ -254,7 +236,7 @@ public:
    template <class charT>
    const_reference named_subexpression(const charT* i, const charT* j) const
    {
-      BOOST_STATIC_ASSERT(sizeof(charT) <= sizeof(char_type));
+      static_assert(sizeof(charT) <= sizeof(char_type), "Failed internal logic");
       if(i == j)
          return m_null;
       std::vector<char_type> s;
@@ -282,7 +264,7 @@ public:
    template <class charT>
    int named_subexpression_index(const charT* i, const charT* j) const
    {
-      BOOST_STATIC_ASSERT(sizeof(charT) <= sizeof(char_type));
+      static_assert(sizeof(charT) <= sizeof(char_type), "Failed internal logic");
       if(i == j)
          return -20;
       std::vector<char_type> s;
@@ -305,7 +287,7 @@ public:
    template <class charT>
    const_reference operator[](const charT* p) const
    {
-      BOOST_STATIC_ASSERT(sizeof(charT) <= sizeof(char_type));
+      static_assert(sizeof(charT) <= sizeof(char_type), "Failed internal logic");
       if(*p == 0)
          return m_null;
       std::vector<char_type> s;
@@ -316,7 +298,7 @@ public:
    template <class charT, class Traits, class A>
    const_reference operator[](const std::basic_string<charT, Traits, A>& ns) const
    {
-      BOOST_STATIC_ASSERT(sizeof(charT) <= sizeof(char_type));
+      static_assert(sizeof(charT) <= sizeof(char_type), "Failed internal logic");
       if(ns.empty())
          return m_null;
       std::vector<char_type> s;
@@ -413,11 +395,7 @@ public:
 
    allocator_type get_allocator() const
    {
-#ifndef BOOST_NO_STD_ALLOCATOR
       return m_subs.get_allocator();
-#else
-     return allocator_type();
-#endif
    }
    void swap(match_results& that)
    {
@@ -678,7 +656,6 @@ void swap(match_results<BidiIterator, Allocator>& a, match_results<BidiIterator,
    a.swap(b);
 }
 
-#ifndef BOOST_NO_STD_LOCALE
 template <class charT, class traits, class BidiIterator, class Allocator>
 std::basic_ostream<charT, traits>&
    operator << (std::basic_ostream<charT, traits>& os,
@@ -686,14 +663,6 @@ std::basic_ostream<charT, traits>&
 {
    return (os << s.str());
 }
-#else
-template <class BidiIterator, class Allocator>
-std::ostream& operator << (std::ostream& os,
-                           const match_results<BidiIterator, Allocator>& s)
-{
-   return (os << s.str());
-}
-#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(pop)

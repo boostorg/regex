@@ -79,7 +79,7 @@ private:
 public:
    typedef          u32regex                                                regex_type;
    typedef          match_results<BidirectionalIterator>                    value_type;
-   typedef typename BOOST_REGEX_DETAIL_NS::regex_iterator_traits<BidirectionalIterator>::difference_type 
+   typedef typename std::iterator_traits<BidirectionalIterator>::difference_type 
                                                                             difference_type;
    typedef          const value_type*                                       pointer;
    typedef          const value_type&                                       reference; 

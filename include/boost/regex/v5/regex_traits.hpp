@@ -19,39 +19,17 @@
 #ifndef BOOST_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_REGEX_TRAITS_HPP_INCLUDED
 
-#ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/regex/config.hpp>
-#endif
-#ifndef BOOST_REGEX_WORKAROUND_HPP
 #include <boost/regex/v5/regex_workaround.hpp>
-#endif
-#ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
 #include <boost/regex/v5/syntax_type.hpp>
-#endif
-#ifndef BOOST_REGEX_ERROR_TYPE_HPP
 #include <boost/regex/v5/error_type.hpp>
-#endif
-#ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #include <boost/regex/v5/regex_traits_defaults.hpp>
-#endif
-#ifndef BOOST_NO_STD_LOCALE
-#  ifndef BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
-#     include <boost/regex/v5/cpp_regex_traits.hpp>
-#  endif
-#endif
-#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
-#  ifndef BOOST_C_REGEX_TRAITS_HPP_INCLUDED
-#     include <boost/regex/v5/c_regex_traits.hpp>
-#  endif
-#endif
+#include <boost/regex/v5/cpp_regex_traits.hpp>
+#include <boost/regex/v5/c_regex_traits.hpp>
 #if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
-#  ifndef BOOST_W32_REGEX_TRAITS_HPP_INCLUDED
 #     include <boost/regex/v5/w32_regex_traits.hpp>
-#  endif
 #endif
-#ifndef BOOST_REGEX_FWD_HPP_INCLUDED
 #include <boost/regex_fwd.hpp>
-#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -136,26 +114,11 @@ struct compute_wrapper_base
 {
    typedef BaseT type;
 };
-#if !BOOST_WORKAROUND(__HP_aCC, < 60000)
 template <class BaseT>
 struct compute_wrapper_base<BaseT, false>
 {
    typedef default_wrapper<BaseT> type;
 };
-#else
-template <>
-struct compute_wrapper_base<c_regex_traits<char>, false>
-{
-   typedef default_wrapper<c_regex_traits<char> > type;
-};
-#ifndef BOOST_NO_WREGEX
-template <>
-struct compute_wrapper_base<c_regex_traits<wchar_t>, false>
-{
-   typedef default_wrapper<c_regex_traits<wchar_t> > type;
-};
-#endif
-#endif
 
 } // namespace BOOST_REGEX_DETAIL_NS
 

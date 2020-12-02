@@ -86,11 +86,7 @@ inline unsigned int regex_grep(Predicate foo,
 
 //
 // regex_grep convenience interfaces:
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
 //
-// this isn't really a partial specialisation, but template function
-// overloading - if the compiler doesn't support partial specialisation
-// then it really won't support this either:
 template <class Predicate, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, const charT* str, 
                         const basic_regex<charT, traits>& e, 
@@ -106,37 +102,6 @@ inline unsigned int regex_grep(Predicate foo, const std::basic_string<charT, ST,
 {
    return regex_grep(foo, s.begin(), s.end(), e, flags);
 }
-#else  // partial specialisation
-inline unsigned int regex_grep(bool (*foo)(const cmatch&), const char* str, 
-                        const regex& e, 
-                        match_flag_type flags = match_default)
-{
-   return regex_grep(foo, str, str + regex::traits_type::length(str), e, flags);
-}
-#ifndef BOOST_NO_WREGEX
-inline unsigned int regex_grep(bool (*foo)(const wcmatch&), const wchar_t* str, 
-                        const wregex& e, 
-                        match_flag_type flags = match_default)
-{
-   return regex_grep(foo, str, str + wregex::traits_type::length(str), e, flags);
-}
-#endif
-inline unsigned int regex_grep(bool (*foo)(const match_results<std::string::const_iterator>&), const std::string& s,
-                        const regex& e, 
-                        match_flag_type flags = match_default)
-{
-   return regex_grep(foo, s.begin(), s.end(), e, flags);
-}
-#if !defined(BOOST_NO_WREGEX)
-inline unsigned int regex_grep(bool (*foo)(const match_results<std::basic_string<wchar_t>::const_iterator>&), 
-                     const std::basic_string<wchar_t>& s, 
-                        const wregex& e, 
-                        match_flag_type flags = match_default)
-{
-   return regex_grep(foo, s.begin(), s.end(), e, flags);
-}
-#endif
-#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(push)

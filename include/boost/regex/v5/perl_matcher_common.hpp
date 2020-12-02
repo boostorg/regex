@@ -54,7 +54,7 @@ namespace BOOST_REGEX_DETAIL_NS{
    template <class BidiIterator, class Allocator, class traits>
 void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_regex<char_type, traits>& e, match_flag_type f)
 { 
-   typedef typename regex_iterator_traits<BidiIterator>::iterator_category category;
+   typedef typename std::iterator_traits<BidiIterator>::iterator_category category;
    typedef typename basic_regex<char_type, traits>::flag_type expression_flag_type;
    
    if(e.empty())
@@ -913,26 +913,26 @@ template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
 {
 #if 0
-   if(position == last)
+   if (position == last)
       return false; // can't possibly match if we're at the end already
 
-   unsigned type = (m_match_flags & match_continuous) ? 
-      static_cast<unsigned int>(regbase::restart_continue) 
-         : static_cast<unsigned int>(re.get_restart_type());
+   unsigned type = (m_match_flags & match_continuous) ?
+      static_cast<unsigned int>(regbase::restart_continue)
+      : static_cast<unsigned int>(re.get_restart_type());
 
    const kmp_info<char_type>* info = access::get_kmp(re);
    int len = info->len;
    const char_type* x = info->pstr;
-   int j = 0; 
-   while (position != last) 
+   int j = 0;
+   while (position != last)
    {
-      while((j > -1) && (x[j] != traits_inst.translate(*position, icase))) 
+      while ((j > -1) && (x[j] != traits_inst.translate(*position, icase)))
          j = info->kmp_next[j];
       ++position;
       ++j;
-      if(j >= len) 
+      if (j >= len)
       {
-         if(type == regbase::restart_fixed_lit)
+         if (type == regbase::restart_fixed_lit)
          {
             std::advance(position, -j);
             restart = position;
@@ -946,13 +946,14 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
          {
             restart = position;
             std::advance(position, -j);
-            if(match_prefix())
+            if (match_prefix())
                return true;
             else
             {
-               for(int k = 0; (restart != position) && (k < j); ++k, --restart)
-                     {} // dwa 10/20/2000 - warning suppression for MWCW
-               if(restart != last)
+               for (int k = 0; (restart != position) && (k < j); ++k, --restart)
+               {
+               } // dwa 10/20/2000 - warning suppression for MWCW
+               if (restart != last)
                   ++restart;
                position = restart;
                j = 0;  //we could do better than this...
@@ -960,7 +961,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::find_restart_lit()
          }
       }
    }
-   if((m_match_flags & match_partial) && (position == last) && j)
+   if ((m_match_flags & match_partial) && (position == last) && j)
    {
       // we need to check for a partial match:
       restart = position;

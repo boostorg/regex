@@ -115,7 +115,7 @@ private:
 #if defined(BOOST_MSVC) && defined(_M_IX86)
    // This is an ugly warning suppression workaround (for warnings *inside* std::vector
    // that can not otherwise be suppressed)...
-   BOOST_STATIC_ASSERT(sizeof(long) >= sizeof(void*));
+   static_assert(sizeof(long) >= sizeof(void*), "Long isn't long enough!");
    std::vector<long>           m_alt_jumps;      // list of alternative in the current scope.
 #else
    std::vector<std::ptrdiff_t> m_alt_jumps;      // list of alternative in the current scope.

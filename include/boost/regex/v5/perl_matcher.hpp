@@ -80,13 +80,11 @@ inline bool can_start(unsigned short c, const unsigned char* map, unsigned char 
 {
    return ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask);
 }
-#if !defined(__hpux) && !defined(__WINSCW__)// WCHAR_MIN not usable in pp-directives.
 #if defined(WCHAR_MIN) && (WCHAR_MIN == 0) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
 inline bool can_start(wchar_t c, const unsigned char* map, unsigned char mask)
 {
    return ((c >= static_cast<wchar_t>(1u << CHAR_BIT)) ? true : map[c] & mask);
 }
-#endif
 #endif
 #if !defined(BOOST_NO_INTRINSIC_WCHAR_T)
 inline bool can_start(unsigned int c, const unsigned char* map, unsigned char mask)
@@ -95,16 +93,6 @@ inline bool can_start(unsigned int c, const unsigned char* map, unsigned char ma
 }
 #endif
 
-
-//
-// Unfortunately Rogue Waves standard library appears to have a bug
-// in std::basic_string::compare that results in erroneous answers
-// in some cases (tested with Borland C++ 5.1, Rogue Wave lib version
-// 0x020101) the test case was:
-// {39135,0} < {0xff,0}
-// which succeeds when it should not.
-//
-#ifndef _RWSTD_VER
 template <class C, class T, class A>
 inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
 { 
@@ -115,24 +103,6 @@ inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
    }
    return s.compare(p); 
 }
-#else
-template <class C, class T, class A>
-inline int string_compare(const std::basic_string<C,T,A>& s, const C* p)
-{ 
-   if(0 == *p)
-   {
-      if(s.empty() || ((s.size() == 1) && (s[0] == 0)))
-         return 0;
-   }
-   return s.compare(p); 
-}
-inline int string_compare(const std::string& s, const char* p)
-{ return std::strcmp(s.c_str(), p); }
-# ifndef BOOST_NO_WREGEX
-inline int string_compare(const std::wstring& s, const wchar_t* p)
-{ return std::wcscmp(s.c_str(), p); }
-#endif
-#endif
 template <class Seq, class C>
 inline int string_compare(const Seq& s, const C* p)
 {
@@ -388,7 +358,7 @@ public:
    typedef bool (self_type::*matcher_proc_type)();
    typedef std::size_t traits_size_type;
    typedef typename is_byte<char_type>::width_type width_type;
-   typedef typename regex_iterator_traits<BidiIterator>::difference_type difference_type;
+   typedef typename std::iterator_traits<BidiIterator>::difference_type difference_type;
    typedef match_results<BidiIterator, Allocator> results_type;
 
    perl_matcher(BidiIterator first, BidiIterator end, 
