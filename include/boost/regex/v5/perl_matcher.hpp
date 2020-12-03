@@ -45,7 +45,7 @@ namespace BOOST_REGEX_DETAIL_NS{
 //
 // error checking API:
 //
-inline void BOOST_REGEX_CALL verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
+inline void  verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
 {
    //
    // can't mix match_extra with POSIX matching rules:
@@ -123,7 +123,7 @@ inline const charT* re_skip_past_null(const charT* p)
 }
 
 template <class iterator, class charT, class traits_type, class char_classT>
-iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
+iterator  re_is_set_member(iterator next, 
                           iterator last, 
                           const re_set_long<char_classT>* set_, 
                           const regex_data<charT, traits_type>& e, bool icase)

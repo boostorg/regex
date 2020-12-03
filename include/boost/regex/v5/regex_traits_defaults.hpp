@@ -60,7 +60,7 @@ inline bool is_extended(charT c)
 inline bool is_extended(char)
 { return false; }
 
-inline const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_type n)
+inline const char*  get_default_syntax(regex_constants::syntax_type n)
 {
    // if the user hasn't supplied a message catalog, then this supplies
    // default "messages" for us to load in the range 1-100.
@@ -130,7 +130,7 @@ inline const char* BOOST_REGEX_CALL get_default_syntax(regex_constants::syntax_t
    return ((n >= (sizeof(messages) / sizeof(messages[1]))) ? "" : messages[n]);
 }
 
-inline const char* BOOST_REGEX_CALL get_default_error_string(regex_constants::error_type n)
+inline const char*  get_default_error_string(regex_constants::error_type n)
 {
    static const char* const s_default_error_messages[] = {
       "Success",                                                            /* REG_NOERROR 0 error_ok */
@@ -163,7 +163,7 @@ inline const char* BOOST_REGEX_CALL get_default_error_string(regex_constants::er
    return (n > ::boost::regex_constants::error_unknown) ? s_default_error_messages[::boost::regex_constants::error_unknown] : s_default_error_messages[n];
 }
 
-inline regex_constants::syntax_type BOOST_REGEX_CALL get_default_syntax_type(char c)
+inline regex_constants::syntax_type  get_default_syntax_type(char c)
 {
    //
    // char_syntax determines how the compiler treats a given character
@@ -358,7 +358,7 @@ inline regex_constants::syntax_type BOOST_REGEX_CALL get_default_syntax_type(cha
    return char_syntax[(unsigned char)c];
 }
 
-inline regex_constants::escape_syntax_type BOOST_REGEX_CALL get_default_escape_syntax_type(char c)
+inline regex_constants::escape_syntax_type  get_default_escape_syntax_type(char c)
 {
    //
    // char_syntax determines how the compiler treats a given character
@@ -554,7 +554,7 @@ inline regex_constants::escape_syntax_type BOOST_REGEX_CALL get_default_escape_s
 }
 
 // is charT c a combining character?
-inline bool BOOST_REGEX_CALL is_combining_implementation(std::uint_least16_t c)
+inline bool  is_combining_implementation(std::uint_least16_t c)
 {
    const std::uint_least16_t combining_ranges[] = { 0x0300, 0x0361,
                            0x0483, 0x0486,
@@ -668,7 +668,7 @@ inline bool is_separator<char>(char c)
 //
 // get a default collating element:
 //
-inline std::string BOOST_REGEX_CALL lookup_default_collate_name(const std::string& name)
+inline std::string  lookup_default_collate_name(const std::string& name)
 {
    //
    // these are the POSIX collating names:
@@ -845,32 +845,32 @@ inline std::ptrdiff_t global_length<wchar_t>(const wchar_t* p)
 }
 #endif
 template <class charT>
-inline charT BOOST_REGEX_CALL global_lower(charT c)
+inline charT  global_lower(charT c)
 {
    return c;
 }
 template <class charT>
-inline charT BOOST_REGEX_CALL global_upper(charT c)
+inline charT  global_upper(charT c)
 {
    return c;
 }
 
-inline char BOOST_REGEX_CALL do_global_lower(char c)
+inline char  do_global_lower(char c)
 {
    return static_cast<char>((std::tolower)((unsigned char)c));
 }
 
-inline char BOOST_REGEX_CALL do_global_upper(char c)
+inline char  do_global_upper(char c)
 {
    return static_cast<char>((std::toupper)((unsigned char)c));
 }
 #ifndef BOOST_NO_WREGEX
-inline wchar_t BOOST_REGEX_CALL do_global_lower(wchar_t c)
+inline wchar_t  do_global_lower(wchar_t c)
 {
    return (std::towlower)(c);
 }
 
-inline wchar_t BOOST_REGEX_CALL do_global_upper(wchar_t c)
+inline wchar_t  do_global_upper(wchar_t c)
 {
    return (std::towupper)(c);
 }
@@ -885,11 +885,11 @@ inline wchar_t BOOST_REGEX_CALL do_global_upper(wchar_t c)
 // otherwise the "local template instantiation" compiler option can pick
 // the wrong instantiation when linking:
 //
-template<> inline char BOOST_REGEX_CALL global_lower<char>(char c) { return do_global_lower(c); }
-template<> inline char BOOST_REGEX_CALL global_upper<char>(char c) { return do_global_upper(c); }
+template<> inline char  global_lower<char>(char c) { return do_global_lower(c); }
+template<> inline char  global_upper<char>(char c) { return do_global_upper(c); }
 #ifndef BOOST_NO_WREGEX
-template<> inline wchar_t BOOST_REGEX_CALL global_lower<wchar_t>(wchar_t c) { return do_global_lower(c); }
-template<> inline wchar_t BOOST_REGEX_CALL global_upper<wchar_t>(wchar_t c) { return do_global_upper(c); }
+template<> inline wchar_t  global_lower<wchar_t>(wchar_t c) { return do_global_lower(c); }
+template<> inline wchar_t  global_upper<wchar_t>(wchar_t c) { return do_global_upper(c); }
 #endif
 
 template <class charT>

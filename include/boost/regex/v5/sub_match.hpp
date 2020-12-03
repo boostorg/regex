@@ -50,7 +50,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
    {
       return matched ? std::basic_string<value_type, T, A>(this->first, this->second) : std::basic_string<value_type, T, A>();
    }
-   difference_type BOOST_REGEX_CALL length()const
+   difference_type  length()const
    {
       difference_type n = matched ? std::distance((BidiIterator)this->first, (BidiIterator)this->second) : 0;
       return n;
@@ -88,7 +88,7 @@ struct sub_match : public std::pair<BidiIterator, BidiIterator>
 
    bool operator==(const sub_match& that)const
    { return compare(that) == 0; }
-   bool BOOST_REGEX_CALL operator !=(const sub_match& that)const
+   bool  operator !=(const sub_match& that)const
    { return compare(that) != 0; }
    bool operator<(const sub_match& that)const
    { return compare(that) < 0; }

@@ -98,14 +98,14 @@ struct c_regex_traits<char>
       return static_cast<char>((std::tolower)(static_cast<unsigned char>(c))); 
    }
 
-   static string_type BOOST_REGEX_CALL transform(const char* p1, const char* p2);
-   static string_type BOOST_REGEX_CALL transform_primary(const char* p1, const char* p2);
+   static string_type  transform(const char* p1, const char* p2);
+   static string_type  transform_primary(const char* p1, const char* p2);
 
-   static char_class_type BOOST_REGEX_CALL lookup_classname(const char* p1, const char* p2);
-   static string_type BOOST_REGEX_CALL lookup_collatename(const char* p1, const char* p2);
+   static char_class_type  lookup_classname(const char* p1, const char* p2);
+   static string_type  lookup_collatename(const char* p1, const char* p2);
 
-   static bool BOOST_REGEX_CALL isctype(char, char_class_type);
-   static int BOOST_REGEX_CALL value(char, int);
+   static bool  isctype(char, char_class_type);
+   static int  value(char, int);
 
    locale_type imbue(locale_type l)
    { return l; }
@@ -143,14 +143,14 @@ struct c_regex_traits<wchar_t>
       return (std::towlower)(c); 
    }
 
-   static string_type BOOST_REGEX_CALL transform(const wchar_t* p1, const wchar_t* p2);
-   static string_type BOOST_REGEX_CALL transform_primary(const wchar_t* p1, const wchar_t* p2);
+   static string_type  transform(const wchar_t* p1, const wchar_t* p2);
+   static string_type  transform_primary(const wchar_t* p1, const wchar_t* p2);
 
-   static char_class_type BOOST_REGEX_CALL lookup_classname(const wchar_t* p1, const wchar_t* p2);
-   static string_type BOOST_REGEX_CALL lookup_collatename(const wchar_t* p1, const wchar_t* p2);
+   static char_class_type  lookup_classname(const wchar_t* p1, const wchar_t* p2);
+   static string_type  lookup_collatename(const wchar_t* p1, const wchar_t* p2);
 
-   static bool BOOST_REGEX_CALL isctype(wchar_t, char_class_type);
-   static int BOOST_REGEX_CALL value(wchar_t, int);
+   static bool  isctype(wchar_t, char_class_type);
+   static int  value(wchar_t, int);
 
    locale_type imbue(locale_type l)
    { return l; }
@@ -165,7 +165,7 @@ private:
 
 #endif // BOOST_NO_WREGEX
 
-inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::transform(const char* p1, const char* p2)
+inline c_regex_traits<char>::string_type  c_regex_traits<char>::transform(const char* p1, const char* p2)
 {
    std::string result(10, ' ');
    std::size_t s = result.size();
@@ -193,7 +193,7 @@ inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::
    return result;
 }
 
-inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::transform_primary(const char* p1, const char* p2)
+inline c_regex_traits<char>::string_type  c_regex_traits<char>::transform_primary(const char* p1, const char* p2)
 {
    static char s_delim;
    static const int s_collate_type = ::boost::BOOST_REGEX_DETAIL_NS::find_sort_syntax(static_cast<c_regex_traits<char>*>(0), &s_delim);
@@ -240,7 +240,7 @@ inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::
    return result;
 }
 
-inline c_regex_traits<char>::char_class_type BOOST_REGEX_CALL c_regex_traits<char>::lookup_classname(const char* p1, const char* p2)
+inline c_regex_traits<char>::char_class_type  c_regex_traits<char>::lookup_classname(const char* p1, const char* p2)
 {
    using namespace BOOST_REGEX_DETAIL_NS;
    static const char_class_type masks[] =
@@ -281,7 +281,7 @@ inline c_regex_traits<char>::char_class_type BOOST_REGEX_CALL c_regex_traits<cha
    return masks[idx + 1];
 }
 
-inline bool BOOST_REGEX_CALL c_regex_traits<char>::isctype(char c, char_class_type mask)
+inline bool  c_regex_traits<char>::isctype(char c, char_class_type mask)
 {
    using namespace BOOST_REGEX_DETAIL_NS;
    return
@@ -300,7 +300,7 @@ inline bool BOOST_REGEX_CALL c_regex_traits<char>::isctype(char c, char_class_ty
       || ((mask & char_class_horizontal) && (std::isspace)(static_cast<unsigned char>(c)) && !::boost::BOOST_REGEX_DETAIL_NS::is_separator(c) && (c != '\v'));
 }
 
-inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::lookup_collatename(const char* p1, const char* p2)
+inline c_regex_traits<char>::string_type  c_regex_traits<char>::lookup_collatename(const char* p1, const char* p2)
 {
    std::string s(p1, p2);
    s = ::boost::BOOST_REGEX_DETAIL_NS::lookup_default_collate_name(s);
@@ -309,7 +309,7 @@ inline c_regex_traits<char>::string_type BOOST_REGEX_CALL c_regex_traits<char>::
    return s;
 }
 
-inline int BOOST_REGEX_CALL c_regex_traits<char>::value(char c, int radix)
+inline int  c_regex_traits<char>::value(char c, int radix)
 {
    char b[2] = { c, '\0', };
    char* ep;
@@ -321,7 +321,7 @@ inline int BOOST_REGEX_CALL c_regex_traits<char>::value(char c, int radix)
 
 #ifndef BOOST_NO_WREGEX
 
-inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform(const wchar_t* p1, const wchar_t* p2)
+inline c_regex_traits<wchar_t>::string_type  c_regex_traits<wchar_t>::transform(const wchar_t* p1, const wchar_t* p2)
 {
    std::size_t r;
    std::size_t s = 10;
@@ -349,7 +349,7 @@ inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wcha
    return result;
 }
 
-inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::transform_primary(const wchar_t* p1, const wchar_t* p2)
+inline c_regex_traits<wchar_t>::string_type  c_regex_traits<wchar_t>::transform_primary(const wchar_t* p1, const wchar_t* p2)
 {
    static wchar_t s_delim;
    static const int s_collate_type = ::boost::BOOST_REGEX_DETAIL_NS::find_sort_syntax(static_cast<const c_regex_traits<wchar_t>*>(0), &s_delim);
@@ -396,7 +396,7 @@ inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wcha
    return result;
 }
 
-inline c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_classname(const wchar_t* p1, const wchar_t* p2)
+inline c_regex_traits<wchar_t>::char_class_type  c_regex_traits<wchar_t>::lookup_classname(const wchar_t* p1, const wchar_t* p2)
 {
    using namespace BOOST_REGEX_DETAIL_NS;
    static const char_class_type masks[] =
@@ -437,7 +437,7 @@ inline c_regex_traits<wchar_t>::char_class_type BOOST_REGEX_CALL c_regex_traits<
    return masks[idx + 1];
 }
 
-inline bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_type mask)
+inline bool  c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_type mask)
 {
    using namespace BOOST_REGEX_DETAIL_NS;
    return
@@ -457,7 +457,7 @@ inline bool BOOST_REGEX_CALL c_regex_traits<wchar_t>::isctype(wchar_t c, char_cl
       || ((mask & char_class_horizontal) && (std::iswspace)(c) && !::boost::BOOST_REGEX_DETAIL_NS::is_separator(c) && (c != L'\v'));
 }
 
-inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2)
+inline c_regex_traits<wchar_t>::string_type  c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2)
 {
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -475,7 +475,7 @@ inline c_regex_traits<wchar_t>::string_type BOOST_REGEX_CALL c_regex_traits<wcha
    return string_type();
 }
 
-inline int BOOST_REGEX_CALL c_regex_traits<wchar_t>::value(wchar_t c, int radix)
+inline int  c_regex_traits<wchar_t>::value(wchar_t c, int radix)
 {
 #ifdef BOOST_BORLANDC
    // workaround for broken wcstol:

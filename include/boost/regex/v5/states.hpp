@@ -296,7 +296,7 @@ template<class charT, class traits>
 struct regex_data;
 
 template <class iterator, class charT, class traits_type, class char_classT>
-iterator BOOST_REGEX_CALL re_is_set_member(iterator next, 
+iterator  re_is_set_member(iterator next, 
                           iterator last, 
                           const re_set_long<char_classT>* set_, 
                           const regex_data<charT, traits_type>& e, bool icase);

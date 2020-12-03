@@ -450,7 +450,7 @@ public:
 
    //
    // private access functions:
-   void BOOST_REGEX_CALL set_second(BidiIterator i)
+   void  set_second(BidiIterator i)
    {
       BOOST_REGEX_ASSERT(m_subs.size() > 2);
       m_subs[2].second = i;
@@ -463,7 +463,7 @@ public:
       m_is_singular = false;
    }
 
-   void BOOST_REGEX_CALL set_second(BidiIterator i, size_type pos, bool m = true, bool escape_k = false)
+   void  set_second(BidiIterator i, size_type pos, bool m = true, bool escape_k = false)
    {
       if(pos)
          m_last_closed_paren = static_cast<int>(pos);
@@ -481,7 +481,7 @@ public:
          m_is_singular = false;
       }
    }
-   void BOOST_REGEX_CALL set_size(size_type n, BidiIterator i, BidiIterator j)
+   void  set_size(size_type n, BidiIterator i, BidiIterator j)
    {
       value_type v(j);
       size_type len = m_subs.size();
@@ -499,7 +499,7 @@ public:
       m_subs[1].first = i;
       m_last_closed_paren = 0;
    }
-   void BOOST_REGEX_CALL set_base(BidiIterator pos)
+   void  set_base(BidiIterator pos)
    {
       m_base = pos;
    }
@@ -507,7 +507,7 @@ public:
    {
       return m_base;
    }
-   void BOOST_REGEX_CALL set_first(BidiIterator i)
+   void  set_first(BidiIterator i)
    {
       BOOST_REGEX_ASSERT(m_subs.size() > 2);
       // set up prefix:
@@ -522,7 +522,7 @@ public:
          m_subs[n].matched = false;
       }
    }
-   void BOOST_REGEX_CALL set_first(BidiIterator i, size_type pos, bool escape_k = false)
+   void  set_first(BidiIterator i, size_type pos, bool escape_k = false)
    {
       BOOST_REGEX_ASSERT(pos+2 < m_subs.size());
       if(pos || escape_k)
@@ -537,9 +537,9 @@ public:
       else
          set_first(i);
    }
-   void BOOST_REGEX_CALL maybe_assign(const match_results<BidiIterator, Allocator>& m);
+   void  maybe_assign(const match_results<BidiIterator, Allocator>& m);
 
-   void BOOST_REGEX_CALL set_named_subs(std::shared_ptr<named_sub_type> subs)
+   void  set_named_subs(std::shared_ptr<named_sub_type> subs)
    {
       m_named_subs = subs;
    }
@@ -564,7 +564,7 @@ private:
 };
 
 template <class BidiIterator, class Allocator>
-void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const match_results<BidiIterator, Allocator>& m)
+void  match_results<BidiIterator, Allocator>::maybe_assign(const match_results<BidiIterator, Allocator>& m)
 {
    if(m_is_singular)
    {

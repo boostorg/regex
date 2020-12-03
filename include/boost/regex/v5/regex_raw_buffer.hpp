@@ -123,7 +123,7 @@ public:
       ::operator delete(start);
    }
 
-   void BOOST_REGEX_CALL resize(size_type n)
+   void  resize(size_type n)
    {
       size_type newsize = start ? last - start : 1024;
       while (newsize < n)
@@ -147,7 +147,7 @@ public:
       last = ptr + newsize;
    }
 
-   void* BOOST_REGEX_CALL extend(size_type n)
+   void*  extend(size_type n)
    {
       if(size_type(last - end) < n)
          resize(n + (end - start));
@@ -156,7 +156,7 @@ public:
       return result;
    }
 
-   void* BOOST_REGEX_CALL insert(size_type pos, size_type n)
+   void*  insert(size_type pos, size_type n)
    {
       BOOST_REGEX_ASSERT(pos <= size_type(end - start));
       if (size_type(last - end) < n)
@@ -167,32 +167,32 @@ public:
       return result;
    }
 
-   size_type BOOST_REGEX_CALL size()
+   size_type  size()
    {
       return size_type(end - start);
    }
 
-   size_type BOOST_REGEX_CALL capacity()
+   size_type  capacity()
    {
       return size_type(last - start);
    }
 
-   void* BOOST_REGEX_CALL data()const
+   void*  data()const
    {
       return start;
    }
 
-   size_type BOOST_REGEX_CALL index(void* ptr)
+   size_type  index(void* ptr)
    {
       return size_type(static_cast<pointer>(ptr) - static_cast<pointer>(data()));
    }
 
-   void BOOST_REGEX_CALL clear()
+   void  clear()
    {
       end = start;
    }
 
-   void BOOST_REGEX_CALL align()
+   void  align()
    {
       // move end up to a boundary:
       end = start + (((end - start) + padding_mask) & ~padding_mask);

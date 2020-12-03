@@ -149,24 +149,24 @@ struct mem_block_cache
 
 #if BOOST_REGEX_MAX_CACHE_BLOCKS == 0
 
-inline void* BOOST_REGEX_CALL get_mem_block()
+inline void*  get_mem_block()
 {
    return ::operator new(BOOST_REGEX_BLOCKSIZE);
 }
 
-inline void BOOST_REGEX_CALL put_mem_block(void* p)
+inline void  put_mem_block(void* p)
 {
    ::operator delete(p);
 }
 
 #else
 
-inline void* BOOST_REGEX_CALL get_mem_block()
+inline void*  get_mem_block()
 {
    return mem_block_cache::instance().get();
 }
 
-inline void BOOST_REGEX_CALL put_mem_block(void* p)
+inline void  put_mem_block(void* p)
 {
    mem_block_cache::instance().put(p);
 }

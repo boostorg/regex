@@ -73,35 +73,35 @@ typedef ::std::shared_ptr<void> cat_type; // placeholder for dll HANDLE.
 //
 // then add wrappers around the actual Win32 API's (ie implementation hiding):
 //
-lcid_type BOOST_REGEX_CALL w32_get_default_locale();
-bool BOOST_REGEX_CALL w32_is_lower(char, lcid_type);
+lcid_type  w32_get_default_locale();
+bool  w32_is_lower(char, lcid_type);
 #ifndef BOOST_NO_WREGEX
-bool BOOST_REGEX_CALL w32_is_lower(wchar_t, lcid_type);
+bool  w32_is_lower(wchar_t, lcid_type);
 #endif
-bool BOOST_REGEX_CALL w32_is_upper(char, lcid_type);
+bool  w32_is_upper(char, lcid_type);
 #ifndef BOOST_NO_WREGEX
-bool BOOST_REGEX_CALL w32_is_upper(wchar_t, lcid_type);
+bool  w32_is_upper(wchar_t, lcid_type);
 #endif
-cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name);
-std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type state_id, int i, const std::string& def);
+cat_type  w32_cat_open(const std::string& name);
+std::string  w32_cat_get(const cat_type& cat, lcid_type state_id, int i, const std::string& def);
 #ifndef BOOST_NO_WREGEX
-std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type state_id, int i, const std::wstring& def);
+std::wstring  w32_cat_get(const cat_type& cat, lcid_type state_id, int i, const std::wstring& def);
 #endif
-std::string BOOST_REGEX_CALL w32_transform(lcid_type state_id, const char* p1, const char* p2);
+std::string  w32_transform(lcid_type state_id, const char* p1, const char* p2);
 #ifndef BOOST_NO_WREGEX
-std::wstring BOOST_REGEX_CALL w32_transform(lcid_type state_id, const wchar_t* p1, const wchar_t* p2);
+std::wstring  w32_transform(lcid_type state_id, const wchar_t* p1, const wchar_t* p2);
 #endif
-char BOOST_REGEX_CALL w32_tolower(char c, lcid_type);
+char  w32_tolower(char c, lcid_type);
 #ifndef BOOST_NO_WREGEX
-wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type);
+wchar_t  w32_tolower(wchar_t c, lcid_type);
 #endif
-char BOOST_REGEX_CALL w32_toupper(char c, lcid_type);
+char  w32_toupper(char c, lcid_type);
 #ifndef BOOST_NO_WREGEX
-wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type);
+wchar_t  w32_toupper(wchar_t c, lcid_type);
 #endif
-bool BOOST_REGEX_CALL w32_is(lcid_type, boost::uint32_t mask, char c);
+bool  w32_is(lcid_type, boost::uint32_t mask, char c);
 #ifndef BOOST_NO_WREGEX
-bool BOOST_REGEX_CALL w32_is(lcid_type, boost::uint32_t mask, wchar_t c);
+bool  w32_is(lcid_type, boost::uint32_t mask, wchar_t c);
 #endif
 //
 // class w32_regex_traits_base:
@@ -793,12 +793,12 @@ namespace BOOST_REGEX_DETAIL_NS {
       BOOST_REGEX_ASSERT(0 != r);
    }
 
-   inline lcid_type BOOST_REGEX_CALL w32_get_default_locale()
+   inline lcid_type  w32_get_default_locale()
    {
       return ::GetUserDefaultLCID();
    }
 
-   inline bool BOOST_REGEX_CALL w32_is_lower(char c, lcid_type idx)
+   inline bool  w32_is_lower(char c, lcid_type idx)
    {
 #ifndef BOOST_NO_ANSI_APIS
       WORD mask;
@@ -821,7 +821,7 @@ namespace BOOST_REGEX_DETAIL_NS {
 #endif
    }
 
-   inline bool BOOST_REGEX_CALL w32_is_lower(wchar_t c, lcid_type idx)
+   inline bool  w32_is_lower(wchar_t c, lcid_type idx)
    {
       WORD mask;
       if (::GetStringTypeExW(idx, CT_CTYPE1, &c, 1, &mask) && (mask & C1_LOWER))
@@ -829,7 +829,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return false;
    }
 
-   inline bool BOOST_REGEX_CALL w32_is_upper(char c, lcid_type idx)
+   inline bool  w32_is_upper(char c, lcid_type idx)
    {
 #ifndef BOOST_NO_ANSI_APIS
       WORD mask;
@@ -852,7 +852,7 @@ namespace BOOST_REGEX_DETAIL_NS {
 #endif
    }
 
-   inline bool BOOST_REGEX_CALL w32_is_upper(wchar_t c, lcid_type idx)
+   inline bool  w32_is_upper(wchar_t c, lcid_type idx)
    {
       WORD mask;
       if (::GetStringTypeExW(idx, CT_CTYPE1, &c, 1, &mask) && (mask & C1_UPPER))
@@ -865,7 +865,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       ::FreeLibrary(static_cast<HMODULE>(mod));
    }
 
-   inline cat_type BOOST_REGEX_CALL w32_cat_open(const std::string& name)
+   inline cat_type  w32_cat_open(const std::string& name)
    {
 #ifndef BOOST_NO_ANSI_APIS
       cat_type result(::LoadLibraryA(name.c_str()), &free_module);
@@ -880,7 +880,7 @@ namespace BOOST_REGEX_DETAIL_NS {
 #endif
    }
 
-   inline std::string BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::string& def)
+   inline std::string  w32_cat_get(const cat_type& cat, lcid_type, int i, const std::string& def)
    {
 #ifndef BOOST_NO_ANSI_APIS
       char buf[256];
@@ -914,7 +914,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline std::wstring BOOST_REGEX_CALL w32_cat_get(const cat_type& cat, lcid_type, int i, const std::wstring& def)
+   inline std::wstring  w32_cat_get(const cat_type& cat, lcid_type, int i, const std::wstring& def)
    {
       wchar_t buf[256];
       if (0 == ::LoadStringW(
@@ -929,7 +929,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return std::wstring(buf);
    }
 #endif
-   inline std::string BOOST_REGEX_CALL w32_transform(lcid_type idx, const char* p1, const char* p2)
+   inline std::string  w32_transform(lcid_type idx, const char* p1, const char* p2)
    {
 #ifndef BOOST_NO_ANSI_APIS
       int bytes = ::LCMapStringA(
@@ -991,7 +991,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline std::wstring BOOST_REGEX_CALL w32_transform(lcid_type idx, const wchar_t* p1, const wchar_t* p2)
+   inline std::wstring  w32_transform(lcid_type idx, const wchar_t* p1, const wchar_t* p2)
    {
       int bytes = ::LCMapStringW(
          idx,       // locale identifier
@@ -1024,7 +1024,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return r2;
    }
 #endif
-   inline char BOOST_REGEX_CALL w32_tolower(char c, lcid_type idx)
+   inline char  w32_tolower(char c, lcid_type idx)
    {
       char result[2];
 #ifndef BOOST_NO_ANSI_APIS
@@ -1064,7 +1064,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline wchar_t BOOST_REGEX_CALL w32_tolower(wchar_t c, lcid_type idx)
+   inline wchar_t  w32_tolower(wchar_t c, lcid_type idx)
    {
       wchar_t result[2];
       int b = ::LCMapStringW(
@@ -1079,7 +1079,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return result[0];
    }
 #endif
-   inline char BOOST_REGEX_CALL w32_toupper(char c, lcid_type idx)
+   inline char  w32_toupper(char c, lcid_type idx)
    {
       char result[2];
 #ifndef BOOST_NO_ANSI_APIS
@@ -1119,7 +1119,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline wchar_t BOOST_REGEX_CALL w32_toupper(wchar_t c, lcid_type idx)
+   inline wchar_t  w32_toupper(wchar_t c, lcid_type idx)
    {
       wchar_t result[2];
       int b = ::LCMapStringW(
@@ -1134,7 +1134,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return result[0];
    }
 #endif
-   inline bool BOOST_REGEX_CALL w32_is(lcid_type idx, boost::uint32_t m, char c)
+   inline bool  w32_is(lcid_type idx, boost::uint32_t m, char c)
    {
       WORD mask;
 #ifndef BOOST_NO_ANSI_APIS
@@ -1158,7 +1158,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline bool BOOST_REGEX_CALL w32_is(lcid_type idx, boost::uint32_t m, wchar_t c)
+   inline bool  w32_is(lcid_type idx, boost::uint32_t m, wchar_t c)
    {
       WORD mask;
       if (::GetStringTypeExW(idx, CT_CTYPE1, &c, 1, &mask) && (mask & m & w32_regex_traits_implementation<wchar_t>::mask_base))
