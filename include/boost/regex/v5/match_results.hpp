@@ -551,7 +551,11 @@ private:
    static void raise_logic_error()
    {
       std::logic_error e("Attempt to access an uninitialized boost::match_results<> class.");
+#ifndef BOOST_REGEX_STANDALONE
       boost::throw_exception(e);
+#else
+      throw e;
+#endif
    }
 
 

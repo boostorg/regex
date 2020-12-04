@@ -72,6 +72,11 @@ Accepts UTF-32 code points and forwards them on as UTF-16 code points.
 #endif
 #include <limits.h> // CHAR_BIT
 
+#ifdef BOOST_REGEX_CXX03
+
+#else
+#endif
+
 namespace boost{
 
 namespace detail{

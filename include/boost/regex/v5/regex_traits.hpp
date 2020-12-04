@@ -87,7 +87,7 @@ struct default_wrapper : public BaseT
    {
       return (char_type(c & 0x7f) == c) ? get_default_escape_syntax_type(static_cast<char>(c)) : ::boost::regex_constants::escape_type_identity;
    }
-   boost::intmax_t toi(const char_type*& p1, const char_type* p2, int radix)const
+   std::intmax_t toi(const char_type*& p1, const char_type* p2, int radix)const
    {
       return ::boost::BOOST_REGEX_DETAIL_NS::global_toi(p1, p2, radix, *this);
    }

@@ -245,7 +245,7 @@ protected:
    unsigned                      m_repeater_id;        // the state_id of the next repeater
    bool                          m_has_backrefs;       // true if there are actually any backrefs
    indexed_bit_flag              m_backrefs;           // bitmask of permitted backrefs
-   boost::uintmax_t              m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
+   std::uintmax_t                m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
    bool                          m_has_recursions;     // set when we have recursive expressions to fixup
    std::vector<unsigned char>    m_recursion_checks;   // notes which recursions we've followed while analysing this expression
    typename traits::char_class_type m_word_mask;       // mask used to determine if a character is a word character
@@ -1456,7 +1456,7 @@ bool basic_regex_creator<charT, traits>::is_bad_repeat(re_syntax_base* pt)
          unsigned state_id = static_cast<re_repeat*>(pt)->state_id;
          if(state_id >= sizeof(m_bad_repeats) * CHAR_BIT)
             return true;  // run out of bits, assume we can't traverse this one.
-         static const boost::uintmax_t one = 1uL;
+         static const std::uintmax_t one = 1uL;
          return m_bad_repeats & (one << state_id);
       }
    default:
@@ -1476,7 +1476,7 @@ void basic_regex_creator<charT, traits>::set_bad_repeat(re_syntax_base* pt)
    case syntax_element_long_set_rep:
       {
          unsigned state_id = static_cast<re_repeat*>(pt)->state_id;
-         static const boost::uintmax_t one = 1uL;
+         static const std::uintmax_t one = 1uL;
          if(state_id <= sizeof(m_bad_repeats) * CHAR_BIT)
             m_bad_repeats |= (one << state_id);
       }

@@ -9,6 +9,7 @@
  *
  */
 
+#include <boost/regex.hpp>
 #include <boost/config.hpp>
 
 #if defined(BOOST_MSVC)
@@ -22,18 +23,11 @@
 #pragma warning(disable:1418 981 983 595 383)
 #endif
 
-#include <boost/regex.hpp>
-#include <boost/detail/workaround.hpp>
-#if !BOOST_WORKAROUND(_MSC_VER, < 1310) && !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__) && !BOOST_WORKAROUND(__GNUC__, < 3)
 #include <boost/regex/concepts.hpp>
-#endif
 
 
 int main()
 {
-   // VC6 and VC7 can't cope with the iterator architypes, 
-   // don't bother testing as it doesn't work:
-#if !BOOST_WORKAROUND(_MSC_VER, < 1310) && !defined(BOOST_NO_MEMBER_TEMPLATES) && !defined(__IBMCPP__) && !BOOST_WORKAROUND(__GNUC__, < 3)
    boost::function_requires<
       boost::RegexTraitsConcept<
          boost::regex_traits<char>
@@ -53,7 +47,6 @@ int main()
    >();
 #endif
 #endif
-#if !BOOST_WORKAROUND(BOOST_BORLANDC, < 0x560)
    boost::function_requires<
       boost::BoostRegexConcept<
          boost::basic_regex<char, boost::c_regex_traits<char> >
@@ -65,7 +58,6 @@ int main()
          boost::basic_regex<wchar_t, boost::c_regex_traits<wchar_t> >
       >
    >();
-#endif
 #endif
 #if defined(_WIN32) && !defined(BOOST_REGEX_NO_W32)
    boost::function_requires<
@@ -90,15 +82,12 @@ int main()
          regex_traits_tester_type1
       >
    >();
-#if !defined(__MWERKS__) && !defined(__SUNPRO_CC) // MWCW tries to instantiate std::basic_string<boost::char_architype>, not sure whose bug this is....
    typedef boost::basic_regex<boost::char_architype, boost::regex_traits_architype<boost::char_architype> > regex_traits_tester_type2;
    boost::function_requires<
       boost::BaseRegexConcept<
          regex_traits_tester_type2
       >
    >();
-#endif // __MWERKS__
-#endif   
    return 0;
 }
 

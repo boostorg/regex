@@ -509,8 +509,13 @@ public:
    // begin, end, subexpression:
    std::pair<const_iterator, const_iterator>  subexpression(std::size_t n)const
    {
+#ifdef BOOST_REGEX_STANDALONE
+      if (!m_pimpl.get())
+         throw std::logic_error("Can't access subexpressions in an invalid regex.");
+#else
       if(!m_pimpl.get())
          boost::throw_exception(std::logic_error("Can't access subexpressions in an invalid regex."));
+#endif
       return m_pimpl->subexpression(n);
    }
    const_iterator  begin()const

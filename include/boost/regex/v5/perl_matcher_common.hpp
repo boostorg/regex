@@ -61,7 +61,11 @@ void perl_matcher<BidiIterator, Allocator, traits>::construct_init(const basic_r
    {
       // precondition failure: e is not a valid regex.
       std::invalid_argument ex("Invalid regular expression object");
+#ifndef BOOST_REGEX_STANDALONE
       boost::throw_exception(ex);
+#else
+      throw e;
+#endif
    }
    pstate = 0;
    m_match_flags = f;

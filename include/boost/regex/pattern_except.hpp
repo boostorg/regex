@@ -76,7 +76,11 @@ public:
    void raise()const 
    {
 #ifndef BOOST_NO_EXCEPTIONS
+#ifndef BOOST_REGEX_STANDALONE
       ::boost::throw_exception(*this);
+#else
+      throw* this;
+#endif
 #endif
    }
 private:
@@ -91,7 +95,11 @@ namespace BOOST_REGEX_DETAIL_NS{
 
 inline void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex)
 {
+#ifndef BOOST_REGEX_STANDALONE
    ::boost::throw_exception(ex);
+#else
+   throw ex;
+#endif
 }
 
 template <class traits>

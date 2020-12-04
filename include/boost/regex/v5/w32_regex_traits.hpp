@@ -67,8 +67,8 @@ namespace BOOST_REGEX_DETAIL_NS{
 //
 // start by typedeffing the types we'll need:
 //
-typedef ::boost::uint32_t lcid_type;   // placeholder for LCID.
-typedef ::std::shared_ptr<void> cat_type; // placeholder for dll HANDLE.
+typedef std::uint32_t lcid_type;   // placeholder for LCID.
+typedef std::shared_ptr<void> cat_type; // placeholder for dll HANDLE.
 
 //
 // then add wrappers around the actual Win32 API's (ie implementation hiding):
@@ -99,9 +99,9 @@ char  w32_toupper(char c, lcid_type);
 #ifndef BOOST_NO_WREGEX
 wchar_t  w32_toupper(wchar_t c, lcid_type);
 #endif
-bool  w32_is(lcid_type, boost::uint32_t mask, char c);
+bool  w32_is(lcid_type, std::uint32_t mask, char c);
 #ifndef BOOST_NO_WREGEX
-bool  w32_is(lcid_type, boost::uint32_t mask, wchar_t c);
+bool  w32_is(lcid_type, std::uint32_t mask, wchar_t c);
 #endif
 //
 // class w32_regex_traits_base:
@@ -158,7 +158,7 @@ public:
    {
       return ::boost::BOOST_REGEX_DETAIL_NS::w32_tolower(c, this->m_locale);
    }
-   bool isctype(boost::uint32_t mask, charT c)const
+   bool isctype(std::uint32_t mask, charT c)const
    {
       return ::boost::BOOST_REGEX_DETAIL_NS::w32_is(this->m_locale, mask, c);
    }
@@ -255,7 +255,7 @@ public:
    {
       return m_lower_map[static_cast<unsigned char>(c)];
    }
-   bool isctype(boost::uint32_t mask, char c)const
+   bool isctype(std::uint32_t mask, char c)const
    {
       return m_type_map[static_cast<unsigned char>(c)] & mask;
    }
@@ -263,7 +263,7 @@ public:
 private:
    regex_constants::syntax_type m_char_map[1u << CHAR_BIT];
    char m_lower_map[1u << CHAR_BIT];
-   boost::uint16_t m_type_map[1u << CHAR_BIT];
+   std::uint16_t m_type_map[1u << CHAR_BIT];
    template <class U>
    void init();
 };
@@ -529,7 +529,7 @@ public:
    typedef std::size_t                   size_type;
    typedef std::basic_string<char_type>  string_type;
    typedef ::boost::BOOST_REGEX_DETAIL_NS::lcid_type locale_type;
-   typedef boost::uint_least32_t         char_class_type;
+   typedef std::uint_least32_t         char_class_type;
 
    struct boost_extensions_tag{};
 
@@ -601,7 +601,7 @@ public:
          return true;
       return false;
    }
-   boost::intmax_t toi(const charT*& p1, const charT* p2, int radix)const
+   std::intmax_t toi(const charT*& p1, const charT* p2, int radix)const
    {
       return ::boost::BOOST_REGEX_DETAIL_NS::global_toi(p1, p2, radix, *this);
    }
@@ -1134,7 +1134,7 @@ namespace BOOST_REGEX_DETAIL_NS {
       return result[0];
    }
 #endif
-   inline bool  w32_is(lcid_type idx, boost::uint32_t m, char c)
+   inline bool  w32_is(lcid_type idx, std::uint32_t m, char c)
    {
       WORD mask;
 #ifndef BOOST_NO_ANSI_APIS
@@ -1158,7 +1158,7 @@ namespace BOOST_REGEX_DETAIL_NS {
    }
 
 #ifndef BOOST_NO_WREGEX
-   inline bool  w32_is(lcid_type idx, boost::uint32_t m, wchar_t c)
+   inline bool  w32_is(lcid_type idx, std::uint32_t m, wchar_t c)
    {
       WORD mask;
       if (::GetStringTypeExW(idx, CT_CTYPE1, &c, 1, &mask) && (mask & m & w32_regex_traits_implementation<wchar_t>::mask_base))

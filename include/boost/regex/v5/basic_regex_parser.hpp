@@ -44,19 +44,19 @@ namespace BOOST_REGEX_DETAIL_NS{
 #endif
 #endif
 
-inline boost::intmax_t umax(std::integral_constant<bool, false> const&)
+inline std::intmax_t umax(std::integral_constant<bool, false> const&)
 {
    // Get out clause here, just in case numeric_limits is unspecialized:
-   return std::numeric_limits<boost::intmax_t>::is_specialized ? (std::numeric_limits<boost::intmax_t>::max)() : INT_MAX;
+   return std::numeric_limits<std::intmax_t>::is_specialized ? (std::numeric_limits<std::intmax_t>::max)() : INT_MAX;
 }
-inline boost::intmax_t umax(std::integral_constant<bool, true> const&)
+inline std::intmax_t umax(std::integral_constant<bool, true> const&)
 {
    return (std::numeric_limits<std::size_t>::max)();
 }
 
-inline boost::intmax_t umax()
+inline std::intmax_t umax()
 {
-   return umax(std::integral_constant<bool, std::numeric_limits<boost::intmax_t>::digits >= std::numeric_limits<std::size_t>::digits>());
+   return umax(std::integral_constant<bool, std::numeric_limits<std::intmax_t>::digits >= std::numeric_limits<std::size_t>::digits>());
 }
 
 template <class charT, class traits>
@@ -911,7 +911,7 @@ escape_type_class_jump:
             return false;
          }
          const charT* pc = m_position;
-         boost::intmax_t i = this->m_traits.toi(pc, m_end, 10);
+         std::intmax_t i = this->m_traits.toi(pc, m_end, 10);
          if((i < 0) && syn_end)
          {
             // Check for a named capture, get the leftmost one if there is more than one:
@@ -924,7 +924,7 @@ escape_type_class_jump:
             pc = m_position;
          }
          if(negative)
-            i = 1 + (static_cast<boost::intmax_t>(m_mark_count) - i);
+            i = 1 + (static_cast<std::intmax_t>(m_mark_count) - i);
          if(((i < hash_value_mask) && (i > 0) && (this->m_backrefs.test(i))) || ((i >= hash_value_mask) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id(i)))))
          {
             m_position = pc;
@@ -1151,7 +1151,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat_range(bool isbasic)
    // parse a repeat-range:
    //
    std::size_t min, max;
-   boost::intmax_t v;
+   std::intmax_t v;
    // skip whitespace:
    while((m_position != m_end) && this->m_traits.isctype(*m_position, this->m_mask_space))
       ++m_position;
@@ -1741,19 +1741,19 @@ digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal(basic_cha
 // does a value fit in the specified charT type?
 //
 template <class charT>
-bool valid_value(charT, boost::intmax_t v, const std::integral_constant<bool, true>&)
+bool valid_value(charT, std::intmax_t v, const std::integral_constant<bool, true>&)
 {
    return (v >> (sizeof(charT) * CHAR_BIT)) == 0;
 }
 template <class charT>
-bool valid_value(charT, boost::intmax_t, const std::integral_constant<bool, false>&)
+bool valid_value(charT, std::intmax_t, const std::integral_constant<bool, false>&)
 {
    return true; // v will alsways fit in a charT
 }
 template <class charT>
-bool valid_value(charT c, boost::intmax_t v)
+bool valid_value(charT c, std::intmax_t v)
 {
-   return valid_value(c, v, std::integral_constant<bool, (sizeof(charT) < sizeof(boost::intmax_t))>());
+   return valid_value(c, v, std::integral_constant<bool, (sizeof(charT) < sizeof(std::intmax_t))>());
 }
 
 template <class charT, class traits>
@@ -1829,10 +1829,10 @@ charT basic_regex_parser<charT, traits>::unescape_character()
             fail(regex_constants::error_escape, m_position - m_base, "Missing } in hexadecimal escape sequence.");
             return result;
          }
-         boost::intmax_t i = this->m_traits.toi(m_position, m_end, 16);
+         std::intmax_t i = this->m_traits.toi(m_position, m_end, 16);
          if((m_position == m_end)
             || (i < 0)
-            || ((std::numeric_limits<charT>::is_specialized) && (i > (boost::intmax_t)(std::numeric_limits<charT>::max)()))
+            || ((std::numeric_limits<charT>::is_specialized) && (i > (std::intmax_t)(std::numeric_limits<charT>::max)()))
             || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_brace))
          {
             // Rewind to start of escape:
@@ -1847,7 +1847,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
       else
       {
          std::ptrdiff_t len = (std::min)(static_cast<std::ptrdiff_t>(2), static_cast<std::ptrdiff_t>(m_end - m_position));
-         boost::intmax_t i = this->m_traits.toi(m_position, m_position + len, 16);
+         std::intmax_t i = this->m_traits.toi(m_position, m_position + len, 16);
          if((i < 0)
             || !valid_value(charT(0), i))
          {
@@ -1866,7 +1866,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
       // followed by up to 3 octal digits:
       std::ptrdiff_t len = (std::min)(std::distance(m_position, m_end), static_cast<std::ptrdiff_t>(4));
       const charT* bp = m_position;
-      boost::intmax_t val = this->m_traits.toi(bp, bp + 1, 8);
+      std::intmax_t val = this->m_traits.toi(bp, bp + 1, 8);
       if(val != 0)
       {
          // Rewind to start of escape:
@@ -1877,7 +1877,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          return result;
       }
       val = this->m_traits.toi(m_position, m_position + len, 8);
-      if((val < 0) || (val > (boost::intmax_t)(std::numeric_limits<charT>::max)()))
+      if((val < 0) || (val > (std::intmax_t)(std::numeric_limits<charT>::max)()))
       {
          // Rewind to start of escape:
          --m_position;
@@ -1950,7 +1950,7 @@ bool basic_regex_parser<charT, traits>::parse_backref()
 {
    BOOST_REGEX_ASSERT(m_position != m_end);
    const charT* pc = m_position;
-   boost::intmax_t i = this->m_traits.toi(pc, pc + 1, 10);
+   std::intmax_t i = this->m_traits.toi(pc, pc + 1, 10);
    if((i == 0) || (((this->flags() & regbase::main_option_type) == regbase::perl_syntax_group) && (this->flags() & regbase::no_bk_refs)))
    {
       // not a backref at all but an octal escape sequence:
@@ -2072,7 +2072,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    int max_mark = m_max_mark;
    m_mark_reset = -1;
    m_max_mark = m_mark_count;
-   boost::intmax_t v;
+   std::intmax_t v;
    //
    // select the actual extension used:
    //
@@ -2126,7 +2126,7 @@ insert_recursion:
          fail(regex_constants::error_perl_extension, m_position - m_base, "An invalid or unterminated recursive sub-expression.");
          return false;
       }
-      if ((std::numeric_limits<boost::intmax_t>::max)() - m_mark_count < v)
+      if ((std::numeric_limits<std::intmax_t>::max)() - m_mark_count < v)
       {
          fail(regex_constants::error_perl_extension, m_position - m_base, "An invalid or unterminated recursive sub-expression.");
          return false;
@@ -2145,7 +2145,7 @@ insert_recursion:
          // Oops not a relative recursion at all, but a (?-imsx) group:
          goto option_group_jump;
       }
-      v = static_cast<boost::intmax_t>(m_mark_count) + 1 - v;
+      v = static_cast<std::intmax_t>(m_mark_count) + 1 - v;
       if(v <= 0)
       {
          // Rewind to start of (? sequence:

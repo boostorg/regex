@@ -70,9 +70,15 @@ inline void pointer_construct(T* p, const T& t)
  *
  ****************************************************************************/
 
+#if defined(BOOST_WORKAROUND)
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__
+#define BOOST_REGEX_HAS_STRCPY_S
+#endif
+#endif
+
 #ifdef __cplusplus
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
-#if defined(BOOST_WORKAROUND) && BOOST_WORKAROUND(BOOST_MSVC,>=1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__ 
+#if defined(BOOST_REGEX_HAS_STRCPY_S)
 
    // use safe versions of strcpy etc:
    using ::strcpy_s;

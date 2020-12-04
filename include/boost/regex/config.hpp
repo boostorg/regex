@@ -90,6 +90,20 @@
 #  endif
 #endif
 
+
+/****************************************************************************
+*
+* Legacy support:
+*
+*******************************************************************************/
+
+#if defined(BOOST_NO_STD_LOCALE) || defined(BOOST_NO_CXX11_HDR_MUTEX) || defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) \
+   || defined(BOOST_NO_CXX11_HDR_ATOMIC) || defined(BOOST_NO_CXX11_ALLOCATOR) || defined(BOOST_NO_CXX11_SMART_PTR) || defined(BOOST_NO_CXX11_STATIC_ASSERT)
+#ifndef BOOST_REGEX_CXX03
+#  define BOOST_REGEX_CXX03
+#endif
+#endif
+
 /*****************************************************************************
  *
  *  Boilerplate regex config options:

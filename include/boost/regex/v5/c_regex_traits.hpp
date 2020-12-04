@@ -82,7 +82,7 @@ struct c_regex_traits<char>
    typedef std::size_t size_type;
    typedef std::string string_type;
    struct locale_type{};
-   typedef boost::uint32_t char_class_type;
+   typedef std::uint32_t char_class_type;
 
    static size_type length(const char_type* p) 
    { 
@@ -127,7 +127,7 @@ struct c_regex_traits<wchar_t>
    typedef std::size_t size_type;
    typedef std::wstring string_type;
    struct locale_type{};
-   typedef boost::uint32_t char_class_type;
+   typedef std::uint32_t char_class_type;
 
    static size_type length(const char_type* p) 
    { 
