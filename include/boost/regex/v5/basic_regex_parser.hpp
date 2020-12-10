@@ -411,7 +411,7 @@ bool basic_regex_parser<charT, traits>::parse_extended()
          while((m_position != m_end) && !is_separator(*m_position++)){}
          return true;
       }
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    default:
       result = parse_literal();
       break;
@@ -675,7 +675,7 @@ bool basic_regex_parser<charT, traits>::parse_basic_escape()
          {
          case 'w':
             negate = false;
-            BOOST_FALLTHROUGH;
+            BOOST_REGEX_FALLTHROUGH;
          case 'W':
             {
             basic_char_set<charT, traits> char_set;
@@ -692,7 +692,7 @@ bool basic_regex_parser<charT, traits>::parse_basic_escape()
             }
          case 's':
             negate = false;
-            BOOST_FALLTHROUGH;
+            BOOST_REGEX_FALLTHROUGH;
          case 'S':
             return add_emacs_code(negate);
          case 'c':
@@ -724,7 +724,7 @@ bool basic_regex_parser<charT, traits>::parse_extended_escape()
    {
    case regex_constants::escape_type_not_class:
       negate = true;
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    case regex_constants::escape_type_class:
       {
 escape_type_class_jump:
@@ -794,7 +794,7 @@ escape_type_class_jump:
       break;
    case regex_constants::escape_type_not_property:
       negate = true;
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    case regex_constants::escape_type_property:
       {
          ++m_position;
@@ -953,7 +953,7 @@ escape_type_class_jump:
    case regex_constants::escape_type_control_v:
       if(0 == (this->flags() & (regbase::main_option_type | regbase::no_perl_ex)))
          goto escape_type_class_jump;
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    default:
       this->append_literal(unescape_character());
       break;
@@ -2080,7 +2080,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
    {
    case regex_constants::syntax_or:
       m_mark_reset = m_mark_count;
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    case regex_constants::syntax_colon:
       //
       // a non-capturing mark:

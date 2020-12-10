@@ -152,7 +152,10 @@ test-suite regex
             <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] : standalone_concept_check
       ]
       [ link concepts/icu_concept_check.cpp :
-            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+            <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+      ]
+      [ link concepts/icu_concept_check.cpp :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] : standalone_icu_concept_check
       ]
       [ link concepts/range_concept_check.cpp :
             [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]

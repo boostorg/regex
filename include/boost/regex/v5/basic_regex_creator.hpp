@@ -736,14 +736,14 @@ void basic_regex_creator<charT, traits>::fixup_pointers(re_syntax_base* state)
       case syntax_element_long_set_rep:
          // set the state_id of this repeat:
          static_cast<re_repeat*>(state)->state_id = m_repeater_id++;
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       case syntax_element_alt:
          std::memset(static_cast<re_alt*>(state)->_map, 0, sizeof(static_cast<re_alt*>(state)->_map));
          static_cast<re_alt*>(state)->can_be_null = 0;
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       case syntax_element_jump:
          static_cast<re_jump*>(state)->alt.p = getaddress(static_cast<re_jump*>(state)->alt.i, state);
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       default:
          if(state->next.i)
             state->next.p = getaddress(state->next.i, state);
@@ -947,7 +947,7 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
                e.raise();
             }
          }
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       default:
          state = state->next.p;
       }
@@ -1170,13 +1170,13 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             }
             m_recursion_checks[recursion_sub] |= 1u;
             // can't handle nested recursion here...
-            BOOST_FALLTHROUGH;
+            BOOST_REGEX_FALLTHROUGH;
          }
       case syntax_element_backref:
          // can be null, and any character can match:
          if(pnull)
             *pnull |= mask;
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       case syntax_element_wild:
       {
          // can't be null, any character can match:
@@ -1383,7 +1383,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
             state = state->next.p->next.p;
             break;
          }
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       default:
          state = state->next.p;
       }
@@ -1569,7 +1569,7 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
       case syntax_element_long_set_rep:
          if(this->m_has_backrefs == 0)
             static_cast<re_repeat*>(state)->leading = true;
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       default:
          return;
       }

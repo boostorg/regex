@@ -35,7 +35,7 @@ namespace boost{
 // class regbase
 // handles error codes and flags
 //
-class BOOST_REGEX_DECL regbase
+class regbase
 {
 public:
    enum flag_type_

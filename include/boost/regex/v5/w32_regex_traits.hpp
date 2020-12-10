@@ -277,11 +277,11 @@ class w32_regex_traits_implementation : public w32_regex_traits_char_layer<charT
 {
 public:
    typedef typename w32_regex_traits<charT>::char_class_type char_class_type;
-   BOOST_STATIC_CONSTANT(char_class_type, mask_word = 0x0400); // must be C1_DEFINED << 1
-   BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 0x0800); // must be C1_DEFINED << 2
-   BOOST_STATIC_CONSTANT(char_class_type, mask_horizontal = 0x1000); // must be C1_DEFINED << 3
-   BOOST_STATIC_CONSTANT(char_class_type, mask_vertical = 0x2000); // must be C1_DEFINED << 4
-   BOOST_STATIC_CONSTANT(char_class_type, mask_base = 0x3ff);  // all the masks used by the CT_CTYPE1 group
+   static const char_class_type mask_word = 0x0400; // must be C1_DEFINED << 1
+   static const char_class_type mask_unicode = 0x0800; // must be C1_DEFINED << 2
+   static const char_class_type mask_horizontal = 0x1000; // must be C1_DEFINED << 3
+   static const char_class_type mask_vertical = 0x2000; // must be C1_DEFINED << 4
+   static const char_class_type mask_base = 0x3ff;  // all the masks used by the CT_CTYPE1 group
 
    typedef std::basic_string<charT> string_type;
    typedef charT char_type;

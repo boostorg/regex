@@ -118,12 +118,20 @@
 #define UNICODE
 #endif
 
+#define BOOST_REGEX_JOIN(x, y) x##y
+
+#ifdef BOOST_FALLTHROUGH
+#  define BOOST_REGEX_FALLTHROUGH BOOST_FALLTHROUGH
+#else
+#  define BOOST_REGEX_FALLTHROUGH
+#endif
+
 
 /*
 * Define a macro for the namespace that details are placed in, this includes the Boost
 * version number to avoid mismatched header and library versions:
 */
-#define BOOST_REGEX_DETAIL_NS BOOST_JOIN(re_detail_, BOOST_RE_VERSION)
+#define BOOST_REGEX_DETAIL_NS BOOST_REGEX_JOIN(re_detail_, BOOST_RE_VERSION)
 
 /*
  * Fix for gcc prior to 3.4: std::ctype<wchar_t> doesn't allow
@@ -153,7 +161,7 @@
 #     define _STLP_CWCTYPE
 #  endif
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && defined(BOOST_REGEX_CXX03)
 #  include <boost/regex/config/cwchar.hpp>
 #endif
 
@@ -200,15 +208,15 @@
  *
  ****************************************************************************/
 
-#ifndef BOOST_SYMBOL_EXPORT
+#if !defined(BOOST_SYMBOL_EXPORT)
 #  define BOOST_SYMBOL_EXPORT
 #  define BOOST_SYMBOL_IMPORT
 #endif
 
 #if (defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)) && !defined(BOOST_REGEX_STATIC_LINK)
 #  if defined(BOOST_REGEX_SOURCE)
-#     define BOOST_REGEX_DECL BOOST_SYMBOL_EXPORT
 #     define BOOST_REGEX_BUILD_DLL
+#     define BOOST_REGEX_DECL BOOST_SYMBOL_EXPORT
 #  else
 #     define BOOST_REGEX_DECL BOOST_SYMBOL_IMPORT
 #  endif
@@ -216,6 +224,7 @@
 #  define BOOST_REGEX_DECL
 #endif
 
+#ifdef BOOST_REGEX_CXX03
 #if !defined(BOOST_REGEX_NO_LIB) && !defined(BOOST_REGEX_SOURCE) && !defined(BOOST_ALL_NO_LIB) && defined(__cplusplus)
 #  define BOOST_LIB_NAME boost_regex
 #  if defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)
@@ -225,6 +234,7 @@
 #     define BOOST_LIB_DIAGNOSTIC
 #  endif
 #  include <boost/config/auto_link.hpp>
+#endif
 #endif
 
 /*****************************************************************************

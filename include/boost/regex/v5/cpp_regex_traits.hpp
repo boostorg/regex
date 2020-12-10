@@ -90,9 +90,9 @@ public:
    parser_buf() : base_type() { setbuf(0, 0); }
    const charT* getnext() { return this->gptr(); }
 protected:
-   std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n) BOOST_OVERRIDE;
-   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which) BOOST_OVERRIDE;
-   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which) BOOST_OVERRIDE;
+   std::basic_streambuf<charT, traits>* setbuf(char_type* s, streamsize n) override;
+   typename parser_buf<charT, traits>::pos_type seekpos(pos_type sp, ::std::ios_base::openmode which) override;
+   typename parser_buf<charT, traits>::pos_type seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which) override;
 private:
    parser_buf& operator=(const parser_buf&);
    parser_buf(const parser_buf&);
@@ -214,11 +214,11 @@ std::locale cpp_regex_traits_base<charT>::imbue(const std::locale& l)
 {
    std::locale result(m_locale);
    m_locale = l;
-   m_pctype = &BOOST_USE_FACET(std::ctype<charT>, l);
+   m_pctype = &std::use_facet<std::ctype<charT>>(l);
 #ifndef BOOST_NO_STD_MESSAGES
-   m_pmessages = BOOST_HAS_FACET(std::messages<charT>, l) ? &BOOST_USE_FACET(std::messages<charT>, l) : 0;
+   m_pmessages = std::has_facet<std::messages<charT> >(l) ? &std::use_facet<std::messages<charT> >(l) : 0;
 #endif
-   m_pcollate = &BOOST_USE_FACET(std::collate<charT>, l);
+   m_pcollate = &std::use_facet<std::collate<charT> >(l);
    return result;
 }
 
@@ -394,11 +394,11 @@ public:
    typedef typename cpp_regex_traits<charT>::char_class_type      char_class_type;
    typedef typename std::ctype<charT>::mask                       native_mask_type;
    typedef typename std::make_unsigned<native_mask_type>::type    unsigned_native_mask_type;
-   BOOST_STATIC_CONSTANT(char_class_type, mask_blank = 1u << 24);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_word = 1u << 25);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_unicode = 1u << 26);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_horizontal = 1u << 27);
-   BOOST_STATIC_CONSTANT(char_class_type, mask_vertical = 1u << 28);
+   static const char_class_type mask_blank = 1u << 24;
+   static const char_class_type mask_word = 1u << 25;
+   static const char_class_type mask_unicode = 1u << 26;
+   static const char_class_type mask_horizontal = 1u << 27;
+   static const char_class_type mask_vertical = 1u << 28;
 
    typedef std::basic_string<charT> string_type;
    typedef charT char_type;
@@ -928,7 +928,7 @@ std::intmax_t cpp_regex_traits<charT>::toi(const charT*& first, const charT* las
    std::basic_istream<charT>      is(&sbuf);       // stream for parsing numbers.
 
    // we do NOT want to parse any thousands separators inside the stream:
-   last = std::find(first, last, BOOST_USE_FACET(std::numpunct<charT>, is.getloc()).thousands_sep());
+   last = std::find(first, last, std::use_facet<std::numpunct<charT>>(is.getloc()).thousands_sep());
 
    sbuf.pubsetbuf(const_cast<charT*>(static_cast<const charT*>(first)), static_cast<std::streamsize>(last-first));
    is.clear();

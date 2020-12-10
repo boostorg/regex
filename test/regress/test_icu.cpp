@@ -23,6 +23,7 @@
 #if defined(BOOST_HAS_ICU) && !defined(BOOST_NO_STD_WSTRING)
 
 #include <boost/regex/icu.hpp>
+#include <boost/mpl/int.hpp>
 #include "test.hpp"
 
 namespace unnecessary_fix{

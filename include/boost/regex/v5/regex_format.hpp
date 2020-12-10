@@ -279,7 +279,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
             break;
          }
          // not a special character:
-         BOOST_FALLTHROUGH;
+         BOOST_REGEX_FALLTHROUGH;
       default:
          put(*m_position);
          ++m_position;
@@ -350,7 +350,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    case '{':
       have_brace = true;
       ++m_position;
-      BOOST_FALLTHROUGH;
+      BOOST_REGEX_FALLTHROUGH;
    default:
       // see if we have a number:
       {
@@ -938,7 +938,7 @@ private:
    static O out;
    static boost::regex_constants::match_flag_type flags;
 public:
-   BOOST_STATIC_CONSTANT(int, value = sizeof(check_is_formatter(f(m), f(m, out), f(m, out, flags))));
+   static const int value = sizeof(check_is_formatter(f(m), f(m, out), f(m, out, flags)));
 };
 
 template <class F, class M, class O>
