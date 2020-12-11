@@ -38,6 +38,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <cctype>
+#include <locale>
 #include <cwctype>
 
 #ifdef BOOST_NO_STDC_NAMESPACE

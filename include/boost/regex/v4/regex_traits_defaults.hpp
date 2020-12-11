@@ -33,6 +33,10 @@
 #include <boost/regex/config.hpp>
 #include <boost/cstdint.hpp>
 
+#include <cctype>
+#include <cwctype>
+#include <locale>
+
 #ifndef BOOST_REGEX_SYNTAX_TYPE_HPP
 #include <boost/regex/v4/syntax_type.hpp>
 #endif
