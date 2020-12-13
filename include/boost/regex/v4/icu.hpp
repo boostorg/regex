@@ -82,16 +82,16 @@ namespace boost {
             ::uint8_t result[100];
             ::int32_t len;
             if (!t.empty())
-               len = pcoll->getSortKey(&*t.begin(), static_cast<::int32_t>(t.size()), result, sizeof(result));
+               len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), result, sizeof(result));
             else
-               len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<::int32_t>(0), result, sizeof(result));
+               len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast< ::int32_t>(0), result, sizeof(result));
             if (std::size_t(len) > sizeof(result))
             {
                scoped_array< ::uint8_t> presult(new ::uint8_t[len + 1]);
                if (!t.empty())
-                  len = pcoll->getSortKey(&*t.begin(), static_cast<::int32_t>(t.size()), presult.get(), len + 1);
+                  len = pcoll->getSortKey(&*t.begin(), static_cast< ::int32_t>(t.size()), presult.get(), len + 1);
                else
-                  len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast<::int32_t>(0), presult.get(), len + 1);
+                  len = pcoll->getSortKey(static_cast<UChar const*>(0), static_cast< ::int32_t>(0), presult.get(), len + 1);
                if ((0 == presult[len - 1]) && (len > 1))
                   --len;
 #ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
@@ -374,7 +374,7 @@ namespace boost {
       }
       int value(char_type c, int radix)const
       {
-         return u_digit(c, static_cast<::int8_t>(radix));
+         return u_digit(c, static_cast< ::int8_t>(radix));
       }
       locale_type imbue(locale_type l)
       {
