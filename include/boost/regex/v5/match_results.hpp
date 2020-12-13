@@ -19,25 +19,25 @@
 #ifndef BOOST_REGEX_V5_MATCH_RESULTS_HPP
 #define BOOST_REGEX_V5_MATCH_RESULTS_HPP
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
 namespace boost{
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
-#pragma warning(disable : 4251)
-#if BOOST_MSVC < 1700
+#pragma warning(disable : 4251 4459)
+#if BOOST_REGEX_MSVC < 1700
 #     pragma warning(disable : 4231)
 #endif
-#  if BOOST_MSVC < 1600
+#  if BOOST_REGEX_MSVC < 1600
 #     pragma warning(disable : 4660)
 #  endif
 #endif
@@ -668,19 +668,19 @@ std::basic_ostream<charT, traits>&
    return (os << s.str());
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

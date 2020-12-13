@@ -14,27 +14,27 @@
 
 #include <boost/regex/v5/iterator_category.hpp>
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#pragma warning(disable : 4251)
-#if BOOST_MSVC < 1700
+#pragma warning(disable : 4251 4459)
+#if BOOST_REGEX_MSVC < 1700
 #     pragma warning(disable : 4231)
 #endif
-#  if BOOST_MSVC < 1600
+#  if BOOST_REGEX_MSVC < 1600
 #     pragma warning(disable : 4660)
 #  endif
-#if BOOST_MSVC < 1910
+#if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
 #endif
@@ -332,9 +332,9 @@ enum saved_state_type
    saved_state_count = 14
 };
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#if BOOST_MSVC >= 1800
+#if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable:26495)
 #endif
 #endif
@@ -349,7 +349,7 @@ struct recursion_info
    repeater_count<iterator>* repeater_stack;
    iterator location_of_start;
 };
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
@@ -550,9 +550,9 @@ private:
    // Recursion limit:
    unsigned m_recursions;
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#if BOOST_MSVC >= 1800
+#if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable:26495)
 #endif
 #endif
@@ -564,25 +564,25 @@ private:
    }
    perl_matcher(const perl_matcher& that)
       : m_result(that.m_result), re(that.re), traits_inst(that.traits_inst), rep_obj(0) {}
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 };
 
 } // namespace BOOST_REGEX_DETAIL_NS
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

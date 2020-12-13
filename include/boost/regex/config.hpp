@@ -98,7 +98,8 @@
 *******************************************************************************/
 
 #if defined(BOOST_NO_STD_LOCALE) || defined(BOOST_NO_CXX11_HDR_MUTEX) || defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) \
-   || defined(BOOST_NO_CXX11_HDR_ATOMIC) || defined(BOOST_NO_CXX11_ALLOCATOR) || defined(BOOST_NO_CXX11_SMART_PTR) || defined(BOOST_NO_CXX11_STATIC_ASSERT)
+   || defined(BOOST_NO_CXX11_HDR_ATOMIC) || defined(BOOST_NO_CXX11_ALLOCATOR) || defined(BOOST_NO_CXX11_SMART_PTR) \
+   || defined(BOOST_NO_CXX11_STATIC_ASSERT) || defined(BOOST_NO_NOEXCEPT)
 #ifndef BOOST_REGEX_CXX03
 #  define BOOST_REGEX_CXX03
 #endif
@@ -199,6 +200,14 @@
 #endif
 #if defined(__COMO__) && !defined(BOOST_REGEX_NO_W32) && !defined(_MSC_EXTENSIONS)
 #  define BOOST_REGEX_NO_W32
+#endif
+
+#ifdef BOOST_REGEX_STANDALONE
+#  if defined(_MSC_VER) && !defined(__clang__) && !defined(__GNUC__)
+#     define BOOST_REGEX_MSVC _MSC_VER
+#endif
+#elif defined(BOOST_MSVC)
+#  define BOOST_REGEX_MSVC BOOST_MSVC
 #endif
 
 

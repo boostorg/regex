@@ -19,14 +19,14 @@
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #define BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -40,12 +40,6 @@
 #include <cctype>
 #include <locale>
 #include <cwctype>
-
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std{
-   using ::strlen;
-}
-#endif
 
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
@@ -762,7 +756,20 @@ struct character_pointer_range
       // calling std::equal, but there is no other algorithm available:
       // not even a non-standard MS one.  So forward to unchecked_equal
       // in the MS case.
+#ifdef __cpp_lib_robust_nonmodifying_seq_ops
+      return std::equal(p1, p2, r.p1, r.p2);
+#elif defined(BOOST_REGEX_MSVC)
+      if (((p2 - p1) != (r.p2 - r.p1)))
+         return false;
+      const charT* with = r.p1;
+      const charT* pos = p1;
+      while (pos != p2)
+         if (*pos++ != *with++) return false;
+      return true;
+
+#else
       return ((p2 - p1) == (r.p2 - r.p1)) && std::equal(p1, p2, r.p1);
+#endif
    }
 };
 template <class charT>
@@ -938,7 +945,7 @@ std::intmax_t global_toi(const charT*& p1, const charT* p2, int radix, const tra
 template <class charT>
 inline typename std::enable_if<(sizeof(charT) > 1), const charT*>::type get_escape_R_string()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #  pragma warning(disable:4309 4245)
 #endif
@@ -952,7 +959,7 @@ inline typename std::enable_if<(sizeof(charT) > 1), const charT*>::type get_esca
    bool b = (static_cast<unsigned>(c) == 0x2029u);
 
    return (b ? e1 : e2);
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 }
@@ -960,14 +967,35 @@ inline typename std::enable_if<(sizeof(charT) > 1), const charT*>::type get_esca
 template <class charT>
 inline typename std::enable_if<(sizeof(charT) == 1), const charT*>::type get_escape_R_string()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#  pragma warning(disable:4309)
+#  pragma warning(disable:4309 4245)
 #endif
-   static const charT e2[] = { '(', '?', '-', 'x', ':', '(', '?', '>', '\x0D', '\x0A', '?',
-      '|', '[', '\x0A', '\x0B', '\x0C', '\x85', ']', ')', ')', '\0' };
+   static const charT e2[] = { 
+      static_cast<charT>('('), 
+      static_cast<charT>('?'), 
+      static_cast<charT>('-'), 
+      static_cast<charT>('x'), 
+      static_cast<charT>(':'), 
+      static_cast<charT>('('), 
+      static_cast<charT>('?'), 
+      static_cast<charT>('>'), 
+      static_cast<charT>('\x0D'), 
+      static_cast<charT>('\x0A'), 
+      static_cast<charT>('?'),
+      static_cast<charT>('|'), 
+      static_cast<charT>('['), 
+      static_cast<charT>('\x0A'), 
+      static_cast<charT>('\x0B'), 
+      static_cast<charT>('\x0C'), 
+      static_cast<charT>('\x85'), 
+      static_cast<charT>(']'), 
+      static_cast<charT>(')'), 
+      static_cast<charT>(')'), 
+      static_cast<charT>('\0') 
+   };
    return e2;
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 }
@@ -975,14 +1003,14 @@ inline typename std::enable_if<(sizeof(charT) == 1), const charT*>::type get_esc
 } // BOOST_REGEX_DETAIL_NS
 } // boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

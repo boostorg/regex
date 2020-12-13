@@ -19,30 +19,30 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_HPP
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
 #include <vector>
 
 namespace boost{
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable : 4251)
-#if BOOST_MSVC < 1700
+#if BOOST_REGEX_MSVC < 1700
 #     pragma warning(disable : 4231)
 #endif
-#if BOOST_MSVC < 1600
+#if BOOST_REGEX_MSVC < 1600
 #pragma warning(disable : 4660)
 #endif
-#if BOOST_MSVC < 1910
+#if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
 #endif
@@ -177,14 +177,14 @@ struct regex_data : public named_subexpressions
       ::boost::regex_traits_wrapper<traits> >& t) 
       : m_ptraits(t), m_flags(0), m_status(0), m_expression(0), m_expression_len(0),
          m_mark_count(0), m_first_state(0), m_restart_type(0),
-#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_MSVC) && (BOOST_MSVC < 1900))
+#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_REGEX_MSVC) && (BOOST_REGEX_MSVC < 1900))
          m_startmap{ 0 },
 #endif
          m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
    regex_data() 
       : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_flags(0), m_status(0), m_expression(0), m_expression_len(0), 
          m_mark_count(0), m_first_state(0), m_restart_type(0), 
-#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_MSVC) && (BOOST_MSVC < 1900))
+#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_REGEX_MSVC) && (BOOST_REGEX_MSVC < 1900))
       m_startmap{ 0 },
 #endif
          m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
@@ -786,20 +786,20 @@ public:
 
 };
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning (pop)
 #endif
 
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

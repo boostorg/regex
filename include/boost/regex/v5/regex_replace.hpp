@@ -24,14 +24,14 @@
 
 namespace boost{
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -48,7 +48,7 @@ OutputIterator regex_replace(OutputIterator out,
    if(i == j)
    {
       if(!(flags & regex_constants::format_no_copy))
-         out = std::copy(first, last, out);
+         out = BOOST_REGEX_DETAIL_NS::copy(first, last, out);
    }
    else
    {
@@ -56,7 +56,7 @@ OutputIterator regex_replace(OutputIterator out,
       while(i != j)
       {
          if(!(flags & regex_constants::format_no_copy))
-            out = std::copy(i->prefix().first, i->prefix().second, out); 
+            out = BOOST_REGEX_DETAIL_NS::copy(i->prefix().first, i->prefix().second, out);
          out = i->format(out, fmt, flags, e);
          last_m = (*i)[0].second;
          if(flags & regex_constants::format_first_only)
@@ -64,7 +64,7 @@ OutputIterator regex_replace(OutputIterator out,
          ++i;
       }
       if(!(flags & regex_constants::format_no_copy))
-         out = std::copy(last_m, last, out);
+         out = BOOST_REGEX_DETAIL_NS::copy(last_m, last, out);
    }
    return out;
 }
@@ -81,14 +81,14 @@ std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
    return result;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

@@ -19,29 +19,18 @@
 #ifndef BOOST_C_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_C_REGEX_TRAITS_HPP_INCLUDED
 
-#ifndef BOOST_REGEX_CONFIG_HPP
 #include <boost/regex/config.hpp>
-#endif
-#ifndef BOOST_REGEX_WORKAROUND_HPP
 #include <boost/regex/v5/regex_workaround.hpp>
-#endif
-
 #include <cctype>
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std{
-   using ::strlen; using ::tolower;
-}
-#endif
-
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103 4244)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -459,14 +448,10 @@ inline bool  c_regex_traits<wchar_t>::isctype(wchar_t c, char_class_type mask)
 
 inline c_regex_traits<wchar_t>::string_type  c_regex_traits<wchar_t>::lookup_collatename(const wchar_t* p1, const wchar_t* p2)
 {
-#ifdef BOOST_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4244)
-#endif
-   std::string name(p1, p2);
-#ifdef BOOST_MSVC
-#pragma warning(pop)
-#endif
+   std::string name;
+   // Usual msvc warning suppression does not work here with std::string template constructor.... use a workaround instead:
+   for (const wchar_t* pos = p1; pos != p2; ++pos)
+      name.push_back((char)*pos);
    name = ::boost::BOOST_REGEX_DETAIL_NS::lookup_default_collate_name(name);
    if (!name.empty())
       return string_type(name.begin(), name.end());
@@ -494,14 +479,14 @@ inline int  c_regex_traits<wchar_t>::value(wchar_t c, int radix)
 
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

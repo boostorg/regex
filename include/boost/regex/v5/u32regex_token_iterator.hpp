@@ -24,7 +24,7 @@ namespace boost{
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #  pragma warning(disable:4700)
 #endif
@@ -302,7 +302,7 @@ inline u32regex_token_iterator<const UChar*> make_u32regex_token_iterator(const 
    return u32regex_token_iterator<const UChar*>(s.getBuffer(), s.getBuffer() + s.length(), e, submatch, m);
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS

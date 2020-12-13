@@ -227,7 +227,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
       std::size_t len = p.size();
       if(len < buf_size)
       {
-         std::copy(p.c_str(), p.c_str() + p.size() + 1, buf);
+         BOOST_REGEX_DETAIL_NS::copy(p.c_str(), p.c_str() + p.size() + 1, buf);
       }
       return len + 1;
    }

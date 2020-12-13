@@ -19,27 +19,27 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
-#if BOOST_MSVC >= 1800
+#if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable: 26812)
 #endif
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
-#pragma warning(disable:4244)
-#if BOOST_MSVC < 1910
+#pragma warning(disable:4244 4459)
+#if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
 #endif
@@ -112,7 +112,7 @@ private:
    std::ptrdiff_t             m_alt_insert_point; // where to insert the next alternative
    bool                       m_has_case_change; // true if somewhere in the current block the case has changed
    unsigned                   m_recursion_count; // How many times we've called parse_all.
-#if defined(BOOST_MSVC) && defined(_M_IX86)
+#if defined(BOOST_REGEX_MSVC) && defined(_M_IX86)
    // This is an ugly warning suppression workaround (for warnings *inside* std::vector
    // that can not otherwise be suppressed)...
    static_assert(sizeof(long) >= sizeof(void*), "Long isn't long enough!");
@@ -267,7 +267,7 @@ bool basic_regex_parser<charT, traits>::parse_all()
    return result;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4702)
 #endif
@@ -325,9 +325,9 @@ bool basic_regex_parser<charT, traits>::parse_basic()
    return true;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#if BOOST_MSVC >= 1800
+#if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable:26812)
 #endif
 #endif
@@ -418,10 +418,10 @@ bool basic_regex_parser<charT, traits>::parse_extended()
    }
    return result;
 }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -925,11 +925,11 @@ escape_type_class_jump:
          }
          if(negative)
             i = 1 + (static_cast<std::intmax_t>(m_mark_count) - i);
-         if(((i < hash_value_mask) && (i > 0) && (this->m_backrefs.test(i))) || ((i >= hash_value_mask) && (this->m_pdata->get_id(i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id(i)))))
+         if(((i < hash_value_mask) && (i > 0) && (this->m_backrefs.test((std::size_t)i))) || ((i >= hash_value_mask) && (this->m_pdata->get_id((int)i) > 0) && (this->m_backrefs.test(this->m_pdata->get_id((int)i)))))
          {
             m_position = pc;
             re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
-            pb->index = i;
+            pb->index = (int)i;
             pb->icase = this->flags() & regbase::icase;
          }
          else
@@ -1759,7 +1759,7 @@ bool valid_value(charT c, std::intmax_t v)
 template <class charT, class traits>
 charT basic_regex_parser<charT, traits>::unescape_character()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
@@ -1940,7 +1940,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
    }
    ++m_position;
    return result;
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -1957,11 +1957,11 @@ bool basic_regex_parser<charT, traits>::parse_backref()
       charT c = unescape_character();
       this->append_literal(c);
    }
-   else if((i > 0) && (this->m_backrefs.test(i)))
+   else if((i > 0) && (this->m_backrefs.test((std::size_t)i)))
    {
       m_position = pc;
       re_brace* pb = static_cast<re_brace*>(this->append_state(syntax_element_backref, sizeof(re_brace)));
-      pb->index = i;
+      pb->index = (int)i;
       pb->icase = this->flags() & regbase::icase;
    }
    else
@@ -1978,7 +1978,7 @@ bool basic_regex_parser<charT, traits>::parse_backref()
 template <class charT, class traits>
 bool basic_regex_parser<charT, traits>::parse_QE()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
@@ -2022,7 +2022,7 @@ bool basic_regex_parser<charT, traits>::parse_QE()
       ++start;
    }
    return true;
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -2105,7 +2105,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_extension()
 insert_recursion:
       pb->index = markid = 0;
       re_recurse* pr = static_cast<re_recurse*>(this->append_state(syntax_element_recurse, sizeof(re_recurse)));
-      pr->alt.i = v;
+      pr->alt.i = (std::ptrdiff_t)v;
       pr->state_id = 0;
       static_cast<re_case*>(
             this->append_state(syntax_element_toggle_case, sizeof(re_case))
@@ -2260,7 +2260,7 @@ insert_recursion:
             v = -this->m_traits.toi(m_position, m_end, 10);
          }
          re_brace* br = static_cast<re_brace*>(this->append_state(syntax_element_assert_backref, sizeof(re_brace)));
-         br->index = v < 0 ? (v - 1) : 0;
+         br->index = v < 0 ? (int)(v - 1) : 0;
          if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark)
          {
             // Rewind to start of (? sequence:
@@ -2293,7 +2293,7 @@ insert_recursion:
          }
          v = static_cast<int>(hash_value_from_capture_name(base, m_position));
          re_brace* br = static_cast<re_brace*>(this->append_state(syntax_element_assert_backref, sizeof(re_brace)));
-         br->index = v;
+         br->index = (int)v;
          if(((*m_position != charT('>')) && (*m_position != charT('\''))) || (++m_position == m_end))
          {
             // Rewind to start of (? sequence:
@@ -2354,7 +2354,7 @@ insert_recursion:
       else if(v > 0)
       {
          re_brace* br = static_cast<re_brace*>(this->append_state(syntax_element_assert_backref, sizeof(re_brace)));
-         br->index = v;
+         br->index = (int)v;
          if(this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_mark)
          {
             // Rewind to start of (? sequence:
@@ -2759,9 +2759,9 @@ bool basic_regex_parser<charT, traits>::match_verb(const char* verb)
    return true;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#if BOOST_MSVC >= 1800
+#if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable:26812)
 #endif
 #endif
@@ -2933,7 +2933,7 @@ bool basic_regex_parser<charT, traits>::parse_perl_verb()
    fail(regex_constants::error_perl_extension, m_position - m_base);
    return false;
 }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
@@ -3143,21 +3143,21 @@ bool basic_regex_parser<charT, traits>::unwind_alts(std::ptrdiff_t last_paren_st
    return true;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
 } // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

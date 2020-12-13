@@ -22,20 +22,21 @@
 
 #include <boost/regex/v5/indexed_bit_flag.hpp>
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#if BOOST_MSVC < 1910
+#pragma warning(disable:4459)
+#if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
 #endif
@@ -478,10 +479,10 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
          return 0;
       }
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s1.size() + s2.size() + 2) ) );
-      std::copy(s1.begin(), s1.end(), p);
+      BOOST_REGEX_DETAIL_NS::copy(s1.begin(), s1.end(), p);
       p[s1.size()] = charT(0);
       p += s1.size() + 1;
-      std::copy(s2.begin(), s2.end(), p);
+      BOOST_REGEX_DETAIL_NS::copy(s2.begin(), s2.end(), p);
       p[s2.size()] = charT(0);
    }
    //
@@ -502,7 +503,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
       charT* p = static_cast<charT*>(this->m_pdata->m_data.extend(sizeof(charT) * (s.size()+1) ) );
-      std::copy(s.begin(), s.end(), p);
+      BOOST_REGEX_DETAIL_NS::copy(s.begin(), s.end(), p);
       p[s.size()] = charT(0);
       ++sfirst;
    }
@@ -681,7 +682,7 @@ void basic_regex_creator<charT, traits>::finalize(const charT* p1, const charT* 
    m_pdata->m_expression_len = len;
    charT* ps = static_cast<charT*>(m_pdata->m_data.extend(sizeof(charT) * (1 + (p2 - p1))));
    m_pdata->m_expression = ps;
-   std::copy(p1, p2, ps);
+   BOOST_REGEX_DETAIL_NS::copy(p1, p2, ps);
    ps[p2 - p1] = 0;
    // fill in our other data...
    // successful parsing implies a zero status:
@@ -1530,7 +1531,7 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
             state = state->next.p;
             continue;
          }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #pragma warning(disable:6011)
 #endif
@@ -1541,7 +1542,7 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
             state = static_cast<const re_jump*>(state->next.p)->alt.p->next.p;
             continue;
          }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
          if(static_cast<re_brace*>(state)->index == -3)
@@ -1580,18 +1581,18 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
 
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

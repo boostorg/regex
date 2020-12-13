@@ -22,20 +22,20 @@
 
 #include <boost/regex/v5/mem_block_cache.hpp>
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
-#  pragma warning(disable: 4706)
-#if BOOST_MSVC < 1910
+#  pragma warning(disable: 4706 4459)
+#if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
 #endif
 #endif
@@ -596,7 +596,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_alt()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127 4244)
 #endif
@@ -694,7 +694,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 #ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -786,7 +786,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
@@ -853,7 +853,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 #ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -861,7 +861,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
@@ -927,7 +927,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 #ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -935,7 +935,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 {
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
@@ -1002,7 +1002,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 #ifdef BOOST_BORLANDC
 #pragma option pop
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 }
@@ -1860,7 +1860,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_then(bool b)
    // Unwind everything till we hit an alternative:
    boost::BOOST_REGEX_DETAIL_NS::inplace_destroy(m_backup_state++);
    bool result = false;
-   while((result = unwind(b)) && !m_unwound_alt){}
+   result = unwind(b);
+   while(result && !m_unwound_alt)
+   {
+      result = unwind(b);
+   }
    // We're now pointing at the next alternative, need one more backtrack 
    // since *all* the other alternatives must fail once we've reached a THEN clause:
    if(result && m_unwound_alt)
@@ -1871,18 +1875,18 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_then(bool b)
 } // namespace BOOST_REGEX_DETAIL_NS
 } // namespace boost
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

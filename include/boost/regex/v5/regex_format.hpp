@@ -26,14 +26,14 @@
 
 namespace boost{
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -78,7 +78,7 @@ struct trivial_format_traits
    }
 };
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #pragma warning(disable:26812)
 #endif
@@ -145,7 +145,7 @@ private:
       typedef typename std::is_convertible<ForwardIter, const char_type*>::type tag_type;
       return get_named_sub_index(i, j, tag_type());
    }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
    // msvc-8.0 issues a spurious warning on the call to std::advance here:
 #pragma warning(push)
 #pragma warning(disable:4244)
@@ -163,7 +163,7 @@ private:
       }
       return -1;
    }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
    inline int toi(ForwardIter& i, ForwardIter j, int base, const std::integral_constant<bool, true>&)
@@ -195,7 +195,7 @@ private:
    basic_regex_formatter(const basic_regex_formatter&);
    basic_regex_formatter& operator=(const basic_regex_formatter&);
 };
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
 #endif
 
@@ -825,7 +825,7 @@ OutputIterator regex_format_imp(OutputIterator out,
 {
    if(flags & regex_constants::format_literal)
    {
-      return std::copy(p1, p2, out);
+      return BOOST_REGEX_DETAIL_NS::copy(p1, p2, out);
    }
 
    BOOST_REGEX_DETAIL_NS::basic_regex_formatter<
@@ -1124,14 +1124,14 @@ inline std::basic_string<typename match_results<Iterator, Allocator>::char_type>
    return m.format(fmt, flags);
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
 #endif
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 

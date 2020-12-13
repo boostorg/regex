@@ -57,7 +57,7 @@ private:
    friend struct data;
 };
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable: 4702)
 #endif
@@ -72,7 +72,7 @@ std::shared_ptr<Object const> object_cache<Key, Object>::get(const Key& k, size_
    return do_get(k, l_max_cache_size);
 #endif
 }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
@@ -134,7 +134,7 @@ std::shared_ptr<Object const> object_cache<Key, Object>::do_get(const Key& k, si
       list_iterator last = s_data.cont.end();
       while((pos != last) && (s > l_max_cache_size))
       {
-         if(pos->first.unique())
+         if(pos->first.use_count() == 1)
          {
             list_iterator condemmed(pos);
             ++pos;

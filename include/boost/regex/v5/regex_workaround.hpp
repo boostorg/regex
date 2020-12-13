@@ -44,7 +44,7 @@
 #ifdef __cplusplus
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning (push)
 #pragma warning (disable : 4100)
 #endif
@@ -53,7 +53,7 @@ template <class T>
 inline void pointer_destroy(T* p)
 { p->~T(); (void)p; }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning (pop)
 #endif
 
@@ -71,13 +71,39 @@ inline void pointer_construct(T* p, const T& t)
  ****************************************************************************/
 
 #if defined(BOOST_WORKAROUND)
-#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__
+#if BOOST_WORKAROUND(BOOST_REGEX_MSVC, >= 1400) && defined(__STDC_WANT_SECURE_LIB__) && __STDC_WANT_SECURE_LIB__
 #define BOOST_REGEX_HAS_STRCPY_S
 #endif
 #endif
 
 #ifdef __cplusplus
 namespace boost{ namespace BOOST_REGEX_DETAIL_NS{
+
+#if defined(BOOST_REGEX_MSVC) && (BOOST_REGEX_MSVC < 1910)
+   //
+   // MSVC 10 will either emit warnings or else refuse to compile
+   // code that makes perfectly legitimate use of std::copy, when
+   // the OutputIterator type is a user-defined class (apparently all user 
+   // defined iterators are "unsafe").  What's more Microsoft have removed their
+   // non-standard "unchecked" versions, even though they are still in the MS
+   // documentation!! Work around this as best we can: 
+   //
+   template<class InputIterator, class OutputIterator>
+   inline OutputIterator copy(
+      InputIterator first,
+      InputIterator last,
+      OutputIterator dest
+   )
+   {
+      while (first != last)
+         *dest++ = *first++;
+      return dest;
+   }
+#else 
+   using std::copy;
+#endif 
+
+
 #if defined(BOOST_REGEX_HAS_STRCPY_S)
 
    // use safe versions of strcpy etc:

@@ -27,7 +27,7 @@
 #include <boost/regex.hpp>
 #include <boost/regex/v5/unicode_iterator.hpp>
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning (push)
 #pragma warning (disable: 4251)
 #endif
@@ -1392,7 +1392,7 @@ inline U_NAMESPACE_QUALIFIER UnicodeString u32regex_replace(const U_NAMESPACE_QU
 
 } // namespace boost.
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning (pop)
 #endif
 

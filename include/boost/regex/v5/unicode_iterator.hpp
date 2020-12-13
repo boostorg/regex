@@ -114,7 +114,7 @@ inline unsigned utf8_trailing_byte_count(std::uint8_t c)
    return utf8_byte_count(c) - 1;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4100)
 #endif
@@ -132,7 +132,7 @@ inline void invalid_utf32_code_point(std::uint32_t val)
    throw e;
 #endif
 }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
