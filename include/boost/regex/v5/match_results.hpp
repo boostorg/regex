@@ -61,12 +61,12 @@ public:
    typedef          const_iterator                                          iterator;
    typedef typename std::iterator_traits<
                                     BidiIterator>::difference_type          difference_type;
-   typedef typename Allocator::size_type                                    size_type;
+   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
    typedef          Allocator                                               allocator_type;
    typedef typename std::iterator_traits<
                                     BidiIterator>::value_type               char_type;
    typedef          std::basic_string<char_type>                            string_type;
-   typedef          BOOST_REGEX_DETAIL_NS::named_subexpressions                         named_sub_type;
+   typedef          BOOST_REGEX_DETAIL_NS::named_subexpressions             named_sub_type;
 
    // construct/copy/destroy:
    explicit match_results(const Allocator& a = Allocator())
