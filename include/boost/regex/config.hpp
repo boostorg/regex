@@ -126,7 +126,22 @@
 #ifdef BOOST_FALLTHROUGH
 #  define BOOST_REGEX_FALLTHROUGH BOOST_FALLTHROUGH
 #else
+
+#if defined(__clang__) && (__cplusplus >= 201103L) && defined(__has_warning)
+#  if __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
+#    define BOOST_REGEX_FALLTHROUGH [[clang::fallthrough]]
+#  endif
+#endif
+#if !defined(BOOST_REGEX_FALLTHROUGH) && defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1800) && (__cplusplus >= 201703)
+#  define BOOST_REGEX_FALLTHROUGH [[fallthrough]]
+#endif
+#if !defined(BOOST_REGEX_FALLTHROUGH) && defined(__GNUC__) && (__GNUC__ >= 7)
+#  define BOOST_REGEX_FALLTHROUGH __attribute__((fallthrough))
+#endif
+
+#if !defined(BOOST_REGEX_FALLTHROUGH)
 #  define BOOST_REGEX_FALLTHROUGH
+#endif
 #endif
 
 
@@ -219,12 +234,7 @@
  *
  ****************************************************************************/
 
-#if !defined(BOOST_SYMBOL_EXPORT)
-#  define BOOST_SYMBOL_EXPORT
-#  define BOOST_SYMBOL_IMPORT
-#endif
-
-#if (defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)) && !defined(BOOST_REGEX_STATIC_LINK)
+#if (defined(BOOST_REGEX_DYN_LINK) || defined(BOOST_ALL_DYN_LINK)) && !defined(BOOST_REGEX_STATIC_LINK) && defined(BOOST_SYMBOL_IMPORT)
 #  if defined(BOOST_REGEX_SOURCE)
 #     define BOOST_REGEX_BUILD_DLL
 #     define BOOST_REGEX_DECL BOOST_SYMBOL_EXPORT

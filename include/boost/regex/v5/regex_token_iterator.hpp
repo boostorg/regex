@@ -67,6 +67,7 @@ public:
          subs.push_back(submatches[i]);
       }
    }
+   regex_token_iterator_implementation(const regex_token_iterator_implementation& other) = default;
    bool init(BidirectionalIterator first)
    {
       N = 0;
