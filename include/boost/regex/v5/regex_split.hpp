@@ -24,17 +24,6 @@
 namespace boost{
 
 #ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #if BOOST_REGEX_MSVC < 1910
 #pragma warning(disable:4800)
@@ -154,17 +143,6 @@ inline std::size_t regex_split(OutputIterator out,
 
 #ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
 #endif
 
 } // namespace boost

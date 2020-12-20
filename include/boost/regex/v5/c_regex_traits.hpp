@@ -23,17 +23,6 @@
 #include <boost/regex/v5/regex_workaround.hpp>
 #include <cctype>
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103 4244)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 namespace boost{
 
    namespace BOOST_REGEX_DETAIL_NS {
@@ -478,17 +467,6 @@ inline int  c_regex_traits<wchar_t>::value(wchar_t c, int radix)
 #endif
 
 }
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 #endif
 

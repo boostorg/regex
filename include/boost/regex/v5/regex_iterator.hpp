@@ -23,17 +23,6 @@
 
 namespace boost{
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 template <class BidirectionalIterator, 
           class charT,
           class traits>
@@ -177,17 +166,6 @@ inline regex_iterator<typename std::basic_string<charT, ST, SA>::const_iterator,
 {
    return regex_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits>(p.begin(), p.end(), e, m);
 }
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 } // namespace boost
 

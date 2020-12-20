@@ -24,17 +24,6 @@
 
 namespace boost{
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 template <class OutputIterator, class Iterator, class traits, class charT>
 inline OutputIterator regex_merge(OutputIterator out,
                          Iterator first,
@@ -74,17 +63,6 @@ inline std::basic_string<charT> regex_merge(const std::basic_string<charT>& s,
 {
    return regex_replace(s, e, fmt, flags);
 }
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 } // namespace boost
 

@@ -26,36 +26,18 @@
 
 #ifndef BOOST_NO_STD_LOCALE
 
-#ifndef BOOST_RE_PAT_EXCEPT_HPP
 #include <boost/regex/pattern_except.hpp>
-#endif
-#ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #include <boost/regex/v5/regex_traits_defaults.hpp>
-#endif
+
 #ifdef BOOST_HAS_THREADS
 #include <mutex>
 #endif
-#ifndef BOOST_REGEX_PRIMARY_TRANSFORM
 #include <boost/regex/v5/primary_transform.hpp>
-#endif
-#ifndef BOOST_REGEX_OBJECT_CACHE_HPP
 #include <boost/regex/v5/object_cache.hpp>
-#endif
 
 #include <climits>
 #include <ios>
 #include <istream>
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
@@ -1070,17 +1052,6 @@ namespace BOOST_REGEX_DETAIL_NS {
 
 } // boost
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif

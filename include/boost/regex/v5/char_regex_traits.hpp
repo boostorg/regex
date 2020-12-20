@@ -20,17 +20,6 @@
 #ifndef BOOST_REGEX_V5_CHAR_REGEX_TRAITS_HPP
 #define BOOST_REGEX_V5_CHAR_REGEX_TRAITS_HPP
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 namespace boost{
 
 namespace deprecated{
@@ -65,17 +54,6 @@ public:
 #endif
 } // namespace deprecated
 } // namespace boost
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 #endif // include
 

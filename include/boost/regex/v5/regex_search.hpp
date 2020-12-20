@@ -22,17 +22,6 @@
 
 namespace boost{
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 template <class BidiIterator, class Allocator, class charT, class traits>
 bool regex_search(BidiIterator first, BidiIterator last, 
                   match_results<BidiIterator, Allocator>& m, 
@@ -106,17 +95,6 @@ inline bool regex_search(const std::basic_string<charT, ST, SA>& s,
 {
    return regex_search(s.begin(), s.end(), e, flags);
 }
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 } // namespace boost
 

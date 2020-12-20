@@ -23,17 +23,6 @@
 #include <boost/regex/v5/indexed_bit_flag.hpp>
 
 #ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #pragma warning(disable:4459)
 #if BOOST_REGEX_MSVC < 1910
@@ -1583,17 +1572,6 @@ void basic_regex_creator<charT, traits>::probe_leading_repeat(re_syntax_base* st
 
 #ifdef BOOST_REGEX_MSVC
 #  pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
 #endif
 
 #endif

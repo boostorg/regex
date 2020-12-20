@@ -19,17 +19,6 @@
 #ifndef BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 #define BOOST_REGEX_TRAITS_DEFAULTS_HPP_INCLUDED
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 #include <boost/regex/config.hpp>
 
 #include <boost/regex/v5/syntax_type.hpp>
@@ -1002,16 +991,5 @@ inline typename std::enable_if<(sizeof(charT) == 1), const charT*>::type get_esc
 
 } // BOOST_REGEX_DETAIL_NS
 } // boost
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 #endif

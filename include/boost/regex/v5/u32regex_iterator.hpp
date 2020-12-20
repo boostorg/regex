@@ -21,10 +21,6 @@
 
 namespace boost{
 
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-
 template <class BidirectionalIterator>
 class u32regex_iterator_implementation 
 {
@@ -174,10 +170,6 @@ inline u32regex_iterator<const UChar*> make_u32regex_iterator(const U_NAMESPACE_
 {
    return u32regex_iterator<const UChar*>(s.getBuffer(), s.getBuffer() + s.length(), e, m);
 }
-
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
 
 } // namespace boost
 

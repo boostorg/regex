@@ -23,10 +23,6 @@
 #include <mutex>
 #endif
 
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-
 #ifndef BOOST_NO_CXX11_HDR_ATOMIC
   #include <atomic>
   #if ATOMIC_POINTER_LOCK_FREE == 2
@@ -174,10 +170,6 @@ inline void  put_mem_block(void* p)
 #endif
 }
 } // namespace boost
-
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
 
 #endif
 

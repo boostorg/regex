@@ -119,7 +119,7 @@ inline unsigned utf8_trailing_byte_count(std::uint8_t c)
 #pragma warning(disable:4100)
 #endif
 #ifndef BOOST_NO_EXCEPTIONS
-BOOST_NORETURN
+BOOST_REGEX_NORETURN
 #endif
 inline void invalid_utf32_code_point(std::uint32_t val)
 {

@@ -32,17 +32,6 @@ namespace boost{
 
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
 #pragma warning(disable : 4275)
 #if BOOST_REGEX_MSVC >= 1800
 #pragma warning(disable : 26812 4459)
@@ -88,7 +77,7 @@ typedef regex_error bad_expression;
 
 namespace BOOST_REGEX_DETAIL_NS{
 
-inline void BOOST_REGEX_CALL raise_runtime_error(const std::runtime_error& ex)
+inline void raise_runtime_error(const std::runtime_error& ex)
 {
 #ifndef BOOST_REGEX_STANDALONE
    ::boost::throw_exception(ex);
@@ -107,17 +96,6 @@ void raise_error(const traits& t, regex_constants::error_type code)
 
 }
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif

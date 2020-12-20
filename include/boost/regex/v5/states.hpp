@@ -19,17 +19,6 @@
 #ifndef BOOST_REGEX_V5_STATES_HPP
 #define BOOST_REGEX_V5_STATES_HPP
 
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_PREFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
-
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
@@ -304,17 +293,6 @@ iterator  re_is_set_member(iterator next,
 } // namespace BOOST_REGEX_DETAIL_NS
 
 } // namespace boost
-
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(push)
-#pragma warning(disable: 4103)
-#endif
-#ifdef BOOST_HAS_ABI_HEADERS
-#  include BOOST_ABI_SUFFIX
-#endif
-#ifdef BOOST_REGEX_MSVC
-#pragma warning(pop)
-#endif
 
 #endif
 

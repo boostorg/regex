@@ -144,6 +144,12 @@
 #endif
 #endif
 
+#ifdef BOOST_NORETURN
+#  define BOOST_REGEX_NORETURN BOOST_NORETURN
+#else
+#  define BOOST_REGEX_NORETURN
+#endif
+
 
 /*
 * Define a macro for the namespace that details are placed in, this includes the Boost
