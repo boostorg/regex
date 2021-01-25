@@ -20,7 +20,7 @@
 #ifndef BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
 #define BOOST_REGEX_V4_PERL_MATCHER_NON_RECURSIVE_HPP
 
-#include <new>
+#include <boost/regex/v4/mem_block_cache.hpp>
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -111,7 +111,7 @@ struct save_state_init
       *end = reinterpret_cast<saved_state*>(reinterpret_cast<char*>(*base)+BOOST_REGEX_BLOCKSIZE);
       --(*end);
       (void) new (*end)saved_state(0);
-      BOOST_ASSERT(*end > *base);
+      BOOST_REGEX_ASSERT(*end > *base);
    }
    ~save_state_init()
    {
@@ -248,7 +248,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::extend_stack()
 template <class BidiIterator, class Allocator, class traits>
 inline void perl_matcher<BidiIterator, Allocator, traits>::push_matched_paren(int index, const sub_match<BidiIterator>& sub)
 {
-   //BOOST_ASSERT(index);
+   //BOOST_REGEX_ASSERT(index);
    saved_matched_paren<BidiIterator>* pmp = static_cast<saved_matched_paren<BidiIterator>*>(m_backup_state);
    --pmp;
    if(pmp < m_stack_base)
@@ -264,7 +264,7 @@ inline void perl_matcher<BidiIterator, Allocator, traits>::push_matched_paren(in
 template <class BidiIterator, class Allocator, class traits>
 inline void perl_matcher<BidiIterator, Allocator, traits>::push_case_change(bool c)
 {
-   //BOOST_ASSERT(index);
+   //BOOST_REGEX_ASSERT(index);
    saved_change_case* pmp = static_cast<saved_change_case*>(m_backup_state);
    --pmp;
    if(pmp < m_stack_base)
@@ -492,7 +492,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
       {
       // conditional expression:
       const re_alt* alt = static_cast<const re_alt*>(pstate->next.p);
-      BOOST_ASSERT(alt->type == syntax_element_alt);
+      BOOST_REGEX_ASSERT(alt->type == syntax_element_alt);
       pstate = alt->next.p;
       if(pstate->type == syntax_element_assert_backref)
       {
@@ -503,7 +503,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
       else
       {
          // zero width assertion, have to match this recursively:
-         BOOST_ASSERT(pstate->type == syntax_element_startmark);
+         BOOST_REGEX_ASSERT(pstate->type == syntax_element_startmark);
          bool negated = static_cast<const re_brace*>(pstate)->index == -2;
          BidiIterator saved_position = position;
          const re_syntax_base* next_pstate = static_cast<const re_jump*>(pstate->next.p)->alt.p->next.p;
@@ -543,7 +543,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
       }
    default:
    {
-      BOOST_ASSERT(index > 0);
+      BOOST_REGEX_ASSERT(index > 0);
       if((m_match_flags & match_nosubs) == 0)
       {
          push_matched_paren(index, (*m_presult)[index]);
@@ -794,7 +794,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 #pragma option push -w-8008 -w-8066 -w-8004
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   BOOST_ASSERT(1 == static_cast<const re_literal*>(rep->next.p)->length);
+   BOOST_REGEX_ASSERT(1 == static_cast<const re_literal*>(rep->next.p)->length);
    const char_type what = *reinterpret_cast<const char_type*>(static_cast<const re_literal*>(rep->next.p) + 1);
    std::size_t count = 0;
    //
@@ -1010,7 +1010,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_recursion()
 {
-   BOOST_ASSERT(pstate->type == syntax_element_recurse);
+   BOOST_REGEX_ASSERT(pstate->type == syntax_element_recurse);
    //
    // See if we've seen this recursion before at this location, if we have then
    // we need to prevent infinite recursion:
@@ -1087,7 +1087,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_match()
 {
    if(!recursion_stack.empty())
    {
-      BOOST_ASSERT(0 == recursion_stack.back().idx);
+      BOOST_REGEX_ASSERT(0 == recursion_stack.back().idx);
       pstate = recursion_stack.back().preturn_address;
       push_recursion(recursion_stack.back().idx, recursion_stack.back().preturn_address, m_presult, &recursion_stack.back().results);
       *m_presult = recursion_stack.back().results;
@@ -1394,15 +1394,15 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_greedy_single_repeat(
 
    const re_repeat* rep = pmp->rep;
    std::size_t count = pmp->count;
-   BOOST_ASSERT(rep->next.p != 0);
-   BOOST_ASSERT(rep->alt.p != 0);
+   BOOST_REGEX_ASSERT(rep->next.p != 0);
+   BOOST_REGEX_ASSERT(rep->alt.p != 0);
 
    count -= rep->min;
    
    if((m_match_flags & match_partial) && (position == last))
       m_has_partial_match = true;
 
-   BOOST_ASSERT(count);
+   BOOST_REGEX_ASSERT(count);
    position = pmp->last_position;
 
    // backtrack till we can skip out:
@@ -1443,12 +1443,12 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_slow_dot_repeat(bool 
 
    const re_repeat* rep = pmp->rep;
    std::size_t count = pmp->count;
-   BOOST_ASSERT(rep->type == syntax_element_dot_rep);
-   BOOST_ASSERT(rep->next.p != 0);
-   BOOST_ASSERT(rep->alt.p != 0);
-   BOOST_ASSERT(rep->next.p->type == syntax_element_wild);
+   BOOST_REGEX_ASSERT(rep->type == syntax_element_dot_rep);
+   BOOST_REGEX_ASSERT(rep->next.p != 0);
+   BOOST_REGEX_ASSERT(rep->alt.p != 0);
+   BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_wild);
 
-   BOOST_ASSERT(count < rep->max);
+   BOOST_REGEX_ASSERT(count < rep->max);
    pstate = rep->next.p;
    position = pmp->last_position;
 
@@ -1508,7 +1508,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_fast_dot_repeat(bool 
    const re_repeat* rep = pmp->rep;
    std::size_t count = pmp->count;
 
-   BOOST_ASSERT(count < rep->max);
+   BOOST_REGEX_ASSERT(count < rep->max);
    position = pmp->last_position;
    if(position != last)
    {
@@ -1568,11 +1568,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_char_repeat(bool r)
    const char_type what = *reinterpret_cast<const char_type*>(static_cast<const re_literal*>(pstate) + 1);
    position = pmp->last_position;
 
-   BOOST_ASSERT(rep->type == syntax_element_char_rep);
-   BOOST_ASSERT(rep->next.p != 0);
-   BOOST_ASSERT(rep->alt.p != 0);
-   BOOST_ASSERT(rep->next.p->type == syntax_element_literal);
-   BOOST_ASSERT(count < rep->max);
+   BOOST_REGEX_ASSERT(rep->type == syntax_element_char_rep);
+   BOOST_REGEX_ASSERT(rep->next.p != 0);
+   BOOST_REGEX_ASSERT(rep->alt.p != 0);
+   BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_literal);
+   BOOST_REGEX_ASSERT(count < rep->max);
 
    if(position != last)
    {
@@ -1637,11 +1637,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_short_set_repeat(bool
    const unsigned char* map = static_cast<const re_set*>(rep->next.p)->_map;
    position = pmp->last_position;
 
-   BOOST_ASSERT(rep->type == syntax_element_short_set_rep);
-   BOOST_ASSERT(rep->next.p != 0);
-   BOOST_ASSERT(rep->alt.p != 0);
-   BOOST_ASSERT(rep->next.p->type == syntax_element_set);
-   BOOST_ASSERT(count < rep->max);
+   BOOST_REGEX_ASSERT(rep->type == syntax_element_short_set_rep);
+   BOOST_REGEX_ASSERT(rep->next.p != 0);
+   BOOST_REGEX_ASSERT(rep->alt.p != 0);
+   BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_set);
+   BOOST_REGEX_ASSERT(count < rep->max);
    
    if(position != last)
    {
@@ -1707,11 +1707,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat(bool 
    const re_set_long<m_type>* set = static_cast<const re_set_long<m_type>*>(pstate);
    position = pmp->last_position;
 
-   BOOST_ASSERT(rep->type == syntax_element_long_set_rep);
-   BOOST_ASSERT(rep->next.p != 0);
-   BOOST_ASSERT(rep->alt.p != 0);
-   BOOST_ASSERT(rep->next.p->type == syntax_element_long_set);
-   BOOST_ASSERT(count < rep->max);
+   BOOST_REGEX_ASSERT(rep->type == syntax_element_long_set_rep);
+   BOOST_REGEX_ASSERT(rep->next.p != 0);
+   BOOST_REGEX_ASSERT(rep->alt.p != 0);
+   BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_long_set);
+   BOOST_REGEX_ASSERT(count < rep->max);
 
    if(position != last)
    {

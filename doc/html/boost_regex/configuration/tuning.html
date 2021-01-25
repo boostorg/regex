@@ -6,7 +6,7 @@
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="../../index.html" title="Boost.Regex 5.1.4">
 <link rel="up" href="../configuration.html" title="Configuration">
-<link rel="prev" href="algorithm.html" title="Algorithm Selection">
+<link rel="prev" href="locale.html" title="Locale and traits class selection">
 <link rel="next" href="../install.html" title="Building and Installing the Library">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -20,49 +20,12 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="algorithm.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../configuration.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../install.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="locale.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../configuration.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../install.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h3 class="title">
 <a name="boost_regex.configuration.tuning"></a><a class="link" href="tuning.html" title="Algorithm Tuning">Algorithm Tuning</a>
 </h3></div></div></div>
-<p>
-        The following option applies only if BOOST_REGEX_RECURSIVE is set.
-      </p>
-<div class="informaltable"><table class="table">
-<colgroup>
-<col>
-<col>
-</colgroup>
-<thead><tr>
-<th>
-                <p>
-                  macro
-                </p>
-              </th>
-<th>
-                <p>
-                  description
-                </p>
-              </th>
-</tr></thead>
-<tbody><tr>
-<td>
-                <p>
-                  BOOST_REGEX_HAS_MS_STACK_GUARD
-                </p>
-              </td>
-<td>
-                <p>
-                  Tells Boost.Regex that Microsoft style __try - __except blocks
-                  are supported, and can be used to safely trap stack overflow.
-                </p>
-              </td>
-</tr></tbody>
-</table></div>
-<p>
-        The following options apply only if BOOST_REGEX_NON_RECURSIVE is set.
-      </p>
 <div class="informaltable"><table class="table">
 <colgroup>
 <col>
@@ -89,13 +52,12 @@
               </td>
 <td>
                 <p>
-                  In non-recursive mode, Boost.Regex uses largish blocks of memory
-                  to act as a stack for the state machine, the larger the block size
-                  then the fewer allocations that will take place. This defaults
-                  to 4096 bytes, which is large enough to match the vast majority
-                  of regular expressions without further allocations, however, you
-                  can choose smaller or larger values depending upon your platforms
-                  characteristics.
+                  Boost.Regex uses largish blocks of memory to act as a stack for
+                  the state machine, the larger the block size then the fewer allocations
+                  that will take place. This defaults to 4096 bytes, which is large
+                  enough to match the vast majority of regular expressions without
+                  further allocations, however, you can choose smaller or larger
+                  values depending upon your platforms characteristics.
                 </p>
               </td>
 </tr>
@@ -150,7 +112,7 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="algorithm.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../configuration.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../install.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="locale.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../configuration.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../install.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

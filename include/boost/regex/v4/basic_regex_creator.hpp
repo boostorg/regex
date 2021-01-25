@@ -58,8 +58,8 @@ struct digraph : public std::pair<charT, charT>
    template <class Seq>
    digraph(const Seq& s) : std::pair<charT, charT>()
    {
-      BOOST_ASSERT(s.size() <= 2);
-      BOOST_ASSERT(s.size());
+      BOOST_REGEX_ASSERT(s.size() <= 2);
+      BOOST_REGEX_ASSERT(s.size());
       this->first = s[0];
       this->second = (s.size() > 1) ? s[1] : 0;
    }
@@ -288,11 +288,11 @@ basic_regex_creator<charT, traits>::basic_regex_creator(regex_data<charT, traits
    m_upper_mask = m_traits.lookup_classname(u, u + 5);
    m_alpha_mask = m_traits.lookup_classname(a, a + 5);
    m_pdata->m_word_mask = m_word_mask;
-   BOOST_ASSERT(m_word_mask != 0); 
-   BOOST_ASSERT(m_mask_space != 0); 
-   BOOST_ASSERT(m_lower_mask != 0); 
-   BOOST_ASSERT(m_upper_mask != 0); 
-   BOOST_ASSERT(m_alpha_mask != 0); 
+   BOOST_REGEX_ASSERT(m_word_mask != 0); 
+   BOOST_REGEX_ASSERT(m_mask_space != 0); 
+   BOOST_REGEX_ASSERT(m_lower_mask != 0); 
+   BOOST_REGEX_ASSERT(m_upper_mask != 0); 
+   BOOST_REGEX_ASSERT(m_alpha_mask != 0); 
 }
 
 template <class charT, class traits>
@@ -580,7 +580,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
             // Oops error:
             return 0;
          }
-         BOOST_ASSERT(c3[1] == charT(0));
+         BOOST_REGEX_ASSERT(c3[1] == charT(0));
          for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
          {
             c3[0] = static_cast<charT>(i);
@@ -645,7 +645,7 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    while(sfirst != slast)
    {
       string_type s;
-      BOOST_ASSERT(static_cast<charT>(0) == sfirst->second);
+      BOOST_REGEX_ASSERT(static_cast<charT>(0) == sfirst->second);
       s = m_traits.transform_primary(&sfirst->first, &sfirst->first+1);
       if(s.empty())
          return 0;  // invalid or unsupported equivalence class
@@ -1038,7 +1038,7 @@ int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state
             }
             else if(state->type == syntax_element_long_set_rep)
             {
-               BOOST_ASSERT(rep->next.p->type == syntax_element_long_set);
+               BOOST_REGEX_ASSERT(rep->next.p->type == syntax_element_long_set);
                if(static_cast<re_set_long<m_type>*>(rep->next.p)->singleton == 0)
                   return -1;
                if(rep->max != rep->min)
@@ -1138,7 +1138,7 @@ void basic_regex_creator<charT, traits>::create_startmap(re_syntax_base* state, 
       }
       case syntax_element_recurse:
          {
-            BOOST_ASSERT(static_cast<const re_jump*>(state)->alt.p->type == syntax_element_startmark);
+            BOOST_REGEX_ASSERT(static_cast<const re_jump*>(state)->alt.p->type == syntax_element_startmark);
             recursion_sub = static_cast<re_brace*>(static_cast<const re_jump*>(state)->alt.p)->index;
             if(m_recursion_checks[recursion_sub] & 1u)
             {

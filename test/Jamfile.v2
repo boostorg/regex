@@ -38,6 +38,7 @@ rule regex-test ( name : sources + : requirements * : input-files * )
 R_SOURCE = 
 basic_tests.cpp
 main.cpp
+wmain.cpp
 test_alt.cpp
 test_anchors.cpp
 test_asserts.cpp
@@ -61,29 +62,19 @@ test_operators.cpp
 ;
 
 lib boost_regex_recursive :    
-   ../src/c_regex_traits.cpp
-   ../src/cpp_regex_traits.cpp
-   ../src/cregex.cpp
-   ../src/fileiter.cpp
-   ../src/icu.cpp
-   ../src/instances.cpp
    ../src/posix_api.cpp
    ../src/regex.cpp
    ../src/regex_debug.cpp
-   ../src/regex_raw_buffer.cpp
-   ../src/regex_traits_defaults.cpp
    ../src/static_mutex.cpp
-   ../src/w32_regex_traits.cpp
-   ../src/wc_regex_traits.cpp
    ../src/wide_posix_api.cpp
-   ../src/winstances.cpp 
-   ../src/usinstances.cpp 
    ../build//icu_options
     : 
         <define>BOOST_REGEX_RECURSIVE=1
+        <define>BOOST_REGEX_CXX03=1
 	     <link>shared:<define>BOOST_REGEX_DYN_LINK=1
     : 
     ;
+
 
 local regress-sources = regress/$(R_SOURCE) ;
 
@@ -113,24 +104,29 @@ test-suite regex
       [ regex-test wide_posix_api_check_cpp 
           : c_compiler_checks/wide_posix_api_check.cpp ]
 
-      [ run pathology/bad_expression_test.cpp
-            ../build//boost_regex
+      [ run pathology/bad_expression_test.cpp : : :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
       ]
 
-      [ run pathology/recursion_test.cpp
-            ../build//boost_regex
+      [ run pathology/recursion_test.cpp : : :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
       ]
       
-      [ run named_subexpressions/named_subexpressions_test.cpp
-            ../build//boost_regex
+      [ run named_subexpressions/named_subexpressions_test.cpp : : :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
       ]
       
-      [ run unicode/unicode_iterator_test.cpp ../build//boost_regex : : : release <define>TEST_UTF8 : unicode_iterator_test_utf8 ]
-      [ run unicode/unicode_iterator_test.cpp ../build//boost_regex : : : release <define>TEST_UTF16 : unicode_iterator_test_utf16 ]
+      [ run unicode/unicode_iterator_test.cpp : : : 
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+            release <define>TEST_UTF8 : unicode_iterator_test_utf8 ]
+      [ run unicode/unicode_iterator_test.cpp : : : 
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+            release <define>TEST_UTF16 : unicode_iterator_test_utf16 ]
       [ run static_mutex/static_mutex_test.cpp
             ../../thread/build//boost_thread ../build//boost_regex
       ]
-      [ run object_cache/object_cache_test.cpp ../build//boost_regex
+      [ run object_cache/object_cache_test.cpp : : :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
       ]
       
       [ run config_info/regex_config_info.cpp 
@@ -150,31 +146,47 @@ test-suite regex
       : : : <test-info>always_show_run_output : test_collate_info ]
 
 
-      [ link concepts/concept_check.cpp ../build//boost_regex ]
-      [ link concepts/icu_concept_check.cpp ../build//boost_regex ]
-      [ link concepts/range_concept_check.cpp ../build//boost_regex ]
-      [ run concepts/test_bug_11988.cpp ../build//boost_regex ]
+      [ link concepts/concept_check.cpp :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+      ]
+      [ link concepts/concept_check.cpp :
+            <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <build>no ] : standalone_concept_check
+      ]
+      [ link concepts/icu_concept_check.cpp :
+            <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+      ]
+      [ link concepts/icu_concept_check.cpp :
+            [ check-target-builds ../build//is_legacy_03 : : <build>no ] : standalone_icu_concept_check
+      ]
+      [ link concepts/range_concept_check.cpp :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+      ]
+      [ run concepts/test_bug_11988.cpp : : :
+            [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
+      ]
       
      [ run
     # sources
     captures/captures_test.cpp
-    captures//boost_regex_extra ../build//icu_options
+    ../build//icu_options
  :  # additional args
  :  # test-files
  :  # requirements
     <threading>multi
     <define>BOOST_REGEX_MATCH_EXTRA=1
     <define>BOOST_REGEX_NO_LIB=1
+    [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
  :  # test name
     captures_test
  ]
 
-[ run regress/$(R_SOURCE) .//boost_regex_recursive
+ [ run regress/$(R_SOURCE) .//boost_regex_recursive
                           ../build//icu_options
   : # command line
   : # input files
   : # requirements
     <define>BOOST_REGEX_RECURSIVE=1
+    <define>BOOST_REGEX_CXX03=1
   : regex_regress_recursive ]
 
 [ run regress/$(R_SOURCE) ./noeh_test//boost_regex_noeh
@@ -201,3 +213,11 @@ compile test_warnings.cpp
    :     <toolset>msvc:<warnings>all <toolset>msvc:<warnings-as-errors>on
          <toolset>gcc:<warnings>all <toolset>gcc:<warnings-as-errors>on
          <toolset>clang:<warnings>all <toolset>clang:<warnings-as-errors>on ;
+
+compile test_warnings.cpp 
+   :     <toolset>msvc:<warnings>all <toolset>msvc:<warnings-as-errors>on
+         <toolset>gcc:<warnings>all <toolset>gcc:<warnings-as-errors>on
+         <toolset>clang:<warnings>all <toolset>clang:<warnings-as-errors>on
+         <define>BOOST_REGEX_STANDALONE
+         [ check-target-builds ../build//is_legacy_03 : : <build>no ]
+   :  test_warnings_standalone ;

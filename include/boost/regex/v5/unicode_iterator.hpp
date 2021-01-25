@@ -24,22 +24,22 @@ Contents:
 1) Read Only, Input Adapters:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-template <class BaseIterator, class U8Type = ::boost::uint8_t>
+template <class BaseIterator, class U8Type = std::uint8_t>
 class u32_to_u8_iterator;
 
 Adapts sequence of UTF-32 code points to "look like" a sequence of UTF-8.
 
-template <class BaseIterator, class U32Type = ::boost::uint32_t>
+template <class BaseIterator, class U32Type = std::uint32_t>
 class u8_to_u32_iterator;
 
 Adapts sequence of UTF-8 code points to "look like" a sequence of UTF-32.
 
-template <class BaseIterator, class U16Type = ::boost::uint16_t>
+template <class BaseIterator, class U16Type = std::uint16_t>
 class u32_to_u16_iterator;
 
 Adapts sequence of UTF-32 code points to "look like" a sequence of UTF-16.
 
-template <class BaseIterator, class U32Type = ::boost::uint32_t>
+template <class BaseIterator, class U32Type = std::uint32_t>
 class u16_to_u32_iterator;
 
 Adapts sequence of UTF-16 code points to "look like" a sequence of UTF-32.
@@ -60,31 +60,32 @@ Accepts UTF-32 code points and forwards them on as UTF-16 code points.
 
 #ifndef BOOST_REGEX_UNICODE_ITERATOR_HPP
 #define BOOST_REGEX_UNICODE_ITERATOR_HPP
-#include <boost/cstdint.hpp>
-#include <boost/assert.hpp>
-#include <boost/iterator/iterator_facade.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/throw_exception.hpp>
+#include <cstdint>
+#include <boost/regex/config.hpp>
 #include <stdexcept>
-#ifndef BOOST_NO_STD_LOCALE
 #include <sstream>
 #include <ios>
-#endif
 #include <limits.h> // CHAR_BIT
+
+#include <iostream>
+
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/throw_exception.hpp>
+#endif
 
 namespace boost{
 
 namespace detail{
 
-static const ::boost::uint16_t high_surrogate_base = 0xD7C0u;
-static const ::boost::uint16_t low_surrogate_base = 0xDC00u;
-static const ::boost::uint32_t ten_bit_mask = 0x3FFu;
+static const std::uint16_t high_surrogate_base = 0xD7C0u;
+static const std::uint16_t low_surrogate_base = 0xDC00u;
+static const std::uint32_t ten_bit_mask = 0x3FFu;
 
-inline bool is_high_surrogate(::boost::uint16_t v)
+inline bool is_high_surrogate(std::uint16_t v)
 {
    return (v & 0xFFFFFC00u) == 0xd800u;
 }
-inline bool is_low_surrogate(::boost::uint16_t v)
+inline bool is_low_surrogate(std::uint16_t v)
 {
    return (v & 0xFFFFFC00u) == 0xdc00u;
 }
@@ -94,11 +95,11 @@ inline bool is_surrogate(T v)
    return (v & 0xFFFFF800u) == 0xd800;
 }
 
-inline unsigned utf8_byte_count(boost::uint8_t c)
+inline unsigned utf8_byte_count(std::uint8_t c)
 {
    // if the most significant bit with a zero in it is in position
    // 8-N then there are N bytes in this UTF-8 sequence:
-   boost::uint8_t mask = 0x80u;
+   std::uint8_t mask = 0x80u;
    unsigned result = 0;
    while(c & mask)
    {
@@ -108,58 +109,58 @@ inline unsigned utf8_byte_count(boost::uint8_t c)
    return (result == 0) ? 1 : ((result > 4) ? 4 : result);
 }
 
-inline unsigned utf8_trailing_byte_count(boost::uint8_t c)
+inline unsigned utf8_trailing_byte_count(std::uint8_t c)
 {
    return utf8_byte_count(c) - 1;
 }
 
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4100)
 #endif
 #ifndef BOOST_NO_EXCEPTIONS
-BOOST_NORETURN
+BOOST_REGEX_NORETURN
 #endif
-inline void invalid_utf32_code_point(::boost::uint32_t val)
+inline void invalid_utf32_code_point(std::uint32_t val)
 {
-#ifndef BOOST_NO_STD_LOCALE
    std::stringstream ss;
    ss << "Invalid UTF-32 code point U+" << std::showbase << std::hex << val << " encountered while trying to encode UTF-16 sequence";
    std::out_of_range e(ss.str());
-#else
-   std::out_of_range e("Invalid UTF-32 code point encountered while trying to encode UTF-16 sequence");
-#endif
+#ifndef BOOST_REGEX_STANDALONE
    boost::throw_exception(e);
+#else
+   throw e;
+#endif
 }
-#ifdef BOOST_MSVC
+#ifdef BOOST_REGEX_MSVC
 #pragma warning(pop)
 #endif
 
 
 } // namespace detail
 
-template <class BaseIterator, class U16Type = ::boost::uint16_t>
+template <class BaseIterator, class U16Type = std::uint16_t>
 class u32_to_u16_iterator
-   : public boost::iterator_facade<u32_to_u16_iterator<BaseIterator, U16Type>, U16Type, std::bidirectional_iterator_tag, const U16Type>
 {
-   typedef boost::iterator_facade<u32_to_u16_iterator<BaseIterator, U16Type>, U16Type, std::bidirectional_iterator_tag, const U16Type> base_type;
-
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
 
-   BOOST_STATIC_ASSERT(sizeof(base_value_type)*CHAR_BIT == 32);
-   BOOST_STATIC_ASSERT(sizeof(U16Type)*CHAR_BIT == 16);
-#endif
+   static_assert(sizeof(base_value_type)*CHAR_BIT == 32, "Incorrectly sized template argument");
+   static_assert(sizeof(U16Type)*CHAR_BIT == 16, "Incorrectly sized template argument");
 
 public:
-   typename base_type::reference
-      dereference()const
+   typedef std::ptrdiff_t     difference_type;
+   typedef U16Type            value_type;
+   typedef value_type const*  pointer;
+   typedef value_type const   reference;
+   typedef std::bidirectional_iterator_tag iterator_category;
+
+   reference operator*()const
    {
       if(m_current == 2)
          extract_current();
       return m_values[m_current];
    }
-   bool equal(const u32_to_u16_iterator& that)const
+   bool operator==(const u32_to_u16_iterator& that)const
    {
       if(m_position == that.m_position)
       {
@@ -169,7 +170,11 @@ public:
       }
       return false;
    }
-   void increment()
+   bool operator!=(const u32_to_u16_iterator& that)const
+   {
+      return !(*this == that);
+   }
+   u32_to_u16_iterator& operator++()
    {
       // if we have a pending read then read now, so that we know whether
       // to skip a position, or move to a low-surrogate:
@@ -186,8 +191,15 @@ public:
          m_current = 2;
          ++m_position;
       }
+      return *this;
    }
-   void decrement()
+   u32_to_u16_iterator operator++(int)
+   {
+      u32_to_u16_iterator r(*this);
+      ++(*this);
+      return r;
+   }
+   u32_to_u16_iterator& operator--()
    {
       if(m_current != 1)
       {
@@ -200,6 +212,13 @@ public:
       {
          m_current = 0;
       }
+      return *this;
+   }
+   u32_to_u16_iterator operator--(int)
+   {
+      u32_to_u16_iterator r(*this);
+      --(*this);
+      return r;
    }
    BaseIterator base()const
    {
@@ -223,7 +242,7 @@ private:
    void extract_current()const
    {
       // begin by checking for a code point out of range:
-      ::boost::uint32_t v = *m_position;
+      std::uint32_t v = *m_position;
       if(v >= 0x10000u)
       {
          if(v > 0x10FFFFu)
@@ -232,8 +251,8 @@ private:
          m_values[0] = static_cast<U16Type>(v >> 10) + detail::high_surrogate_base;
          m_values[1] = static_cast<U16Type>(v & detail::ten_bit_mask) + detail::low_surrogate_base;
          m_current = 0;
-         BOOST_ASSERT(detail::is_high_surrogate(m_values[0]));
-         BOOST_ASSERT(detail::is_low_surrogate(m_values[1]));
+         BOOST_REGEX_ASSERT(detail::is_high_surrogate(m_values[0]));
+         BOOST_REGEX_ASSERT(detail::is_low_surrogate(m_values[1]));
       }
       else
       {
@@ -251,47 +270,66 @@ private:
    mutable unsigned m_current;
 };
 
-template <class BaseIterator, class U32Type = ::boost::uint32_t>
+template <class BaseIterator, class U32Type = std::uint32_t>
 class u16_to_u32_iterator
-   : public boost::iterator_facade<u16_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type>
 {
-   typedef boost::iterator_facade<u16_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type> base_type;
    // special values for pending iterator reads:
-   BOOST_STATIC_CONSTANT(U32Type, pending_read = 0xffffffffu);
+   static const U32Type pending_read = 0xffffffffu;
 
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
 
-   BOOST_STATIC_ASSERT(sizeof(base_value_type)*CHAR_BIT == 16);
-   BOOST_STATIC_ASSERT(sizeof(U32Type)*CHAR_BIT == 32);
-#endif
+   static_assert(sizeof(base_value_type)*CHAR_BIT == 16, "Incorrectly sized template argument");
+   static_assert(sizeof(U32Type)*CHAR_BIT == 32, "Incorrectly sized template argument");
 
 public:
-   typename base_type::reference
-      dereference()const
+   typedef std::ptrdiff_t     difference_type;
+   typedef U32Type            value_type;
+   typedef value_type const*  pointer;
+   typedef value_type const   reference;
+   typedef std::bidirectional_iterator_tag iterator_category;
+
+   reference operator*()const
    {
       if(m_value == pending_read)
          extract_current();
       return m_value;
    }
-   bool equal(const u16_to_u32_iterator& that)const
+   bool operator==(const u16_to_u32_iterator& that)const
    {
       return m_position == that.m_position;
    }
-   void increment()
+   bool operator!=(const u16_to_u32_iterator& that)const
+   {
+      return !(*this == that);
+   }
+   u16_to_u32_iterator& operator++()
    {
       // skip high surrogate first if there is one:
       if(detail::is_high_surrogate(*m_position)) ++m_position;
       ++m_position;
       m_value = pending_read;
+      return *this;
    }
-   void decrement()
+   u16_to_u32_iterator operator++(int)
+   {
+      u16_to_u32_iterator r(*this);
+      ++(*this);
+      return r;
+   }
+   u16_to_u32_iterator& operator--()
    {
       --m_position;
       // if we have a low surrogate then go back one more:
       if(detail::is_low_surrogate(*m_position)) 
          --m_position;
       m_value = pending_read;
+      return *this;
+   }
+   u16_to_u32_iterator operator--(int)
+   {
+      u16_to_u32_iterator r(*this);
+      --(*this);
+      return r;
    }
    BaseIterator base()const
    {
@@ -317,7 +355,7 @@ public:
       // otherwise we run the risk of running outside the underlying input range.
       // Likewise b must not be located at a low surrogate.
       //
-      boost::uint16_t val;
+      std::uint16_t val;
       if(start != end)
       {
          if((b != start) && (b != end))
@@ -335,61 +373,61 @@ public:
       }
    }
 private:
-   static void invalid_code_point(::boost::uint16_t val)
+   static void invalid_code_point(std::uint16_t val)
    {
-#ifndef BOOST_NO_STD_LOCALE
       std::stringstream ss;
       ss << "Misplaced UTF-16 surrogate U+" << std::showbase << std::hex << val << " encountered while trying to encode UTF-32 sequence";
       std::out_of_range e(ss.str());
-#else
-      std::out_of_range e("Misplaced UTF-16 surrogate encountered while trying to encode UTF-32 sequence");
-#endif
+#ifndef BOOST_REGEX_STANDALONE
       boost::throw_exception(e);
+#else
+      throw e;
+#endif
    }
    void extract_current()const
    {
-      m_value = static_cast<U32Type>(static_cast< ::boost::uint16_t>(*m_position));
+      m_value = static_cast<U32Type>(static_cast< std::uint16_t>(*m_position));
       // if the last value is a high surrogate then adjust m_position and m_value as needed:
       if(detail::is_high_surrogate(*m_position))
       {
          // precondition; next value must have be a low-surrogate:
          BaseIterator next(m_position);
-         ::boost::uint16_t t = *++next;
+         std::uint16_t t = *++next;
          if((t & 0xFC00u) != 0xDC00u)
             invalid_code_point(t);
          m_value = (m_value - detail::high_surrogate_base) << 10;
-         m_value |= (static_cast<U32Type>(static_cast< ::boost::uint16_t>(t)) & detail::ten_bit_mask);
+         m_value |= (static_cast<U32Type>(static_cast< std::uint16_t>(t)) & detail::ten_bit_mask);
       }
       // postcondition; result must not be a surrogate:
       if(detail::is_surrogate(m_value))
-         invalid_code_point(static_cast< ::boost::uint16_t>(m_value));
+         invalid_code_point(static_cast< std::uint16_t>(m_value));
    }
    BaseIterator m_position;
    mutable U32Type m_value;
 };
 
-template <class BaseIterator, class U8Type = ::boost::uint8_t>
+template <class BaseIterator, class U8Type = std::uint8_t>
 class u32_to_u8_iterator
-   : public boost::iterator_facade<u32_to_u8_iterator<BaseIterator, U8Type>, U8Type, std::bidirectional_iterator_tag, const U8Type>
 {
-   typedef boost::iterator_facade<u32_to_u8_iterator<BaseIterator, U8Type>, U8Type, std::bidirectional_iterator_tag, const U8Type> base_type;
-   
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
 
-   BOOST_STATIC_ASSERT(sizeof(base_value_type)*CHAR_BIT == 32);
-   BOOST_STATIC_ASSERT(sizeof(U8Type)*CHAR_BIT == 8);
-#endif
+   static_assert(sizeof(base_value_type)*CHAR_BIT == 32, "Incorrectly sized template argument");
+   static_assert(sizeof(U8Type)*CHAR_BIT == 8, "Incorrectly sized template argument");
 
 public:
-   typename base_type::reference
-      dereference()const
+   typedef std::ptrdiff_t     difference_type;
+   typedef U8Type             value_type;
+   typedef value_type const*  pointer;
+   typedef value_type const   reference;
+   typedef std::bidirectional_iterator_tag iterator_category;
+
+   reference operator*()const
    {
       if(m_current == 4)
          extract_current();
       return m_values[m_current];
    }
-   bool equal(const u32_to_u8_iterator& that)const
+   bool operator==(const u32_to_u8_iterator& that)const
    {
       if(m_position == that.m_position)
       {
@@ -400,7 +438,11 @@ public:
       }
       return false;
    }
-   void increment()
+   bool operator!=(const u32_to_u8_iterator& that)const
+   {
+      return !(*this == that);
+   }
+   u32_to_u8_iterator& operator++()
    {
       // if we have a pending read then read now, so that we know whether
       // to skip a position, or move to a low-surrogate:
@@ -417,8 +459,15 @@ public:
          m_current = 4;
          ++m_position;
       }
+      return *this;
    }
-   void decrement()
+   u32_to_u8_iterator operator++(int)
+   {
+      u32_to_u8_iterator r(*this);
+      ++(*this);
+      return r;
+   }
+   u32_to_u8_iterator& operator--()
    {
       if((m_current & 3) == 0)
       {
@@ -430,6 +479,13 @@ public:
       }
       else
          --m_current;
+      return *this;
+   }
+   u32_to_u8_iterator operator--(int)
+   {
+      u32_to_u8_iterator r(*this);
+      --(*this);
+      return r;
    }
    BaseIterator base()const
    {
@@ -456,7 +512,7 @@ private:
 
    void extract_current()const
    {
-      boost::uint32_t c = *m_position;
+      std::uint32_t c = *m_position;
       if(c > 0x10FFFFu)
          detail::invalid_utf32_code_point(c);
       if(c < 0x80u)
@@ -494,37 +550,42 @@ private:
    mutable unsigned m_current;
 };
 
-template <class BaseIterator, class U32Type = ::boost::uint32_t>
+template <class BaseIterator, class U32Type = std::uint32_t>
 class u8_to_u32_iterator
-   : public boost::iterator_facade<u8_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type>
 {
-   typedef boost::iterator_facade<u8_to_u32_iterator<BaseIterator, U32Type>, U32Type, std::bidirectional_iterator_tag, const U32Type> base_type;
    // special values for pending iterator reads:
-   BOOST_STATIC_CONSTANT(U32Type, pending_read = 0xffffffffu);
+   static const U32Type pending_read = 0xffffffffu;
 
-#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
    typedef typename std::iterator_traits<BaseIterator>::value_type base_value_type;
 
-   BOOST_STATIC_ASSERT(sizeof(base_value_type)*CHAR_BIT == 8);
-   BOOST_STATIC_ASSERT(sizeof(U32Type)*CHAR_BIT == 32);
-#endif
+   static_assert(sizeof(base_value_type)*CHAR_BIT == 8, "Incorrectly sized template argument");
+   static_assert(sizeof(U32Type)*CHAR_BIT == 32, "Incorrectly sized template argument");
 
 public:
-   typename base_type::reference
-      dereference()const
+   typedef std::ptrdiff_t     difference_type;
+   typedef U32Type            value_type;
+   typedef value_type const*  pointer;
+   typedef value_type const   reference;
+   typedef std::bidirectional_iterator_tag iterator_category;
+
+   reference operator*()const
    {
       if(m_value == pending_read)
          extract_current();
       return m_value;
    }
-   bool equal(const u8_to_u32_iterator& that)const
+   bool operator==(const u8_to_u32_iterator& that)const
    {
       return m_position == that.m_position;
    }
-   void increment()
+   bool operator!=(const u8_to_u32_iterator& that)const
+   {
+      return !(*this == that);
+   }
+   u8_to_u32_iterator& operator++()
    {
       // We must not start with a continuation character:
-      if((static_cast<boost::uint8_t>(*m_position) & 0xC0) == 0x80)
+      if((static_cast<std::uint8_t>(*m_position) & 0xC0) == 0x80)
          invalid_sequence();
       // skip high surrogate first if there is one:
       unsigned c = detail::utf8_byte_count(*m_position);
@@ -535,7 +596,7 @@ public:
          {
             ++m_position;
             // We must have a continuation byte:
-            if((i != c - 1) && ((static_cast<boost::uint8_t>(*m_position) & 0xC0) != 0x80))
+            if((i != c - 1) && ((static_cast<std::uint8_t>(*m_position) & 0xC0) != 0x80))
                invalid_sequence();
          }
       }
@@ -544,8 +605,15 @@ public:
          std::advance(m_position, c);
       }
       m_value = pending_read;
+      return *this;
    }
-   void decrement()
+   u8_to_u32_iterator operator++(int)
+   {
+      u8_to_u32_iterator r(*this);
+      ++(*this);
+      return r;
+   }
+   u8_to_u32_iterator& operator--()
    {
       // Keep backtracking until we don't have a trailing character:
       unsigned count = 0;
@@ -554,6 +622,13 @@ public:
       if(count != detail::utf8_trailing_byte_count(*m_position))
          invalid_sequence();
       m_value = pending_read;
+      return *this;
+   }
+   u8_to_u32_iterator operator--(int)
+   {
+      u8_to_u32_iterator r(*this);
+      --(*this);
+      return r;
    }
    BaseIterator base()const
    {
@@ -601,11 +676,15 @@ private:
    static void invalid_sequence()
    {
       std::out_of_range e("Invalid UTF-8 sequence encountered while trying to encode UTF-32 character");
+#ifndef BOOST_REGEX_STANDALONE
       boost::throw_exception(e);
+#else
+      throw e;
+#endif
    }
    void extract_current()const
    {
-      m_value = static_cast<U32Type>(static_cast< ::boost::uint8_t>(*m_position));
+      m_value = static_cast<U32Type>(static_cast< std::uint8_t>(*m_position));
       // we must not have a continuation character:
       if((m_value & 0xC0u) == 0x80u)
          invalid_sequence();
@@ -618,13 +697,13 @@ private:
          ++next;
          m_value <<= 6;
          // We must have a continuation byte:
-         if((static_cast<boost::uint8_t>(*next) & 0xC0) != 0x80)
+         if((static_cast<std::uint8_t>(*next) & 0xC0) != 0x80)
             invalid_sequence();
-         m_value += static_cast<boost::uint8_t>(*next) & 0x3Fu;
+         m_value += static_cast<std::uint8_t>(*next) & 0x3Fu;
       }
       // we now need to remove a few of the leftmost bits, but how many depends
       // upon how many extra bytes we've extracted:
-      static const boost::uint32_t masks[4] = 
+      static const std::uint32_t masks[4] = 
       {
          0x7Fu,
          0x7FFu,
@@ -652,8 +731,8 @@ class utf16_output_iterator
 public:
    typedef void                                   difference_type;
    typedef void                                   value_type;
-   typedef boost::uint32_t*                       pointer;
-   typedef boost::uint32_t&                       reference;
+   typedef std::uint32_t*                         pointer;
+   typedef std::uint32_t&                         reference;
    typedef std::output_iterator_tag               iterator_category;
 
    utf16_output_iterator(const BaseIterator& b)
@@ -669,7 +748,7 @@ public:
    {
       return *this;
    }
-   void operator=(boost::uint32_t val)const
+   void operator=(std::uint32_t val)const
    {
       push(val);
    }
@@ -686,7 +765,7 @@ public:
       return m_position;
    }
 private:
-   void push(boost::uint32_t v)const
+   void push(std::uint32_t v)const
    {
       if(v >= 0x10000u)
       {
@@ -694,8 +773,8 @@ private:
          if(v > 0x10FFFFu)
             detail::invalid_utf32_code_point(v);
          // split into two surrogates:
-         *m_position++ = static_cast<boost::uint16_t>(v >> 10) + detail::high_surrogate_base;
-         *m_position++ = static_cast<boost::uint16_t>(v & detail::ten_bit_mask) + detail::low_surrogate_base;
+         *m_position++ = static_cast<std::uint16_t>(v >> 10) + detail::high_surrogate_base;
+         *m_position++ = static_cast<std::uint16_t>(v & detail::ten_bit_mask) + detail::low_surrogate_base;
       }
       else
       {
@@ -703,7 +782,7 @@ private:
          // value must not be a surrogate:
          if(detail::is_surrogate(v))
             detail::invalid_utf32_code_point(v);
-         *m_position++ = static_cast<boost::uint16_t>(v);
+         *m_position++ = static_cast<std::uint16_t>(v);
       }
    }
    mutable BaseIterator m_position;
@@ -715,8 +794,8 @@ class utf8_output_iterator
 public:
    typedef void                                   difference_type;
    typedef void                                   value_type;
-   typedef boost::uint32_t*                       pointer;
-   typedef boost::uint32_t&                       reference;
+   typedef std::uint32_t*                       pointer;
+   typedef std::uint32_t&                       reference;
    typedef std::output_iterator_tag               iterator_category;
 
    utf8_output_iterator(const BaseIterator& b)
@@ -732,7 +811,7 @@ public:
    {
       return *this;
    }
-   void operator=(boost::uint32_t val)const
+   void operator=(std::uint32_t val)const
    {
       push(val);
    }
@@ -749,7 +828,7 @@ public:
       return m_position;
    }
 private:
-   void push(boost::uint32_t c)const
+   void push(std::uint32_t c)const
    {
       if(c > 0x10FFFFu)
          detail::invalid_utf32_code_point(c);

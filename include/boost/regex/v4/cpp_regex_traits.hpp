@@ -38,7 +38,7 @@
 #include <boost/regex/v4/primary_transform.hpp>
 #endif
 #ifndef BOOST_REGEX_OBJECT_CACHE_HPP
-#include <boost/regex/pending/object_cache.hpp>
+#include <boost/regex/v4/object_cache.hpp>
 #endif
 
 #include <climits>
@@ -355,7 +355,7 @@ typename cpp_regex_traits_char_layer<charT>::string_type
 // specialized version for narrow characters:
 //
 template <>
-class BOOST_REGEX_DECL cpp_regex_traits_char_layer<char> : public cpp_regex_traits_base<char>
+class cpp_regex_traits_char_layer<char> : public cpp_regex_traits_base<char>
 {
    typedef std::string string_type;
 public:
@@ -508,7 +508,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we work around this elsewhere, but just assert here that
    // we adhere to gcc's (buggy) preconditions...
    //
-   BOOST_ASSERT(*p2 == 0);
+   BOOST_REGEX_ASSERT(*p2 == 0);
    string_type result;
 #if defined(_CPPLIB_VER)
    //
@@ -588,7 +588,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // we work around this elsewhere, but just assert here that
    // we adhere to gcc's (buggy) preconditions...
    //
-   BOOST_ASSERT(*p2 == 0);
+   BOOST_REGEX_ASSERT(*p2 == 0);
    //
    // swallowing all exceptions here is a bad idea
    // however at least one std lib will always throw
@@ -646,7 +646,7 @@ typename cpp_regex_traits_implementation<charT>::string_type
             result2.append(1, static_cast<charT>(1 + static_cast<uchar_type>(result[i]))).append(1, charT('b') - 1);
          }
       }
-      BOOST_ASSERT(std::find(result2.begin(), result2.end(), charT(0)) == result2.end());
+      BOOST_REGEX_ASSERT(std::find(result2.begin(), result2.end(), charT(0)) == result2.end());
 #ifndef BOOST_NO_EXCEPTIONS
    }
    catch(...)
@@ -872,7 +872,7 @@ typename cpp_regex_traits_implementation<charT>::char_class_type
          return pos->second;
    }
    std::size_t state_id = 1 + BOOST_REGEX_DETAIL_NS::get_default_class_id(p1, p2);
-   BOOST_ASSERT(state_id < sizeof(masks) / sizeof(masks[0]));
+   BOOST_REGEX_ASSERT(state_id < sizeof(masks) / sizeof(masks[0]));
    return masks[state_id];
 }
 
@@ -1128,6 +1128,92 @@ static_mutex& cpp_regex_traits<charT>::get_mutex_inst()
    return s_mutex;
 }
 #endif
+
+namespace BOOST_REGEX_DETAIL_NS {
+
+   inline void cpp_regex_traits_char_layer<char>::init()
+   {
+      // we need to start by initialising our syntax map so we know which
+      // character is used for which purpose:
+      std::memset(m_char_map, 0, sizeof(m_char_map));
+#ifndef BOOST_NO_STD_MESSAGES
+#ifndef __IBMCPP__
+      std::messages<char>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
+#else
+      std::messages<char>::catalog cat = reinterpret_cast<std::messages<char>::catalog>(-1);
+#endif
+      std::string cat_name(cpp_regex_traits<char>::get_catalog_name());
+      if ((!cat_name.empty()) && (m_pmessages != 0))
+      {
+         cat = this->m_pmessages->open(
+            cat_name,
+            this->m_locale);
+         if ((int)cat < 0)
+         {
+            std::string m("Unable to open message catalog: ");
+            std::runtime_error err(m + cat_name);
+            boost::BOOST_REGEX_DETAIL_NS::raise_runtime_error(err);
+         }
+      }
+      //
+      // if we have a valid catalog then load our messages:
+      //
+      if ((int)cat >= 0)
+      {
+#ifndef BOOST_NO_EXCEPTIONS
+         try {
+#endif
+            for (regex_constants::syntax_type i = 1; i < regex_constants::syntax_max; ++i)
+            {
+               string_type mss = this->m_pmessages->get(cat, 0, i, get_default_syntax(i));
+               for (string_type::size_type j = 0; j < mss.size(); ++j)
+               {
+                  m_char_map[static_cast<unsigned char>(mss[j])] = i;
+               }
+            }
+            this->m_pmessages->close(cat);
+#ifndef BOOST_NO_EXCEPTIONS
+         }
+         catch (...)
+         {
+            this->m_pmessages->close(cat);
+            throw;
+         }
+#endif
+      }
+      else
+      {
+#endif
+         for (regex_constants::syntax_type j = 1; j < regex_constants::syntax_max; ++j)
+         {
+            const char* ptr = get_default_syntax(j);
+            while (ptr && *ptr)
+            {
+               m_char_map[static_cast<unsigned char>(*ptr)] = j;
+               ++ptr;
+            }
+         }
+#ifndef BOOST_NO_STD_MESSAGES
+      }
+#endif
+      //
+      // finish off by calculating our escape types:
+      //
+      unsigned char i = 'A';
+      do
+      {
+         if (m_char_map[i] == 0)
+         {
+            if (this->m_pctype->is(std::ctype_base::lower, i))
+               m_char_map[i] = regex_constants::escape_type_class;
+            else if (this->m_pctype->is(std::ctype_base::upper, i))
+               m_char_map[i] = regex_constants::escape_type_not_class;
+         }
+      } while (0xFF != i++);
+   }
+
+} // namespace detail
+
 
 } // boost
 
