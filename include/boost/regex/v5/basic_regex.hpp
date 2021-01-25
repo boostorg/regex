@@ -166,16 +166,12 @@ struct regex_data : public named_subexpressions
       ::boost::regex_traits_wrapper<traits> >& t) 
       : m_ptraits(t), m_flags(0), m_status(0), m_expression(0), m_expression_len(0),
          m_mark_count(0), m_first_state(0), m_restart_type(0),
-#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_REGEX_MSVC) && (BOOST_REGEX_MSVC < 1900))
          m_startmap{ 0 },
-#endif
          m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
    regex_data() 
       : m_ptraits(new ::boost::regex_traits_wrapper<traits>()), m_flags(0), m_status(0), m_expression(0), m_expression_len(0), 
          m_mark_count(0), m_first_state(0), m_restart_type(0), 
-#if !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) && !(defined(BOOST_REGEX_MSVC) && (BOOST_REGEX_MSVC < 1900))
       m_startmap{ 0 },
-#endif
          m_can_be_null(0), m_word_mask(0), m_has_recursions(false), m_disable_match_any(false) {}
 
    ::std::shared_ptr<
@@ -390,7 +386,6 @@ public:
    {
       return do_assign(p1, p2, f);
    }
-#if !defined(BOOST_NO_MEMBER_TEMPLATES)
 
    template <class ST, class SA>
    unsigned int  set_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal)
@@ -444,30 +439,6 @@ public:
       }
       return assign(static_cast<const charT*>(0), static_cast<const charT*>(0), f);
    }
-#else
-   unsigned int  set_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
-   { 
-      return set_expression(p.data(), p.data() + p.size(), f); 
-   }
-
-   basic_regex(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
-   { 
-      assign(p, f); 
-   }
-
-   basic_regex&  operator=(const std::basic_string<charT>& p)
-   {
-      return assign(p.data(), p.data() + p.size(), regex_constants::normal);
-   }
-
-   basic_regex&  assign(
-       const std::basic_string<charT>& s,
-       flag_type f = regex_constants::normal)
-   {
-      return assign(s.data(), s.data() + s.size(), f);
-   }
-
-#endif
 
    //
    // locale:
@@ -695,7 +666,6 @@ void swap(basic_regex<charT, traits>& e1, basic_regex<charT, traits>& e2)
    e1.swap(e2);
 }
 
-#ifndef BOOST_NO_STD_LOCALE
 template <class charT, class traits, class traits2>
 std::basic_ostream<charT, traits>& 
    operator << (std::basic_ostream<charT, traits>& os, 
@@ -703,13 +673,6 @@ std::basic_ostream<charT, traits>&
 {
    return (os << e.str());
 }
-#else
-template <class traits>
-std::ostream& operator << (std::ostream& os, const basic_regex<char, traits>& e)
-{
-   return (os << e.str());
-}
-#endif
 
 //
 // class reg_expression:
@@ -741,7 +704,6 @@ public:
       return this->assign(that);
    }
 
-#if !defined(BOOST_NO_MEMBER_TEMPLATES)
    template <class ST, class SA>
    explicit reg_expression(const std::basic_string<charT, ST, SA>& p, flag_type f = regex_constants::normal)
    : basic_regex<charT, traits>(p, f)
@@ -760,18 +722,6 @@ public:
       this->assign(p);
       return *this;
    }
-#else
-   explicit reg_expression(const std::basic_string<charT>& p, flag_type f = regex_constants::normal)
-   : basic_regex<charT, traits>(p, f)
-   { 
-   }
-
-   reg_expression&  operator=(const std::basic_string<charT>& p)
-   {
-      this->assign(p);
-      return *this;
-   }
-#endif
 
 };
 

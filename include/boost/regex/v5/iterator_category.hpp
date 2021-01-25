@@ -75,10 +75,8 @@ public:
    static const bool value = answer::value;
 };
 
-#ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
 template <class I>
 const bool is_random_access_iterator<I>::value;
-#endif
 
 }
 

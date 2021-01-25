@@ -51,7 +51,7 @@ namespace boost{
 extern "C" {
 #endif
 
-#if defined(__cplusplus) && !defined(BOOST_NO_STDC_NAMESPACE)
+#if defined(__cplusplus)
 typedef std::ptrdiff_t regoff_t;
 typedef std::size_t regsize_t;
 #else

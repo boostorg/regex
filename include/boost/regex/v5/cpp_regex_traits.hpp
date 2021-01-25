@@ -24,8 +24,6 @@
 #include <locale>
 #include <type_traits>
 
-#ifndef BOOST_NO_STD_LOCALE
-
 #include <boost/regex/pattern_except.hpp>
 #include <boost/regex/v5/regex_traits_defaults.hpp>
 
@@ -160,33 +158,25 @@ struct cpp_regex_traits_base
 
    std::locale m_locale;
    std::ctype<charT> const* m_pctype;
-#ifndef BOOST_NO_STD_MESSAGES
    std::messages<charT> const* m_pmessages;
-#endif
    std::collate<charT> const* m_pcollate;
 
    bool operator<(const cpp_regex_traits_base& b)const
    {
       if(m_pctype == b.m_pctype)
       {
-#ifndef BOOST_NO_STD_MESSAGES
          if(m_pmessages == b.m_pmessages)
          {
             return m_pcollate < b.m_pcollate;
          }
          return m_pmessages < b.m_pmessages;
-#else
-         return m_pcollate < b.m_pcollate;
-#endif
       }
       return m_pctype < b.m_pctype;
    }
    bool operator==(const cpp_regex_traits_base& b)const
    {
       return (m_pctype == b.m_pctype) 
-#ifndef BOOST_NO_STD_MESSAGES
          && (m_pmessages == b.m_pmessages) 
-#endif
          && (m_pcollate == b.m_pcollate);
    }
 };
@@ -197,9 +187,7 @@ std::locale cpp_regex_traits_base<charT>::imbue(const std::locale& l)
    std::locale result(m_locale);
    m_locale = l;
    m_pctype = &std::use_facet<std::ctype<charT>>(l);
-#ifndef BOOST_NO_STD_MESSAGES
    m_pmessages = std::has_facet<std::messages<charT> >(l) ? &std::use_facet<std::messages<charT> >(l) : 0;
-#endif
    m_pcollate = &std::use_facet<std::collate<charT> >(l);
    return result;
 }
@@ -255,7 +243,6 @@ void cpp_regex_traits_char_layer<charT>::init()
 {
    // we need to start by initialising our syntax map so we know which
    // character is used for which purpose:
-#ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
    typename std::messages<charT>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
 #else
@@ -303,7 +290,6 @@ void cpp_regex_traits_char_layer<charT>::init()
    }
    else
    {
-#endif
       for(regex_constants::syntax_type i = 1; i < regex_constants::syntax_max; ++i)
       {
          const char* ptr = get_default_syntax(i);
@@ -313,9 +299,7 @@ void cpp_regex_traits_char_layer<charT>::init()
             ++ptr;
          }
       }
-#ifndef BOOST_NO_STD_MESSAGES
    }
-#endif
 }
 
 template <class charT>
@@ -971,7 +955,6 @@ namespace BOOST_REGEX_DETAIL_NS {
       // we need to start by initialising our syntax map so we know which
       // character is used for which purpose:
       std::memset(m_char_map, 0, sizeof(m_char_map));
-#ifndef BOOST_NO_STD_MESSAGES
 #ifndef __IBMCPP__
       std::messages<char>::catalog cat = static_cast<std::messages<char>::catalog>(-1);
 #else
@@ -1018,7 +1001,6 @@ namespace BOOST_REGEX_DETAIL_NS {
       }
       else
       {
-#endif
          for (regex_constants::syntax_type j = 1; j < regex_constants::syntax_max; ++j)
          {
             const char* ptr = get_default_syntax(j);
@@ -1028,9 +1010,7 @@ namespace BOOST_REGEX_DETAIL_NS {
                ++ptr;
             }
          }
-#ifndef BOOST_NO_STD_MESSAGES
       }
-#endif
       //
       // finish off by calculating our escape types:
       //
@@ -1056,6 +1036,5 @@ namespace BOOST_REGEX_DETAIL_NS {
 #pragma warning(pop)
 #endif
 
-#endif
 
 #endif
