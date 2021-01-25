@@ -114,7 +114,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [ g++-5, g++-6, clang++-5.0, clang++-6.0 ]
-        standard: [ c++11, c++14, c++1z ]
+        standard: [ c++03 c++11, c++14, c++1z ]
     steps:
       - uses: actions/checkout@v2
         with:
