@@ -21,12 +21,3 @@ target_link_libraries(boost_regex
     Boost::assert
 )
 
-# boost_install requires PROJECT_VERSION
-# Without the superproject, we don't have any, so skip installation
-
-if(BOOST_SUPERPROJECT_VERSION)
-
-  include(BoostInstall)
-  boost_install(TARGETS boost_regex HEADER_DIRECTORY include/)
-
-endif()
