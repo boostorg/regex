@@ -58,8 +58,8 @@ Accepts UTF-32 code points and forwards them on as UTF-16 code points.
 
 ****************************************************************************/
 
-#ifndef BOOST_REGEX_UNICODE_ITERATOR_HPP
-#define BOOST_REGEX_UNICODE_ITERATOR_HPP
+#ifndef BOOST_REGEX_V4_UNICODE_ITERATOR_HPP
+#define BOOST_REGEX_V4_UNICODE_ITERATOR_HPP
 #include <boost/cstdint.hpp>
 #include <boost/regex/config.hpp>
 #include <boost/iterator/iterator_facade.hpp>
