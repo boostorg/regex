@@ -17,6 +17,8 @@ target_link_libraries(boost_regex
   INTERFACE
     Boost::config
     Boost::throw_exception
+    Boost::predef
+    Boost::assert
 )
 
 # boost_install requires PROJECT_VERSION
