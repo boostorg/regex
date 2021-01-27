@@ -248,7 +248,7 @@ jobs:
       - name: Test
         run: ..\..\..\b2 --hash %ARGS%
         working-directory: ../boost-root/libs/regex/test
-  ubuntu-focal:
+  ubuntu-cmake-install:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -277,7 +277,7 @@ jobs:
          cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
          cmake --build .
          cmake --build . --target check
-  ubuntu-focal:
+  ubuntu-cmake-check:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
