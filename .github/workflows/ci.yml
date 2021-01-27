@@ -248,3 +248,58 @@ jobs:
       - name: Test
         run: ..\..\..\b2 --hash %ARGS%
         working-directory: ../boost-root/libs/regex/test
+  ubuntu-focal:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout main boost
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
+        working-directory: ../boost-root
+      - name: Copy files
+        run: cp -r $GITHUB_WORKSPACE/* libs/regex
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        working-directory: ../boost-root
+      - name: Bootstrap
+        run: ./bootstrap.sh
+        working-directory: ../boost-root
+      - name: CMake Test
+        working-directory: ../boost-root
+        run: | 
+         mkdir __build__ && cd __build__
+         cmake -DBOOST_ENABLE_CMAKE=1 -DBoost_VERBOSE=1 -DBOOST_INCLUDE_LIBRARIES="regex;core" -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=~/.local ..
+         cmake --build . --target install
+         cd ../libs/regex/test/cmake_install_test && mkdir __build__ && cd __build__
+         cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
+         cmake --build .
+         cmake --build . --target check
+  ubuntu-focal:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout main boost
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
+        working-directory: ../boost-root
+      - name: Copy files
+        run: cp -r $GITHUB_WORKSPACE/* libs/regex
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        working-directory: ../boost-root
+      - name: Bootstrap
+        run: ./bootstrap.sh
+        working-directory: ../boost-root
+      - name: CMake Test
+        working-directory: ../boost-root/libs/regex/test
+        run: | 
+          cd cmake_subdir_test && mkdir __build__ && cd __build__
+          cmake ..
+          cmake --build .
+          cmake --build . --target check
