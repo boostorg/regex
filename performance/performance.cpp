@@ -148,7 +148,7 @@ void test_search(const char* expression, const char* text, bool isperl = false, 
       {
          double time = exec_timed_test([&]() { return (*i)->find_all(text); });
          report_execution_time(time, table, row, heading);
-         std::cout << "Search with library: " << heading << " found " << last_value_returned << " occurances.\n";
+         std::cout << "Search with library: " << heading << " found " << last_value_returned << " occurrences.\n";
       }
    }
 }

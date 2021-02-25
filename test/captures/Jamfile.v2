@@ -8,23 +8,11 @@ project
     ;
 
 EX_SOURCES = 
-   c_regex_traits.cpp
-   cpp_regex_traits.cpp
-   cregex.cpp
-   fileiter.cpp
-   icu.cpp
-   instances.cpp
    posix_api.cpp
    regex.cpp
    regex_debug.cpp
-   regex_raw_buffer.cpp
-   regex_traits_defaults.cpp
    static_mutex.cpp
-   w32_regex_traits.cpp
-   wc_regex_traits.cpp
-   wide_posix_api.cpp
-   winstances.cpp 
-   usinstances.cpp ;
+   wide_posix_api.cpp ;
        
 lib boost_regex_extra : $(EX_SOURCES) ../../build//icu_options
     : 

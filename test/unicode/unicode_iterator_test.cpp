@@ -16,6 +16,7 @@
   *   DESCRIPTION: Simple test suite for Unicode interconversions.
   */
 
+#include <boost/regex/config.hpp>
 #include <boost/regex/pending/unicode_iterator.hpp>
 #include <boost/detail/lightweight_main.hpp>
 #include "../test_macros.hpp"
@@ -317,6 +318,6 @@ int cpp_main( int, char* [] )
    for(unsigned i = 0xDFFF + 1; i < 0x10FFFF; ++i)
       v.push_back(i);
    test(v);
-   return 0;
+   return boost::report_errors();
 }
 

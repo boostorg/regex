@@ -217,7 +217,7 @@ if you really want an empty alternative use [^(?:)] as a placeholder, for exampl
 
 [h4 Character sets]
 
-A character set is a bracket-expression starting with [^[] and ending with [^]], 
+A character set is a bracket-expression starting with [^\[] and ending with [^\]], 
 it defines a set of characters, and matches any single character that is a 
 member of that set.
 

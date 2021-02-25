@@ -43,15 +43,39 @@
       The library will encase all code inside namespace boost.
     </p>
 <p>
-      Unlike some other template libraries, this library consists of a mixture of
-      template code (in the headers) and static code and data (in cpp files). Consequently
-      it is necessary to build the library's support code into a library or archive
-      file before you can use it, instructions for specific platforms are as follows:
+      This is a header only library provided your compiler supports C++11 or later.
+      Support for C++03 compilers is still present, but is now deprecated and may
+      be removed without further notice!
     </p>
+<p>
+      The only people that still need to build the external libboost_regex library
+      are those that are either:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Using the library in C++03 mode, or,
+        </li>
+<li class="listitem">
+          Using the deprecated POSIX C API's
+        </li>
+</ul></div>
+<p>
+      Further, this library may now be used in "standalone" mode without
+      the rest of the Boost C++ libraries, in order to do this you must either:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Have a C++17 compiler that supports <code class="computeroutput"><span class="identifier">__has_include</span></code>,
+          in this case if <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">config</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code> is not present then the library will
+          automoatically enter standalone mode. Or:
+        </li>
+<li class="listitem">
+          Define BOOST_REGEX_STANDALONE when building.
+        </li>
+</ul></div>
 <h5>
 <a name="boost_regex.install.h0"></a>
-      <span class="phrase"><a name="boost_regex.install.building_with_bjam"></a></span><a class="link" href="install.html#boost_regex.install.building_with_bjam">Building
-      with bjam</a>
+      <span class="phrase"><a name="boost_regex.install.c_03_users_only_deprecated_build"></a></span><a class="link" href="install.html#boost_regex.install.c_03_users_only_deprecated_build"><span class="bold"><strong>C++03 users only (Deprecated)</strong></span> Building with bjam</a>
     </h5>
 <p>
       This is now the preferred method for building and installing this library,
