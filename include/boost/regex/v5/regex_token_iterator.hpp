@@ -201,7 +201,7 @@ private:
    void cow()
    {
       // copy-on-write
-      if(pdata.get() && !pdata.unique())
+      if(pdata.get() && (pdata.use_count() > 1))
       {
          pdata.reset(new impl(*(pdata.get())));
       }
