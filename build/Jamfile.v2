@@ -57,7 +57,7 @@ if ! $(disable-icu)
 
    if $(ICU_ICUUC_NAME)
    {
-      lib icuuc : : <name>$(ICU_ICUUC_NAME) ;
+      lib icuuc : : <name>$(ICU_ICUUC_NAME) <conditional>@path_options ;
    }
    else
    {
@@ -71,7 +71,7 @@ if ! $(disable-icu)
    }
    if $(ICU_ICUDT_NAME)
    {
-      lib icudt : : <name>$(ICU_ICUDT_NAME) ;
+      lib icudt : : <name>$(ICU_ICUDT_NAME) <conditional>@path_options ;
    }
    else
    {
@@ -85,7 +85,7 @@ if ! $(disable-icu)
    }
    if $(ICU_ICUIN_NAME)
    {
-      lib icuin : : <name>$(ICU_ICUIN_NAME) ;
+      lib icuin : : <name>$(ICU_ICUIN_NAME) <conditional>@path_options ;
    }
    else
    {
