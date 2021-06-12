@@ -114,6 +114,28 @@ if ! $(disable-icu)
       <runtime-link>static:<define>U_STATIC_IMPLEMENTATION=1
       ;
 
+   if [ modules.peek : ICU_DATA_DIR ]
+   {
+       rule data-dir-options ( properties * )
+       {
+          local result ;
+          local data_dir = [ modules.peek : ICU_DATA_DIR ] ;
+          if <toolset>emscripten in $(properties)
+          {
+             result = <define>ICU_DATA_DIR=\\\"/$(data_dir:BS)\\\"
+                      "<linkflags>--embed-file $(data_dir)@/$(data_dir:BS)"
+                      ;
+          }
+          else
+          {
+             result = <define>ICU_DATA_DIR=\\\"$(data_dir)\\\" ;
+          }
+          return $(result) ;
+       }
+
+       ICU_OPTS += <conditional>@data-dir-options ;
+   }
+
 }
 
 exe has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
