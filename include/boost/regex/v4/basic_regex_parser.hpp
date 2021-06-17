@@ -1093,9 +1093,10 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
          // Check for illegal following quantifier, we have to do this here, because
          // the extra states we insert below circumvents our usual error checking :-(
          //
-         bool contin = false;
+         bool contin;
          do
          {
+            contin = false;
             if ((this->flags() & (regbase::main_option_type | regbase::mod_x | regbase::no_perl_ex)) == regbase::mod_x)
             {
                // whitespace skip:
