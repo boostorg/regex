@@ -122,6 +122,9 @@ test-suite regex
       [ run unicode/unicode_iterator_test.cpp : : : 
             [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ]
             release <define>TEST_UTF16 : unicode_iterator_test_utf16 ]
+      [ run unicode/unicode_casefold_test.cpp 
+            ../build//boost_regex ../build//icu_options      
+      ]
       [ run static_mutex/static_mutex_test.cpp
             ../../thread/build//boost_thread ../build//boost_regex
       ]
