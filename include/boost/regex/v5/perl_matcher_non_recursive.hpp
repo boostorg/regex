@@ -1353,6 +1353,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_repeater_counter(bool
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind_extra_block(bool)
 {
+   ++used_block_count;
    saved_extra_block* pmp = static_cast<saved_extra_block*>(m_backup_state);
    void* condemmed = m_stack_base;
    m_stack_base = pmp->base;
