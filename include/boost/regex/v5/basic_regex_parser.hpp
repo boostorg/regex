@@ -348,7 +348,7 @@ bool basic_regex_parser<charT, traits>::parse_extended()
       ++m_position;
       return parse_repeat();
    case regex_constants::syntax_question:
-      if(m_position == this->m_base)
+      if(m_position == this->m_base || (((char)*(m_position-1) == "|" && ((char)m_position[0] == "?"))
       {
          fail(regex_constants::error_badrepeat, 0, "The repeat operator \"?\" cannot start a regular expression.");
          return false;
