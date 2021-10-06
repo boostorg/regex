@@ -224,3 +224,8 @@ compile test_warnings.cpp
          <define>BOOST_REGEX_STANDALONE
          [ check-target-builds ../build//is_legacy_03 : : <build>no ]
    :  test_warnings_standalone ;
+
+compile test_windows_defs_1.cpp ;
+compile test_windows_defs_2.cpp ;
+compile test_windows_defs_3.cpp ;
+compile test_windows_defs_4.cpp ;
