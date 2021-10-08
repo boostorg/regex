@@ -232,7 +232,6 @@ protected:
    bool                          m_icase;              // true for case insensitive matches
    unsigned                      m_repeater_id;        // the state_id of the next repeater
    bool                          m_has_backrefs;       // true if there are actually any backrefs
-   indexed_bit_flag              m_backrefs;           // bitmask of permitted backrefs
    std::uintmax_t                m_bad_repeats;        // bitmask of repeats we can't deduce a startmap for;
    bool                          m_has_recursions;     // set when we have recursive expressions to fixup
    std::vector<unsigned char>    m_recursion_checks;   // notes which recursions we've followed while analysing this expression
