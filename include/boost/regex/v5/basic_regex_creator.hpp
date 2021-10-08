@@ -20,8 +20,6 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_CREATOR_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_CREATOR_HPP
 
-#include <boost/regex/v5/indexed_bit_flag.hpp>
-
 #ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
 #pragma warning(disable:4459)
