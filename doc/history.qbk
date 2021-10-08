@@ -14,6 +14,16 @@ Currently open issues can be viewed [@https://github.com/boostorg/regex/issues?q
 
 All issues including closed ones can be viewed [@https://github.com/boostorg/regex/issues?q=is%3Aissue+is%3Aclosed here].
 
+[h4 Boost.Regex-7.0.0 (Boost-1.78.0)]
+
+* [*Breaking Change:] Change \B to be the opposite of \b as per Perl behaviour.
+* Change w32_regex_traits.hpp so that windows.h is no longer included.
+
+[h4 Boost.Regex-6.0.0 (Boost-1.77.0)]
+
+* Big change to header only library.
+* Deprecate C++03 support.
+
 [h4 Boost.Regex-5.1.4 (Boost-172.0)]
 
 * Minor build fixes, see [@https://github.com/boostorg/regex/issues/89 #89].
