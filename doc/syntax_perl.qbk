@@ -195,7 +195,11 @@ You can also use the \g escape for the same function, for example:
 [[[^\g{one}]][Match whatever matched the sub-expression named "one"]]
 ]
 
-Finally the \k escape can be used to refer to named subexpressions, for example [^\k<two>] will match
+Note that a back reference can also be a forward-reference to a sub-expression that has not yet
+been seen - this only really makes sense within a repeat, so for example `(\2two|(one))+` will
+match "oneonetwo".
+
+Finally the \k escape can be used to refer to named subexpressions, for example [^\k<two>] will 
 whatever matched the subexpression named "two".
 
 [h4 Alternation]
