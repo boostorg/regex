@@ -28,6 +28,8 @@
 #endif
 #endif
 
+#include <set>
+
 namespace boost{
 
 namespace BOOST_REGEX_DETAIL_NS{
