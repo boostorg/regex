@@ -49,7 +49,8 @@ CMakeLists.txt defines two targets:
 
 There is also one configuration option:
 
-* BOOST_REGEX_STANDALONE when set then no other Boost libraries are targeted as dependencies, and Boost.Regex is placed in standalone mode.
+* BOOST_REGEX_STANDALONE when set then no other Boost libraries are targeted as dependencies, and Boost.Regex is placed in standalone mode.  Invoke CMake
+with -DBOOST_REGEX_STANDALONE=on to enable standalone mode.
 
 [h4 [*C++03 users only (DEPRECATED)] Building with bjam]
 
