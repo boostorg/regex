@@ -362,7 +362,7 @@ jobs:
           cmake --build .
           cmake --build . --target check
           rm -rf *
-          cmake -DBOOST_REGEX_STANDALONE ..
+          cmake -DBOOST_REGEX_STANDALONE=on ..
           cmake --build .
           cmake --build . --target check
           cd ../cmake_subdir_test_icu && mkdir __build__ && cd __build__
@@ -370,6 +370,6 @@ jobs:
           cmake --build .
           cmake --build . --target check
           rm -rf *
-          cmake -DBOOST_REGEX_STANDALONE ..
+          cmake -DBOOST_REGEX_STANDALONE=on ..
           cmake --build .
           cmake --build . --target check
