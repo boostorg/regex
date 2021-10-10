@@ -10,7 +10,7 @@
 // See library home page at http://www.boost.org/libs/regex
 
 #include <boost/regex.hpp>
-#include <boost/core/lightweight_test.hpp>
+#include <cassert>
 #include <string>
 
 bool validate_card_format(const std::string& s)
@@ -37,19 +37,19 @@ int main()
 {
     std::string s[ 4 ] = { "0000111122223333", "0000 1111 2222 3333", "0000-1111-2222-3333", "000-1111-2222-3333" };
 
-    BOOST_TEST( !validate_card_format( s[0] ) );
-    BOOST_TEST_EQ( machine_readable_card_number( s[0] ), s[0] );
-    BOOST_TEST_EQ( human_readable_card_number( s[0] ), s[2] );
+    assert(!validate_card_format(s[0]));
+    assert(machine_readable_card_number(s[0]) == s[0]);
+    assert(human_readable_card_number(s[0]) == s[2]);
 
-    BOOST_TEST( validate_card_format( s[1] ) );
-    BOOST_TEST_EQ( machine_readable_card_number( s[1] ), s[0] );
-    BOOST_TEST_EQ( human_readable_card_number( s[1] ), s[2] );
+    assert(validate_card_format(s[1]));
+    assert(machine_readable_card_number(s[1]) == s[0]);
+    assert(human_readable_card_number(s[1]) == s[2]);
 
-    BOOST_TEST( validate_card_format( s[2] ) );
-    BOOST_TEST_EQ( machine_readable_card_number( s[2] ), s[0] );
-    BOOST_TEST_EQ( human_readable_card_number( s[2] ), s[2] );
+    assert(validate_card_format(s[2]));
+    assert(machine_readable_card_number(s[2]) == s[0]);
+    assert(human_readable_card_number(s[2]) == s[2]);
 
-    BOOST_TEST( !validate_card_format( s[3] ) );
+    assert(!validate_card_format(s[3]));
 
-    return boost::report_errors();
+    return 0;
 }
