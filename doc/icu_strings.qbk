@@ -18,15 +18,16 @@ contains the data types and algorithms necessary for working with regular
 expressions in a Unicode aware environment. 
 
 In order to use this header you will need the 
-[@http://www.ibm.com/software/globalization/icu/ ICU library], and you will need 
-to have built the Boost.Regex library with 
-[link boost_regex.install.building_with_unicode_and_icu_su ICU support enabled].
+[@http://www.ibm.com/software/globalization/icu/ ICU library].
 
 The header will enable you to:
 
 * Create regular expressions that treat Unicode strings as sequences of UTF-32 code points.
 * Create regular expressions that support various Unicode data properties, including character classification.
 * Transparently search Unicode strings that are encoded as either UTF-8, UTF-16 or UTF-32.
+
+CMake users should link to the `Boost::regex_icu` target in our CMakeLists.txt in order to have ICU dependencies
+taken care of when using this header.
 
 [endsect]
 
