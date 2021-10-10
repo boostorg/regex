@@ -27,7 +27,7 @@ jobs:
       - name: Add repository
         run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
-        run: sudo apt install g++-9 g++-10 clang-9 clang-10
+        run: sudo apt install g++-9 g++-10 clang-9 clang-10  libicu-dev
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -78,7 +78,7 @@ jobs:
       - name: Add repository
         run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
-        run: sudo apt install g++-7 g++-8 clang-7 clang-8
+        run: sudo apt install g++-7 g++-8 clang-7 clang-8 libicu-dev
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -331,6 +331,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
+      - name: Install packages
+        run: sudo apt install libicu-dev
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -350,5 +352,17 @@ jobs:
         run: | 
           cd cmake_subdir_test && mkdir __build__ && cd __build__
           cmake ..
+          cmake --build .
+          cmake --build . --target check
+          rm -rf *
+          cmake -DBOOST_REGEX_STANDALONE ..
+          cmake --build .
+          cmake --build . --target check
+          cd ../cmake_subdir_test_icu && mkdir __build__ && cd __build__
+          cmake ..
+          cmake --build .
+          cmake --build . --target check
+          rm -rf *
+          cmake -DBOOST_REGEX_STANDALONE ..
           cmake --build .
           cmake --build . --target check

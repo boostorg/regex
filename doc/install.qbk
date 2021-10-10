@@ -35,6 +35,10 @@ in order to do this you must either:
 then the library will automoatically enter standalone mode.  Or:
 * Define BOOST_REGEX_STANDALONE when building.
 
+If you are using this library with ICU, note that since it is now header only, it will be up to you
+to link to the ICU libraries if you use `<boost/regex/icu.hpp>`.  Also note that the installed CMake file
+for Boost.Regex [/does not] list ICU as a dependency.
+
 [h4 [*C++03 users only (Deprecated)] Building with bjam]
 
 This is now the preferred method for building and installing this library, 
