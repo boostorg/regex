@@ -496,5 +496,13 @@ void test_pocessive_repeats()
    TEST_INVALID_REGEX("(ab + + +)", perl | mod_x);
    TEST_INVALID_REGEX("(ab + + ?)", perl | mod_x);
 
+#ifndef BOOST_REGEX_CXX03
+   // Some bug cases from https://github.com/boostorg/regex/issues/151
+   TEST_INVALID_REGEX("a|?+", perl | mod_x);
+   TEST_INVALID_REGEX("(?xi)a|?+", perl | mod_x);
+   TEST_INVALID_REGEX("(?xi)a|#\r*", perl | mod_x);
+   TEST_INVALID_REGEX("(?xi)|#\r*", perl | mod_x);
+   TEST_INVALID_REGEX("(?xi)|?+#\r*", perl | mod_x);
+#endif
 }
 
