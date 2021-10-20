@@ -417,7 +417,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_startmark()
          {
             // Must be unwinding from a COMMIT/SKIP/PRUNE and the independent 
             // sub failed, need to unwind everything else:
-            while(unwind(false));
+            while (m_backup_state->state_id)
+               unwind(false);
             return false;
          }
 #if !defined(BOOST_NO_EXCEPTIONS)
