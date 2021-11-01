@@ -4,8 +4,8 @@
 <title>Building and Installing the Library</title>
 <link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
-<link rel="home" href="../index.html" title="Boost.Regex 5.1.4">
-<link rel="up" href="../index.html" title="Boost.Regex 5.1.4">
+<link rel="home" href="../index.html" title="Boost.Regex 7.0.0">
+<link rel="up" href="../index.html" title="Boost.Regex 7.0.0">
 <link rel="prev" href="configuration/tuning.html" title="Algorithm Tuning">
 <link rel="next" href="intro.html" title="Introduction and Overview">
 </head>
@@ -73,17 +73,52 @@
           Define BOOST_REGEX_STANDALONE when building.
         </li>
 </ul></div>
+<p>
+      If you are using this library with ICU, note that since it is now header only,
+      it will be up to you to link to the ICU libraries if you use <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">regex</span><span class="special">/</span><span class="identifier">icu</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code> unless you are using the supplied CMake
+      script.
+    </p>
 <h5>
 <a name="boost_regex.install.h0"></a>
-      <span class="phrase"><a name="boost_regex.install.c_03_users_only_deprecated_build"></a></span><a class="link" href="install.html#boost_regex.install.c_03_users_only_deprecated_build"><span class="bold"><strong>C++03 users only (Deprecated)</strong></span> Building with bjam</a>
+      <span class="phrase"><a name="boost_regex.install.usage_with_cmake"></a></span><a class="link" href="install.html#boost_regex.install.usage_with_cmake">Usage
+      with CMake</a>
     </h5>
 <p>
-      This is now the preferred method for building and installing this library,
-      please refer to the <a href="../../../../../more/getting_started.html" target="_top">getting
+      The library comes with a very basic CMakeLists.txt that allows this library
+      to be used from other CMake scripts.
+    </p>
+<p>
+      CMakeLists.txt defines two targets:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">Boost</span><span class="special">::</span><span class="identifier">regex</span></code> This is the target to use for normal
+          header only builds.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">Boost</span><span class="special">::</span><span class="identifier">regex_icu</span></code> This is the target to use if
+          you are using <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">regex</span><span class="special">/</span><span class="identifier">icu</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code> in your code, and wish to have the
+          ICU dependencies taken care of for you.
+        </li>
+</ul></div>
+<p>
+      There is also one configuration option:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          BOOST_REGEX_STANDALONE when set then no other Boost libraries are targeted
+          as dependencies, and Boost.Regex is placed in standalone mode.
+        </li></ul></div>
+<h5>
+<a name="boost_regex.install.h1"></a>
+      <span class="phrase"><a name="boost_regex.install.c_03_users_only_deprecated_build"></a></span><a class="link" href="install.html#boost_regex.install.c_03_users_only_deprecated_build"><span class="bold"><strong>C++03 users only (DEPRECATED)</strong></span> Building with bjam</a>
+    </h5>
+<p>
+      This is now the preferred method for building and installing legacy versions
+      this library, please refer to the <a href="../../../../../more/getting_started.html" target="_top">getting
       started guide</a> for more information.
     </p>
 <h5>
-<a name="boost_regex.install.h1"></a>
+<a name="boost_regex.install.h2"></a>
       <span class="phrase"><a name="boost_regex.install.building_with_unicode_and_icu_su"></a></span><a class="link" href="install.html#boost_regex.install.building_with_unicode_and_icu_su">Building
       With Unicode and ICU Support</a>
     </h5>
@@ -293,7 +328,7 @@
       header-include and linker-search paths).
     </p>
 <h5>
-<a name="boost_regex.install.h2"></a>
+<a name="boost_regex.install.h3"></a>
       <span class="phrase"><a name="boost_regex.install.building_from_source"></a></span><a class="link" href="install.html#boost_regex.install.building_from_source">Building
       from Source</a>
     </h5>

@@ -19,13 +19,19 @@ void test_backrefs()
 {
    using namespace boost::regex_constants;
    TEST_INVALID_REGEX("a(b)\\2c", perl);
+#ifdef BOOST_REGEX_CXX03
    TEST_INVALID_REGEX("a(b\\1)c", perl);
+#endif
    TEST_REGEX_SEARCH("a(b*)c\\1d", perl, "abbcbbd", match_default, make_array(0, 7, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\1d", perl, "abbcbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\1d", perl, "abbcbbbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("^(.)\\1", perl, "abc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a([bc])\\1d", perl, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
    TEST_REGEX_SEARCH("a\\([bc]\\)\\1d", basic, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
+#ifndef BOOST_REGEX_CXX03
+   TEST_REGEX_SEARCH("(\\2two|(one))+", perl, "oneonetwo", match_default, make_array(0, 9, 3, 9, 0, 3, -2, -2));
+   TEST_INVALID_REGEX("(\\3two|(one))+", perl);
+#endif
    // strictly speaking this is at best ambiguous, at worst wrong, this is what most
    // re implimentations will match though.
    TEST_REGEX_SEARCH("a(([bc])\\2)*d", perl, "abbccd", match_default, make_array(0, 6, 3, 5, 3, 4, -2, -2));
@@ -59,7 +65,9 @@ void test_backrefs()
    // Now test the \g version:
    //
    TEST_INVALID_REGEX("a(b)\\g2c", perl);
+#ifdef BOOST_REGEX_CXX03
    TEST_INVALID_REGEX("a(b\\g1)c", perl);
+#endif
    TEST_INVALID_REGEX("a(b\\g0)c", perl);
    TEST_REGEX_SEARCH("a(b*)c\\g1d", perl, "abbcbbd", match_default, make_array(0, 7, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g1d", perl, "abbcbd", match_default, make_array(-2, -2));
@@ -67,8 +75,14 @@ void test_backrefs()
    TEST_REGEX_SEARCH("^(.)\\g1", perl, "abc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a([bc])\\g1d", perl, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
    TEST_INVALID_REGEX("a(b)\\g{2}c", perl);
+#ifdef BOOST_REGEX_CXX03
    TEST_INVALID_REGEX("a(b\\g{1})c", perl);
+#endif
    TEST_INVALID_REGEX("a(b\\g{0})c", perl);
+#ifndef BOOST_REGEX_CXX03
+   TEST_REGEX_SEARCH("(\\g{2}two|(one))+", perl, "oneonetwo", match_default, make_array(0, 9, 3, 9, 0, 3, -2, -2));
+   TEST_INVALID_REGEX("(\\g{3}two|(one))+", perl);
+#endif
    TEST_REGEX_SEARCH("a(b*)c\\g{1}d", perl, "abbcbbd", match_default, make_array(0, 7, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g{1}d", perl, "abbcbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g{1}d", perl, "abbcbbbd", match_default, make_array(-2, -2));
@@ -76,7 +90,9 @@ void test_backrefs()
    TEST_REGEX_SEARCH("a([bc])\\g{1}d", perl, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
    // And again but with negative indexes:
    TEST_INVALID_REGEX("a(b)\\g-2c", perl);
+#ifdef BOOST_REGEX_CXX03
    TEST_INVALID_REGEX("a(b\\g-1)c", perl);
+#endif
    TEST_INVALID_REGEX("a(b\\g-0)c", perl);
    TEST_REGEX_SEARCH("a(b*)c\\g-1d", perl, "abbcbbd", match_default, make_array(0, 7, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g-1d", perl, "abbcbd", match_default, make_array(-2, -2));
@@ -84,7 +100,9 @@ void test_backrefs()
    TEST_REGEX_SEARCH("^(.)\\g1", perl, "abc", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a([bc])\\g1d", perl, "abcdabbd", match_default, make_array(4, 8, 5, 6, -2, -2));
    TEST_INVALID_REGEX("a(b)\\g{-2}c", perl);
+#ifdef BOOST_REGEX_CXX03
    TEST_INVALID_REGEX("a(b\\g{-1})c", perl);
+#endif
    TEST_REGEX_SEARCH("a(b*)c\\g{-1}d", perl, "abbcbbd", match_default, make_array(0, 7, 1, 3, -2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g{-1}d", perl, "abbcbd", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("a(b*)c\\g{-1}d", perl, "abbcbbbd", match_default, make_array(-2, -2));

@@ -35,9 +35,26 @@ in order to do this you must either:
 then the library will automoatically enter standalone mode.  Or:
 * Define BOOST_REGEX_STANDALONE when building.
 
-[h4 [*C++03 users only (Deprecated)] Building with bjam]
+If you are using this library with ICU, note that since it is now header only, it will be up to you
+to link to the ICU libraries if you use `<boost/regex/icu.hpp>` unless you are using the supplied CMake script.
 
-This is now the preferred method for building and installing this library, 
+[h4 Usage with CMake]
+
+The library comes with a very basic CMakeLists.txt that allows this library to be used from other CMake scripts.
+
+CMakeLists.txt defines two targets:
+
+* `Boost::regex`  This is the target to use for normal header only builds.
+* `Boost::regex_icu`  This is the target to use if you are using `<boost/regex/icu.hpp>` in your code, and wish to have the ICU dependencies taken care of for you.
+
+There is also one configuration option:
+
+* BOOST_REGEX_STANDALONE when set then no other Boost libraries are targeted as dependencies, and Boost.Regex is placed in standalone mode.  Invoke CMake
+with -DBOOST_REGEX_STANDALONE=on to enable standalone mode.
+
+[h4 [*C++03 users only (DEPRECATED)] Building with bjam]
+
+This is now the preferred method for building and installing legacy versions this library, 
 please refer to the 
 [@../../../../more/getting_started.html getting started guide] for more information.
 

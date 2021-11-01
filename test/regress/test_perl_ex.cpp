@@ -999,6 +999,9 @@ void test_verbs()
    TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|C", perl, "AAAC", match_default, make_array(3, 4, -1, -1, -2, -2));
    TEST_REGEX_SEARCH("AA+(*SKIP)(B|Z)|AC", perl, "AAAC", match_default, make_array(-2, -2));
    TEST_REGEX_SEARCH("AA+(*SKIP)B|C", perl, "AAAC", match_default, make_array(3, 4, -2, -2));
+   
+   // https://github.com/boostorg/regex/issues/152
+   TEST_REGEX_SEARCH("\\A((\x1f((?1)    )?+)?+(*SKIP) *?(?2)*?)\\z", perl, "\x20\x1f\x1f\x20", match_default, make_array(-2, -2));
 
    TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaaxxxxxx", match_default, make_array(0, 9, -2, -2));
    TEST_REGEX_SEARCH("^(?:aaa(*THEN)\\w{6}|bbb(*THEN)\\w{5}|ccc(*THEN)\\w{4}|\\w{3})", perl, "aaa++++++", match_default, make_array(-2, -2));
