@@ -17,7 +17,8 @@ All issues including closed ones can be viewed [@https://github.com/boostorg/reg
 [h4 Boost.Regex-7.0.0 (Boost-1.78.0)]
 
 * [*Breaking Change:] Change \B to be the opposite of \b as per Perl behaviour.
-* Change w32_regex_traits.hpp so that windows.h is no longer included.
+* Change w32_regex_traits.hpp so that windows.h is no longer included. 
+* Fxed fuzzing related issues [@https://github.com/boostorg/regex/issues/156 #151], [@https://github.com/boostorg/regex/issues/156 #152], [@https://github.com/boostorg/regex/issues/156 #153], [@https://github.com/boostorg/regex/issues/156 #156].
 
 [h4 Boost.Regex-6.0.0 (Boost-1.77.0)]
 
