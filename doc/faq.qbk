@@ -12,8 +12,8 @@
 [*A.] If you embed regular expressions in C++ code, then remember that escape 
 characters are processed twice: once by the C++ compiler, and once by the 
 Boost.Regex expression compiler, so to pass the regular expression \d+ 
-to Boost.Regex, you need to embed "\\d+" in your code. Likewise to match a 
-literal backslash you will need to embed "\\\\" in your code.
+to Boost.Regex, you need to embed "\\\\d+" in your code. Likewise to match a 
+literal backslash you will need to embed "\\\\\\\\" in your code.
 
 [*Q.] No matter what I do regex_match always returns false, what's going on?
 
