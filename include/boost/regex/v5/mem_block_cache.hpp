@@ -34,6 +34,8 @@
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
+#if BOOST_REGEX_MAX_CACHE_BLOCKS != 0
+
 #ifdef BOOST_REGEX_MEM_BLOCK_CACHE_LOCK_FREE /* lock free implementation */
 struct mem_block_cache
 {
@@ -139,7 +141,17 @@ struct mem_block_cache
 };
 #endif
 
-#if BOOST_REGEX_MAX_CACHE_BLOCKS == 0
+inline void*  get_mem_block()
+{
+   return mem_block_cache::instance().get();
+}
+
+inline void  put_mem_block(void* p)
+{
+   mem_block_cache::instance().put(p);
+}
+
+#else
 
 inline void*  get_mem_block()
 {
@@ -149,18 +161,6 @@ inline void*  get_mem_block()
 inline void  put_mem_block(void* p)
 {
    ::operator delete(p);
-}
-
-#else
-
-inline void*  get_mem_block()
-{
-   return mem_block_cache::instance().get();
-}
-
-inline void  put_mem_block(void* p)
-{
-   mem_block_cache::instance().put(p);
 }
 
 #endif
