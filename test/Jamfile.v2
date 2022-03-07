@@ -94,6 +94,15 @@ test-suite regex
         <define>TEST_THREADS
         : regex_regress_threaded ]
 
+      [ run regress/$(R_SOURCE) ../build//boost_regex
+                                ../../thread/build//boost_thread ../build//icu_options
+        : # command line
+        : # input files
+        : # requirements
+        <define>TEST_THREADS
+        <define>BOOST_REGEX_MAX_CACHE_BLOCKS=0
+        : regex_regress_threaded_no_cache ]
+
       [ regex-test posix_api_check : c_compiler_checks/posix_api_check.c ]
 
       [ compile c_compiler_checks/wide_posix_api_check.c 
