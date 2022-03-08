@@ -205,7 +205,7 @@ jobs:
         run: ..\..\..\b2 --hash %ARGS%
         working-directory: ../boost-root/libs/regex/test
   windows_msvc_14_0:
-    runs-on: windows-latest
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
@@ -252,7 +252,7 @@ jobs:
         run: ..\..\..\b2 --hash %ARGS%
         working-directory: ../boost-root/libs/regex/test
   windows_msvc_14_2:
-    runs-on: windows-latest
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
@@ -263,6 +263,53 @@ jobs:
       matrix:
         toolset: [ msvc-14.2 ]
         standard: [ 14, 17, latest ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - uses: mstachniuk/ci-skip@v1
+        with:
+          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[apple];[Apple];[APPLE];[linux];[Linux];[LINUX]'
+          commit-filter-separator: ';'
+          fail-fast: true
+      - name: Checkout main boost
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
+        working-directory: ../boost-root
+      - name: Copy files
+        run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\regex
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        working-directory: ../boost-root
+      - name: Bootstrap
+        run: bootstrap
+        working-directory: ../boost-root
+      - name: Generate headers
+        run: b2 headers
+        working-directory: ../boost-root
+      - name: Config info install
+        run: ..\..\..\b2 config_info_travis_install %ARGS%
+        working-directory: ../boost-root/libs/config/test
+      - name: Config info
+        run: config_info_travis
+        working-directory: ../boost-root/libs/config/test
+      - name: Test
+        run: ..\..\..\b2 --hash %ARGS%
+        working-directory: ../boost-root/libs/regex/test
+  windows_msvc_14_3:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: cmd
+    env:
+      ARGS: toolset=${{ matrix.toolset }} address-model=64 cxxstd=${{ matrix.standard }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolset: [ msvc-14.3 ]
+        standard: [ 14, 17, 20, latest ]
     steps:
       - uses: actions/checkout@v2
         with:
