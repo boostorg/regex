@@ -26,7 +26,7 @@ namespace boost{
 // regex_grep:
 // find all non-overlapping matches within the sequence first last:
 //
-template <class Predicate, class BidiIterator, class charT, class traits>
+BOOST_REGEX_MODULE_EXPORT template <class Predicate, class BidiIterator, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, 
                                BidiIterator first, 
                                BidiIterator last, 
@@ -76,7 +76,7 @@ inline unsigned int regex_grep(Predicate foo,
 //
 // regex_grep convenience interfaces:
 //
-template <class Predicate, class charT, class traits>
+BOOST_REGEX_MODULE_EXPORT template <class Predicate, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, const charT* str, 
                         const basic_regex<charT, traits>& e, 
                         match_flag_type flags = match_default)
@@ -84,7 +84,7 @@ inline unsigned int regex_grep(Predicate foo, const charT* str,
    return regex_grep(foo, str, str + traits::length(str), e, flags);
 }
 
-template <class Predicate, class ST, class SA, class charT, class traits>
+BOOST_REGEX_MODULE_EXPORT template <class Predicate, class ST, class SA, class charT, class traits>
 inline unsigned int regex_grep(Predicate foo, const std::basic_string<charT, ST, SA>& s, 
                  const basic_regex<charT, traits>& e, 
                  match_flag_type flags = match_default)

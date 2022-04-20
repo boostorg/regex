@@ -25,8 +25,10 @@
 #include <boost/regex/config.hpp>
 #endif
 
+#ifndef BOOST_REGEX_AS_MODULE
 #include <algorithm>
 #include <cstddef>
+#endif
 
 namespace boost{
    namespace BOOST_REGEX_DETAIL_NS{

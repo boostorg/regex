@@ -33,6 +33,13 @@
 #endif
 #endif
 
+#ifndef BOOST_REGEX_MODULE_EXPORT
+#define BOOST_REGEX_MODULE_EXPORT
+#define BOOST_REGEX_STATIC_CONST static const
+#else
+#define BOOST_REGEX_STATIC_CONST inline constexpr
+#endif
+
 /*
  * Borland C++ Fix/error check
  * this has to go *before* we include any std lib headers:
@@ -51,7 +58,9 @@
 *************************************************************************/
 
 #ifdef BOOST_REGEX_STANDALONE
+#ifndef BOOST_REGEX_AS_MODULE
 #include <cassert>
+#endif
 #  define BOOST_REGEX_ASSERT(x) assert(x)
 #else
 #include <boost/assert.hpp>

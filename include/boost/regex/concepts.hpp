@@ -24,7 +24,7 @@
 #include <boost/type_traits/is_enum.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/static_assert.hpp>
-#ifndef BOOST_TEST_TR1_REGEX
+#if !defined(BOOST_TEST_TR1_REGEX) && !defined(BOOST_REGEX_TEST_MODULE)
 #include <boost/regex.hpp>
 #endif
 #include <bitset>
@@ -35,6 +35,16 @@
 #define RW_NS boost
 #else
 #define RW_NS std
+#endif
+
+
+  //
+  // alter this to std::tr1, to test a std implementation:
+  //
+#ifndef BOOST_TEST_TR1_REGEX
+namespace global_regex_namespace = ::boost;
+#else
+namespace global_regex_namespace = ::std::tr1;
 #endif
 
 namespace boost{
@@ -178,15 +188,6 @@ private:
    regex_traits_architype& operator=(const regex_traits_architype&){ return *this; }
 };
 
-//
-// alter this to std::tr1, to test a std implementation:
-//
-#ifndef BOOST_TEST_TR1_REGEX
-namespace global_regex_namespace = ::boost;
-#else
-namespace global_regex_namespace = ::std::tr1;
-#endif
-
 template <class Bitmask>
 struct BitmaskConcept
 {
@@ -273,7 +274,7 @@ template <class Regex>
 struct regex_traits_computer;
 
 template <class charT, class traits>
-struct regex_traits_computer< global_regex_namespace::basic_regex<charT, traits> >
+struct regex_traits_computer< ::boost::basic_regex<charT, traits> >
 {
    typedef traits type;
 };

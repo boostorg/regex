@@ -37,7 +37,7 @@ class named_subexpressions;
 
 }
 
-template <class BidiIterator, class Allocator>
+BOOST_REGEX_MODULE_EXPORT template <class BidiIterator, class Allocator>
 class match_results
 { 
 private:
@@ -643,13 +643,13 @@ void  match_results<BidiIterator, Allocator>::maybe_assign(const match_results<B
       *this = m;
 }
 
-template <class BidiIterator, class Allocator>
+BOOST_REGEX_MODULE_EXPORT template <class BidiIterator, class Allocator>
 void swap(match_results<BidiIterator, Allocator>& a, match_results<BidiIterator, Allocator>& b)
 {
    a.swap(b);
 }
 
-template <class charT, class traits, class BidiIterator, class Allocator>
+BOOST_REGEX_MODULE_EXPORT template <class charT, class traits, class BidiIterator, class Allocator>
 std::basic_ostream<charT, traits>&
    operator << (std::basic_ostream<charT, traits>& os,
                 const match_results<BidiIterator, Allocator>& s)
