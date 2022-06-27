@@ -158,7 +158,7 @@ jobs:
         run: ../../../b2 toolset=${{ matrix.toolset }} cxxstd=${{ matrix.standard }}
         working-directory: ../boost-root/libs/regex/test
   windows_gcc:
-    runs-on: windows-latest
+    runs-on: windows-2019
     defaults:
       run:
         shell: cmd
