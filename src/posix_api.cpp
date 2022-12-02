@@ -21,6 +21,7 @@
 #include <boost/config.hpp>
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
+#include <boost/cstdint.hpp>
 #include <cstdio>
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
