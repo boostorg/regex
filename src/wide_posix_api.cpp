@@ -24,6 +24,7 @@
 
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
+#include <boost/cstdint.hpp>
 
 #include <cstdio>
 #include <cstring>
