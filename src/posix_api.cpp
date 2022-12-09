@@ -18,10 +18,8 @@
 
 #define BOOST_REGEX_SOURCE
 
-#include <boost/config.hpp>
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
-#include <boost/cstdint.hpp>
 #include <cstdio>
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
@@ -31,6 +29,11 @@ namespace std{
    using ::strcmp;
 }
 #endif
+
+#ifndef BOOST_WORKAROUND
+#define BOOST_WORKAROUND(x, y) false
+#endif
+
 
 
 namespace boost{
@@ -88,7 +91,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompA(regex_tA* expression, const char
       return REG_E_MEMORY;
 #endif
    // set default flags:
-   boost::uint_fast32_t flags = (f & REG_PERLEX) ? 0 : ((f & REG_EXTENDED) ? regex::extended : regex::basic);
+   unsigned flags = (f & REG_PERLEX) ? 0 : ((f & REG_EXTENDED) ? regex::extended : regex::basic);
    expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : match_default;
    // and translate those that are actually set:
 
