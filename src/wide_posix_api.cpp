@@ -20,14 +20,14 @@
 
 #include <boost/regex/config.hpp>
 
-#ifndef BOOST_WORKAROUND
-#define BOOST_WORKAROUND(x, y) false
-#endif
-
 #ifndef BOOST_NO_WREGEX
 
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
+
+#ifndef BOOST_WORKAROUND
+#define BOOST_WORKAROUND(x, y) false
+#endif
 
 #include <cstdio>
 #include <cstring>
