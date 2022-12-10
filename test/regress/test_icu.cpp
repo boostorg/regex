@@ -21,9 +21,11 @@
 //
 #include <boost/regex/config.hpp>
 
+#ifdef BOOST_REGEX_STANDALONE
 #ifdef __has_include
-#if __has_include(<unicode/utypes.h>)
+#if __has_include(<unicode/utypes.h>) && __has_include(<unicode/uchar.h>) && __has_include(<unicode/coll.h>)
 #define BOOST_HAS_ICU
+#endif
 #endif
 #endif
 
