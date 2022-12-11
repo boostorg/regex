@@ -22,11 +22,12 @@
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
 #include <boost/cstdint.hpp>
-#include <cstdio>
+#include <boost/core/snprintf.hpp>
+#include <cstddef>
+#include <cstring>
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{
-   using ::sprintf;
    using ::strcpy;
    using ::strcmp;
 }
@@ -177,29 +178,17 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             // We're converting an integer i to a string, and since i <= REG_E_UNKNOWN
             // a five character string is *always* large enough:
             //
-#if BOOST_CXX_VERSION >= 201103
-            int r = (std::snprintf)(localbuf, 5, "%d", i);
-#elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
-            int r = (::sprintf_s)(localbuf, 5, "%d", i);
-#else
-            int r = (std::sprintf)(localbuf, "%d", i);
-#endif
+            int r = boost::core::snprintf(localbuf, 5, "%d", i);
             if(r < 0)
-               return 0; // sprintf failed
+               return 0; // snprintf failed
             if(std::strlen(localbuf) < buf_size)
                BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);
             return std::strlen(localbuf) + 1;
          }
       }
-#if BOOST_CXX_VERSION >= 201103
-      int r = (::snprintf)(localbuf, 5, "%d", 0);
-#elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
-      int r = (::sprintf_s)(localbuf, 5, "%d", 0);
-#else
-      int r = (std::sprintf)(localbuf, "%d", 0);
-#endif
+      int r = boost::core::snprintf(localbuf, 5, "%d", 0);
       if(r < 0)
-         return 0; // sprintf failed
+         return 0; // snprintf failed
       if(std::strlen(localbuf) < buf_size)
          BOOST_REGEX_DETAIL_NS::strcpy_s(buf, buf_size, localbuf);
       return std::strlen(localbuf) + 1;
@@ -236,7 +225,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecA(const regex_tA* expression, cons
    const char* end;
    const char* start;
    cmatch m;
-   
+
    if(eflags & REG_NOTBOL)
       flags |= match_not_bol;
    if(eflags & REG_NOTEOL)

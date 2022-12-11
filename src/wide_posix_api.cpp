@@ -25,21 +25,14 @@
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/core/snprintf.hpp>
 
-#include <cstdio>
+#include <cstddef>
 #include <cstring>
 #include <cwchar>
 
 #ifdef BOOST_INTEL
 #pragma warning(disable:981)
-#endif
-
-#if defined(BOOST_NO_STDC_NAMESPACE) || defined(__NetBSD__)
-namespace std{
-#  ifndef BOOST_NO_SWPRINTF
-      using ::swprintf;
-#  endif
-}
 #endif
 
 
@@ -178,7 +171,6 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
       }
       return result;
    }
-#if !defined(BOOST_NO_SWPRINTF)
    if(code == REG_ATOI)
    {
       wchar_t localbuf[5];
@@ -188,11 +180,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
       {
          if(std::wcscmp(e->re_endp, wnames[i]) == 0)
          {
-#if defined(_WIN32_WCE) && !defined(UNDER_CE)
-            (std::swprintf)(localbuf, L"%d", i);
-#else
-            (std::swprintf)(localbuf, 5, L"%d", i);
-#endif
+            boost::core::swprintf(localbuf, 5, L"%d", i);
             if(std::wcslen(localbuf) < buf_size)
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
                ::wcscpy_s(buf, buf_size, localbuf);
@@ -202,11 +190,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
             return std::wcslen(localbuf) + 1;
          }
       }
-#if defined(_WIN32_WCE) && !defined(UNDER_CE)
-      (std::swprintf)(localbuf, L"%d", 0);
-#else
-      (std::swprintf)(localbuf, 5, L"%d", 0);
-#endif
+      boost::core::swprintf(localbuf, 5, L"%d", 0);
       if(std::wcslen(localbuf) < buf_size)
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
          ::wcscpy_s(buf, buf_size, localbuf);
@@ -215,7 +199,6 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 #endif
       return std::wcslen(localbuf) + 1;
    }
-#endif
    if(code <= (int)REG_E_UNKNOWN)
    {
       std::string p;
@@ -248,7 +231,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regexecW(const regex_tW* expression, cons
    const wchar_t* end;
    const wchar_t* start;
    wcmatch m;
-   
+
    if(eflags & REG_NOTBOL)
       flags |= match_not_bol;
    if(eflags & REG_NOTEOL)
