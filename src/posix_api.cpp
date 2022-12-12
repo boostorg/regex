@@ -180,7 +180,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             // We're converting an integer i to a string, and since i <= REG_E_UNKNOWN
             // a five character string is *always* large enough:
             //
-#if BOOST_CXX_VERSION >= 201103
+#if !defined(BOOST_CXX_VERSION) || (BOOST_CXX_VERSION >= 201103)
             int r = (std::snprintf)(localbuf, 5, "%d", i);
 #elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
             int r = (::sprintf_s)(localbuf, 5, "%d", i);
@@ -194,7 +194,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             return std::strlen(localbuf) + 1;
          }
       }
-#if BOOST_CXX_VERSION >= 201103
+#if  !defined(BOOST_CXX_VERSION) || (BOOST_CXX_VERSION >= 201103)
       int r = (::snprintf)(localbuf, 5, "%d", 0);
 #elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
       int r = (::sprintf_s)(localbuf, 5, "%d", 0);
