@@ -24,7 +24,10 @@
 
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
-#include <boost/cstdint.hpp>
+
+#ifndef BOOST_WORKAROUND
+#define BOOST_WORKAROUND(x, y) false
+#endif
 
 #include <cstdio>
 #include <cstring>
@@ -98,7 +101,7 @@ BOOST_REGEX_DECL int BOOST_REGEX_CCALL regcompW(regex_tW* expression, const wcha
       return REG_E_MEMORY;
 #endif
    // set default flags:
-   boost::uint_fast32_t flags = (f & REG_PERLEX) ? 0 : ((f & REG_EXTENDED) ? wregex::extended : wregex::basic);
+   unsigned flags = (f & REG_PERLEX) ? 0 : ((f & REG_EXTENDED) ? wregex::extended : wregex::basic);
    expression->eflags = (f & REG_NEWLINE) ? match_not_dot_newline : match_default;
 
    // and translate those that are actually set:
