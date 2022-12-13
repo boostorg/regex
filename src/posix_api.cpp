@@ -22,19 +22,15 @@
 #include <boost/cregex.hpp>
 #include <cstdio>
 
-#if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{
-   using ::sprintf;
-   using ::strcpy;
-   using ::strcmp;
-}
-#endif
-
 #ifndef BOOST_WORKAROUND
 #define BOOST_WORKAROUND(x, y) false
 #endif
 
-
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/core/snprintf.hpp>
+#else
+namespace boost { namespace core { using std::snprintf; } }
+#endif
 
 namespace boost{
 
@@ -180,13 +176,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             // We're converting an integer i to a string, and since i <= REG_E_UNKNOWN
             // a five character string is *always* large enough:
             //
-#if !defined(BOOST_CXX_VERSION) || (BOOST_CXX_VERSION >= 201103)
-            int r = (std::snprintf)(localbuf, 5, "%d", i);
-#elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
-            int r = (::sprintf_s)(localbuf, 5, "%d", i);
-#else
-            int r = (std::sprintf)(localbuf, "%d", i);
-#endif
+            int r = (boost::core::snprintf)(localbuf, 5, "%d", i);
             if(r < 0)
                return 0; // sprintf failed
             if(std::strlen(localbuf) < buf_size)
@@ -194,13 +184,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorA(int code, const regex_tA*
             return std::strlen(localbuf) + 1;
          }
       }
-#if  !defined(BOOST_CXX_VERSION) || (BOOST_CXX_VERSION >= 201103)
-      int r = (::snprintf)(localbuf, 5, "%d", 0);
-#elif BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
-      int r = (::sprintf_s)(localbuf, 5, "%d", 0);
-#else
-      int r = (std::sprintf)(localbuf, "%d", 0);
-#endif
+      int r = (boost::core::snprintf)(localbuf, 5, "%d", 0);
       if(r < 0)
          return 0; // sprintf failed
       if(std::strlen(localbuf) < buf_size)

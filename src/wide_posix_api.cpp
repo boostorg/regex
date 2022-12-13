@@ -37,15 +37,6 @@
 #pragma warning(disable:981)
 #endif
 
-#if defined(BOOST_NO_STDC_NAMESPACE) || defined(__NetBSD__)
-namespace std{
-#  ifndef BOOST_NO_SWPRINTF
-      using ::swprintf;
-#  endif
-}
-#endif
-
-
 namespace boost{
 
 namespace {
