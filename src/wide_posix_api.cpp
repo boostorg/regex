@@ -25,6 +25,12 @@
 #include <boost/regex.hpp>
 #include <boost/cregex.hpp>
 
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/core/snprintf.hpp>
+#else
+namespace boost { namespace core { using std::swprintf; } }
+#endif
+
 #ifndef BOOST_WORKAROUND
 #define BOOST_WORKAROUND(x, y) false
 #endif
@@ -185,7 +191,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 #if defined(_WIN32_WCE) && !defined(UNDER_CE)
             (std::swprintf)(localbuf, L"%d", i);
 #else
-            (std::swprintf)(localbuf, 5, L"%d", i);
+            (boost::core::swprintf)(localbuf, 5, L"%d", i);
 #endif
             if(std::wcslen(localbuf) < buf_size)
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
@@ -199,7 +205,7 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 #if defined(_WIN32_WCE) && !defined(UNDER_CE)
       (std::swprintf)(localbuf, L"%d", 0);
 #else
-      (std::swprintf)(localbuf, 5, L"%d", 0);
+      (boost::core::swprintf)(localbuf, 5, L"%d", 0);
 #endif
       if(std::wcslen(localbuf) < buf_size)
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400) && !defined(_WIN32_WCE) && !defined(UNDER_CE)
