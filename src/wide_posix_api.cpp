@@ -178,7 +178,6 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
       }
       return result;
    }
-#if !defined(BOOST_NO_SWPRINTF)
    if(code == REG_ATOI)
    {
       wchar_t localbuf[5];
@@ -215,7 +214,6 @@ BOOST_REGEX_DECL regsize_t BOOST_REGEX_CCALL regerrorW(int code, const regex_tW*
 #endif
       return std::wcslen(localbuf) + 1;
    }
-#endif
    if(code <= (int)REG_E_UNKNOWN)
    {
       std::string p;
