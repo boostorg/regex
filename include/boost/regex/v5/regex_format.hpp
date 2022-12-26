@@ -21,15 +21,17 @@
 #ifndef BOOST_REGEX_FORMAT_HPP
 #define BOOST_REGEX_FORMAT_HPP
 
+#ifndef BOOST_REGEX_AS_MODULE
 #include <type_traits>
 #include <functional>
+#endif
 
 namespace boost{
 
 //
 // Forward declaration:
 //
-   template <class BidiIterator, class Allocator = typename std::vector<sub_match<BidiIterator> >::allocator_type >
+BOOST_REGEX_MODULE_EXPORT template <class BidiIterator, class Allocator = typename std::vector<sub_match<BidiIterator> >::allocator_type >
 class match_results;
 
 namespace BOOST_REGEX_DETAIL_NS{
@@ -1095,7 +1097,7 @@ struct compute_functor_type
 
 } // namespace BOOST_REGEX_DETAIL_NS
 
-template <class OutputIterator, class Iterator, class Allocator, class Functor>
+BOOST_REGEX_MODULE_EXPORT template <class OutputIterator, class Iterator, class Allocator, class Functor>
 inline OutputIterator regex_format(OutputIterator out,
                           const match_results<Iterator, Allocator>& m,
                           Functor fmt,
@@ -1105,7 +1107,7 @@ inline OutputIterator regex_format(OutputIterator out,
    return m.format(out, fmt, flags);
 }
 
-template <class Iterator, class Allocator, class Functor>
+BOOST_REGEX_MODULE_EXPORT template <class Iterator, class Allocator, class Functor>
 inline std::basic_string<typename match_results<Iterator, Allocator>::char_type> regex_format(const match_results<Iterator, Allocator>& m, 
                                       Functor fmt, 
                                       match_flag_type flags = format_all)

@@ -217,6 +217,7 @@ test-suite regex
 compile test_consolidated.cpp ;
 
 build-project ../example ;
+build-project ./module ;
 
 # `quick` target (for CI)
 run quick.cpp ../build//boost_regex ;

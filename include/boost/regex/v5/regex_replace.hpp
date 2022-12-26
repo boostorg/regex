@@ -24,7 +24,7 @@
 
 namespace boost{
 
-template <class OutputIterator, class BidirectionalIterator, class traits, class charT, class Formatter>
+BOOST_REGEX_MODULE_EXPORT template <class OutputIterator, class BidirectionalIterator, class traits, class charT, class Formatter>
 OutputIterator regex_replace(OutputIterator out,
                          BidirectionalIterator first,
                          BidirectionalIterator last,
@@ -58,7 +58,7 @@ OutputIterator regex_replace(OutputIterator out,
    return out;
 }
 
-template <class traits, class charT, class Formatter>
+BOOST_REGEX_MODULE_EXPORT template <class traits, class charT, class Formatter>
 std::basic_string<charT> regex_replace(const std::basic_string<charT>& s,
                          const basic_regex<charT, traits>& e, 
                          Formatter fmt,

@@ -19,7 +19,9 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_HPP
 
+#ifndef BOOST_REGEX_AS_MODULE
 #include <vector>
+#endif
 
 namespace boost{
 #ifdef BOOST_REGEX_MSVC
@@ -58,7 +60,12 @@ void bubble_down_one(I first, I last)
    }
 }
 
-static const int hash_value_mask = 1 << (std::numeric_limits<int>::digits - 1);
+#ifndef BOOST_REGEX_AS_MODULE
+static
+#else
+inline
+#endif
+const int hash_value_mask = 1 << (std::numeric_limits<int>::digits - 1);
 
 template <class Iterator>
 inline int hash_value_from_capture_name(Iterator i, Iterator j)
@@ -306,7 +313,7 @@ public:
 // represents the compiled
 // regular expression:
 //
-
+BOOST_REGEX_MODULE_EXPORT
 #ifdef BOOST_REGEX_NO_FWD
 template <class charT, class traits = regex_traits<charT> >
 #else
@@ -660,13 +667,13 @@ typename basic_regex<charT, traits>::locale_type  basic_regex<charT, traits>::im
 //
 // non-members:
 //
-template <class charT, class traits>
+BOOST_REGEX_MODULE_EXPORT template <class charT, class traits>
 void swap(basic_regex<charT, traits>& e1, basic_regex<charT, traits>& e2)
 {
    e1.swap(e2);
 }
 
-template <class charT, class traits, class traits2>
+BOOST_REGEX_MODULE_EXPORT template <class charT, class traits, class traits2>
 std::basic_ostream<charT, traits>& 
    operator << (std::basic_ostream<charT, traits>& os, 
                 const basic_regex<charT, traits2>& e)

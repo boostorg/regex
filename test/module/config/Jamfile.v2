@@ -1,0 +1,17 @@
+# copyright John Maddock 2022
+# Distributed under the Boost Software License, Version 1.0. 
+# (See accompanying file LICENSE_1_0.txt or copy at 
+# http://www.boost.org/LICENSE_1_0.txt.
+
+project
+    : requirements 
+      <threading>multi 
+      <toolset>msvc:<asynch-exceptions>on
+      <toolset>msvc:<cxxstd>latest
+      <toolset>gcc:<cxxflags>-fmodules-ts
+    ;
+
+
+obj has_module_support : has_module_support.cpp : <toolset>msvc:<cxxflags>-interface ;
+exe test_has_module_support : test_has_module_support.cpp has_module_support : <dependency>has_module_support ;
+explicit test_has_module_support ;

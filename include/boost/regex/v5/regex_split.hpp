@@ -90,7 +90,7 @@ bool split_pred<OutputIterator, charT, Traits1, Alloc1>::operator()
 
 } // namespace BOOST_REGEX_DETAIL_NS
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
+BOOST_REGEX_MODULE_EXPORT template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
 std::size_t regex_split(OutputIterator out,
                    std::basic_string<charT, Traits1, Alloc1>& s, 
                    const basic_regex<charT, Traits2>& e,
@@ -125,7 +125,7 @@ std::size_t regex_split(OutputIterator out,
    return init_size - max_split;
 }
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
+BOOST_REGEX_MODULE_EXPORT template <class OutputIterator, class charT, class Traits1, class Alloc1, class Traits2>
 inline std::size_t regex_split(OutputIterator out,
                    std::basic_string<charT, Traits1, Alloc1>& s, 
                    const basic_regex<charT, Traits2>& e,
@@ -134,7 +134,7 @@ inline std::size_t regex_split(OutputIterator out,
    return regex_split(out, s, e, flags, UINT_MAX);
 }
 
-template <class OutputIterator, class charT, class Traits1, class Alloc1>
+BOOST_REGEX_MODULE_EXPORT template <class OutputIterator, class charT, class Traits1, class Alloc1>
 inline std::size_t regex_split(OutputIterator out,
                    std::basic_string<charT, Traits1, Alloc1>& s)
 {
