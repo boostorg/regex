@@ -64,6 +64,31 @@ jobs:
       - name: Test
         run: ../../../b2 toolset=$TOOLSET
         working-directory: ../boost-root/libs/regex/test
+  ubuntu-jammy-standalone:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++ ]
+        standard: [ c++11, c++14, c++17, c++2a ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - uses: mstachniuk/ci-skip@v1
+        with:
+          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
+          commit-filter-separator: ';'
+          fail-fast: true
+      - name: Set TOOLSET
+        run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
+      - name: Add repository
+        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
+      - name: Install packages
+        run: sudo apt install libicu-dev
+      - name: Test
+        run: ${{ matrix.compiler }} -std=${{ matrix.standard }}  -I../../include *.cpp ../../src/*.cpp -o regress && ./regress
+        working-directory: ./test/regress
   ubuntu-bionic:
     runs-on: ubuntu-18.04
     strategy:
