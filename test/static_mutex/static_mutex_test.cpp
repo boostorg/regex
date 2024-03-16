@@ -16,6 +16,8 @@
   *   DESCRIPTION: test program for boost::static_mutex.
   */
 
+#define BOOST_TIMER_ENABLE_DEPRECATED
+
 #include <boost/regex/pending/static_mutex.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/timer.hpp>
