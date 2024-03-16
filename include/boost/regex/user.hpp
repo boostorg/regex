@@ -93,3 +93,7 @@
 
 // define this if you want regex to use __cdecl calling convensions, even when __fastcall is available:
 // #define BOOST_REGEX_NO_FASTCALL
+
+// define this to control how deep non-avoidable recursive function calls can go, typical expressions 
+// and format strings should only recurse a handful of times, this is mainly to prevent DOS type attacks.
+// #define BOOST_REGEX_MAX_RECURSION_DEPTH 100
