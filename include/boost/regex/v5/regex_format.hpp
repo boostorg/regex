@@ -204,7 +204,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    if (recursion_count > BOOST_REGEX_MAX_RECURSION_DEPTH)
    {
       // We need to protect ourselves from bad format strings used as DOS attacks:
-      BOOST_THROW_EXCEPTION(std::runtime_error("Excessive recursion in format string, this looks like a deliberately malformed expression."));
+      throw std::runtime_error("Excessive recursion in format string, this looks like a deliberately malformed expression.");
    }
    // over and over:
    while(m_position != m_end)
