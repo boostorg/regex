@@ -56,7 +56,7 @@ jobs:
         run: 'echo "using $TOOLSET : : ${{ matrix.compiler }} : <cxxflags>-std=${{ matrix.standard }} ;" > ~/user-config.jam'
         working-directory: ../boost-root
       - name: Config info
-        run: ../../../b2 print_config_info toolset=$TOOLSET <cxxflags>-std=${{ matrix.standard }}
+        run: ../../../b2 print_config_info toolset=$TOOLSET
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ../../../b2 toolset=$TOOLSET
@@ -129,7 +129,7 @@ jobs:
         run: 'echo "using $TOOLSET : : ${{ matrix.compiler }} : <cxxflags>-std=${{ matrix.standard }} ;" > ~/user-config.jam'
         working-directory: ../boost-root
       - name: Config info
-        run: ../../../b2 print_config_info toolset=$TOOLSET <cxxflags>-std=${{ matrix.standard }}
+        run: ../../../b2 print_config_info toolset=$TOOLSET
         working-directory: ../boost-root/libs/config/test
       - name: Test
         run: ../../../b2 toolset=$TOOLSET define=CI_SUPPRESS_KNOWN_ISSUES define=SLOW_COMPILER
