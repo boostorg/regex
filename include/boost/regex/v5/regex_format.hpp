@@ -201,11 +201,6 @@ OutputIterator basic_regex_formatter<OutputIterator, Results, traits, ForwardIte
 template <class OutputIterator, class Results, class traits, class ForwardIter>
 void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_all(unsigned recursion_count)
 {
-   if (recursion_count > BOOST_REGEX_MAX_RECURSION_DEPTH)
-   {
-      // We need to protect ourselves from bad format strings used as DOS attacks:
-      throw std::runtime_error("Excessive recursion in format string, this looks like a deliberately malformed expression.");
-   }
    // over and over:
    while(m_position != m_end)
    {
@@ -224,7 +219,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          format_escape();
          break;
       case '(':
-         if(m_flags & boost::regex_constants::format_all)
+         if((m_flags & boost::regex_constants::format_all) && (recursion_count < BOOST_REGEX_MAX_RECURSION_DEPTH))
          {
             ++m_position;
             bool have_conditional = m_have_conditional;
@@ -257,7 +252,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          ++m_position;
          break;
       case '?':
-         if(m_flags & boost::regex_constants::format_all)
+         if((m_flags & boost::regex_constants::format_all) && (recursion_count < BOOST_REGEX_MAX_RECURSION_DEPTH))
          {
             ++m_position;
             format_conditional(recursion_count);
