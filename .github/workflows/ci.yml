@@ -44,7 +44,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -117,7 +117,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -159,7 +159,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -206,7 +206,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
@@ -253,7 +253,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
@@ -300,7 +300,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
@@ -347,7 +347,7 @@ jobs:
         run: xcopy /s /e /q %GITHUB_WORKSPACE% libs\regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: bootstrap
@@ -381,7 +381,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
@@ -415,7 +415,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* libs/regex
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" regex rational
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
