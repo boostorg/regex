@@ -116,11 +116,11 @@ run object_cache/object_cache_test.cpp : : : [ check-target-builds ../build//is_
 run config_info/regex_config_info.cpp  ../build//boost_regex/<link>static : : : <test-info>always_show_run_output ;
 run config_info/regex_config_info.cpp ../build//boost_regex : : : <test-info>always_show_run_output : regex_dll_config_info ;    
 run collate_info/collate_info.cpp ../build//boost_regex : : : <test-info>always_show_run_output : test_collate_info ;
-link concepts/concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] ;
-link concepts/concept_check.cpp : <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <build>no ] : standalone_concept_check ;
-link concepts/icu_concept_check.cpp : <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] ;
-link concepts/icu_concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <build>no ] : standalone_icu_concept_check ;
-link concepts/range_concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] ;
+link concepts/concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
+link concepts/concept_check.cpp : <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <build>no ] <toolset>gcc:<cxxflags>-Wno-deprecated-copy : standalone_concept_check ;
+link concepts/icu_concept_check.cpp : <define>BOOST_REGEX_STANDALONE [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
+link concepts/icu_concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <build>no ] <toolset>gcc:<cxxflags>-Wno-deprecated-copy : standalone_icu_concept_check ;
+link concepts/range_concept_check.cpp : [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
 run concepts/test_bug_11988.cpp : : : [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] ;      
 run captures/captures_test.cpp ../build//icu_options : : : <threading>multi <define>BOOST_REGEX_MATCH_EXTRA=1 <define>BOOST_REGEX_NO_LIB=1 
       [ check-target-builds ../build//is_legacy_03 : : <source>../build//boost_regex ] : captures_test ;

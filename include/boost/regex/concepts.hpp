@@ -127,6 +127,9 @@ bool operator == (const allocator_architype<T>&, const allocator_architype<T>&) 
 template <class T>
 bool operator != (const allocator_architype<T>&, const allocator_architype<T>&) { return false; }
 
+template <class T>
+void consume_type() {}
+
 namespace boost{
 //
 // regex_traits_architype:
@@ -371,6 +374,8 @@ struct BaseRegexConcept
       e1 = except.code();
 
       typedef typename Regex::value_type regex_value_type;
+      regex_value_type val{};
+      ignore_unused_variable_warning(val);
       function_requires< RegexTraitsConcept<global_regex_namespace::regex_traits<char> > >();
       function_requires< BaseRegexConcept<global_regex_namespace::basic_regex<char> > >();
    }
@@ -446,15 +451,25 @@ struct BaseRegexConcept
       // match_results tests - some typedefs are not used, however these
       // guarante that they exist (some compilers may warn on non-usage)
       typedef typename match_results_type::value_type mr_value_type;
+      consume_type<mr_value_type>();
       typedef typename match_results_type::const_reference mr_const_reference;
+      consume_type<mr_const_reference>();
       typedef typename match_results_type::reference mr_reference;
+      consume_type<mr_reference>();
       typedef typename match_results_type::const_iterator mr_const_iterator;
+      consume_type<mr_const_iterator>();
       typedef typename match_results_type::iterator mr_iterator;
+      consume_type<mr_iterator>();
       typedef typename match_results_type::difference_type mr_difference_type;
+      consume_type<mr_difference_type>();
       typedef typename match_results_type::size_type mr_size_type;
+      consume_type<mr_size_type>();
       typedef typename match_results_type::allocator_type mr_allocator_type;
+      consume_type<mr_allocator_type>();
       typedef typename match_results_type::char_type mr_char_type;
+      consume_type<mr_char_type>();
       typedef typename match_results_type::string_type mr_string_type;
+      consume_type<mr_string_type>();
 
       match_results_type m1;
       mr_allocator_type at;
