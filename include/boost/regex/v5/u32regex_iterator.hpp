@@ -35,6 +35,7 @@ class u32regex_iterator_implementation
 public:
    u32regex_iterator_implementation(const regex_type* p, BidirectionalIterator last, match_flag_type f)
       : base(), end(last), re(*p), flags(f){}
+   u32regex_iterator_implementation(const u32regex_iterator_implementation&) = default;
    bool init(BidirectionalIterator first)
    {
       base = first;

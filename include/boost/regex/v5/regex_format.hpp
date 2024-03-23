@@ -97,11 +97,11 @@ private:
 
    void put(char_type c);
    void put(const sub_match_type& sub);
-   void format_all();
+   void format_all(unsigned recursion_count = 0);
    void format_perl();
    void format_escape();
-   void format_conditional();
-   void format_until_scope_end();
+   void format_conditional(unsigned recursion_count);
+   void format_until_scope_end(unsigned recursion_count);
    bool handle_perl_verb(bool have_brace);
 
    inline typename Results::value_type const& get_named_sub(ForwardIter i, ForwardIter j, const std::integral_constant<bool, false>&)
@@ -199,7 +199,7 @@ OutputIterator basic_regex_formatter<OutputIterator, Results, traits, ForwardIte
 }
 
 template <class OutputIterator, class Results, class traits, class ForwardIter>
-void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_all()
+void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_all(unsigned recursion_count)
 {
    // over and over:
    while(m_position != m_end)
@@ -219,12 +219,12 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          format_escape();
          break;
       case '(':
-         if(m_flags & boost::regex_constants::format_all)
+         if((m_flags & boost::regex_constants::format_all) && (recursion_count < BOOST_REGEX_MAX_RECURSION_DEPTH))
          {
             ++m_position;
             bool have_conditional = m_have_conditional;
             m_have_conditional = false;
-            format_until_scope_end();
+            format_until_scope_end(recursion_count);
             m_have_conditional = have_conditional;
             if(m_position == m_end)
                return;
@@ -252,10 +252,10 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          ++m_position;
          break;
       case '?':
-         if(m_flags & boost::regex_constants::format_all)
+         if((m_flags & boost::regex_constants::format_all) && (recursion_count < BOOST_REGEX_MAX_RECURSION_DEPTH))
          {
             ++m_position;
-            format_conditional();
+            format_conditional(recursion_count);
             break;
          }
          put(*m_position);
@@ -644,7 +644,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
 }
 
 template <class OutputIterator, class Results, class traits, class ForwardIter>
-void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_conditional()
+void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_conditional(unsigned recursion_count)
 {
    if(m_position == m_end)
    {
@@ -692,7 +692,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
    if(m_results[v].matched)
    {
       m_have_conditional = true;
-      format_all();
+      format_all(++recursion_count);
       m_have_conditional = false;
       if((m_position != m_end) && (*m_position == static_cast<char_type>(':')))
       {
@@ -702,7 +702,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          output_state saved_state = m_state;
          m_state = output_none;
          // format the rest of this scope:
-         format_until_scope_end();
+         format_until_scope_end(recursion_count);
          // restore output state:
          m_state = saved_state;
       }
@@ -714,7 +714,7 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
       m_state = output_none;
       // format until ':' or ')':
       m_have_conditional = true;
-      format_all();
+      format_all(++recursion_count);
       m_have_conditional = false;
       // restore state:
       m_state = saved_state;
@@ -723,17 +723,17 @@ void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format
          // skip the ':':
          ++m_position;
          // format the rest of this scope:
-         format_until_scope_end();
+         format_until_scope_end(recursion_count);
       }
    }
 }
 
 template <class OutputIterator, class Results, class traits, class ForwardIter>
-void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_until_scope_end()
+void basic_regex_formatter<OutputIterator, Results, traits, ForwardIter>::format_until_scope_end(unsigned recursion_count)
 {
    do
    {
-      format_all();
+      format_all(++recursion_count);
       if((m_position == m_end) || (*m_position == static_cast<char_type>(')')))
          return;
       put(*m_position++);
