@@ -59,16 +59,6 @@
 // exception handling.
 // #define BOOST_REGEX_HAS_MS_STACK_GUARD
 
-// define this if you want to use the recursive algorithm
-// even if BOOST_REGEX_HAS_MS_STACK_GUARD is not defined.
-// NOTE: OBSOLETE!!
-// #define BOOST_REGEX_RECURSIVE
-
-// define this if you want to use the non-recursive
-// algorithm, even if the recursive version would be the default.
-// NOTE: OBSOLETE!!
-// #define BOOST_REGEX_NON_RECURSIVE
-
 // define this if you want to set the size of the memory blocks
 // used by the non-recursive algorithm.
 // #define BOOST_REGEX_BLOCKSIZE 4096
