@@ -142,16 +142,10 @@ if ! $(disable-icu)
 exe has_icu : has_icu_test.cpp : $(ICU_OPTS) ;
 explicit has_icu ;
 
-obj is_legacy_03 : is_legacy_03.cpp ;
-explicit is_legacy_03 ;
-
 alias icu_options : : : : [ check-target-builds has_icu : $(ICU_OPTS) : ] ;
 
 SOURCES = 
    posix_api.cpp
-   regex.cpp
-   regex_debug.cpp
-   static_mutex.cpp
    wide_posix_api.cpp
 ;
 

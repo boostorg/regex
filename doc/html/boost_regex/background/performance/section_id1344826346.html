@@ -1,13 +1,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Testing leftmost-longest searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)</title>
+<title>Testing leftmost-longest searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.3)</title>
 <link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="../../../index.html" title="Boost.Regex 7.0.1">
 <link rel="up" href="../performance.html" title="Performance">
-<link rel="prev" href="section_id3141719723.html" title="Testing simple leftmost-longest matches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)">
-<link rel="next" href="section_id3261825021.html" title="Testing simple Perl matches (platform = linux, compiler = GNU C++ version 6.3.0)">
+<link rel="prev" href="../performance.html" title="Performance">
+<link rel="next" href="section_id1744311203.html" title="Testing simple leftmost-longest matches (platform = Windows x64, compiler = GNU C++ version 11.4.0)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table cellpadding="2" width="100%"><tr>
@@ -20,19 +21,19 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="section_id3141719723.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id3261825021.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="../performance.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id1744311203.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="boost_regex.background.performance.section_id3258595385"></a><a class="link" href="section_id3258595385.html" title="Testing leftmost-longest searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)">Testing
+<a name="boost_regex.background.performance.section_id1344826346"></a><a class="link" href="section_id1344826346.html" title="Testing leftmost-longest searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.3)">Testing
         leftmost-longest searches (platform = Windows x64, compiler = Microsoft Visual
-        C++ version 14.1)</a>
+        C++ version 14.3)</a>
 </h4></div></div></div>
 <div class="table">
-<a name="boost_regex.background.performance.section_id3258595385.table_Testing_leftmost_longest_searches_platform_Windows_x64_compiler_Microsoft_Visual_C_version_14_1_"></a><p class="title"><b>Table 11. Testing leftmost-longest searches (platform = Windows x64, compiler
-          = Microsoft Visual C++ version 14.1)</b></p>
+<a name="boost_regex.background.performance.section_id1344826346.table_Testing_leftmost_longest_searches_platform_Windows_x64_compiler_Microsoft_Visual_C_version_14_3_"></a><p class="title"><b>Table 8. Testing leftmost-longest searches (platform = Windows x64, compiler
+          = Microsoft Visual C++ version 14.3)</b></p>
 <div class="table-contents"><table class="table" summary="Testing leftmost-longest searches (platform = Windows x64, compiler
-          = Microsoft Visual C++ version 14.1)">
+          = Microsoft Visual C++ version 14.3)">
 <colgroup>
 <col>
 <col>
@@ -46,7 +47,7 @@
                 </th>
 <th>
                   <p>
-                    boost 1.65
+                    boost 1.85
                   </p>
                 </th>
 <th>
@@ -65,12 +66,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (80801ns)</span>
+                    <span class="green">1.00<br> (59483ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">6.82<br> (551022ns)</span>
+                    <span class="red">9.43<br> (561070ns)</span>
                   </p>
                 </td>
 </tr>
@@ -83,12 +84,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (19868ns)</span>
+                    <span class="green">1.00<br> (11446ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">4.23<br> (84068ns)</span>
+                    <span class="red">7.64<br> (87467ns)</span>
                   </p>
                 </td>
 </tr>
@@ -100,12 +101,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (10508ns)</span>
+                    <span class="green">1.00<br> (5211ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.37<br> (35378ns)</span>
+                    <span class="red">13.88<br> (72322ns)</span>
                   </p>
                 </td>
 </tr>
@@ -114,17 +115,14 @@
 </div>
 <br class="table-break">
 </div>
-<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
-<td align="left"></td>
-<td align="right"><div class="copyright-footer">Copyright © 1998-2013 John Maddock<p>
+<div class="copyright-footer">Copyright © 1998-2013 John Maddock<p>
         Distributed under the Boost Software License, Version 1.0. (See accompanying
         file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
       </p>
-</div></td>
-</tr></table>
+</div>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="section_id3141719723.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id3261825021.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="../performance.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id1744311203.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

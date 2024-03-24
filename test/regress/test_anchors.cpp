@@ -64,8 +64,6 @@ void test_anchors()
    TEST_REGEX_SEARCH_W(L".$", boost::regex::extended, L" \x2028 \x2028", match_default, make_array(0, 1, -2, 2, 3, -2, 3, 4, -2, -2));
 #endif
    // DOS attack prevention:
-#ifndef BOOST_REGEX_RECURSIVE
    TEST_INVALID_REGEX("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", perl);
-#endif
 }
 

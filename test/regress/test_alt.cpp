@@ -52,8 +52,6 @@ void test_alt()
    TEST_REGEX_SEARCH("a\nb", egrep, "b", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("a\nb", egrep, "a", match_default, make_array(0, 1, -2, -2));
    // DOS protection:
-#ifndef BOOST_REGEX_RECURSIVE
    TEST_INVALID_REGEX("(|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(?0))", perl);
-#endif
 }
 
