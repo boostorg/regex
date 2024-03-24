@@ -1,13 +1,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Testing Perl searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)</title>
+<title>Testing Perl searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.3)</title>
 <link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="../../../index.html" title="Boost.Regex 7.0.1">
 <link rel="up" href="../performance.html" title="Performance">
-<link rel="prev" href="section_id3261825021.html" title="Testing simple Perl matches (platform = linux, compiler = GNU C++ version 6.3.0)">
-<link rel="next" href="section_id4128344975.html" title="Testing simple Perl matches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)">
+<link rel="prev" href="section_id1744311203.html" title="Testing simple leftmost-longest matches (platform = Windows x64, compiler = GNU C++ version 11.4.0)">
+<link rel="next" href="section_id3048770036.html" title="Testing simple Perl matches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.3)">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -21,21 +21,20 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="section_id3261825021.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id4128344975.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="section_id1744311203.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id3048770036.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="boost_regex.background.performance.section_id3752650613"></a><a class="link" href="section_id3752650613.html" title="Testing Perl searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.1)">Testing
+<a name="boost_regex.background.performance.section_id2864474365"></a><a class="link" href="section_id2864474365.html" title="Testing Perl searches (platform = Windows x64, compiler = Microsoft Visual C++ version 14.3)">Testing
         Perl searches (platform = Windows x64, compiler = Microsoft Visual C++ version
-        14.1)</a>
+        14.3)</a>
 </h4></div></div></div>
 <div class="table">
-<a name="boost_regex.background.performance.section_id3752650613.table_Testing_Perl_searches_platform_Windows_x64_compiler_Microsoft_Visual_C_version_14_1_"></a><p class="title"><b>Table 13. Testing Perl searches (platform = Windows x64, compiler = Microsoft
-          Visual C++ version 14.1)</b></p>
+<a name="boost_regex.background.performance.section_id2864474365.table_Testing_Perl_searches_platform_Windows_x64_compiler_Microsoft_Visual_C_version_14_3_"></a><p class="title"><b>Table 10. Testing Perl searches (platform = Windows x64, compiler = Microsoft
+          Visual C++ version 14.3)</b></p>
 <div class="table-contents"><table class="table" summary="Testing Perl searches (platform = Windows x64, compiler = Microsoft
-          Visual C++ version 14.1)">
+          Visual C++ version 14.3)">
 <colgroup>
-<col>
 <col>
 <col>
 <col>
@@ -50,17 +49,7 @@
                 </th>
 <th>
                   <p>
-                    boost 1.65
-                  </p>
-                </th>
-<th>
-                  <p>
-                    PCRE-10.10
-                  </p>
-                </th>
-<th>
-                  <p>
-                    RE2
+                    boost 1.85
                   </p>
                 </th>
 <th>
@@ -71,6 +60,11 @@
 <th>
                   <p>
                     boost::xpressive::cregex
+                  </p>
+                </th>
+<th>
+                  <p>
+                    PCRE-10.43
                   </p>
                 </th>
 </tr></thead>
@@ -84,17 +78,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.36<br> (21565ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (15821ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.08<br> (17111ns)</span>
+                    <span class="green">1.00<br> (14312ns)</span>
                   </p>
                 </td>
 <td>
@@ -104,7 +88,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.89<br> (45731ns)</span>
+                    <span class="blue">2.23<br> (31878ns)</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    <span class="blue">1.31<br> (18684ns)</span>
                   </p>
                 </td>
 </tr>
@@ -117,17 +106,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.05<br> (16442ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">1.58<br> (8492ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (5385ns)</span>
+                    <span class="green">1.10<br> (10195ns)</span>
                   </p>
                 </td>
 <td>
@@ -137,7 +116,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.31<br> (17804ns)</span>
+                    <span class="blue">1.34<br> (12441ns)</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    <span class="green">1.00<br> (9263ns)</span>
                   </p>
                 </td>
 </tr>
@@ -150,17 +134,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.11<br> (15434ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">1.31<br> (9615ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (7315ns)</span>
+                    <span class="green">1.00<br> (9687ns)</span>
                   </p>
                 </td>
 <td>
@@ -170,7 +144,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="red">4.28<br> (31331ns)</span>
+                    <span class="blue">2.10<br> (20340ns)</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    <span class="blue">1.27<br> (12333ns)</span>
                   </p>
                 </td>
 </tr>
@@ -183,17 +162,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.73<br> (16457ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">1.41<br> (8503ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (6023ns)</span>
+                    <span class="green">1.07<br> (10169ns)</span>
                   </p>
                 </td>
 <td>
@@ -203,7 +172,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.14<br> (18913ns)</span>
+                    <span class="blue">1.40<br> (13302ns)</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    <span class="green">1.00<br> (9505ns)</span>
                   </p>
                 </td>
 </tr>
@@ -216,17 +190,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.32<br> (15717ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">1.57<br> (10652ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (6789ns)</span>
+                    <span class="green">1.00<br> (9950ns)</span>
                   </p>
                 </td>
 <td>
@@ -236,7 +200,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.76<br> (25542ns)</span>
+                    <span class="blue">1.73<br> (17184ns)</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    <span class="blue">1.46<br> (14485ns)</span>
                   </p>
                 </td>
 </tr>
@@ -249,12 +218,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (1125008ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">2.90<br> (3265708ns)</span>
+                    <span class="green">1.00<br> (1549295ns)</span>
                   </p>
                 </td>
 <td>
@@ -269,7 +233,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="grey">-</span>
+                    <span class="red">11.09<br> (17177250ns)</span>
                   </p>
                 </td>
 </tr>
@@ -282,12 +246,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.55<br> (11035845ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (7123895ns)</span>
+                    <span class="blue">1.36<br> (14276693ns)</span>
                   </p>
                 </td>
 <td>
@@ -297,12 +256,12 @@
                 </td>
 <td>
                   <p>
-                    <span class="grey">-</span>
+                    <span class="green">1.17<br> (12252446ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.46<br> (10415180ns)</span>
+                    <span class="green">1.00<br> (10503162ns)</span>
                   </p>
                 </td>
 </tr>
@@ -315,27 +274,22 @@
                 </td>
 <td>
                   <p>
-                    <span class="red">26.17<br> (8436744ns)</span>
+                    <span class="blue">1.22<br> (7693839ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">32.97<br> (10629852ns)</span>
+                    <span class="red">57.46<br> (363338150ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (322399ns)</span>
+                    <span class="green">1.00<br> (6323396ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">811.84<br> (261737971ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="red">23.34<br> (7526351ns)</span>
+                    <span class="blue">2.15<br> (13603310ns)</span>
                   </p>
                 </td>
 </tr>
@@ -347,27 +301,22 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.58<br> (10246ns)</span>
+                    <span class="green">1.00<br> (4643ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (6487ns)</span>
+                    <span class="red">15.54<br> (72171ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.48<br> (16109ns)</span>
+                    <span class="blue">1.30<br> (6027ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">5.39<br> (34994ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.09<br> (7046ns)</span>
+                    <span class="blue">1.54<br> (7151ns)</span>
                   </p>
                 </td>
 </tr>
@@ -380,12 +329,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (1152646ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="blue">1.70<br> (1962067ns)</span>
+                    <span class="green">1.00<br> (1498291ns)</span>
                   </p>
                 </td>
 <td>
@@ -400,7 +344,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="grey">-</span>
+                    <span class="blue">2.37<br> (3555960ns)</span>
                   </p>
                 </td>
 </tr>
@@ -413,12 +357,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.62<br> (255439ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (158034ns)</span>
+                    <span class="blue">1.29<br> (212586ns)</span>
                   </p>
                 </td>
 <td>
@@ -433,7 +372,7 @@
                 </td>
 <td>
                   <p>
-                    <span class="grey">-</span>
+                    <span class="green">1.00<br> (164592ns)</span>
                   </p>
                 </td>
 </tr>
@@ -446,27 +385,22 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.48<br> (268270ns)</span>
+                    <span class="green">1.06<br> (251988ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.08<br> (195553ns)</span>
+                    <span class="red">7.99<br> (1891782ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.78<br> (323879ns)</span>
+                    <span class="green">1.00<br> (236878ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">7.75<br> (1406976ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (181554ns)</span>
+                    <span class="blue">1.54<br> (363700ns)</span>
                   </p>
                 </td>
 </tr>
@@ -479,27 +413,22 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.48<br> (268560ns)</span>
+                    <span class="green">1.00<br> (228825ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.08<br> (195915ns)</span>
+                    <span class="red">7.72<br> (1765632ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.76<br> (319886ns)</span>
+                    <span class="green">1.01<br> (231986ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">7.72<br> (1398962ns)</span>
-                  </p>
-                </td>
-<td>
-                  <p>
-                    <span class="green">1.00<br> (181328ns)</span>
+                    <span class="blue">1.57<br> (360051ns)</span>
                   </p>
                 </td>
 </tr>
@@ -515,7 +444,7 @@
 </div>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="section_id3261825021.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id4128344975.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="section_id1744311203.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id3048770036.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>

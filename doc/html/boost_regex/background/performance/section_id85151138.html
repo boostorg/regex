@@ -1,13 +1,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Testing simple leftmost-longest matches (platform = linux, compiler = GNU C++ version 6.3.0)</title>
+<title>Testing simple Perl matches (platform = Windows x64, compiler = GNU C++ version 11.4.0)</title>
 <link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
 <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
 <link rel="home" href="../../../index.html" title="Boost.Regex 7.0.1">
 <link rel="up" href="../performance.html" title="Performance">
-<link rel="prev" href="../performance.html" title="Performance">
-<link rel="next" href="section_id1675827111.html" title="Testing Perl searches (platform = linux, compiler = GNU C++ version 6.3.0)">
+<link rel="prev" href="section_id456935730.html" title="Testing leftmost-longest searches (platform = Windows x64, compiler = GNU C++ version 11.4.0)">
+<link rel="next" href="../standards.html" title="Standards Conformance">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -21,19 +21,18 @@
 </tr></table>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="../performance.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id1675827111.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="section_id456935730.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../standards.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 <div class="section">
 <div class="titlepage"><div><div><h4 class="title">
-<a name="boost_regex.background.performance.section_id1378460593"></a><a class="link" href="section_id1378460593.html" title="Testing simple leftmost-longest matches (platform = linux, compiler = GNU C++ version 6.3.0)">Testing
-        simple leftmost-longest matches (platform = linux, compiler = GNU C++ version
-        6.3.0)</a>
+<a name="boost_regex.background.performance.section_id85151138"></a><a class="link" href="section_id85151138.html" title="Testing simple Perl matches (platform = Windows x64, compiler = GNU C++ version 11.4.0)">Testing
+        simple Perl matches (platform = Windows x64, compiler = GNU C++ version 11.4.0)</a>
 </h4></div></div></div>
 <div class="table">
-<a name="boost_regex.background.performance.section_id1378460593.table_Testing_simple_leftmost_longest_matches_platform_linux_compiler_GNU_C_version_6_3_0_"></a><p class="title"><b>Table 8. Testing simple leftmost-longest matches (platform = linux, compiler
-          = GNU C++ version 6.3.0)</b></p>
-<div class="table-contents"><table class="table" summary="Testing simple leftmost-longest matches (platform = linux, compiler
-          = GNU C++ version 6.3.0)">
+<a name="boost_regex.background.performance.section_id85151138.table_Testing_simple_Perl_matches_platform_Windows_x64_compiler_GNU_C_version_11_4_0_"></a><p class="title"><b>Table 15. Testing simple Perl matches (platform = Windows x64, compiler =
+          GNU C++ version 11.4.0)</b></p>
+<div class="table-contents"><table class="table" summary="Testing simple Perl matches (platform = Windows x64, compiler =
+          GNU C++ version 11.4.0)">
 <colgroup>
 <col>
 <col>
@@ -48,7 +47,7 @@
                 </th>
 <th>
                   <p>
-                    boost 1.65
+                    boost 1.85
                   </p>
                 </th>
 <th>
@@ -58,7 +57,7 @@
                 </th>
 <th>
                   <p>
-                    POSIX
+                    boost::xpressive::cregex
                   </p>
                 </th>
 </tr></thead>
@@ -72,17 +71,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.11<br> (669ns)</span>
+                    <span class="blue">2.75<br> (297ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (603ns)</span>
+                    <span class="blue">3.35<br> (362ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.70<br> (2234ns)</span>
+                    <span class="green">1.00<br> (108ns)</span>
                   </p>
                 </td>
 </tr>
@@ -95,17 +94,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (781ns)</span>
+                    <span class="blue">2.60<br> (208ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">4.52<br> (3530ns)</span>
+                    <span class="red">17.80<br> (1424ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="red">12.72<br> (9933ns)</span>
+                    <span class="green">1.00<br> (80ns)</span>
                   </p>
                 </td>
 </tr>
@@ -118,17 +117,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (937ns)</span>
+                    <span class="blue">2.47<br> (428ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.26<br> (1184ns)</span>
+                    <span class="blue">3.32<br> (574ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.06<br> (2864ns)</span>
+                    <span class="green">1.00<br> (173ns)</span>
                   </p>
                 </td>
 </tr>
@@ -141,17 +140,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (892ns)</span>
+                    <span class="blue">2.73<br> (412ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.29<br> (1150ns)</span>
+                    <span class="blue">3.54<br> (535ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.95<br> (2628ns)</span>
+                    <span class="green">1.00<br> (151ns)</span>
                   </p>
                 </td>
 </tr>
@@ -164,17 +163,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (1160ns)</span>
+                    <span class="blue">2.74<br> (469ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.31<br> (1517ns)</span>
+                    <span class="red">4.25<br> (727ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.29<br> (3818ns)</span>
+                    <span class="green">1.00<br> (171ns)</span>
                   </p>
                 </td>
 </tr>
@@ -187,17 +186,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.58<br> (485ns)</span>
+                    <span class="blue">2.55<br> (158ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.48<br> (455ns)</span>
+                    <span class="red">4.98<br> (309ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (307ns)</span>
+                    <span class="green">1.00<br> (62ns)</span>
                   </p>
                 </td>
 </tr>
@@ -210,17 +209,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.50<br> (466ns)</span>
+                    <span class="blue">2.48<br> (151ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.50<br> (464ns)</span>
+                    <span class="red">4.95<br> (302ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (310ns)</span>
+                    <span class="green">1.00<br> (61ns)</span>
                   </p>
                 </td>
 </tr>
@@ -233,17 +232,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">3.10<br> (666ns)</span>
+                    <span class="blue">2.03<br> (124ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.57<br> (338ns)</span>
+                    <span class="red">4.38<br> (267ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (215ns)</span>
+                    <span class="green">1.00<br> (61ns)</span>
                   </p>
                 </td>
 </tr>
@@ -256,17 +255,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.18<br> (373ns)</span>
+                    <span class="blue">2.66<br> (162ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.10<br> (359ns)</span>
+                    <span class="red">4.67<br> (285ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (171ns)</span>
+                    <span class="green">1.00<br> (61ns)</span>
                   </p>
                 </td>
 </tr>
@@ -279,17 +278,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.27<br> (363ns)</span>
+                    <span class="blue">2.07<br> (126ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.93<br> (309ns)</span>
+                    <span class="red">4.36<br> (266ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (160ns)</span>
+                    <span class="green">1.00<br> (61ns)</span>
                   </p>
                 </td>
 </tr>
@@ -302,17 +301,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.90<br> (473ns)</span>
+                    <span class="blue">2.08<br> (148ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.19<br> (357ns)</span>
+                    <span class="blue">3.72<br> (264ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (163ns)</span>
+                    <span class="green">1.00<br> (71ns)</span>
                   </p>
                 </td>
 </tr>
@@ -325,17 +324,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.56<br> (386ns)</span>
+                    <span class="blue">2.17<br> (141ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">1.83<br> (277ns)</span>
+                    <span class="blue">3.82<br> (248ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (151ns)</span>
+                    <span class="green">1.00<br> (65ns)</span>
                   </p>
                 </td>
 </tr>
@@ -348,17 +347,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.46<br> (381ns)</span>
+                    <span class="blue">2.39<br> (160ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.14<br> (331ns)</span>
+                    <span class="blue">3.61<br> (242ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (155ns)</span>
+                    <span class="green">1.00<br> (67ns)</span>
                   </p>
                 </td>
 </tr>
@@ -370,17 +369,17 @@
                 </td>
 <td>
                   <p>
-                    <span class="blue">2.35<br> (324ns)</span>
+                    <span class="blue">1.75<br> (77ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.11<br> (153ns)</span>
+                    <span class="red">4.25<br> (187ns)</span>
                   </p>
                 </td>
 <td>
                   <p>
-                    <span class="green">1.00<br> (138ns)</span>
+                    <span class="green">1.00<br> (44ns)</span>
                   </p>
                 </td>
 </tr>
@@ -396,7 +395,7 @@
 </div>
 <hr>
 <div class="spirit-nav">
-<a accesskey="p" href="../performance.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="section_id1675827111.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+<a accesskey="p" href="section_id456935730.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../performance.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../standards.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
 </div>
 </body>
 </html>
