@@ -488,7 +488,7 @@ public:
    }
    //
    // swap:
-   void  swap(basic_regex& that)throw()
+   void  swap(basic_regex& that)noexcept
    {
       m_pimpl.swap(that.m_pimpl);
    }
