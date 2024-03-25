@@ -76,13 +76,10 @@ inline long hash_value(char_architype val)
 //
 } // namespace boost
 namespace std{
-   template<> struct char_traits<boost::char_architype>
-   {
-      // The intent is that this template is not instantiated,
-      // but this typedef gives us a chance of compilation in
-      // case it is:
-      typedef boost::char_architype char_type;
-   };
+   //
+   // We should never use this, if we do it should be an error:
+   //
+   template<> struct char_traits<boost::char_architype>;
 }
 //
 // Allocator architype:
@@ -411,6 +408,10 @@ struct BaseRegexConcept
       ignore_unused_variable_warning(e4);
       Regex e5(in1, in2, m_flags);
       ignore_unused_variable_warning(e5);
+
+      // equals:
+      e1 == e2;
+      e1 != e2;
 
       // assign etc:
       Regex e;
