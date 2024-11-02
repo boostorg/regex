@@ -44,7 +44,7 @@ path-constant HERE : . ;
 test-suite regex-examples :
 
 [ regex-test-run timer/regex_timer.cpp /boost/smart_ptr//boost_smart_ptr : $(HERE)/timer/input_script.txt ]
-[ regex-test-run grep/grep.cpp /boost/program_options//boost_program_options/<link>static : -n -b $(HERE)/../include/boost/regex.hpp : test_grep ]
+[ regex-test-run grep/grep.cpp /boost/program_options//boost_program_options/<link>static : -n -b -E #include.+ $(HERE)/../include/boost/regex.hpp : test_grep ]
 [ regex-test-run snippets/credit_card_example.cpp ]
 [ regex-test-run snippets/mfc_example.cpp ]
 [ regex-test-run snippets/icu_example.cpp ]
