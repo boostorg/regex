@@ -1204,8 +1204,10 @@ bool perl_matcher<BidiIterator, Allocator, traits>::skip_until_paren(int index, 
       else if(pstate->type == syntax_element_startmark)
       {
          int idx = static_cast<const re_brace*>(pstate)->index;
-         match_startmark();
-         pstate = pstate->next.p;
+         if(idx > 0)
+            match_startmark();
+         else
+            pstate = pstate->next.p;
          skip_until_paren(idx, false);
          continue;
       }
