@@ -9,6 +9,7 @@ on:
     branches:
       - master
       - develop
+      - feature/**
   pull_request:
   release:
     types: [published, created, edited]
