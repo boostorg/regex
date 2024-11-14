@@ -12,7 +12,18 @@
 #ifndef BOOST_REGEX_MATCHER_HPP
 #define BOOST_REGEX_MATCHER_HPP
 
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/regbase.hpp>
 #include <boost/regex/v5/iterator_category.hpp>
+#include <boost/regex/v5/states.hpp>
+#include <boost/regex/v5/regex_traits.hpp>
+
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/throw_exception.hpp>
+#endif
+
+#include <climits>
 
 #ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)

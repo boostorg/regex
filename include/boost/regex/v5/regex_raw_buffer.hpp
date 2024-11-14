@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 
 namespace boost{
    namespace BOOST_REGEX_DETAIL_NS{

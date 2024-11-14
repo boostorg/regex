@@ -28,6 +28,9 @@
 #endif
 #endif
 
+#include <boost/regex/v5/basic_regex.hpp>
+
+#include <vector>
 #include <set>
 
 namespace boost{

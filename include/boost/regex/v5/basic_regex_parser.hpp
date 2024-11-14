@@ -19,6 +19,13 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_PARSER_HPP
 
+#include <boost/regex/v5/basic_regex_creator.hpp>
+
+#include <climits>
+#include <cstdint>
+#include <limits>
+#include <type_traits>
+
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 

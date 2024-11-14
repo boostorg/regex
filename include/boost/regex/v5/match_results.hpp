@@ -19,6 +19,14 @@
 #ifndef BOOST_REGEX_V5_MATCH_RESULTS_HPP
 #define BOOST_REGEX_V5_MATCH_RESULTS_HPP
 
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/sub_match.hpp>
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/regex_format.hpp>
+
+#include <string>
+#include <vector>
+
 namespace boost{
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(push)

@@ -19,6 +19,15 @@
 #ifndef BOOST_REGEX_V5_BASIC_REGEX_HPP
 #define BOOST_REGEX_V5_BASIC_REGEX_HPP
 
+#include <boost/regex/v5/regbase.hpp>
+#include <boost/regex/v5/syntax_type.hpp>
+#include <boost/regex/v5/regex_traits.hpp>
+#include <boost/regex/v5/states.hpp>
+#include <boost/regex/v5/regex_raw_buffer.hpp>
+
+#include <algorithm>
+#include <limits>
+#include <memory>
 #include <vector>
 
 namespace boost{

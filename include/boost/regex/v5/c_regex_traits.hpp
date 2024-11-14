@@ -21,7 +21,12 @@
 
 #include <boost/regex/config.hpp>
 #include <boost/regex/v5/regex_workaround.hpp>
+#include <boost/regex/v5/primary_transform.hpp>
+#include <boost/regex/v5/regex_traits_defaults.hpp>
+
 #include <cctype>
+#include <cstdint>
+#include <cwctype>
 
 namespace boost{
 

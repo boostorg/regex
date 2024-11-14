@@ -22,6 +22,9 @@
 #ifndef BOOST_REGEX_MATCH_HPP
 #define BOOST_REGEX_MATCH_HPP
 
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/perl_matcher.hpp>
+
 namespace boost{
 
 //

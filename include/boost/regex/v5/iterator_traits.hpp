@@ -19,6 +19,8 @@
 #ifndef BOOST_REGEX_V5_ITERATOR_TRAITS_HPP
 #define BOOST_REGEX_V5_ITERATOR_TRAITS_HPP
 
+#include <iterator>
+
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 

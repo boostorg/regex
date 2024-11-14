@@ -19,6 +19,9 @@
 #ifndef BOOST_REGEX_V5_SUB_MATCH_HPP
 #define BOOST_REGEX_V5_SUB_MATCH_HPP
 
+#include <iterator>
+#include <utility>
+
 namespace boost{
 
 template <class BidiIterator>

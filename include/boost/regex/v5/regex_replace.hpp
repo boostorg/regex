@@ -22,6 +22,10 @@
 #define BOOST_REGEX_V5_REGEX_REPLACE_HPP
 
 
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/regex_iterator.hpp>
+
 namespace boost{
 
 template <class OutputIterator, class BidirectionalIterator, class traits, class charT, class Formatter>

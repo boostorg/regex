@@ -20,6 +20,9 @@
 #define BOOST_REGEX_V5_REGEX_SEARCH_HPP
 
 
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/perl_matcher.hpp>
+
 namespace boost{
 
 template <class BidiIterator, class Allocator, class charT, class traits>

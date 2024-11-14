@@ -21,6 +21,9 @@
 #ifndef BOOST_REGEX_SPLIT_HPP
 #define BOOST_REGEX_SPLIT_HPP
 
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/match_results.hpp>
+
 namespace boost{
 
 #ifdef BOOST_REGEX_MSVC

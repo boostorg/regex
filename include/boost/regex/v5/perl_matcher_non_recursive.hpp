@@ -20,6 +20,18 @@
 #ifndef BOOST_REGEX_V5_PERL_MATCHER_NON_RECURSIVE_HPP
 #define BOOST_REGEX_V5_PERL_MATCHER_NON_RECURSIVE_HPP
 
+#include <boost/regex/config.hpp>
+
+#ifndef BOOST_REGEX_STANDALONE
+
+#include <boost/config.hpp>
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#pragma once
+#include <boost/regex/v5/perl_matcher.hpp>
+#endif
+
+#endif
+
 #include <boost/regex/v5/mem_block_cache.hpp>
 
 #ifdef BOOST_REGEX_MSVC

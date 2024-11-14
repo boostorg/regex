@@ -19,6 +19,11 @@
 #ifndef BOOST_REGEX_V5_STATES_HPP
 #define BOOST_REGEX_V5_STATES_HPP
 
+#include <boost/regex/v5/regex_raw_buffer.hpp>
+
+#include <climits>
+#include <cstddef>
+
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
