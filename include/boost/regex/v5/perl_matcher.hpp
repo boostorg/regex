@@ -39,25 +39,34 @@
 #endif
 #endif
 
+#ifndef BOOST_REGEX_STANDALONE
+#  define BOOST_REGEX_DETAIL_THROW(ex) boost::throw_exception(ex)
+#else
+#  define BOOST_REGEX_DETAIL_THROW(ex) throw ex
+#endif
+
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
 //
 // error checking API:
 //
-inline void  verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
+inline void verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
 {
+   auto is_perl = (mf & match_perl);
+   auto is_posix = (mf & match_posix);
+
+   if (is_perl && is_posix)
+   {
+      BOOST_REGEX_DETAIL_THROW(std::logic_error("Usage Error: Can't mix Perl and POSIX matching rules"));
+   }
+
    //
    // can't mix match_extra with POSIX matching rules:
    //
-   if ((mf & match_extra) && (mf & match_posix))
+   if ((mf & match_extra) && is_posix)
    {
-      std::logic_error msg("Usage Error: Can't mix regular expression captures with POSIX matching rules");
-#ifndef BOOST_REGEX_STANDALONE
-      throw_exception(msg);
-#else
-      throw msg;
-#endif
+      BOOST_REGEX_DETAIL_THROW(std::logic_error("Usage Error: Can't mix regular expression captures with POSIX matching rules"));
    }
 }
 //
