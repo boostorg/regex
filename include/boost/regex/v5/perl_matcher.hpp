@@ -40,7 +40,7 @@
 #endif
 
 #ifndef BOOST_REGEX_STANDALONE
-#  define BOOST_REGEX_DETAIL_THROW(ex) BOOST_THROW_EXCEPTION(ex)
+#  define BOOST_REGEX_DETAIL_THROW(ex) boost::throw_exception(ex)
 #else
 #  define BOOST_REGEX_DETAIL_THROW(ex) throw ex
 #endif
