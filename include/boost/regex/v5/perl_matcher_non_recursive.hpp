@@ -237,8 +237,8 @@ void perl_matcher<BidiIterator, Allocator, traits>::extend_stack()
       saved_state* backup_state;
       stack_base = static_cast<saved_state*>(get_mem_block());
       backup_state = reinterpret_cast<saved_state*>(reinterpret_cast<char*>(stack_base)+BOOST_REGEX_BLOCKSIZE);
-      saved_extra_block* block = static_cast<saved_extra_block*>(backup_state);
-      --block;
+      saved_extra_block* block = reinterpret_cast<saved_extra_block*>(
+         reinterpret_cast<std::uintptr_t>(backup_state) - sizeof(saved_extra_block));
       (void) new (block) saved_extra_block(m_stack_base, m_backup_state);
       m_stack_base = stack_base;
       m_backup_state = block;
