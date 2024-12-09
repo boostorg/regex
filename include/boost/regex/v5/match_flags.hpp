@@ -99,7 +99,7 @@ inline match_flags operator|(match_flags m1, match_flags m2)
 inline match_flags operator^(match_flags m1, match_flags m2)
 { return static_cast<match_flags>(static_cast<std::int32_t>(m1) ^ static_cast<std::int32_t>(m2)); }
 inline match_flags operator~(match_flags m1)
-{ return static_cast<match_flags>(~static_cast<std::int32_t>(m1)); }
+{ return static_cast<match_flags>(~static_cast<std::int32_t>(m1) & static_cast<std::int32_t>(match_not_any)); }
 inline match_flags& operator&=(match_flags& m1, match_flags m2)
 { m1 = m1&m2; return m1; }
 inline match_flags& operator|=(match_flags& m1, match_flags m2)
