@@ -250,7 +250,7 @@ private:
    void fixup_pointers(re_syntax_base* state);
    void fixup_recursions(re_syntax_base* state);
    void create_startmaps(re_syntax_base* state);
-   int calculate_backstep(re_syntax_base* state);
+   int calculate_backstep(re_syntax_base* state, int recurse_count = 0);
    void create_startmap(re_syntax_base* state, unsigned char* l_map, unsigned int* pnull, unsigned char mask, unsigned recursion_count = 0);
    unsigned get_restart_type(re_syntax_base* state);
    void set_all_masks(unsigned char* bits, unsigned char);
@@ -971,8 +971,12 @@ void basic_regex_creator<charT, traits>::create_startmaps(re_syntax_base* state)
 }
 
 template <class charT, class traits>
-int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state)
+int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state, int recurse_count)
 {
+   if (recurse_count >= 2000) {
+      return -1;
+   }
+
    typedef typename traits::char_class_type m_type;
    int result = 0;
    while(state)
@@ -1051,8 +1055,8 @@ int basic_regex_creator<charT, traits>::calculate_backstep(re_syntax_base* state
          continue;
       case syntax_element_alt:
          {
-            int r1 = calculate_backstep(state->next.p);
-            int r2 = calculate_backstep(static_cast<re_alt*>(state)->alt.p);
+            int r1 = calculate_backstep(state->next.p, recurse_count + 1);
+            int r2 = calculate_backstep(static_cast<re_alt*>(state)->alt.p, recurse_count + 1);
             if((r1 < 0) || (r1 != r2))
                return -1;
             return result + r1;
