@@ -28,6 +28,7 @@
 #ifndef BOOST_REGEX_AS_MODULE
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 #endif
 
 namespace boost{

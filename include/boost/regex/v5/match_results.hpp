@@ -19,6 +19,16 @@
 #ifndef BOOST_REGEX_V5_MATCH_RESULTS_HPP
 #define BOOST_REGEX_V5_MATCH_RESULTS_HPP
 
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/sub_match.hpp>
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/regex_format.hpp>
+
+#ifndef BOOST_REGEX_AS_MODULE
+#include <string>
+#include <vector>
+#endif
+
 namespace boost{
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
@@ -553,7 +563,7 @@ public:
 
    void  set_named_subs(std::shared_ptr<named_sub_type> subs)
    {
-      m_named_subs = subs;
+      m_named_subs = std::move(subs);
    }
 
 private:

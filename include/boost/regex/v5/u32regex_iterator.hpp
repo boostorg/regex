@@ -19,6 +19,21 @@
 #ifndef BOOST_REGEX_V5_U32REGEX_ITERATOR_HPP
 #define BOOST_REGEX_V5_U32REGEX_ITERATOR_HPP
 
+#include <boost/regex/config.hpp>
+
+#ifndef BOOST_REGEX_STANDALONE
+
+#include <boost/config.hpp>
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#pragma once
+#include <boost/regex/v5/icu.hpp>
+#endif
+
+#endif
+
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/match_results.hpp>
+
 namespace boost{
 
 template <class BidirectionalIterator>

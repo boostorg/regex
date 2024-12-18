@@ -19,6 +19,9 @@
 #ifndef BOOST_REGEX_V5_REGEX_TOKEN_ITERATOR_HPP
 #define BOOST_REGEX_V5_REGEX_TOKEN_ITERATOR_HPP
 
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/sub_match.hpp>
 #ifndef BOOST_REGEX_AS_MODULE
 #include <memory>
 #endif

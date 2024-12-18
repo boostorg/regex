@@ -12,7 +12,20 @@
 #ifndef BOOST_REGEX_MATCHER_HPP
 #define BOOST_REGEX_MATCHER_HPP
 
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/regbase.hpp>
 #include <boost/regex/v5/iterator_category.hpp>
+#include <boost/regex/v5/states.hpp>
+#include <boost/regex/v5/regex_traits.hpp>
+
+#ifndef BOOST_REGEX_AS_MODULE
+#ifndef BOOST_REGEX_STANDALONE
+#include <boost/throw_exception.hpp>
+#endif
+
+#include <climits>
+#endif
 
 #ifdef BOOST_REGEX_MSVC
 #  pragma warning(push)
@@ -28,25 +41,34 @@
 #endif
 #endif
 
+#ifndef BOOST_REGEX_STANDALONE
+#  define BOOST_REGEX_DETAIL_THROW(ex) boost::throw_exception(ex)
+#else
+#  define BOOST_REGEX_DETAIL_THROW(ex) throw ex
+#endif
+
 namespace boost{
 namespace BOOST_REGEX_DETAIL_NS{
 
 //
 // error checking API:
 //
-inline void  verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
+inline void verify_options(boost::regex_constants::syntax_option_type, match_flag_type mf)
 {
+   auto is_perl = (mf & match_perl);
+   auto is_posix = (mf & match_posix);
+
+   if (is_perl && is_posix)
+   {
+      BOOST_REGEX_DETAIL_THROW(std::logic_error("Usage Error: Can't mix Perl and POSIX matching rules"));
+   }
+
    //
    // can't mix match_extra with POSIX matching rules:
    //
-   if ((mf & match_extra) && (mf & match_posix))
+   if ((mf & match_extra) && is_posix)
    {
-      std::logic_error msg("Usage Error: Can't mix regular expression captures with POSIX matching rules");
-#ifndef BOOST_REGEX_STANDALONE
-      throw_exception(msg);
-#else
-      throw msg;
-#endif
+      BOOST_REGEX_DETAIL_THROW(std::logic_error("Usage Error: Can't mix regular expression captures with POSIX matching rules"));
    }
 }
 //

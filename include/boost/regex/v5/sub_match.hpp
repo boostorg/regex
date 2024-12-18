@@ -19,6 +19,11 @@
 #ifndef BOOST_REGEX_V5_SUB_MATCH_HPP
 #define BOOST_REGEX_V5_SUB_MATCH_HPP
 
+#ifndef BOOST_REGEX_AS_MODULE
+#include <iterator>
+#include <utility>
+#endif
+
 namespace boost{
 
 BOOST_REGEX_MODULE_EXPORT template <class BidiIterator>

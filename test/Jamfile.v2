@@ -1,13 +1,15 @@
 # copyright John Maddock 2003
-# Distributed under the Boost Software License, Version 1.0. 
-# (See accompanying file LICENSE_1_0.txt or copy at 
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt.
 
 project
-    : requirements 
-      <threading>multi 
-      <link>shared:<define>BOOST_REGEX_DYN_LINK=1 
-      <toolset>msvc-7.1:<define>TEST_MFC=1 
+    : requirements
+      <library>/boost/regex//boost_regex
+      <library>/boost/detail//boost_detail
+      <threading>multi
+      <link>shared:<define>BOOST_REGEX_DYN_LINK=1
+      <toolset>msvc-7.1:<define>TEST_MFC=1
       <toolset>msvc-7.0:<define>TEST_MFC=1
       # There are unidentified linker problems on these platforms:
       <toolset>mipspro-7.4:<link>static
@@ -20,6 +22,8 @@ project
       #<toolset>gcc-mingw:<link>static
       #<toolset>gcc-cygwin:<link>static
       <toolset>sun:<link>static
+      <include>../src
+      <include>.
     ;
 
 #
@@ -27,14 +31,14 @@ project
 #
 rule regex-test ( name : sources + : requirements * : input-files * )
 {
-    return [ run $(sources) ../build//boost_regex
+    return [ run $(sources) /boost/regex//boost_regex
                :
                : $(input-files)
                : $(requirements)
                : $(name) ] ;
 }
 
-R_SOURCE = 
+R_SOURCE =
 basic_tests.cpp
 main.cpp
 wmain.cpp
@@ -69,7 +73,7 @@ run regress/$(R_SOURCE) ../build//boost_regex ../build//icu_options
    : regex_regress ;
 
 run regress/$(R_SOURCE) ../build//boost_regex
-                           ../../thread/build//boost_thread ../build//icu_options
+                           /boost/thread//boost_thread ../build//icu_options
    : # command line
    : # input files
    : # requirements
@@ -77,7 +81,7 @@ run regress/$(R_SOURCE) ../build//boost_regex
    : regex_regress_threaded ;
 
 run regress/$(R_SOURCE) ../build//boost_regex
-                           ../../thread/build//boost_thread ../build//icu_options
+                           /boost/thread//boost_thread ../build//icu_options
    : # command line
    : # input files
    : # requirements
@@ -97,15 +101,15 @@ run unicode/unicode_iterator_test.cpp : : : release <define>TEST_UTF16 : unicode
 run unicode/unicode_casefold_test.cpp  ../build//boost_regex ../build//icu_options ;
 run object_cache/object_cache_test.cpp ;
 run config_info/regex_config_info.cpp  ../build//boost_regex/<link>static : : : <test-info>always_show_run_output ;
-run config_info/regex_config_info.cpp ../build//boost_regex : : : <test-info>always_show_run_output : regex_dll_config_info ;    
+run config_info/regex_config_info.cpp ../build//boost_regex : : : <test-info>always_show_run_output : regex_dll_config_info ;
 run collate_info/collate_info.cpp ../build//boost_regex : : : <test-info>always_show_run_output : test_collate_info ;
-link concepts/concept_check.cpp : <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
+link concepts/concept_check.cpp /boost/range//boost_range : <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
 link concepts/concept_check.cpp : <define>BOOST_REGEX_STANDALONE <toolset>gcc:<cxxflags>-Wno-deprecated-copy : standalone_concept_check ;
 link concepts/icu_concept_check.cpp : <define>BOOST_REGEX_STANDALONE <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
 link concepts/icu_concept_check.cpp : <toolset>gcc:<cxxflags>-Wno-deprecated-copy : standalone_icu_concept_check ;
-link concepts/range_concept_check.cpp : <toolset>gcc:<cxxflags>-Wno-deprecated-copy ;
-run concepts/test_bug_11988.cpp ;      
-run captures/captures_test.cpp ../build//icu_options : : : <threading>multi <define>BOOST_REGEX_MATCH_EXTRA=1 <define>BOOST_REGEX_NO_LIB=1 : captures_test ;
+link concepts/range_concept_check.cpp : <toolset>gcc:<cxxflags>-Wno-deprecated-copy <library>/boost/range//boost_range ;
+run concepts/test_bug_11988.cpp ;
+run captures/captures_test.cpp ../build//icu_options /boost/array//boost_array : : : <threading>multi <define>BOOST_REGEX_MATCH_EXTRA=1 <define>BOOST_REGEX_NO_LIB=1 : captures_test ;
 run regress/$(R_SOURCE) ./noeh_test//boost_regex_noeh ../build//icu_options : : : <define>BOOST_NO_EXCEPTIONS=1 <exception-handling>off <link>static <runtime-link>shared : regex_regress_noeh ;
 compile test_consolidated.cpp ;
 
@@ -113,12 +117,12 @@ build-project ../example ;
 
 # `quick` target (for CI)
 run quick.cpp ../build//boost_regex ;
-compile test_warnings.cpp 
+compile test_warnings.cpp
    :     <toolset>msvc:<warnings>all <toolset>msvc:<warnings-as-errors>on
          <toolset>gcc:<warnings>all <toolset>gcc:<warnings-as-errors>on
          <toolset>clang:<warnings>all <toolset>clang:<warnings-as-errors>on ;
 
-compile test_warnings.cpp 
+compile test_warnings.cpp
    :     <toolset>msvc:<warnings>all <toolset>msvc:<warnings-as-errors>on
          <toolset>gcc:<warnings>all <toolset>gcc:<warnings-as-errors>on
          <toolset>clang:<warnings>all <toolset>clang:<warnings-as-errors>on
@@ -130,4 +134,8 @@ compile test_windows_defs_2.cpp ;
 compile test_windows_defs_3.cpp ;
 compile test_windows_defs_4.cpp ;
 
-run issue153.cpp : : : <toolset>msvc:<linkflags>-STACK:2097152 ;
+run issue153.cpp : : : "<toolset>msvc:<linkflags>-STACK:2097152" ;
+run issue227.cpp ;
+run issue232.cpp ;
+run lookbehind_recursion_stress_test.cpp ;
+

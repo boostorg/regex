@@ -21,6 +21,9 @@
 #ifndef BOOST_REGEX_FORMAT_HPP
 #define BOOST_REGEX_FORMAT_HPP
 
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/sub_match.hpp>
+#include <boost/regex/v5/regex_traits_defaults.hpp>
 #ifndef BOOST_REGEX_AS_MODULE
 #include <type_traits>
 #include <functional>

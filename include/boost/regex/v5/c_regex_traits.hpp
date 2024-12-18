@@ -19,11 +19,16 @@
 #ifndef BOOST_C_REGEX_TRAITS_HPP_INCLUDED
 #define BOOST_C_REGEX_TRAITS_HPP_INCLUDED
 
-#include <boost/regex/config.hpp>
-#include <boost/regex/v5/regex_workaround.hpp>
 #ifndef BOOST_REGEX_AS_MODULE
 #include <cctype>
+#include <cstdint>
+#include <cwctype>
 #endif
+
+#include <boost/regex/config.hpp>
+#include <boost/regex/v5/regex_workaround.hpp>
+#include <boost/regex/v5/primary_transform.hpp>
+#include <boost/regex/v5/regex_traits_defaults.hpp>
 
 namespace boost{
 

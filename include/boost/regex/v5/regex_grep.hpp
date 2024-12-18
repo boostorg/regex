@@ -19,6 +19,10 @@
 #ifndef BOOST_REGEX_V5_REGEX_GREP_HPP
 #define BOOST_REGEX_V5_REGEX_GREP_HPP
 
+#include <boost/regex/v5/basic_regex.hpp>
+#include <boost/regex/v5/match_flags.hpp>
+#include <boost/regex/v5/match_results.hpp>
+#include <boost/regex/v5/perl_matcher.hpp>
 
 namespace boost{
 

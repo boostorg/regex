@@ -19,7 +19,7 @@
 #endif
 
 #define main OLD_MAIN
-#include <libs/config/test/config_info.cpp>
+#include <config_info.cpp>
 #undef main
 #ifndef NEW_MAIN
 #  define NEW_MAIN main
