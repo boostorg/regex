@@ -51,6 +51,7 @@ PDF version of this manual is also available].
 
 [include configuration.qbk]
 [include install.qbk]
+[include modules.qbk]
 [include introduction.qbk]
 [include unicode.qbk]
 [include captures.qbk]
