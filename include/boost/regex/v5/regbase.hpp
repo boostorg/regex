@@ -112,7 +112,7 @@ public:
 //
 namespace regex_constants{
 
-   enum flag_type_
+   BOOST_REGEX_MODULE_EXPORT enum flag_type_
    {
 
       no_except = ::boost::regbase::no_except,
@@ -148,7 +148,7 @@ namespace regex_constants{
       JavaScript = normal,
       JScript = normal
    };
-   typedef ::boost::regbase::flag_type syntax_option_type;
+   BOOST_REGEX_MODULE_EXPORT typedef ::boost::regbase::flag_type syntax_option_type;
 
 } // namespace regex_constants
 
