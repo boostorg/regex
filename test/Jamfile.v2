@@ -137,6 +137,7 @@ compile test_windows_defs_4.cpp ;
 run issue153.cpp : : : "<toolset>msvc:<linkflags>-STACK:2097152" ;
 run issue227.cpp ;
 run issue232.cpp ;
+run issue244.cpp ;
 run lookbehind_recursion_stress_test.cpp ;
 run regex_replace_overflow.cpp ;
 
