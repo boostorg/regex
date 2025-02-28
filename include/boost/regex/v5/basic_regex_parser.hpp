@@ -997,7 +997,7 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
       if((m_position != m_end)
          && (0 == (this->flags() & regbase::main_option_type)) 
          && (this->m_traits.syntax_type(*m_position) == regex_constants::syntax_plus))
-      {
+      { 
          possessive = true;
          ++m_position;
       }
@@ -1114,6 +1114,13 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
                   else
                      contin = false;
                   break;
+               case regex_constants::syntax_hash:
+                  if (this->flags() & regex_constants::mod_x) {
+                     while((m_position != m_end) && !is_separator(*m_position++)){}
+                     contin = true;
+                     break;
+                  }
+                  BOOST_REGEX_FALLTHROUGH;
                default:
                   contin = false;
                }

@@ -19,6 +19,8 @@
 #ifndef BOOST_REGEX_V5_REGBASE_HPP
 #define BOOST_REGEX_V5_REGBASE_HPP
 
+#include <boost/regex/config.hpp>
+
 namespace boost{
 //
 // class regbase

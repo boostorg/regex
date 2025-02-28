@@ -10,6 +10,7 @@ on:
       - master
       - develop
       - feature/**
+      - cve-*
   pull_request:
   release:
     types: [published, created, edited]
