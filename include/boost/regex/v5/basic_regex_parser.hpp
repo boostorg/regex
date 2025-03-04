@@ -898,6 +898,11 @@ escape_type_class_jump:
          }
          const charT* pc = m_position;
          std::intmax_t i = this->m_traits.toi(pc, m_end, 10);
+         if(i < 0 && !syn_end)
+         {
+            fail(regex_constants::error_backref, m_position - m_base);
+            return false;
+         }
          if((i < 0) && syn_end)
          {
             // Check for a named capture, get the leftmost one if there is more than one:
