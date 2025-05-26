@@ -79,7 +79,7 @@ bool regex_search(BidiIterator first, BidiIterator last,
 
    match_results<BidiIterator> m;
    typedef typename match_results<BidiIterator>::allocator_type match_alloc_type;
-   BOOST_REGEX_DETAIL_NS::perl_matcher<BidiIterator, match_alloc_type, traits> matcher(first, last, m, e, flags | regex_constants::match_any, first);
+   BOOST_REGEX_DETAIL_NS::perl_matcher<BidiIterator, match_alloc_type, traits> matcher(first, last, m, e, flags, first);
    return BOOST_REGEX_DETAIL_NS::factory_find(matcher);
 }
 
