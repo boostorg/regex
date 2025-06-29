@@ -39,12 +39,6 @@
 [template sed_format[] [link boost_regex.format.sed_format Sed]]
 [template boost_extended_format[] [link boost_regex.format.boost_format_syntax Boost-Extended]]
 
-[/depricated stuff:]
-[template regcomp[] [link boost_regex.ref.posix.regcomp `regcomp`]]
-[template regexec[] [link boost_regex.ref.posix.regexec `regexec`]]
-[template regerror[] [link boost_regex.ref.posix.regerror `regerror`]]
-[template regfree[] [link boost_regex.ref.posix.regfree `regfree`]]
-
 A printer-friendly 
 [@http://sourceforge.net/projects/boost/files/boost-docs/ 
 PDF version of this manual is also available].
@@ -78,7 +72,6 @@ PDF version of this manual is also available].
 [include regex_traits.qbk]
 
 [include non_std_strings.qbk]
-[include posix_api.qbk]
 [include concepts.qbk]
 
 [section:deprecated Deprecated Interfaces]

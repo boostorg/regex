@@ -65,7 +65,6 @@ test-suite regex-examples :
 [ regex-test-run snippets/regex_token_iterator_eg_2.cpp : $(HERE)/../doc/html/index.html ]
 [ regex-test-run snippets/regex_iterator_example.cpp : $(HERE)/../include/boost/regex/v5/regex_iterator.hpp ]
 [ run snippets/captures_example.cpp
-  ../test/captures//boost_regex_extra
   : : :  <threading>multi <define>BOOST_REGEX_MATCH_EXTRA=1 ]
 
 ;

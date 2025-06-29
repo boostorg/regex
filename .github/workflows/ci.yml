@@ -90,7 +90,7 @@ jobs:
       - name: Install packages
         run: sudo apt install libicu-dev
       - name: Test
-        run: ${{ matrix.compiler }} -std=${{ matrix.standard }}  -I../../include *.cpp ../../src/*.cpp -o regress && ./regress
+        run: ${{ matrix.compiler }} -std=${{ matrix.standard }}  -I../../include *.cpp -o regress && ./regress
         working-directory: ./test/regress
   ubuntu-jammy-clang:
     runs-on: ubuntu-22.04
