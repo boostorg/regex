@@ -148,7 +148,8 @@ inline const char*  get_default_error_string(regex_constants::error_type n)
       "Unknown error.",                                                     /* REG_E_UNKNOWN 21 error_unknown */
    };
 
-   return (n > ::boost::regex_constants::error_unknown) ? s_default_error_messages[::boost::regex_constants::error_unknown] : s_default_error_messages[n];
+   typedef typename std::make_unsigned<regex_constants::error_type>::type unsigned_type;
+   return (static_cast<unsigned_type>(n) > ::boost::regex_constants::error_unknown) ? s_default_error_messages[::boost::regex_constants::error_unknown] : s_default_error_messages[n];
 }
 
 inline regex_constants::syntax_type  get_default_syntax_type(char c)
