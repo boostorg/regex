@@ -74,7 +74,11 @@ struct mem_block_cache
 
    static mem_block_cache& instance()
    {
+#ifdef BOOST_NO_CXX11_THREAD_LOCAL
       static mem_block_cache block_cache = { { {nullptr} } };
+#else
+      thread_local mem_block_cache block_cache = { { {nullptr} } };
+#endif
       return block_cache;
    }
 };
@@ -139,7 +143,11 @@ struct mem_block_cache
    }
    static mem_block_cache& instance()
    {
+#ifdef BOOST_NO_CXX11_THREAD_LOCAL
       static mem_block_cache block_cache;
+#else
+      thread_local mem_block_cache block_cache;
+#endif
       return block_cache;
    }
 };
