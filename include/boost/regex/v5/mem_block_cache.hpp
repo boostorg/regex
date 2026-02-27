@@ -47,7 +47,8 @@ struct mem_block_cache
    ~mem_block_cache()
    {
      for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
-       if (cache[i].load()) ::operator delete(cache[i].load());
+       void* p = cache[i].exchange(nullptr);
+       if (p) ::operator delete(p);
      }
    }
    void* get()
