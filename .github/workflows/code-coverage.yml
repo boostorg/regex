@@ -15,6 +15,10 @@
 
 name: Code Coverage
 
+permissions:
+  contents:
+    write
+
 on:
   push:
     branches:
