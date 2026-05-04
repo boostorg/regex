@@ -30,11 +30,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
       - name: Add repository
@@ -78,11 +73,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
       - name: Add repository
@@ -103,11 +93,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
       - name: Add repository
@@ -146,11 +131,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Grab install script
         run: wget https://apt.llvm.org/llvm.sh && chmod u+x llvm.sh
       - name: Install clang 18 packages
@@ -186,11 +166,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
       - name: Add repository
@@ -234,11 +209,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[linux];[Linux];[LINUX]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -281,11 +251,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[apple];[Apple];[APPLE];[linux];[Linux];[LINUX]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
@@ -328,11 +293,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: '0'
-      - uses: mstachniuk/ci-skip@v1
-        with:
-          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[apple];[Apple];[APPLE];[linux];[Linux];[LINUX]'
-          commit-filter-separator: ';'
-          fail-fast: true
       - uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
