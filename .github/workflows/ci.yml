@@ -32,8 +32,6 @@ jobs:
           fetch-depth: '0'
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
-      - name: Add repository
-        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
         run: sudo apt install g++-11 g++-12 g++-13
       - name: Checkout main boost
@@ -75,8 +73,6 @@ jobs:
           fetch-depth: '0'
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
-      - name: Add repository
-        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
         run: sudo apt install libicu-dev
       - name: Test
@@ -95,8 +91,6 @@ jobs:
           fetch-depth: '0'
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
-      - name: Add repository
-        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
         run: sudo apt install clang-15
       - name: Checkout main boost
@@ -168,8 +162,6 @@ jobs:
           fetch-depth: '0'
       - name: Set TOOLSET
         run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
-      - name: Add repository
-        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
         run: sudo apt install clang-16 clang-17 clang-18
       - name: Checkout main boost
