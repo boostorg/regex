@@ -25,6 +25,5 @@ explicit
     ;
 
 call-if : boost-library regex
-    : install boost_regex_old
+    : install boost_regex boost_regex_old
     ;
-
