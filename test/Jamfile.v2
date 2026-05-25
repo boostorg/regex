@@ -95,6 +95,7 @@ regex-test posix_api_check_cpp : c_compiler_checks/posix_api_check.cpp ;
 regex-test wide_posix_api_check_cpp  : c_compiler_checks/wide_posix_api_check.cpp ;
 run pathology/bad_expression_test.cpp ;
 run pathology/recursion_test.cpp ;
+run pathology/concurrent_static_regex_test.cpp : : : <threading>multi ;
 run named_subexpressions/named_subexpressions_test.cpp ;
 run unicode/unicode_iterator_test.cpp : : : release <define>TEST_UTF8 : unicode_iterator_test_utf8 ;
 run unicode/unicode_iterator_test.cpp : : : release <define>TEST_UTF16 : unicode_iterator_test_utf16 ;

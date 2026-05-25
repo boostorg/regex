@@ -47,7 +47,8 @@ struct mem_block_cache
    ~mem_block_cache()
    {
      for (size_t i = 0;i < BOOST_REGEX_MAX_CACHE_BLOCKS; ++i) {
-       if (cache[i].load()) ::operator delete(cache[i].load());
+       void* p = cache[i].exchange(nullptr);
+       if (p) ::operator delete(p);
      }
    }
    void* get()
@@ -73,7 +74,11 @@ struct mem_block_cache
 
    static mem_block_cache& instance()
    {
+#ifdef BOOST_NO_CXX11_THREAD_LOCAL
       static mem_block_cache block_cache = { { {nullptr} } };
+#else
+      thread_local mem_block_cache block_cache = { { {nullptr} } };
+#endif
       return block_cache;
    }
 };
@@ -138,7 +143,11 @@ struct mem_block_cache
    }
    static mem_block_cache& instance()
    {
+#ifdef BOOST_NO_CXX11_THREAD_LOCAL
       static mem_block_cache block_cache;
+#else
+      thread_local mem_block_cache block_cache;
+#endif
       return block_cache;
    }
 };
