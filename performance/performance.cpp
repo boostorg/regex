@@ -46,7 +46,7 @@ list_type& engines()
 
 void abstract_regex::register_instance(boost::shared_ptr<abstract_regex> item)
 {
-   engines().push_back(item);
+   engines().push_back(std::move(item));
 }
 
 template <class Clock>
