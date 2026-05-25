@@ -89,7 +89,7 @@ public:
    bool add_emacs_code(bool negate);
    bool unwind_alts(std::ptrdiff_t last_paren_start);
    digraph<charT> get_next_set_literal(basic_char_set<charT, traits>& char_set);
-   charT unescape_character();
+   std::uint32_t unescape_character();
    regex_constants::syntax_option_type parse_options();
 
 private:
@@ -1678,7 +1678,7 @@ digraph<charT> basic_regex_parser<charT, traits>::get_next_set_literal(basic_cha
          break;
       }
       ++m_position;
-      result = unescape_character();
+      result = static_cast<charT>(unescape_character());
       break;
    case regex_constants::syntax_open_set:
    {
@@ -1761,13 +1761,13 @@ bool valid_value(charT c, std::intmax_t v)
 }
 
 template <class charT, class traits>
-charT basic_regex_parser<charT, traits>::unescape_character()
+std::uint32_t basic_regex_parser<charT, traits>::unescape_character()
 {
 #ifdef BOOST_REGEX_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
 #endif
-   charT result(0);
+   std::uint32_t result(0);
    if(m_position == m_end)
    {
       fail(regex_constants::error_escape, m_position - m_base, "Escape sequence terminated prematurely.");
@@ -1776,28 +1776,28 @@ charT basic_regex_parser<charT, traits>::unescape_character()
    switch(this->m_traits.escape_syntax_type(*m_position))
    {
    case regex_constants::escape_type_control_a:
-      result = charT('\a');
+      result = static_cast<std::uint32_t>('\a');
       break;
    case regex_constants::escape_type_e:
-      result = charT(27);
+      result = static_cast<std::uint32_t>(27);
       break;
    case regex_constants::escape_type_control_f:
-      result = charT('\f');
+      result = static_cast<std::uint32_t>('\f');
       break;
    case regex_constants::escape_type_control_n:
-      result = charT('\n');
+      result = static_cast<std::uint32_t>('\n');
       break;
    case regex_constants::escape_type_control_r:
-      result = charT('\r');
+      result = static_cast<std::uint32_t>('\r');
       break;
    case regex_constants::escape_type_control_t:
-      result = charT('\t');
+      result = static_cast<std::uint32_t>('\t');
       break;
    case regex_constants::escape_type_control_v:
-      result = charT('\v');
+      result = static_cast<std::uint32_t>('\v');
       break;
    case regex_constants::escape_type_word_assert:
-      result = charT('\b');
+      result = static_cast<std::uint32_t>('\b');
       break;
    case regex_constants::escape_type_ascii_control:
       ++m_position;
@@ -1809,7 +1809,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          fail(regex_constants::error_escape, m_position - m_base, "ASCII escape sequence terminated prematurely.");
          return result;
       }
-      result = static_cast<charT>(*m_position % 32);
+      result = static_cast<std::uint32_t>(*m_position % 32);
       break;
    case regex_constants::escape_type_hex:
       ++m_position;
@@ -1835,8 +1835,8 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          }
          std::intmax_t i = this->m_traits.toi(m_position, m_end, 16);
          if((m_position == m_end)
-            || (i < 0)
-            || ((std::numeric_limits<charT>::is_specialized) && (i > (std::intmax_t)(std::numeric_limits<charT>::max)()))
+            || (i < 0 || i > 0x10FFFF)
+            || (sizeof(charT) == 1 && (std::numeric_limits<charT>::is_specialized) && (i > (std::intmax_t)(std::numeric_limits<charT>::max)()))
             || (this->m_traits.syntax_type(*m_position) != regex_constants::syntax_close_brace))
          {
             // Rewind to start of escape:
@@ -1846,7 +1846,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
             return result;
          }
          ++m_position;
-         result = charT(i);
+         result = static_cast<std::uint32_t>(i);
       }
       else
       {
@@ -1861,7 +1861,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
             fail(regex_constants::error_escape, m_position - m_base, "Escape sequence did not encode a valid character.");
             return result;
          }
-         result = charT(i);
+         result = static_cast<std::uint32_t>(i);
       }
       return result;
    case regex_constants::syntax_digit:
@@ -1939,7 +1939,7 @@ charT basic_regex_parser<charT, traits>::unescape_character()
          return false;
       }
    default:
-      result = *m_position;
+      result = static_cast<std::uint32_t>(*m_position);
       break;
    }
    ++m_position;
@@ -1958,8 +1958,7 @@ bool basic_regex_parser<charT, traits>::parse_backref()
    if((i == 0) || (((this->flags() & regbase::main_option_type) == regbase::perl_syntax_group) && (this->flags() & regbase::no_bk_refs)))
    {
       // not a backref at all but an octal escape sequence:
-      charT c = unescape_character();
-      this->append_literal(c);
+      this->append_literal(unescape_character());
    }
    else if((i > 0))
    {

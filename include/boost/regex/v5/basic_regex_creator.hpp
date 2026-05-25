@@ -227,6 +227,7 @@ public:
    re_syntax_base* insert_state(std::ptrdiff_t pos, syntax_element_type t, std::size_t s);
    re_syntax_base* insert_state(std::ptrdiff_t pos, syntax_element_type t) { return insert_state(pos, t, sizeof(re_syntax_base)); }
    re_literal* append_literal(charT c);
+   re_literal* append_literal(std::uint32_t c32);
    re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set);
    re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, false>*);
    re_syntax_base* append_set(const basic_char_set<charT, traits>& char_set, std::integral_constant<bool, true>*);
@@ -350,6 +351,21 @@ re_literal* basic_regex_creator<charT, traits>::append_literal(charT c)
       result->length += 1;
    }
    return result;
+}
+
+template <class charT, class traits>
+re_literal* basic_regex_creator<charT, traits>::append_literal(std::uint32_t c32)
+{
+	if (sizeof(charT) != 2 || (c32 & ~0xFFFFu) == 0)
+		return append_literal(static_cast<charT>(c32));
+
+	// Surrogate pair
+	const bool b = m_icase;
+	m_icase = false;
+	append_literal(static_cast<charT>(((c32 - 0x10000u) >> 10) + 0xD800u));
+	re_literal* result = append_literal(static_cast<charT>((c32 & 0x3FFu) + 0xDC00u));
+	m_icase = b;
+	return result;
 }
 
 template <class charT, class traits>
