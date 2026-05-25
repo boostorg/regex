@@ -47,7 +47,7 @@ bool regex_match(iterator first, iterator last,
                  match_flag_type flags = match_default)
 {
    match_results<iterator> m;
-   return regex_match(first, last, m, e, flags | regex_constants::match_any);
+   return regex_match(first, last, m, e, flags);
 }
 //
 // query_match convenience interfaces:
@@ -75,7 +75,7 @@ inline bool regex_match(const charT* str,
                         match_flag_type flags = match_default)
 {
    match_results<const charT*> m;
-   return regex_match(str, str + traits::length(str), m, e, flags | regex_constants::match_any);
+   return regex_match(str, str + traits::length(str), m, e, flags);
 }
 
 BOOST_REGEX_MODULE_EXPORT template <class ST, class SA, class charT, class traits>
@@ -85,7 +85,7 @@ inline bool regex_match(const std::basic_string<charT, ST, SA>& s,
 {
    typedef typename std::basic_string<charT, ST, SA>::const_iterator iterator;
    match_results<iterator> m;
-   return regex_match(s.begin(), s.end(), m, e, flags | regex_constants::match_any);
+   return regex_match(s.begin(), s.end(), m, e, flags);
 }
 
 
