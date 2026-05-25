@@ -59,7 +59,7 @@ namespace boost{
 BOOST_REGEX_MODULE_EXPORT template <class charT>
 struct c_regex_traits;
 
-BOOST_REGEX_MODULE_EXPORT template<>
+template<>
 struct c_regex_traits<char>
 {
    c_regex_traits(){}
@@ -104,7 +104,7 @@ private:
 };
 
 #ifndef BOOST_NO_WREGEX
-BOOST_REGEX_MODULE_EXPORT template<>
+template<>
 struct c_regex_traits<wchar_t>
 {
    c_regex_traits(){}
