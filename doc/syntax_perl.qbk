@@ -615,7 +615,7 @@ with individual elements matched as follows;
 [table
 [[Construct][What gets matched]]
 [[[^AtomA AtomB]][Locates the best match for /AtomA/ that has a following match for /AtomB/.]]
-[[[^Expression1 | Expression2]][If /Expresion1/ can be matched then returns that match, 
+[[[^Expression1 | Expression2]][If /Expression1/ can be matched then returns that match, 
    otherwise attempts to match /Expression2/.]]
 [[[^S{N}]][Matches /S/ repeated exactly N times.]]
 [[[^S{N,M}]][Matches S repeated between N and M times, and as many times as possible.]]
