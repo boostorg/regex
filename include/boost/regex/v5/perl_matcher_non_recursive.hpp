@@ -145,7 +145,7 @@ struct saved_recursion : public saved_state
 struct saved_change_case : public saved_state
 {
    bool icase;
-   saved_change_case(bool c) : saved_state(18), icase(c) {}
+   saved_change_case(bool c) : saved_state(saved_state_change_case), icase(c) {}
 };
 
 struct incrementer
@@ -160,47 +160,6 @@ private:
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
 {
-   static matcher_proc_type const s_match_vtable[34] = 
-   {
-      (&perl_matcher<BidiIterator, Allocator, traits>::match_startmark),
-      &perl_matcher<BidiIterator, Allocator, traits>::match_endmark,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_literal,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_start_line,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_end_line,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_wild,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_match,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_word_boundary,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_within_word,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_word_start,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_word_end,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_buffer_start,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_buffer_end,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_backref,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_long_set,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_set,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_jump,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_alt,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_rep,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_combining,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_soft_buffer_end,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_restart_continue,
-      // Although this next line *should* be evaluated at compile time, in practice
-      // some compilers (VC++) emit run-time initialisation which breaks thread
-      // safety, so use a dispatch function instead:
-      //(::boost::is_random_access_iterator<BidiIterator>::value ? &perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast : &perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_slow),
-      &perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_dispatch,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_backstep,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_assert_backref,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_toggle_case,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_recursion,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_fail,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_accept,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_commit,
-      &perl_matcher<BidiIterator, Allocator, traits>::match_then,
-   };
    incrementer inc(&m_recursions);
    if(inc > 80)
       raise_error(traits_inst, regex_constants::error_complexity);
@@ -208,9 +167,47 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_all_states()
    do{
       while(pstate)
       {
-         matcher_proc_type proc = s_match_vtable[pstate->type];
+         bool r;
          ++state_count;
-         if(!(this->*proc)())
+         switch(pstate->type)
+         {
+         case syntax_element_startmark: r = match_startmark(); break;
+         case syntax_element_endmark: r = match_endmark(); break;
+         case syntax_element_literal: r = match_literal(); break;
+         case syntax_element_start_line: r = match_start_line(); break;
+         case syntax_element_end_line: r = match_end_line(); break;
+         case syntax_element_wild: r = match_wild(); break;
+         case syntax_element_match: r = match_match(); break;
+         case syntax_element_word_boundary: r = match_word_boundary(); break;
+         case syntax_element_within_word: r = match_within_word(); break;
+         case syntax_element_word_start: r = match_word_start(); break;
+         case syntax_element_word_end: r = match_word_end(); break;
+         case syntax_element_buffer_start: r = match_buffer_start(); break;
+         case syntax_element_buffer_end: r = match_buffer_end(); break;
+         case syntax_element_backref: r = match_backref(); break;
+         case syntax_element_long_set: r = match_long_set(); break;
+         case syntax_element_set: r = match_set(); break;
+         case syntax_element_jump: r = match_jump(); break;
+         case syntax_element_alt: r = match_alt(); break;
+         case syntax_element_rep: r = match_rep(); break;
+         case syntax_element_combining: r = match_combining(); break;
+         case syntax_element_soft_buffer_end: r = match_soft_buffer_end(); break;
+         case syntax_element_restart_continue: r = match_restart_continue(); break;
+         case syntax_element_dot_rep: r = match_dot_repeat_dispatch(); break;
+         case syntax_element_char_rep: r = match_char_repeat(); break;
+         case syntax_element_short_set_rep: r = match_set_repeat(); break;
+         case syntax_element_long_set_rep: r = match_long_set_repeat(); break;
+         case syntax_element_backstep: r = match_backstep(); break;
+         case syntax_element_assert_backref: r = match_assert_backref(); break;
+         case syntax_element_toggle_case: r = match_toggle_case(); break;
+         case syntax_element_recurse: r = match_recursion(); break;
+         case syntax_element_fail: r = match_fail(); break;
+         case syntax_element_accept: r = match_accept(); break;
+         case syntax_element_commit: r = match_commit(); break;
+         case syntax_element_then: r = match_then(); break;
+         default: r = false; break;
+         }
+         if(!r)
          {
             if(state_count > max_state_count)
                raise_error(traits_inst, regex_constants::error_complexity);
@@ -1156,7 +1153,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_commit()
       pmp = m_backup_state;
       --pmp;
    }
-   (void) new (pmp)saved_state(16);
+   (void) new (pmp)saved_state(saved_state_commit);
    m_backup_state = pmp;
    pstate = pstate->next.p;
    return true;
@@ -1174,7 +1171,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_then()
       pmp = m_backup_state;
       --pmp;
    }
-   (void) new (pmp)saved_state(17);
+   (void) new (pmp)saved_state(saved_state_then);
    m_backup_state = pmp;
    pstate = pstate->next.p;
    return true;
@@ -1238,41 +1235,38 @@ unwinding does in the recursive implementation.
 template <class BidiIterator, class Allocator, class traits>
 bool perl_matcher<BidiIterator, Allocator, traits>::unwind(bool have_match)
 {
-   static unwind_proc_type const s_unwind_table[19] = 
-   {
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_end,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_paren,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_stopper,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_assertion,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_alt,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_repeater_counter,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_extra_block,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_greedy_single_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_slow_dot_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_fast_dot_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_char_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_short_set_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_non_greedy_repeat,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_recursion_pop,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_commit,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_then,
-      &perl_matcher<BidiIterator, Allocator, traits>::unwind_case,
-   };
-
    m_recursive_result = have_match;
    m_unwound_lookahead = false;
    m_unwound_alt = false;
-   unwind_proc_type unwinder;
    bool cont;
    //
    // keep unwinding our stack until we have something to do:
    //
    do
    {
-      unwinder = s_unwind_table[m_backup_state->state_id];
-      cont = (this->*unwinder)(m_recursive_result);
+      switch(m_backup_state->state_id)
+      {
+      case saved_type_end: cont = unwind_end(m_recursive_result); break;
+      case saved_type_paren: cont = unwind_paren(m_recursive_result); break;
+      case saved_type_recurse: cont = unwind_recursion_stopper(m_recursive_result); break;
+      case saved_type_assertion: cont = unwind_assertion(m_recursive_result); break;
+      case saved_state_alt: cont = unwind_alt(m_recursive_result); break;
+      case saved_state_repeater_count: cont = unwind_repeater_counter(m_recursive_result); break;
+      case saved_state_extra_block: cont = unwind_extra_block(m_recursive_result); break;
+      case saved_state_greedy_single_repeat: cont = unwind_greedy_single_repeat(m_recursive_result); break;
+      case saved_state_rep_slow_dot: cont = unwind_slow_dot_repeat(m_recursive_result); break;
+      case saved_state_rep_fast_dot: cont = unwind_fast_dot_repeat(m_recursive_result); break;
+      case saved_state_rep_char: cont = unwind_char_repeat(m_recursive_result); break;
+      case saved_state_rep_short_set: cont = unwind_short_set_repeat(m_recursive_result); break;
+      case saved_state_rep_long_set: cont = unwind_long_set_repeat(m_recursive_result); break;
+      case saved_state_non_greedy_long_repeat: cont = unwind_non_greedy_repeat(m_recursive_result); break;
+      case saved_state_count: cont = unwind_recursion(m_recursive_result); break;
+      case saved_state_recursion_pop: cont = unwind_recursion_pop(m_recursive_result); break;
+      case saved_state_commit: cont = unwind_commit(m_recursive_result); break;
+      case saved_state_then: cont = unwind_then(m_recursive_result); break;
+      case saved_state_change_case: cont = unwind_case(m_recursive_result); break;
+      default: cont = false; break;
+      }
    }while(cont);
    //
    // return true if we have more states to try:
@@ -1829,7 +1823,7 @@ void perl_matcher<BidiIterator, Allocator, traits>::push_recursion_pop()
       pmp = static_cast<saved_state*>(m_backup_state);
       --pmp;
    }
-   (void) new (pmp)saved_state(15);
+   (void) new (pmp)saved_state(saved_state_recursion_pop);
    m_backup_state = pmp;
 }
 
@@ -1853,7 +1847,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_commit(bool b)
          pmp = m_backup_state;
          --pmp;
       }
-      (void) new (pmp)saved_state(16);
+      (void) new (pmp)saved_state(saved_state_commit);
       m_backup_state = pmp;
    }
    // This prevents us from stopping when we exit from an independent sub-expression:
