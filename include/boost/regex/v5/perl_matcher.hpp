@@ -340,7 +340,11 @@ enum saved_state_type
    saved_state_rep_short_set = 11,
    saved_state_rep_long_set = 12,
    saved_state_non_greedy_long_repeat = 13, 
-   saved_state_count = 14
+   saved_state_count = 14,
+   saved_state_recursion_pop = 15,
+   saved_state_commit = 16,
+   saved_state_then = 17,
+   saved_state_change_case = 18
 };
 
 #ifdef BOOST_REGEX_MSVC
@@ -407,7 +411,7 @@ private:
    bool match_prefix();
    bool match_all_states();
 
-   // match procs, stored in s_match_vtable:
+   // match procs, dispatched from a switch in match_all_states():
    bool match_startmark();
    bool match_endmark();
    bool match_literal();
@@ -508,8 +512,6 @@ private:
    //
    // additional members for non-recursive version:
    //
-   typedef bool (self_type::*unwind_proc_type)(bool);
-
    void extend_stack();
    bool unwind(bool);
    bool unwind_end(bool);
