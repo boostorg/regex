@@ -143,7 +143,7 @@ iterator  re_is_set_member(iterator next,
                           const re_set_long<char_classT>* set_, 
                           const regex_data<charT, traits_type>& e, bool icase)
 {   
-   const charT* p = reinterpret_cast<const charT*>(set_+1);
+   const charT* p = set_->template characters<charT>();
    iterator ptr;
    unsigned int i;
    //bool icase = e.m_flags & regex_constants::icase;
@@ -244,8 +244,12 @@ iterator  re_is_set_member(iterator next,
    }
    if(traits_inst.isctype(col, set_->cclasses) == true)
       return set_->isnot ? next : ++next;
-   if((set_->cnclasses != 0) && (traits_inst.isctype(col, set_->cnclasses) == false))
-      return set_->isnot ? next : ++next;
+   const char_classT* masks = reinterpret_cast<const char_classT*>(set_ + 1);
+   for(std::size_t n = 0; n < set_->cnclasses; ++n)
+   {
+      if(traits_inst.isctype(col, masks[n]) == false)
+         return set_->isnot ? next : ++next;
+   }
    return set_->isnot ? ++next : next;
 }
 

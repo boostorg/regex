@@ -197,8 +197,8 @@ struct re_case : public re_syntax_base
 };
 
 /*** struct re_set_long ***********************************************
-A wide character set of characters, following this structure will be
-an array of type charT:
+A wide character set of characters.  Following this structure are cnclasses
+negated class masks, padded to a multiple of sizeof(charT), then charT data:
 First csingles null-terminated strings
 Then 2 * cranges NULL terminated strings
 Then cequivalents NULL terminated strings
@@ -208,9 +208,24 @@ struct re_set_long : public re_syntax_base
 {
    unsigned int            csingles, cranges, cequivalents;
    mask_type               cclasses;
-   mask_type               cnclasses;
+   std::size_t             cnclasses;
    bool                    isnot;
    bool                    singleton;
+
+   template <class charT>
+   static std::size_t negated_class_bytes(std::size_t count)
+   {
+      // A custom mask can be smaller than charT.  Keep the following
+      // character data aligned even for an odd number of such masks.
+      return ((count * sizeof(mask_type) + sizeof(charT) - 1) / sizeof(charT)) * sizeof(charT);
+   }
+
+   template <class charT>
+   const charT* characters()const
+   {
+      return reinterpret_cast<const charT*>(reinterpret_cast<const unsigned char*>(this + 1)
+         + negated_class_bytes<charT>(cnclasses));
+   }
 };
 
 /*** struct re_set ****************************************************

@@ -31,6 +31,7 @@
 #include <boost/regex/v5/basic_regex.hpp>
 
 #ifndef BOOST_REGEX_AS_MODULE
+#include <algorithm>
 #include <vector>
 #include <set>
 #endif
@@ -71,7 +72,6 @@ public:
       m_negate = false;
       m_has_digraphs = false;
       m_classes = 0;
-      m_negated_classes = 0;
       m_empty = true;
    }
 
@@ -105,7 +105,8 @@ public:
    }
    void add_negated_class(m_type m)
    {
-      m_negated_classes |= m;
+      if(std::find(m_negated_classes.begin(), m_negated_classes.end(), m) == m_negated_classes.end())
+         m_negated_classes.push_back(m);
       m_empty = false;
    }
    void add_equivalent(const digraph_type& s)
@@ -165,7 +166,7 @@ public:
    {
       return m_classes;
    }
-   m_type negated_classes()const
+   const std::vector<m_type>& negated_classes()const
    {
       return m_negated_classes;
    }
@@ -179,7 +180,7 @@ private:
    bool                      m_negate;          // true if the set is to be negated
    bool                      m_has_digraphs;    // true if we have digraphs present
    m_type                    m_classes;         // character classes to match
-   m_type                    m_negated_classes; // negated character classes to match
+   std::vector<m_type>        m_negated_classes; // each negated character class to match
    bool                      m_empty;           // whether we've added anything yet
    std::set<digraph_type>    m_equivalents;     // a list of equivalence classes
 };
@@ -371,7 +372,9 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    typedef typename basic_char_set<charT, traits>::set_iterator  set_iterator;
    typedef typename traits::char_class_type m_type;
    
-   re_set_long<m_type>* result = static_cast<re_set_long<m_type>*>(append_state(syntax_element_long_set, sizeof(re_set_long<m_type>)));
+   const std::vector<m_type>& negated = char_set.negated_classes();
+   re_set_long<m_type>* result = static_cast<re_set_long<m_type>*>(append_state(syntax_element_long_set,
+      sizeof(re_set_long<m_type>) + re_set_long<m_type>::template negated_class_bytes<charT>(negated.size())));
    //
    // fill in the basics:
    //
@@ -379,14 +382,24 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    result->cranges = static_cast<unsigned int>(std::distance(char_set.ranges_begin(), char_set.ranges_end())) / 2;
    result->cequivalents = static_cast<unsigned int>(std::distance(char_set.equivalents_begin(), char_set.equivalents_end()));
    result->cclasses = char_set.classes();
-   result->cnclasses = char_set.negated_classes();
+   result->cnclasses = negated.size();
    if(flags() & regbase::icase)
    {
       // adjust classes as needed:
       if(((result->cclasses & m_lower_mask) == m_lower_mask) || ((result->cclasses & m_upper_mask) == m_upper_mask))
          result->cclasses |= m_alpha_mask;
-      if(((result->cnclasses & m_lower_mask) == m_lower_mask) || ((result->cnclasses & m_upper_mask) == m_upper_mask))
-         result->cnclasses |= m_alpha_mask;
+   }
+
+   // Negated classes form a union of complements.  They cannot be combined
+   // into a single mask: traits only guarantee that mask OR means union.
+   m_type* masks = reinterpret_cast<m_type*>(result + 1);
+   for(std::size_t i = 0; i < negated.size(); ++i)
+   {
+      m_type m = negated[i];
+      if((flags() & regbase::icase)
+         && (((m & m_lower_mask) == m_lower_mask) || ((m & m_upper_mask) == m_upper_mask)))
+         m |= m_alpha_mask;
+      masks[i] = m;
    }
 
    result->isnot = char_set.is_negated();
@@ -616,15 +629,15 @@ re_syntax_base* basic_regex_creator<charT, traits>::append_set(
    //
    // and now the negated classes:
    //
-   m = char_set.negated_classes();
-   if(flags() & regbase::icase)
+   const std::vector<m_type>& negated = char_set.negated_classes();
+   for(std::size_t n = 0; n < negated.size(); ++n)
    {
-      // adjust m as needed:
-      if(((m & m_lower_mask) == m_lower_mask) || ((m & m_upper_mask) == m_upper_mask))
-         m |= m_alpha_mask;
-   }
-   if(m != 0)
-   {
+      m = negated[n];
+      if(flags() & regbase::icase)
+      {
+         if(((m & m_lower_mask) == m_lower_mask) || ((m & m_upper_mask) == m_upper_mask))
+            m |= m_alpha_mask;
+      }
       for(unsigned i = 0; i < (1u << CHAR_BIT); ++i)
       {
          if(0 == this->m_traits.isctype(static_cast<charT>(i), m))

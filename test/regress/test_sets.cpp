@@ -19,6 +19,13 @@ void test_sets()
 {
    using namespace boost::regex_constants;
    // now test the set operator []
+   // A set containing negated classes matches the union of their complements.
+   TEST_REGEX_SEARCH("[\\W\\D]", perl, "a", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[\\W\\D]", perl, "0", match_default, make_array(-2, -2));
+   TEST_REGEX_SEARCH("[\\W\\D]", perl, ".", match_default, make_array(0, 1, -2, -2));
+   TEST_REGEX_SEARCH("[\\W\\D]+", perl, "0a.1", match_default, make_array(1, 3, -2, -2));
+   TEST_REGEX_SEARCH("[^\\W\\D]+", perl, "a01.", match_default, make_array(1, 3, -2, -2));
+   TEST_REGEX_SEARCH("[\\W\\D\\S]", perl, " ", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("[abc]", boost::regex::extended, "a", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("[abc]", boost::regex::extended, "b", match_default, make_array(0, 1, -2, -2));
    TEST_REGEX_SEARCH("[abc]", boost::regex::extended, "c", match_default, make_array(0, 1, -2, -2));
