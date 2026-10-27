@@ -47,7 +47,10 @@
 *
 *************************************************************************/
 
-#ifdef BOOST_REGEX_STANDALONE
+#ifndef __cplusplus
+#include <assert.h>
+#  define BOOST_REGEX_ASSERT(x) assert(x)
+#elif defined(BOOST_REGEX_STANDALONE)
 #ifndef BOOST_REGEX_AS_MODULE
 #include <cassert>
 #  define BOOST_REGEX_ASSERT(x) assert(x)
