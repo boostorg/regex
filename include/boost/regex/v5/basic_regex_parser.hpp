@@ -1119,6 +1119,19 @@ bool basic_regex_parser<charT, traits>::parse_repeat(std::size_t low, std::size_
                   else
                      contin = false;
                   break;
+               case regex_constants::syntax_escape:
+                  // An empty \Q\E sequence must not hide a second quantifier.
+                  if ((m_end - m_position >= 4)
+                     && (this->m_traits.escape_syntax_type(*(m_position + 1)) == regex_constants::escape_type_Q)
+                     && (this->m_traits.syntax_type(*(m_position + 2)) == regex_constants::syntax_escape)
+                     && (this->m_traits.escape_syntax_type(*(m_position + 3)) == regex_constants::escape_type_E))
+                  {
+                     m_position += 4;
+                     contin = true;
+                  }
+                  else
+                     contin = false;
+                  break;
                case regex_constants::syntax_hash:
                   if (this->flags() & regex_constants::mod_x) {
                      while((m_position != m_end) && !is_separator(*m_position++)){}
